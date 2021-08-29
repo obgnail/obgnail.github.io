@@ -1,0 +1,101 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="工程项目去问你详细做了什么，用到了什么关键技术等"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>面试问题总结8_项目相关 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Interview/" rel="tag">Interview</a></div><div class="post-time">2019-09-24</div></div></div><div class="container post-header"><h1>面试问题总结8_项目相关</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">个人博客项目</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#STAR"><span class="toc-number">1.1.</span> <span class="toc-text">STAR</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E6%98%AF%E5%A6%82%E4%BD%95%E9%98%B2%E6%AD%A2XSS%E6%94%BB%E5%87%BB%E5%92%8CSQL%E6%94%BB%E5%87%BB"><span class="toc-number">1.2.</span> <span class="toc-text">你是如何防止XSS攻击和SQL攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">web项目的性能优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">websocket项目</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4"><span class="toc-number"></span> <span class="toc-text">时间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2019-5-%E5%9F%BA%E4%BA%8E-Django%E7%9A%84%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">2019-5  基于 Django的博客项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2019-6-%E5%88%B02019-6-%E5%9F%BA%E4%BA%8E-aiohttp%E7%9A%84%E7%BD%91%E7%BB%9C%E8%81%8A%E5%A4%A9%E5%AE%A4%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">2019-6 到2019-6  基于 aiohttp的网络聊天室项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2018-10-%E5%88%B0-2018-10-%E5%9F%BA%E4%BA%8E-Scrapy-Selenium-PhantomJS%E7%9A%84%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text">2018-10 到 2018-10  基于 Scrapy + Selenium+ PhantomJS的爬虫开发项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2018-9-%E5%88%B0-2019-4-%E5%9F%BA%E4%BA%8ENumpy-Pandas%E7%9A%84%E5%8C%BB%E9%99%A2%E5%85%A5%E9%99%A2%E6%A3%80%E6%9F%A5%E8%AF%8A%E6%96%AD%E6%95%B0%E6%8D%AE%E6%95%B4%E7%90%86%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE"><span class="toc-number">4.</span> <span class="toc-text">2018-9 到 2019-4   基于Numpy + Pandas的医院入院检查诊断数据整理分析项目</span></a></li></ol></details></div><div class="container post-content"><p>工程项目去问你详细做了什么，用到了什么关键技术等</p>
+<h3 id="个人博客项目"><a href="#个人博客项目" class="headerlink" title="个人博客项目"></a>个人博客项目</h3><h4 id="STAR"><a href="#STAR" class="headerlink" title="STAR"></a>STAR</h4><p>S:</p>
+<p>二次评论的设计 :</p>
+<blockquote>
+<ul>
+<li>我想设计成类似于百度贴吧那种楼中楼的样式 , 不知道怎么设计数据表.<ul>
+<li>当时查了很多资料,最后设计了三个表,一级评论和二级评论继承抽象表</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li>抽象表BaseComment</li>
+<li>一级评论表ArticleComment</li>
+<li>二级评论表ArticleCommentReply</li>
+</ul>
+<blockquote>
+<ul>
+<li>抽象表<strong>外键是用户id</strong></li>
+<li>一级评论<strong>外键是文章</strong>,</li>
+<li>二级评论<strong>外键是一级评论和to_user(允许为空,为空表示回复层主)</strong></li>
+</ul>
+<p>二级评论表设计<strong>两个外键</strong>,</p>
+<ul>
+<li>一个外键是一级评论,表示<strong>一级评论下的所有二级评论</strong></li>
+<li>一个外键是to_user(二级评论),也就是说绑定自己,表示<strong>允许互相回复。</strong></li>
+</ul>
+<p>查找步骤:</p>
+<ol>
+<li>首先根据文章ID找出所有的一级评论</li>
+<li>根据一级评论id找出所有的二级评论,</li>
+<li>按时间排序即可</li>
+</ol>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseComment</span>(<span class="params">models.Model</span>):</span></span><br><span class="line">    <span class="string">&#x27;基础评论模型&#x27;</span></span><br><span class="line">    objects = IsDeleteManager()</span><br><span class="line"></span><br><span class="line">    content     = models.TextField(verbose_name=<span class="string">&quot;评论内容&quot;</span>)</span><br><span class="line">    create_time = models.DateTimeField(verbose_name=<span class="string">&#x27;评论时间&#x27;</span>,auto_now_add=<span class="literal">True</span>)</span><br><span class="line">    from_user   = models.ForeignKey(TouristUser, verbose_name=<span class="string">&#x27;评论用户&#x27;</span>, on_delete=models.CASCADE)</span><br><span class="line">    isDelete    = models.BooleanField(verbose_name=<span class="string">&#x27;是否删除&#x27;</span>,default=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        abstract = <span class="literal">True</span></span><br><span class="line">        verbose_name = verbose_name_plural = <span class="string">&#x27;文章评论&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.from_user.username</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleComment</span>(<span class="params">BaseComment</span>):</span></span><br><span class="line">    <span class="string">&#x27;文章评论&#x27;</span></span><br><span class="line">    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name=<span class="string">&#x27;comments&#x27;</span>, verbose_name=<span class="string">&#x27;评论文章&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        verbose_name = verbose_name_plural = <span class="string">&#x27;文章评论&#x27;</span></span><br><span class="line">        ordering = [<span class="string">&#x27;-create_time&#x27;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleCommentReply</span>(<span class="params">BaseComment</span>):</span></span><br><span class="line">    <span class="string">&#x27;文章评论回复(二级评论)&#x27;</span></span><br><span class="line">    comment = models.ForeignKey(ArticleComment, on_delete=models.CASCADE, related_name=<span class="string">&#x27;replies&#x27;</span>, verbose_name=<span class="string">&#x27;一级评论&#x27;</span>)</span><br><span class="line">    to_user = models.ForeignKey(<span class="string">&#x27;user&#x27;</span>, null=<span class="literal">True</span>, blank=<span class="literal">True</span>, on_delete=models.CASCADE, verbose_name=<span class="string">&#x27;回复二级评论&#x27;</span>)</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        ordering = [<span class="string">&#x27;create_time&#x27;</span>]</span><br><span class="line">        verbose_name = verbose_name_plural = <span class="string">&#x27;二级评论&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="你是如何防止XSS攻击和SQL攻击"><a href="#你是如何防止XSS攻击和SQL攻击" class="headerlink" title="你是如何防止XSS攻击和SQL攻击"></a>你是如何防止XSS攻击和SQL攻击</h4><p>XSS攻击和SQL攻击主要发生在URL和提交的表单上,我就对用户提交的内容进行编码和过滤.</p>
+<ol>
+<li>编码 : 对于大于号小于号等等解析</li>
+<li>使用DOM Parser 进行解析过滤,过滤掉一些危险标签和属性</li>
+</ol>
+<h4 id="web项目的性能优化"><a href="#web项目的性能优化" class="headerlink" title="web项目的性能优化"></a>web项目的性能优化</h4><p>后端优化：</p>
+<ul>
+<li>缓存存储读写次数高，变化少的数据，先从缓存中读取，如果读取不到或数据已失效，再访问磁盘数据库，并将数据再次写入缓存。</li>
+<li>异步方式，如果有耗时操作，可以采用异步，比如celery</li>
+</ul>
+<p>数据库优化：</p>
+<ul>
+<li>如有条件，数据可以存放于redis，读取速度快</li>
+<li>建立索引、外键等</li>
+</ul>
+<h3 id="websocket项目"><a href="#websocket项目" class="headerlink" title="websocket项目"></a>websocket项目</h3><p>接入流程:</p>
+<ol>
+<li>判断是否为websocket链接</li>
+<li>创建用户,并且将其存储到客户端列表</li>
+<li>使用while True</li>
+<li>等待消息的传入</li>
+<li>如果消息不为空,使用send更新所有人前端的用户列表</li>
+<li>如果消息为空,说明用户断开了连接,从客户端列表中删除,然后更新所有人前端的用户列表</li>
+</ol>
+<p>向发生信息流程:</p>
+<ol>
+<li>用户使用ajax发送数据,(其中包括是群发还是私聊的标志)</li>
+<li>后台获取相应的数据</li>
+<li>如果是群发就获取向所有客户端发送信息,否则就先特定的用户发送信息</li>
+</ol>
+<p>困难:</p>
+<ul>
+<li>试了好久发现获取不到cookies , aiohttp支持的session仅仅是HTTPONLY类型,</li>
+<li>最后使用token,就token藏在隐藏表单</li>
+</ul>
+<p>困难二 :</p>
+<ul>
+<li>sqlalchemy的session新建问题</li>
+<li>因为协程本质就是单线程,所以为了有效利用资源就不session设计成了单例模式</li>
+<li>要调用sqlalchemy的session来存储数据,然后我发现使用session存储的数据并不能在数据库读出来,必须关闭session后才真的写入数据</li>
+<li>这就意味着我要频繁的新建session,写入数据,然后关闭</li>
+<li>解决思路就是 : 使用主从复制与读写分离</li>
+<li>先将数据存缓到redis中 , 等用户下线或者点击<code>查看历史信息</code>的时候再写入数据</li>
+</ul>
+<h2 id="时间"><a href="#时间" class="headerlink" title="时间"></a>时间</h2><h3 id="2019-5-基于-Django的博客项目"><a href="#2019-5-基于-Django的博客项目" class="headerlink" title="2019-5  基于 Django的博客项目"></a>2019-5  基于 Django的博客项目</h3><p>全栈开发</p>
+<ol>
+<li>项目简介: 独立开发网站 <a target="_blank" rel="noopener" href="http://obgnail.com/">http://obgnail.com</a> ; 实现博文展示 ; 支持Markdown和富文本的博文发表 ; 表单验证 ; 通过 Ajax发送请求实现登录注册 ; 使用 Django REST framework优化接口 ; 对游客用户访问限制 ; 反爬虫限制 ; 防止 CSRF和 XSS,SQL 注入攻击 </li>
+<li>项目实现: 存缓(Redis)+持久存储(MySQL)的数据库结构; 基于 Celery的延时任务 ; cookies+session实现登录状态的保存和检验 ; 对提交的内容进行编码,避免 XSS和 SQL注入攻击 ; 使用中间件拦截后台访问进行反爬</li>
+</ol>
+<h3 id="2019-6-到2019-6-基于-aiohttp的网络聊天室项目"><a href="#2019-6-到2019-6-基于-aiohttp的网络聊天室项目" class="headerlink" title="2019-6 到2019-6  基于 aiohttp的网络聊天室项目"></a>2019-6 到2019-6  基于 aiohttp的网络聊天室项目</h3><p>后台开发</p>
+<ol>
+<li>项目简介: 使用 WebSocket搭建线上网络聊天室 ; 支持用户注册登录 ; 支持匿名聊天; 支持群聊和私聊 ; 聊天记录保存与查看 ; 实时消息推送 ; 断线自动重连 ; 用户黑名单 </li>
+<li>项目实现: 使用 aiohttp处理 WebScoket连接 ; 使用 Redis存缓 session ; Celery + sqlalchemy封装为 DAO , 异步存储聊天记录 ; 函数装饰器拦截黑名单用户</li>
+</ol>
+<h3 id="2018-10-到-2018-10-基于-Scrapy-Selenium-PhantomJS的爬虫开发项目"><a href="#2018-10-到-2018-10-基于-Scrapy-Selenium-PhantomJS的爬虫开发项目" class="headerlink" title="2018-10 到 2018-10  基于 Scrapy + Selenium+ PhantomJS的爬虫开发项目"></a>2018-10 到 2018-10  基于 Scrapy + Selenium+ PhantomJS的爬虫开发项目</h3><p>后台开发</p>
+<ol>
+<li>项目简介: 使用 Scrapy框架抓取知乎网用户信息,并使用 MongoBD 数据库存储 </li>
+<li>项目实现: 通过频率,IP 池,cookies 池应对网站的反扒 ; 使用 Selenium+ PhantomJS避免网站加密参数 ; 使用云服务器托管 python 爬虫</li>
+</ol>
+<h3 id="2018-9-到-2019-4-基于Numpy-Pandas的医院入院检查诊断数据整理分析项目"><a href="#2018-9-到-2019-4-基于Numpy-Pandas的医院入院检查诊断数据整理分析项目" class="headerlink" title="2018-9 到 2019-4   基于Numpy + Pandas的医院入院检查诊断数据整理分析项目"></a>2018-9 到 2019-4   基于Numpy + Pandas的医院入院检查诊断数据整理分析项目</h3></div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;一、基本用法&quot;&gt;&lt;a href=&quot;#一、基本用法&quot; class=&quot;headerlink&quot; title=&quot;一、基本用法&quot;&gt;&lt;/a&gt;一、基本用法&lt;/h2&gt;&lt;p&gt;&lt;code&gt;git cherry-pick&lt;/code&gt;命令的作用，就是将指定的提交（commit）应用于其他分支。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>git cherry-pick 教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Git/" rel="tag">Git</a></div><div class="post-time">2021-03-24</div></div></div><div class="container post-header"><h1>git cherry-pick 教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">一、基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%BD%AC%E7%A7%BB%E5%A4%9A%E4%B8%AA%E6%8F%90%E4%BA%A4"><span class="toc-number">2.</span> <span class="toc-text">二、转移多个提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="toc-number">3.</span> <span class="toc-text">三、配置项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%A3%E7%A0%81%E5%86%B2%E7%AA%81"><span class="toc-number">4.</span> <span class="toc-text">四、代码冲突</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%BD%AC%E7%A7%BB%E5%88%B0%E5%8F%A6%E4%B8%80%E4%B8%AA%E4%BB%A3%E7%A0%81%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">五、转移到另一个代码库</span></a></li></ol></details></div><div class="container post-content"><h2 id="一、基本用法"><a href="#一、基本用法" class="headerlink" title="一、基本用法"></a>一、基本用法</h2><p><code>git cherry-pick</code>命令的作用，就是将指定的提交（commit）应用于其他分支。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick &lt;commitHash&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面命令就会将指定的提交<code>commitHash</code>，应用于当前分支。这会在当前分支产生一个新的提交，当然它们的哈希值会不一样。</p>
+<p>举例来说，代码仓库有<code>master</code>和<code>feature</code>两个分支。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a - b - c - d   Master</span><br><span class="line">     \</span><br><span class="line">       e - f - g Feature</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>现在将提交<code>f</code>应用到<code>master</code>分支。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到 master 分支</span></span><br><span class="line">$ git checkout master</span><br><span class="line"></span><br><span class="line"><span class="comment"># Cherry pick 操作</span></span><br><span class="line">$ git cherry-pick f</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面的操作完成以后，代码库就变成了下面的样子。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a - b - c - d - f   Master</span><br><span class="line">     \</span><br><span class="line">       e - f - g Feature</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>从上面可以看到，<code>master</code>分支的末尾增加了一个提交<code>f</code>。</p>
+<p><code>git cherry-pick</code>命令的参数，不一定是提交的哈希值，分支名也是可以的，表示转移该分支的最新提交。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick feature</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面代码表示将<code>feature</code>分支的最近一次提交，转移到当前分支。</p>
+<h2 id="二、转移多个提交"><a href="#二、转移多个提交" class="headerlink" title="二、转移多个提交"></a>二、转移多个提交</h2><p>Cherry pick 支持一次转移多个提交。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick &lt;HashA&gt; &lt;HashB&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面的命令将 A 和 B 两个提交应用到当前分支。这会在当前分支生成两个对应的新提交。</p>
+<p>如果想要转移一系列的连续提交，可以使用下面的简便语法。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick A..B </span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面的命令可以转移从 A 到 B 的所有提交。它们必须按照正确的顺序放置：提交 A 必须早于提交 B，否则命令将失败，但不会报错。</p>
+<p>注意，使用上面的命令，提交 A 将不会包含在 Cherry pick 中。如果要包含提交 A，可以使用下面的语法。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick A^..B </span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="三、配置项"><a href="#三、配置项" class="headerlink" title="三、配置项"></a>三、配置项</h2><p><code>git cherry-pick</code>命令的常用配置项如下。</p>
+<p><strong>（1）<code>-e</code>，<code>--edit</code></strong></p>
+<p>打开外部编辑器，编辑提交信息。</p>
+<p><strong>（2）<code>-n</code>，<code>--no-commit</code></strong></p>
+<p>只更新工作区和暂存区，不产生新的提交。</p>
+<p><strong>（3）<code>-x</code></strong></p>
+<p>在提交信息的末尾追加一行<code>(cherry picked from commit ...)</code>，方便以后查到这个提交是如何产生的。</p>
+<p><strong>（4）<code>-s</code>，<code>--signoff</code></strong></p>
+<p>在提交信息的末尾追加一行操作者的签名，表示是谁进行了这个操作。</p>
+<p><strong>（5）<code>-m parent-number</code>，<code>--mainline parent-number</code></strong></p>
+<p>如果原始提交是一个合并节点，来自于两个分支的合并，那么 Cherry pick 默认将失败，因为它不知道应该采用哪个分支的代码变动。</p>
+<p><code>-m</code>配置项告诉 Git，应该采用哪个分支的变动。它的参数<code>parent-number</code>是一个从<code>1</code>开始的整数，代表原始提交的父分支编号。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick -m 1 &lt;commitHash&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面命令表示，Cherry pick 采用提交<code>commitHash</code>来自编号1的父分支的变动。</p>
+<p>一般来说，1号父分支是接受变动的分支（the branch being merged into），2号父分支是作为变动来源的分支（the branch being merged from）。</p>
+<h2 id="四、代码冲突"><a href="#四、代码冲突" class="headerlink" title="四、代码冲突"></a>四、代码冲突</h2><p>如果操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作。</p>
+<p><strong>（1）<code>--continue</code></strong></p>
+<p>用户解决代码冲突后，第一步将修改的文件重新加入暂存区（<code>git add .</code>），第二步使用下面的命令，让 Cherry pick 过程继续执行。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p><strong>（2）<code>--abort</code></strong></p>
+<p>发生代码冲突后，放弃合并，回到操作前的样子。</p>
+<p><strong>（3）<code>--quit</code></strong></p>
+<p>发生代码冲突后，退出 Cherry pick，但是不回到操作前的样子。</p>
+<h2 id="五、转移到另一个代码库"><a href="#五、转移到另一个代码库" class="headerlink" title="五、转移到另一个代码库"></a>五、转移到另一个代码库</h2><p>Cherry pick 也支持转移另一个代码库的提交，方法是先将该库加为远程仓库。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git remote add target git://gitUrl</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面命令添加了一个远程仓库<code>target</code>。</p>
+<p>然后，将远程代码抓取到本地。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git fetch target</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面命令将远程代码仓库抓取到本地。</p>
+<p>接着，检查一下要从远程仓库转移的提交，获取它的哈希值。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> target/master</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>最后，使用<code>git cherry-pick</code>命令转移提交。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick &lt;commitHash&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

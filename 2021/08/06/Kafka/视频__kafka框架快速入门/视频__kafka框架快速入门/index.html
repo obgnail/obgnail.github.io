@@ -1,0 +1,134 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="地址 :"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>kafka框架快速入门 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Kafka/" rel="tag">Kafka</a></div><div class="post-time">2021-08-06</div></div></div><div class="container post-header"><h1>kafka框架快速入门</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">1.</span> <span class="toc-text">使用消息队列的好处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">消息队列的两种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kafka%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">Kafka简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kafka%E5%9B%BE%E8%A7%A3"><span class="toc-number">3.1.</span> <span class="toc-text">kafka图解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka%E6%8F%90%E9%AB%98%E6%95%88%E7%8E%87"><span class="toc-number">3.2.</span> <span class="toc-text">Kafka提高效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E8%A7%A3%E8%80%A6"><span class="toc-number">3.3.</span> <span class="toc-text">应用解耦</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kafka%E6%9E%B6%E6%9E%84"><span class="toc-number">4.</span> <span class="toc-text">Kafka架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kafka-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">Kafka 命令行操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kafka-%E6%9E%B6%E6%9E%84%E6%B7%B1%E5%85%A5"><span class="toc-number">6.</span> <span class="toc-text">Kafka 架构深入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E6%9C%BA%E5%88%B6"><span class="toc-number">6.1.</span> <span class="toc-text">Kafka 工作流程及文件存储机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka-%E7%94%9F%E4%BA%A7%E8%80%85"><span class="toc-number">6.2.</span> <span class="toc-text">Kafka 生产者</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E7%AD%96%E7%95%A5"><span class="toc-number">6.2.1.</span> <span class="toc-text">分区策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="toc-number">6.2.2.</span> <span class="toc-text">数据可靠性保证</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><p>地址 :</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1a4411B7V9">https://www.bilibili.com/video/BV1a4411B7V9</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV19A411t7kR">https://www.bilibili.com/video/BV19A411t7kR</a></li>
+</ul>
+<p>Kafka是一个<code>分布式</code>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理领域。</p>
+<p><img src="/images/1592207062402.png" alt="1592207062402"></p>
+<h2 id="使用消息队列的好处"><a href="#使用消息队列的好处" class="headerlink" title="使用消息队列的好处"></a>使用消息队列的好处</h2><ul>
+<li><p>解耦 </p>
+<p>允许你独立的扩展或修改两边的处理过程，只要确保它们遵守同样的接口约束。 </p>
+</li>
+<li><p>可恢复性 </p>
+<p>系统的一部分组件失效时，不会影响到整个系统。消息队列降低了进程间的耦合度，所以即使一个处理消息的进程挂掉，加入队列中的消息仍然可以在系统恢复后被处理。 </p>
+</li>
+<li><p>缓冲</p>
+<p>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息的处理速度不一致的情况。</p>
+</li>
+<li><p>灵活性 &amp; 峰值处理能力</p>
+<p>在访问量剧增的情况下，应用仍然需要继续发挥作用，但是这样的突发流量并不常见。 如果为以能处理这类峰值访问为标准来投入资源随时待命无疑是巨大的浪费。使用消息队列能够使关键组件顶住突发的访问压力，而不会因为突发的超负荷的请求而完全崩溃。 </p>
+</li>
+<li><p>异步通信</p>
+<p>很多时候，用户不想也不需要立即处理消息。消息队列提供了异步处理机制，允许用户把一个消息放入队列，但并不立即处理它。想向队列中放入多少消息就放多少，然后在需要的时候再去处理它们。</p>
+</li>
+</ul>
+<h2 id="消息队列的两种模式"><a href="#消息队列的两种模式" class="headerlink" title="消息队列的两种模式"></a>消息队列的两种模式</h2><p>点对点模式（一对一，消费者主动拉取数据，消息收到后消息清除）</p>
+<ul>
+<li>消息生产者生产消息发送到Queue中，然后消息消费者从Queue中取出并且消费消息。</li>
+<li>消息被消费以后，queue 中不再有存储，所以消息消费者不可能消费到已经被消费的消息。</li>
+<li>Queue 支持存在多个消费者，但是<strong>对一个消息而言，只会有一个消费者可以消费</strong>。 </li>
+</ul>
+<p><img src="/images/1592207487062.png" alt="1592207487062"></p>
+<p>发布/订阅模式（一对多，消费者消费数据之后不会清除消息）</p>
+<ul>
+<li>消息生产者（发布）将消息发布到 topic 中，同时有多个消息消费者（订阅）消费该消息。</li>
+<li>和点对点方式不同，<strong>发布到 topic 的消息会被所有订阅者消费</strong></li>
+</ul>
+<p><img src="/images/1592207593015.png" alt="1592207593015"></p>
+<h2 id="Kafka简介"><a href="#Kafka简介" class="headerlink" title="Kafka简介"></a>Kafka简介</h2><ul>
+<li>Kafka是一个分布式消息队列</li>
+<li>Kafka对消息保存时根据Topic进行归类，发送消息者称为Producer。消息接受者称为 Consumer，</li>
+<li>此外Kafka集群由多个Kafka实例组成，<strong>每个实例(server)称为 broker</strong></li>
+<li>无论是Kafka集群，还是producer和 consume都依赖于zookeeper集群保存一些meta信息，来保证系统可用性</li>
+</ul>
+<h3 id="kafka图解"><a href="#kafka图解" class="headerlink" title="kafka图解"></a>kafka图解</h3><p><img src="/images/1592208482766.png" alt="1592208482766"></p>
+<h3 id="Kafka提高效率"><a href="#Kafka提高效率" class="headerlink" title="Kafka提高效率"></a>Kafka提高效率</h3><p><img src="/images/1592208653778.png" alt="1592208653778"></p>
+<h3 id="应用解耦"><a href="#应用解耦" class="headerlink" title="应用解耦"></a>应用解耦</h3><p><img src="/images/1592208747925.png" alt="1592208747925"></p>
+<h2 id="Kafka架构"><a href="#Kafka架构" class="headerlink" title="Kafka架构"></a>Kafka架构</h2><p><img src="/images/1593923964930.png" alt="1593923964930"></p>
+<ul>
+<li><strong>Topic ：可以理解为一个队列</strong>，生产者和消费者面向的都是一个 topic</li>
+<li>Partition：为了实现扩展性，一个非常大的 topic 可以分布到多个 broker（即服务器）上，一个 topic 可以分为多个 partition，每个 partition 是一个有序的队列</li>
+<li>Replica：副本，为保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 kafka 仍然能够继续工作，kafka 提供了副本机制，一个 topic 的每个分区都有若干个副本，一个 leader 和若干个 follower。<ul>
+<li>leader：每个分区多个副本的“主”，生产者发送数据的对象，以及消费者消费数据的对象都是 leader。</li>
+<li>follower：每个分区多个副本中的“从”，实时从 leader 中同步数据，保持和leader 数据的同步。leader 发生故障时，某个 follower 会成为新的 follower。</li>
+</ul>
+</li>
+<li>Consumer Group （CG）：消费者组，由多个 consumer 组成。消费者组内<strong>每个消费者负责消费不同分区的数据</strong>，一个分区只能由一个组内消费者消费；消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者。</li>
+<li><code>特定分区的数据</code>只能被一个消费者组的<code>某一个特定消费者</code>进行消费所以 , 当<code>消费者组的消费者数量</code> == <code>主题的分区数</code> 时 , 消费的效率最高</li>
+</ul>
+<blockquote>
+<p>分区是用来提高并行度的，而副本是容灾备份的</p>
+</blockquote>
+<h2 id="Kafka-命令行操作"><a href="#Kafka-命令行操作" class="headerlink" title="Kafka 命令行操作"></a>Kafka 命令行操作</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前服务器中的所有 topic</span></span><br><span class="line">bin/kafka-topics.sh --zookeeper 188.66.88.15:2181 --list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 topic :</span></span><br><span class="line"><span class="comment"># 创建一个名叫first的topic , 这个topic有1个分区 , 3个副本</span></span><br><span class="line">bin/kafka-topics.sh --zookeeper 188.66.88.15:2181 --create --topic first --partitions 1 --replication-factor 3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除 topic</span></span><br><span class="line"><span class="comment"># 需要在server.properties中设置 delete.topic.enable=true 否则只是标记删除。</span></span><br><span class="line">bin/kafka-topics.sh --zookeeper 188.66.88.15:2181 --delete --topic first</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某个 Topic 的详情</span></span><br><span class="line">bin/kafka-topics.sh --zookeeper 188.66.88.15:2181 --describe --topic first</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送消息(向Topic发送消息)</span></span><br><span class="line">bin/kafka-console-producer.sh --topic first --broker-list 188.66.88.15:2181</span><br><span class="line">&gt;hello world</span><br><span class="line">&gt;atguigu atguigu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 消费消息</span></span><br><span class="line">bin/kafka-console-consumer.sh --zookeeper  188.66.88.15:2181 --topic first --from-beginning</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server 188.66.88.15:9092 --topic first</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server 188.66.88.15:9092 --from-beginning --topic first</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改分区数</span></span><br><span class="line">bin/kafka-topics.sh --zookeeper 188.66.88.15:2181 --alter --topic first --partitions 6</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--topic</code>：定义 topic 名 </li>
+<li><code>--replication-factor</code>：定义副本数 </li>
+<li><code>--partitions</code>：定义分区数</li>
+<li>``–from-beginning`：会把主题中以往所有的数据都读取出来。</li>
+</ul>
+<h2 id="Kafka-架构深入"><a href="#Kafka-架构深入" class="headerlink" title="Kafka 架构深入"></a>Kafka 架构深入</h2><h3 id="Kafka-工作流程及文件存储机制"><a href="#Kafka-工作流程及文件存储机制" class="headerlink" title="Kafka 工作流程及文件存储机制"></a>Kafka 工作流程及文件存储机制</h3><p><img src="/images/image-20210806114629730.png" alt="image-20210806114629730"></p>
+<ul>
+<li>Kafka 中消息是以 topic 进行分类的，生产者生产消息，消费者消费消息，都是<strong>面向 topic</strong> 的。 </li>
+<li>topic 是逻辑上的概念，而 partition 是物理上的概念，每个 partition 对应于一个 log 文 件，该 log 文件中存储的就是 producer 生产的数据。Producer 生产的数据会被不断追加到该 log 文件末端，且每条数据都有自己的 offset。消费者组中的每个消费者，都会实时记录自己 消费到了哪个 offset，以便出错恢复时，从上次的位置继续消费。</li>
+</ul>
+<p><img src="/images/image-20210806114911560.png" alt="image-20210806114911560"></p>
+<ul>
+<li>由于生产者生产的消息会不断追加到 log 文件末尾，为防止 log 文件过大导致数据定位效率低下，Kafka 采取了分片和索引机制，</li>
+<li>将每个 partition 分为多个 segment。每个 segment 对应两个文件——“.index”文件和“.log”文件。这些文件位于一个文件夹下，该文件夹的命名 规则为：<code>topic 名称+分区序号</code>。</li>
+<li>例如，first 这个 topic 有三个分区，则其对应的文件夹为 first0,first-1,first-2。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">00000000000000000000.index</span><br><span class="line">00000000000000000000.log</span><br><span class="line">00000000000000170410.index</span><br><span class="line">00000000000000170410.log</span><br><span class="line">00000000000000239430.index</span><br><span class="line">00000000000000239430.log</span><br></pre></td></tr></table></figure>
+
+
+
+<p>index 和 log 文件以当前 segment 的第一条消息的 offset 命名。下图为 index 文件和 log 文件的结构示意图。</p>
+<p><img src="/images/image-20210806115205065.png" alt="image-20210806115205065"></p>
+<ul>
+<li><code>.index”</code>文件存储大量的索引信息，</li>
+<li><code>.log</code>文件存储大量的数据，索引文件中的元数据指向对应数据文件中 message 的物理偏移地址。</li>
+</ul>
+<h3 id="Kafka-生产者"><a href="#Kafka-生产者" class="headerlink" title="Kafka 生产者"></a>Kafka 生产者</h3><h4 id="分区策略"><a href="#分区策略" class="headerlink" title="分区策略"></a>分区策略</h4><p>分区的原因：</p>
+<ol>
+<li>方便在集群中扩展，每个 Partition 可以通过调整以适应它所在的机器，而一个 topic 又可以有多个 Partition 组成，因此整个集群就可以适应任意大小的数据了；</li>
+<li>可以提高并发，因为可以以 Partition 为单位读写了。</li>
+</ol>
+<p>分区的原则：</p>
+<p>我们需要将 producer 发送的数据封装成一个 ProducerRecord 对象。</p>
+<p><img src="/images/image-20210806115925337.png" alt="image-20210806115925337"></p>
+<ol>
+<li>指明 partition 的情况下，直接将指明的值直接作为 partiton 值； </li>
+<li>没有指明 partition 值但有 key 的情况下，将 key 的 hash 值与 topic 的 partition 数进行取余得到 partition 值； </li>
+<li>既没有 partition 值又没有 key 值的情况下，第一次调用时随机生成一个整数（后 面每次调用在这个整数上自增），将这个值与 topic 可用的 partition 总数取余得到 partition 值，也就是常说的 round-robin 算法。</li>
+</ol>
+<h4 id="数据可靠性保证"><a href="#数据可靠性保证" class="headerlink" title="数据可靠性保证"></a>数据可靠性保证</h4><p>为保证 producer 发送的数据，能可靠的发送到指定的 topic，topic 的每个 partition 收到 producer 发送的数据后，都需要向 producer 发送 ack（acknowledgement 确认收到），如果 producer 收到 ack，就会进行下一轮的发送，否则重新发送数据。</p>
+<p><img src="/images/image-20210806120138525.png" alt="image-20210806120138525"></p>
+<p>副本数据同步策略：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>半数以上完成同步，就发送ack</td>
+<td>延迟低</td>
+<td>选举新的leader时，容忍n台节点故障，需要2n+1个副本</td>
+</tr>
+<tr>
+<td>全部完成同步，财大送ack</td>
+<td>选举新的leader时，容忍n台节点故障，需要n+1个副本</td>
+<td>延迟高</td>
+</tr>
+</tbody></table>
+<p>Kafka 选择了第二种方案，原因如下： </p>
+<ol>
+<li>同样为了容忍 n 台节点的故障，第一种方案需要 2n+1 个副本，而第二种方案只需要 n+1 个副本，而 Kafka 的每个分区都有大量的数据，第一种方案会造成大量数据的冗余。 </li>
+<li>虽然第二种方案的网络延迟会比较高，但网络延迟对 Kafka 的影响较小。</li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

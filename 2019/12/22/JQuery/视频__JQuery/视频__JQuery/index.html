@@ -1,0 +1,92 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://www.bilibili.com/video/av40716170&quot;&gt;4天从零玩转jQuery&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>JQuery | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/JQuery/" rel="tag">JQuery</a></div><div class="post-time">2019-12-22</div></div></div><div class="container post-header"><h1>JQuery</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text">入口函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JQuery%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">JQuery文件结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jquery%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.</span> <span class="toc-text">Jquery函数的参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jq%E5%AF%B9%E8%B1%A1%E5%92%8Cdom%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.4.</span> <span class="toc-text">jq对象和dom对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BC%A0%E6%A0%87%E7%A7%BB%E5%85%A5%E7%A7%BB%E9%99%A4"><span class="toc-number">1.5.</span> <span class="toc-text">鼠标移入移除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JQuery%E7%9A%84%E9%93%BE%E5%BC%8F%E8%B0%83%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">JQuery的链式调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#toggleClass"><span class="toc-number">1.7.</span> <span class="toc-text">toggleClass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prev%E5%92%8CprevAll"><span class="toc-number">1.8.</span> <span class="toc-text">prev和prevAll</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jquery-%E4%B8%89%E7%A7%8D%E5%9F%BA%E6%9C%AC%E5%8A%A8%E7%94%BB"><span class="toc-number">1.9.</span> <span class="toc-text">Jquery 三种基本动画</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#show-hide-toggle"><span class="toc-number">1.9.1.</span> <span class="toc-text">show,hide,toggle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#slideDown-slideUp-slideToggle"><span class="toc-number">1.9.2.</span> <span class="toc-text">slideDown,slideUp,slideToggle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fadeIn-fadeOut-fadeToggle-fadeTo"><span class="toc-number">1.9.3.</span> <span class="toc-text">fadeIn,fadeOut,fadeToggle,fadeTo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jquery%E4%BD%BF%E7%94%A8%E7%B1%BB%E4%BC%BC%E4%BA%8Eany%E7%9A%84%E5%87%BD%E6%95%B0%E9%80%BB%E8%BE%91"><span class="toc-number">1.10.</span> <span class="toc-text">jquery使用类似于any的函数逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#on%E6%B3%A8%E5%86%8C%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.11.</span> <span class="toc-text">on注册事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8triggle%E8%A7%A6%E5%8F%91%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.12.</span> <span class="toc-text">使用triggle触发自定义事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jQuery%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.13.</span> <span class="toc-text">jQuery事件对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#event-stopPropagation%E9%98%BB%E6%AD%A2%E4%BA%8B%E4%BB%B6%E5%86%92%E6%B3%A1%E8%A1%8C%E4%B8%BA"><span class="toc-number">1.14.</span> <span class="toc-text">event.stopPropagation阻止事件冒泡行为</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av40716170">4天从零玩转jQuery</a></p>
+<h2 id="入口函数"><a href="#入口函数" class="headerlink" title="入口函数"></a>入口函数</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>不要写成 :</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>jQuery入口函数与js入口函数的对比：</p>
+<ul>
+<li>JavaScript的入口函数要等到页面中所有资源（包括图片、文件）加载完成才开始执行。</li>
+<li>jQuery的入口函数只会等待文档树加载完成就开始执行，并不会等待图片、文件的加载。</li>
+</ul>
+<h2 id="JQuery文件结构"><a href="#JQuery文件结构" class="headerlink" title="JQuery文件结构"></a>JQuery文件结构</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">window</span>.jQuery = <span class="built_in">window</span>.$ = jQuery;</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure>
+
+<p>可以看出 , </p>
+<ul>
+<li>JQuery其实是一个<strong>自执行函数</strong> , </li>
+<li>执行这个jQUERY文件中的代码,其实就是执行这个自执行函数.</li>
+<li>这个自执行文件就是给window对象添加一个jQuery属性和$属性.</li>
+</ul>
+<h2 id="Jquery函数的参数"><a href="#Jquery函数的参数" class="headerlink" title="Jquery函数的参数"></a>Jquery函数的参数</h2><ul>
+<li><p>参数传递的是一个匿名函数  :  <code>入口函数</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p>参数传递的是一个字符串  :  <code>选择器</code>/<code>创建一个标签</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&#x27;#one&#x27;</span>);</span><br><span class="line">$(<span class="string">&#x27;&lt;div&gt;啦啦,我是一个div&lt;/div&gt;&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>参数是一个dom对象,那他就会把dom对象转换成jQuery对象.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(dom对象);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="jq对象和dom对象"><a href="#jq对象和dom对象" class="headerlink" title="jq对象和dom对象"></a>jq对象和dom对象</h2><ul>
+<li>DOM对象：使用JavaScript中的方法获取页面中的元素返回的对象。</li>
+<li>jQuery对象：jquery对象就是使用jquery的方法获取页面中的元素返回的对象。</li>
+<li>jQuery对象其实就是DOM对象的包装集 , 是一个<strong>包装了DOM对象的集合（伪数组）</strong></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DOM对象</span></span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//  JQ对象</span></span><br><span class="line">$(<span class="string">&#x27;#one&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// DOM对象转成JQ对象</span></span><br><span class="line"><span class="keyword">var</span> div1 = <span class="built_in">document</span>.getElementById(<span class="string">&quot;one&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> $div1 = $(div1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// JQ对象转成DOM对象(下标获取)</span></span><br><span class="line"><span class="keyword">var</span> $divs = $(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> div1 = $divs[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// 使用jQuery的方法 get();</span></span><br><span class="line"><span class="keyword">var</span> div2 = $divs.get(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="鼠标移入移除"><a href="#鼠标移入移除" class="headerlink" title="鼠标移入移除"></a>鼠标移入移除</h2><ul>
+<li><p>mouseover事件在鼠标移动到选取的元素<strong>及其子元素</strong>上时触发</p>
+</li>
+<li><p>mouseenter事件只在鼠标移动到选取的元素上时触发</p>
+</li>
+<li><p>以后如果有鼠标移入事件，请使用 mouseenter，而不是 mouseover</p>
+</li>
+<li><p>鼠标离开事件使用 mouseleave，就不要使用 mouseout</p>
+</li>
+</ul>
+<h2 id="JQuery的链式调用"><a href="#JQuery的链式调用" class="headerlink" title="JQuery的链式调用"></a>JQuery的链式调用</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&#x27;.wrap&#x27;</span>).find(<span class="string">&#x27;li&#x27;</span>).mouseenter(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//css方法有返回值,返回值就是设置这个方法的元素本身.</span></span><br><span class="line">    <span class="comment">// 除了自己为1,兄弟都为0.4</span></span><br><span class="line">   $(<span class="built_in">this</span>).css(<span class="string">&#x27;opacity&#x27;</span>, <span class="number">1</span>).siblings(<span class="string">&#x27;li&#x27;</span>).css(<span class="string">&#x27;opacity&#x27;</span>,<span class="number">0.4</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">this</span>).children(<span class="string">&#x27;div&#x27;</span>).show().parent().siblings(<span class="string">&#x27;li&#x27;</span>).children(<span class="string">&#x27;div&#x27;</span>).hide();</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="toggleClass"><a href="#toggleClass" class="headerlink" title="toggleClass"></a>toggleClass</h2><ul>
+<li>和<code>removeClass</code>和<code>addClass</code>一样的用法</li>
+<li>如果元素有某个类就移除这个类 , 如果没有这个类就添加这个类</li>
+</ul>
+<h2 id="prev和prevAll"><a href="#prev和prevAll" class="headerlink" title="prev和prevAll"></a>prev和prevAll</h2><p>选择器 上一个兄弟和前面全部的兄弟</p>
+<h2 id="Jquery-三种基本动画"><a href="#Jquery-三种基本动画" class="headerlink" title="Jquery 三种基本动画"></a>Jquery 三种基本动画</h2><h3 id="show-hide-toggle"><a href="#show-hide-toggle" class="headerlink" title="show,hide,toggle"></a>show,hide,toggle</h3><p>展示,隐藏</p>
+<h3 id="slideDown-slideUp-slideToggle"><a href="#slideDown-slideUp-slideToggle" class="headerlink" title="slideDown,slideUp,slideToggle"></a>slideDown,slideUp,slideToggle</h3><p>滑入滑出</p>
+<h3 id="fadeIn-fadeOut-fadeToggle-fadeTo"><a href="#fadeIn-fadeOut-fadeToggle-fadeTo" class="headerlink" title="fadeIn,fadeOut,fadeToggle,fadeTo"></a>fadeIn,fadeOut,fadeToggle,fadeTo</h3><p>淡入淡出</p>
+<h2 id="jquery使用类似于any的函数逻辑"><a href="#jquery使用类似于any的函数逻辑" class="headerlink" title="jquery使用类似于any的函数逻辑"></a>jquery使用类似于any的函数逻辑</h2><p>判断四个select的option标签是否都被选择 , 只要判断selected标签的数量即可 , 只要数量相等就是了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num_of_all = $(<span class="string">&#x27;#aa input&#x27;</span>).length;</span><br><span class="line"><span class="keyword">var</span> num_of_select = $(<span class="string">&#x27;aa input:checked&#x27;</span>).length;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="on注册事件"><a href="#on注册事件" class="headerlink" title="on注册事件"></a>on注册事件</h2><p>jQuery1.7之后，jQuery用on统一了所有事件的处理方法。</p>
+<p>on注册简单事件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示给$(selector)绑定事件，并且由自己触发，不支持动态绑定。</span></span><br><span class="line">$(selector).on( <span class="string">&quot;click&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>on注册委托事件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示给$(selector)绑定代理事件，当必须是它的内部元素span才能触发这个事件，支持动态绑定</span></span><br><span class="line">$(selector).on( <span class="string">&quot;click&quot;</span>,<span class="string">&#x27;span&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用triggle触发自定义事件"><a href="#使用triggle触发自定义事件" class="headerlink" title="使用triggle触发自定义事件"></a>使用triggle触发自定义事件</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">selector.on(<span class="string">&quot;zidingyishijian&quot;</span>,<span class="function"><span class="title">funtion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$(selector).trigger(<span class="string">&quot;zidingyishijian&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="jQuery事件对象"><a href="#jQuery事件对象" class="headerlink" title="jQuery事件对象"></a>jQuery事件对象</h2><p>jQuery事件对象其实就是js事件对象的一个封装</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">selector.click(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>e</code>就是事件对象 , 储存了触发时的信息</p>
+<h2 id="event-stopPropagation阻止事件冒泡行为"><a href="#event-stopPropagation阻止事件冒泡行为" class="headerlink" title="event.stopPropagation阻止事件冒泡行为"></a>event.stopPropagation阻止事件冒泡行为</h2><pre><code>//event.stopPropagation()    阻止事件冒泡行为
+//event.preventDefault()    阻止浏览器默认行为
+//return false:既能阻止事件冒泡，又能阻止浏览器默认行为。
+</code></pre>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

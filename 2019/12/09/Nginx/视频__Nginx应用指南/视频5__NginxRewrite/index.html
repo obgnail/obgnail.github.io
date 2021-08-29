@@ -1,0 +1,165 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;NginxRewrite&quot;&gt;&lt;a href=&quot;#NginxRewrite&quot; class=&quot;headerlink&quot; title=&quot;NginxRewrite&quot;&gt;&lt;/a&gt;NginxRewrite&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Rewrite基本概述&lt;/li&gt;
+&lt;li&gt;Rewrite配置语法&lt;/li&gt;
+&lt;li&gt;Rewrite标记Flag&lt;/li&gt;
+&lt;li&gt;Rewrite使⽤场景&lt;/li&gt;
+&lt;li&gt;Rewrite额外补充&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Rewrite基本概述&quot;&gt;&lt;a href=&quot;#Rewrite基本概述&quot; class=&quot;headerlink&quot; title=&quot;Rewrite基本概述&quot;&gt;&lt;/a&gt;Rewrite基本概述&lt;/h2&gt;&lt;p&gt;rewrite 主要实现 &lt;code&gt;url 地址重写&lt;/code&gt;, 以及&lt;code&gt;重定向&lt;/code&gt;."><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>NginxRewrite | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Nginx/" rel="tag">Nginx</a></div><div class="post-time">2019-12-09</div></div></div><div class="container post-header"><h1>NginxRewrite</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NginxRewrite"><span class="toc-number">1.</span> <span class="toc-text">NginxRewrite</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Rewrite%E5%9F%BA%E6%9C%AC%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">Rewrite基本概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rewrite%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">Rewrite配置语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rewrite%E6%A0%87%E8%AE%B0Flag"><span class="toc-number">1.2.1.</span> <span class="toc-text">Rewrite标记Flag</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#break-%E4%B8%8E-last%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">break 与 last的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#redirect-%E4%B8%8E-permanent%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">redirect 与 permanent的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8301%E8%BF%98%E6%98%AF302"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">使用301还是302</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rewrite%E4%BD%BF%E2%BD%A4%E5%9C%BA%E6%99%AF"><span class="toc-number">1.3.</span> <span class="toc-text">Rewrite使⽤场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rewrite%E9%A2%9D%E5%A4%96%E8%A1%A5%E5%85%85"><span class="toc-number">1.4.</span> <span class="toc-text">Rewrite额外补充</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rewrite-%E4%BC%98%E9%9B%85%E4%B9%A6%E5%86%99"><span class="toc-number">1.5.</span> <span class="toc-text">Rewrite 优雅书写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx%E4%B8%ADtry-files"><span class="toc-number">1.6.</span> <span class="toc-text">nginx中try_files</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="NginxRewrite"><a href="#NginxRewrite" class="headerlink" title="NginxRewrite"></a>NginxRewrite</h1><ol>
+<li>Rewrite基本概述</li>
+<li>Rewrite配置语法</li>
+<li>Rewrite标记Flag</li>
+<li>Rewrite使⽤场景</li>
+<li>Rewrite额外补充</li>
+</ol>
+<h2 id="Rewrite基本概述"><a href="#Rewrite基本概述" class="headerlink" title="Rewrite基本概述"></a>Rewrite基本概述</h2><p>rewrite 主要实现 <code>url 地址重写</code>, 以及<code>重定向</code>.</p>
+<p>Rewrite使用场景</p>
+<ol>
+<li><code>URL访问跳转</code>: ⽀持开发设计, ⻚⾯跳转, 兼容性⽀持, 展示效果</li>
+<li><code>SEO优化</code>: 依赖于url路径,以便⽀持搜索引擎录⼊</li>
+<li><code>维护</code>: 后台维护, 流量转发等</li>
+<li><code>安全</code>: 伪静态,真实动态⻚⾯进⾏伪装</li>
+</ol>
+<blockquote>
+<p>eg : 当用于输入<code>www.obgnail.com/noexist</code>这个不存在的网址的时候 , 就可以跳转到<code>www.obgnail.com/index.html</code>这个页面</p>
+</blockquote>
+<h2 id="Rewrite配置语法"><a href="#Rewrite配置语法" class="headerlink" title="Rewrite配置语法"></a>Rewrite配置语法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 匹配regex这个路径 , 修改成replacement这个路径,最后加一个flag</span></span><br><span class="line">Syntax: rewrite regex replacement [flag];</span><br><span class="line">Default: --</span><br><span class="line">Context: server, location, <span class="keyword">if</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 所有请求转发⾄/pages/maintain.html</span></span><br><span class="line">rewrite ^(.*)$ /pages/maintain.html <span class="built_in">break</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Rewrite标记Flag"><a href="#Rewrite标记Flag" class="headerlink" title="Rewrite标记Flag"></a>Rewrite标记Flag</h3><table>
+<thead>
+<tr>
+<th>flag</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>last</td>
+<td>停⽌rewrite检测</td>
+</tr>
+<tr>
+<td>break</td>
+<td>停⽌rewrite检测</td>
+</tr>
+<tr>
+<td>redirect</td>
+<td>返回302临时重定向, 地址栏会显示跳转后的地址</td>
+</tr>
+<tr>
+<td>permanent</td>
+<td>返回301永久重定向, 地址栏会显示跳转后的地址</td>
+</tr>
+</tbody></table>
+<h4 id="break-与-last的区别"><a href="#break-与-last的区别" class="headerlink" title="break 与 last的区别"></a><code>break</code> 与 <code>last</code>的区别</h4><ul>
+<li><p>last会<strong>新建⽴⼀个请求</strong>, 请求域名+/test</p>
+<blockquote>
+<p>也就是说 , 当我们访问<code>http://192.168.68.112/last</code>的时候 , 会重新建立一个请求 , 去访问<code>http://192.168.69.112/test</code></p>
+</blockquote>
+</li>
+<li><p>break匹配后不会进行匹配, 会查找对应root站点⽬录下包含/test⽬录</p>
+<blockquote>
+<p>也就是说 , 当我们访问 <code>http://192.168.68.112/break</code>的时候 , 停止匹配 , 直接去寻找<code> /test/</code>目录</p>
+</blockquote>
+</li>
+</ul>
+<p>所以下面配置中,<code>http://192.168.68.112/last</code>正常返回,<code>http://192.168.68.112/break</code>访问404</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name localhost;</span><br><span class="line">	root /soft/code;</span><br><span class="line">	location ~ ^/<span class="built_in">break</span> &#123;</span><br><span class="line">		rewrite ^/<span class="built_in">break</span> /<span class="built_in">test</span>/ <span class="built_in">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	location ~ ^/last&#123;</span><br><span class="line">		rewrite ^/last /<span class="built_in">test</span>/ last;</span><br><span class="line">	&#125;</span><br><span class="line">	location /<span class="built_in">test</span>/&#123;</span><br><span class="line">		default_type application/json;</span><br><span class="line">		<span class="built_in">return</span> 200 <span class="string">&#x27;&#123;&quot;status&quot;:&quot;success&quot;&#125;&#x27;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="redirect-与-permanent的区别"><a href="#redirect-与-permanent的区别" class="headerlink" title="redirect 与 permanent的区别"></a>redirect 与 permanent的区别</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server	&#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name  localhost;</span><br><span class="line">	root /soft/code;</span><br><span class="line">	location ~ ^/bgx &#123;</span><br><span class="line">		rewrite ^/bgx http://kt.xuliangwei.com redirect;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server	&#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name  localhost;</span><br><span class="line">	root /soft/code;</span><br><span class="line">	location ~ ^/bgx &#123;</span><br><span class="line">		rewrite ^/bgx http://kt.xuliangwei.com permanent;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个的区别就是302和301状态码的区别</p>
+<ul>
+<li><p>302重定向只是暂时的重定向，搜索引擎会抓取新的内容而保留旧的地址，因为服务器返回302，所以，搜索搜索引擎认为新的网址是暂时的。</p>
+<blockquote>
+<p>302表示旧地址A的资源还在（仍然可以访问），这个重定向只是临时地从旧地址A跳转到地址B，搜索引擎会抓取新的内容而保存旧的网址。</p>
+</blockquote>
+</li>
+<li><p>而301重定向是永久的重定向，搜索引擎<strong>在抓取新的内容的同时也将旧的网址替换为了重定向之后的网址。</strong></p>
+<blockquote>
+<p>301表示旧地址A的资源已经被永久地移除了（这个资源不可访问了），搜索引擎在抓取新内容的同时也将旧的网址交换为重定向之后的网址。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="使用301还是302"><a href="#使用301还是302" class="headerlink" title="使用301还是302"></a>使用301还是302</h4><blockquote>
+<p>尽量使用<code>301</code></p>
+</blockquote>
+<p>什么时候进行301或者302跳转呢？</p>
+<ul>
+<li>当一个网站或者网页24—48小时内临时移动到一个新的位置，这时候就要进行302跳转，打个比方说，我有一套房子，但是最近走亲戚去亲戚家住了，过两天我还回来的。</li>
+<li>使用301跳转的场景就是之前的网站因为某种原因需要移除掉，然后要到新的地址访问，是永久性的，就比如你的那套房子其实是租的，现在租期到了，你又在另一个地方找到了房子，之前租的房子不住了。</li>
+</ul>
+<p>为什么尽量要使用301跳转？——<code>网址劫持</code></p>
+<ul>
+<li>网址A 做一个302 重定向到网址B 时，主机服务器的隐含意思是网址A 随时有可能改主意，重新显示本身的内容或转向其他的地方。</li>
+<li>大部分的搜索引擎在大部分情况下，当收到302 重定向时，一般只要去抓取目标网址就可以了，也就是说网址B。如果搜索引擎在遇到302 转向时，百分之百的都抓取目标网址B 的话，就不用担心网址URL 劫持了。</li>
+<li>问题就在于，有的时候搜索引擎并不能总是抓取目标网址。</li>
+<li>比如说，有的时候A 网址很短，但是它做了一个302 重定向到B 网址，而B 网址是一个很长的乱七八糟的URL 网址，甚至还有可能包含一些问号之类的参数。很自然的，A 网址更加用户友好。这时Google 很有可能会仍然显示网址A。这就造成了网址<code>URL劫持</code>的可能性。</li>
+<li>也就是说，一个不道德的人在他自己的网址A 做一个302 重定向到你的网址B，出于某种原因， Google 搜索结果所显示的仍然是网址A，但是所用的网页内容却是你的网址B 上的内容，这种情况就叫做网址URL 劫持。你辛辛苦苦所写的内容就这样被别人偷走了。302 重定向所造成的网址URL 劫持现象，已经存在一段时间了。</li>
+<li>简单来说就是 : 从网站A（网站比较烂）上做了一个302跳转到网站B（搜索排名很靠前），这时候有时搜索引擎会使用网站B的内容，但却收录了网站A的地址，这样在不知不觉间，网站B在为网站A作贡献，网站A的排名就靠前了。</li>
+<li>301跳转对查找引擎是一种对照驯良的跳转编制，也是查找引擎能够遭遇的跳转编制，它告诉查找引擎，这个地址弃用了，永远转向一个新地址，可以转移新域名的权重。而302重定向很容易被搜索引擎误认为是利用多个域名指向同一网站，那么你的网站就会被封掉，罪名是“利用重复的内容来干扰Google搜索结果的网站排名”。</li>
+</ul>
+<h2 id="Rewrite使⽤场景"><a href="#Rewrite使⽤场景" class="headerlink" title="Rewrite使⽤场景"></a>Rewrite使⽤场景</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	rewrite ^/course-(\d+)-(\d+)-(\d+)\.html /course/<span class="variable">$1</span>/<span class="variable">$2</span>/course_<span class="variable">$3</span>.html <span class="built_in">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样 , 用户访问<code>192.168.69.112/course-11-22-course_33.html</code>,就会被重定向到<code>192.168.69.112/course/11/22/course_33.html</code> . 这样就完成了深层嵌套的路径变成短路径</p>
+<p>也可以这么使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$http_user_agent</span> ~* Chrome)&#123;</span><br><span class="line">	rewrite ^/nginx http://kt.xuliangwei.com/index.html redirect;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Rewrite额外补充"><a href="#Rewrite额外补充" class="headerlink" title="Rewrite额外补充"></a>Rewrite额外补充</h2><p>Rewrite 匹配优先级(由高到低)</p>
+<ol>
+<li>执⾏server块的rewrite指令</li>
+<li>执⾏location匹配</li>
+<li>执⾏选定的location中的rewrite</li>
+</ol>
+<h2 id="Rewrite-优雅书写"><a href="#Rewrite-优雅书写" class="headerlink" title="Rewrite 优雅书写"></a>Rewrite 优雅书写</h2><p>bad :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name www.bgx.com bgx.com;</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$http_host</span> = nginx.org)&#123;</span><br><span class="line">		rewrite (.*) http://www.bgx.com<span class="variable">$1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>good :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将bgx.com全部重定向到www.bgx.com</span></span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name bgx.com;</span><br><span class="line">	rewrite ^ http://www.bgx.com<span class="variable">$request_uri</span>?;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name www.bgx.com;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="nginx中try-files"><a href="#nginx中try-files" class="headerlink" title="nginx中try_files"></a>nginx中try_files</h2><p>语法：</p>
+<ul>
+<li>try_files file …uri</li>
+<li>try_files file …= code</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">try_files   <span class="variable">$uri</span>    <span class="variable">$uri</span>/    /index.php?q=<span class="variable">$uri</span>&amp;<span class="variable">$args</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>依次按照顺序检查文件是否存在，返回第一个找到的文件</li>
+<li>最后一个参数，<strong>用来回退URI</strong>且必须存在，否则将会出现内部500错误。</li>
+<li>一般最后一个参数使用@fallback进行重定向指定代理或文件</li>
+</ul>
+<p>nginx中try_files的的作用一般用户url的美化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">            try_files     <span class="variable">$uri</span>    <span class="variable">$uri</span>/     /index.php?<span class="variable">$query_string</span>;</span><br><span class="line">&#125;</span><br><span class="line">location ~ .*\.(php|php5)?$</span><br><span class="line">&#123;</span><br><span class="line">            fastcgi_pass  127.0.0.1:9000;</span><br><span class="line">            fastcgi_index index.php;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>当用户请求 <a target="_blank" rel="noopener" href="http://localhost/example">http://localhost/example</a> 时，这里的 <code>$uri</code> 就是 /example。</p>
+<p>try_files 会到硬盘里尝试找这个文件。如果存在名为 /$root/example（其中 $root 是项目代码安装目录）的<strong>文件</strong>，就直接把这个文件的内容发送给用户。</p>
+</li>
+<li><p>显然，目录中没有叫 example 的文件。然后就看 $uri/，增加了一个 /，也就是看有没有名为 /$root/example/ 的<strong>目录</strong>。</p>
+</li>
+<li><p>又找不到，就会fallback到 try_files 的最后一个选项 /index.php，<strong>发起一个内部 “子请求”</strong>，也就是相当于 nginx 发起一个 HTTP 请求到 <a target="_blank" rel="noopener" href="http://localhost/index.php%E3%80%82">http://localhost/index.php。</a></p>
+</li>
+<li><p>这个请求会被 location ~ .*.(php|php5)?$ { … } catch 住，也就是进入 FastCGI 的处理程序。而具体的 URI 及参数是在 REQUEST_URI 中传递给 FastCGI 和 PHP 程序的，因此不受 URI 变化的影响。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">loaction / &#123;</span><br><span class="line">	try_files <span class="variable">$uri</span> @apache</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loaction @apache&#123;</span><br><span class="line">	proxy_pass http://127.0.0.1:88</span><br><span class="line">	include aproxy.conf</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>try_files方法让Ngxin尝试访问后面得$uri链接，并进根据@apache配置进行内部重定向。</li>
+<li>当然try_files也可以以错误代码赋值，如try_files /index.php = 404 @apache，则表示当尝试访问得文件返回404时，根据@apache配置项进行重定向。</li>
+</ul>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

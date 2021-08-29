@@ -1,0 +1,156 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;分区类型&quot;&gt;&lt;a href=&quot;#分区类型&quot; class=&quot;headerlink&quot; title=&quot;分区类型&quot;&gt;&lt;/a&gt;分区类型&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;主分区：最多只能有4个&lt;/li&gt;
+&lt;li&gt;扩展分区:&lt;ul&gt;
+&lt;li&gt;最多只能有1个。&lt;/li&gt;
+&lt;li&gt;主分区加扩展分区最多有4个&lt;/li&gt;
+&lt;li&gt;不能写入数据，只能包含逻辑分区&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;逻辑分区&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;简单来说 , 有一个柜子,只能分成4份.现在有5个人要用&lt;/li&gt;
+&lt;li&gt;解决方法 , 将第4个分区分成5和6两个小柜子&lt;/li&gt;
+&lt;li&gt;5和6称为&lt;code&gt;逻辑分区&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;为了管理5和6两个分区,这第4个分区需要一定空间,并且不能写入数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这种限制不是linux造成的,而是硬盘的限制"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>兄弟连-Linux基础知识与系统管理视频教程0 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Linux/" rel="tag">Linux</a></div><div class="post-time">2019-08-26</div></div></div><div class="container post-header"><h1>兄弟连-Linux基础知识与系统管理视频教程0</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">分区类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">格式化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">2.1.</span> <span class="toc-text">硬件设备文件名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">3.</span> <span class="toc-text">分区设备文件名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD"><span class="toc-number">4.</span> <span class="toc-text">挂载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol></details></div><div class="container post-content"><h2 id="分区类型"><a href="#分区类型" class="headerlink" title="分区类型"></a>分区类型</h2><ul>
+<li>主分区：最多只能有4个</li>
+<li>扩展分区:<ul>
+<li>最多只能有1个。</li>
+<li>主分区加扩展分区最多有4个</li>
+<li>不能写入数据，只能包含逻辑分区</li>
+</ul>
+</li>
+<li>逻辑分区</li>
+</ul>
+<blockquote>
+<ul>
+<li>简单来说 , 有一个柜子,只能分成4份.现在有5个人要用</li>
+<li>解决方法 , 将第4个分区分成5和6两个小柜子</li>
+<li>5和6称为<code>逻辑分区</code></li>
+<li>为了管理5和6两个分区,这第4个分区需要一定空间,并且不能写入数据</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>这种限制不是linux造成的,而是硬盘的限制</p>
+</blockquote>
+<h2 id="格式化"><a href="#格式化" class="headerlink" title="格式化"></a>格式化</h2><p>格式化的两个任务:</p>
+<ul>
+<li>将硬盘分成等大的数据块</li>
+<li>创建一个文件列表</li>
+</ul>
+<ul>
+<li><p>将硬盘分成等大的数据块 (<code>block</code>).</p>
+<blockquote>
+<p>linux默认每分数据块是4KB</p>
+</blockquote>
+</li>
+<li><p>如果现在存储10KB的数据 , 那么就会用到3个数据块</p>
+<blockquote>
+<ul>
+<li>这3个数据块不一定连续</li>
+<li>剩余的2KB不能再被使用</li>
+<li>window中的磁盘碎片整理就是 : 尽量的将保存文件的不同数据块,尽量放在一起 . 这样更利于数据的读取</li>
+</ul>
+</blockquote>
+</li>
+<li><p>linux 会维护一个文件列表(<code>inode列表</code>) , 给每一个文件编号(<code>inode号</code>) , 然后记录文件被放在了哪几个数据块中</p>
+<blockquote>
+<p>所以我们读取文件就是</p>
+<ol>
+<li>根据inode列表找出所需文件的编号</li>
+<li>得知文件被放在哪几个block中</li>
+<li>读取block中的数据</li>
+<li>将所有的block拼接成完整数据</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h3 id="硬件设备文件名"><a href="#硬件设备文件名" class="headerlink" title="硬件设备文件名"></a>硬件设备文件名</h3><table>
+<thead>
+<tr>
+<th>设备</th>
+<th>设备在Linux内的文件名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IDE硬盘</td>
+<td>/dev/<strong>hd[a-d]</strong></td>
+</tr>
+<tr>
+<td>SCSI/SATA/USB硬盘</td>
+<td>/dev/<strong>sd[a-p]</strong></td>
+</tr>
+<tr>
+<td>U盘</td>
+<td>/dev/<strong>sd[a-p]</strong>(同上)</td>
+</tr>
+<tr>
+<td>软驱</td>
+<td>/dev/fd[0-1]</td>
+</tr>
+<tr>
+<td>打印机</td>
+<td>25针型：/dev/**lp[0-2]**USB型：/dev/<strong>usb/lp[0-15]</strong></td>
+</tr>
+<tr>
+<td>鼠标</td>
+<td>USB型：/dev/**usb/mouse[0-15]**PS2型：/dev/<strong>psaux</strong></td>
+</tr>
+<tr>
+<td>当前CD ROM/DVD ROM</td>
+<td>/dev/<strong>cdrom</strong></td>
+</tr>
+<tr>
+<td>当前鼠标</td>
+<td>/dev/<strong>mouse</strong></td>
+</tr>
+<tr>
+<td>磁带机</td>
+<td>IDE型：/dev/<strong>ht0</strong>SCSI型：/dev/<strong>st0</strong></td>
+</tr>
+</tbody></table>
+<h2 id="分区设备文件名"><a href="#分区设备文件名" class="headerlink" title="分区设备文件名"></a>分区设备文件名</h2><ul>
+<li>硬盘有设备文件名 , 分区也有设备文件名</li>
+<li>分区的设备文件名就是在硬盘的设备文件名后面加入数字<ul>
+<li>hda代表hd硬盘的第一个硬盘</li>
+<li>hda1代表hda硬盘的第一个分区</li>
+</ul>
+</li>
+<li>示例:<ul>
+<li>dev/hda1分区（IDE硬盘接口）</li>
+<li>dev/sda1分区（SCSI硬盘接口、SATA硬盘接口）</li>
+</ul>
+</li>
+</ul>
+<h2 id="挂载"><a href="#挂载" class="headerlink" title="挂载"></a>挂载</h2><blockquote>
+<ul>
+<li>给分区分配盘符的过程称为<code>挂载</code></li>
+<li>这个盘符称为<code>挂载点</code></li>
+</ul>
+</blockquote>
+<ul>
+<li>必须分区<ul>
+<li>/（根分区）</li>
+<li>swap分区（交换分区，内存2倍，不超过2GB）</li>
+</ul>
+</li>
+<li>推荐分区<ul>
+<li>/boot（启动分区，200MB）</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>分区：把大硬盘分为小的逻辑分区</li>
+<li>格式化：写入文件系统</li>
+<li>分区设备文件名：给每个分区定义设备文件名</li>
+<li>挂载：给每个分区分配挂载点</li>
+</ul>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

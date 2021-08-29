@@ -1,0 +1,94 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;How-to-Setup-a-Raspberry-Pi-Samba-Server&quot;&gt;&lt;a href=&quot;#How-to-Setup-a-Raspberry-Pi-Samba-Server&quot; class=&quot;headerlink&quot; title=&quot;How to Setup a Raspberry Pi Samba Server&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://pimylifeup.com/raspberry-pi-samba/&quot;&gt;How to Setup a Raspberry Pi Samba Server&lt;/a&gt;&lt;/h1&gt;&lt;h2 id=&quot;Setting-up-Samba-on-your-Raspberry-Pi&quot;&gt;&lt;a href=&quot;#Setting-up-Samba-on-your-Raspberry-Pi&quot; class=&quot;headerlink&quot; title=&quot;Setting up Samba on your Raspberry Pi&quot;&gt;&lt;/a&gt;Setting up Samba on your Raspberry Pi&lt;/h2&gt;&lt;p&gt;Samba is a re-implementation of the &lt;a href=&quot;https://en.wikipedia.org/wiki/Server_Message_Block&quot;&gt;SMB (Server Message Block) networking protocol&lt;/a&gt; and allows Linux computers to integrate into Microsoft’s active directory environments seamlessly."><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>samba搭建NAS | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-07</div></div></div><div class="container post-header"><h1>samba搭建NAS</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#How-to-Setup-a-Raspberry-Pi-Samba-Server"><span class="toc-number">1.</span> <span class="toc-text">How to Setup a Raspberry Pi Samba Server</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Setting-up-Samba-on-your-Raspberry-Pi"><span class="toc-number">1.1.</span> <span class="toc-text">Setting up Samba on your Raspberry Pi</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Connecting-to-your-Samba-Server-on-Windows"><span class="toc-number">1.2.</span> <span class="toc-text">Connecting to your Samba Server on Windows</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Connecting-to-your-Samba-Share-on-Mac-OS-X"><span class="toc-number">1.3.</span> <span class="toc-text">Connecting to your Samba Share on Mac OS X</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LINK-2"><span class="toc-number">1.4.</span> <span class="toc-text">LINK-2</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="How-to-Setup-a-Raspberry-Pi-Samba-Server"><a href="#How-to-Setup-a-Raspberry-Pi-Samba-Server" class="headerlink" title="How to Setup a Raspberry Pi Samba Server"></a><a target="_blank" rel="noopener" href="https://pimylifeup.com/raspberry-pi-samba/">How to Setup a Raspberry Pi Samba Server</a></h1><h2 id="Setting-up-Samba-on-your-Raspberry-Pi"><a href="#Setting-up-Samba-on-your-Raspberry-Pi" class="headerlink" title="Setting up Samba on your Raspberry Pi"></a>Setting up Samba on your Raspberry Pi</h2><p>Samba is a re-implementation of the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Server_Message_Block">SMB (Server Message Block) networking protocol</a> and allows Linux computers to integrate into Microsoft’s active directory environments seamlessly.</p>
+<p>CIFS or Common Internet File System is an implementation of the SMB protocol. In modern setups, CIFs or SMB is used interchangeably, but most people will use the term SMB.</p>
+<p>By using Samba on our Raspberry Pi, we can easily share directories in a way that they can be accessed on almost every operating system.</p>
+<p>Samba is one of the easiest to set up and configure file servers, which makes it one of the best solutions for setting up a NAS, especially when you intend on targeting Windows systems.</p>
+<p>There are plenty of <a target="_blank" rel="noopener" href="https://pimylifeup.com/raspberry-pi-nas/">other NAS setups</a> that you can run on your Raspberry Pi. I prefer Samba has I run into the least problems, but something else might appeal to you more.</p>
+<p><strong>1.</strong> The first thing that we must do before we setup a SMB/CIFS share on our Raspberry Pi is to make sure everything is up to date.</p>
+<p>We can update the package list and all our packages by running the following two commands.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2.</strong> Now that we have our Raspbian operating system entirely up to date, we can now proceed on to installing the Samba software to our Raspberry Pi.</p>
+<p>We can install the packages that we require to setup Samba by running the following command.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install samba samba-common-bin</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>3.</strong> Before we set up our network storage on our Pi, we need to first create a folder that we will share.</p>
+<p>This folder can be located anywhere, including on a <a target="_blank" rel="noopener" href="https://pimylifeup.com/raspberry-pi-mount-usb-drive/">mounted external hard drive</a>. For this tutorial, we will be creating the directory within the “<strong>pi</strong>” users home directory.</p>
+<p>Create this folder by running the following command.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/pi/shared</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>4.</strong> Now we can share this folder using the Samba software. To do this, we need to modify the samba config file.</p>
+<p>The “<strong>smb.conf</strong>” configuration file is where you will store all your settings for your shares.</p>
+<p>We can begin modifying the config file by running the command below.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>5.</strong> Within this file, add the following to the bottom. This text defines various details of our share.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[pimylifeupshare]</span><br><span class="line">path = /home/pi/shared</span><br><span class="line">writeable=Yes</span><br><span class="line">create mask=0777</span><br><span class="line">directory mask=0777</span><br><span class="line">public=no</span><br></pre></td></tr></table></figure>
+
+<p>“**[pimylifeupshare]**” – This defines the share itself, the text between the brackets is the point at which you will access the share. For example, ours will be at the following address: <strong>//raspberrypi/pimylifeupshare</strong></p>
+<p>“<strong>path</strong>” – This option is the path to the directory on your Raspberry Pi that you want to be shared.</p>
+<p>“<strong>writeable</strong>” – When this option is set to “<strong>Yes</strong>“, it will allow the folder to be writable.</p>
+<p>“<strong>create mask</strong>” and “<strong>directory mask</strong>” – This option defines the maximum permissions for both files and folders. Setting this to <strong>0777</strong> allows users to read, write, and execute.</p>
+<p>“<strong>public</strong>” – If this is set to “<strong>no</strong>” the Pi will require a valid user to grant access to the shared folders.</p>
+<p><strong>6.</strong> With the changes made to the file, you can now go ahead and save it by pressing CTRL + X then Y followed by ENTER.</p>
+<p><strong>7.</strong> Next, we need to set up a user for our Samba share on the Raspberry Pi. Without it, we won’t be able to make a connection to the shared network drive.</p>
+<p>In this example, we will be creating a Samba user called “<strong>pi</strong>” with the password set to “<strong>raspberry</strong>“.</p>
+<p>Run the following command to create the user. You will be prompted afterward to enter the password.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>8.</strong> Finally, before we connect to our Raspberry Pi Samba share, we need to restart the samba service so that it loads in our configuration changes.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart smbd</span><br><span class="line"></span><br><span class="line">OR</span><br><span class="line">sudo systemctl restart smb.service</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>9.</strong> The last thing we should do before we try connecting to our Samba share is to retrieve our Raspberry Pi’s local IP address.</p>
+<p>First, make sure you’re connected to a network by either connecting Ethernet cable or <a target="_blank" rel="noopener" href="https://pimylifeup.com/setting-up-raspberry-pi-wifi/">setup WiFi</a>.</p>
+<p>While you can connect using the Pi’s network name, we will grab the IP address just in case that option fails to work on your home network.</p>
+<p>Run the command below to print out the Pi’s local IP Address.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname -I</span><br></pre></td></tr></table></figure>
+
+<p>In the next couple of sections, we will walk you through the process of connecting to your network attached storage on Windows and Mac OS X.</p>
+<h2 id="Connecting-to-your-Samba-Server-on-Windows"><a href="#Connecting-to-your-Samba-Server-on-Windows" class="headerlink" title="Connecting to your Samba Server on Windows"></a>Connecting to your Samba Server on Windows</h2><p><strong>1.</strong> To connect to your Samba on Windows, begin by opening up the “<strong>File Explorer</strong>“.</p>
+<p>Within the “<strong>File Explorer</strong>” click the “<strong>Computer</strong>” tab </p>
+<p>(<strong>1.</strong>) then click “<strong>Map network drive</strong>” </p>
+<p>(<strong>2.</strong>)</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Windows-01-File-Explorer.png" alt="Windows File Explorer Map Network Drive"></p>
+<p><strong>2.</strong> You will now be greeted by the dialog shown below asking you to enter some details.</p>
+<p>Within the “<strong>Folder</strong>” textbox (<strong>1.</strong>) you will want to enter the following “<strong>\raspberrypi\pimylifeupshare</strong>“.</p>
+<p>Make sure that you replace “<strong>pimylifeupshare</strong>” with the name that you defined for your Samba share.</p>
+<p>If for any reason the connection fails, you can switch out “<strong>raspberrypi</strong>” with your Raspberry Pi’s local IP address that you retrieved in <strong>step 9</strong> of the setting up section of this tutorial.</p>
+<p>Once done, click the “<strong>Finish</strong>” button to finalize the connection.</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Windows-02-Map-network-drive.png" alt="Windows Samba Network Drive Details"></p>
+<p><strong>3.</strong> Finally, you will be asked to enter your login details to be able to finish the connection.</p>
+<p>Enter the username and password (<strong>1.</strong>) you set using the “<strong>smbpasswd</strong>” tool earlier on in the tutorial.</p>
+<p>Once done, press the “<strong>OK</strong>” button (<strong>2.</strong>) to continue.</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Windows-03-Enter-Credentials.png" alt="Windows Enter Samba Credentials"></p>
+<h2 id="Connecting-to-your-Samba-Share-on-Mac-OS-X"><a href="#Connecting-to-your-Samba-Share-on-Mac-OS-X" class="headerlink" title="Connecting to your Samba Share on Mac OS X"></a>Connecting to your Samba Share on Mac OS X</h2><p><strong>1.</strong> Now to connect to your Raspberry Pi’s Samba server on a MAC OS X system.</p>
+<p>You will have to begin by opening the “<strong>Finder</strong>” application as we have shown in the screenshot below.</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Mac-OS-X-01-Opening-Finder-on-Mac-OS-X.png" alt="Raspberry Pi Samba Cifs - Mac OS X - 01 Opening Finder on Mac OS X"></p>
+<p><strong>2.</strong> With the “<strong>Finder</strong>” application now open, click the “<strong>Go</strong>” button (<strong>1.</strong>) in the toolbar, then click the “<strong>Connect to Server…</strong>” option (<strong>2.</strong>).<br><img src="/images/Raspberry-Pi-Samba-Cifs-Mac-OS-X-02-Connect-to-Server.png" alt="Raspberry Pi Samba Cifs - Mac OS X - 02 Connect to Server"></p>
+<p><strong>3.</strong> Now that the “<strong>Connect to server</strong>” dialog is now open on your device you can go ahead and enter in the details for your Raspberry Pi’s SMB share.</p>
+<p>Within the address box (<strong>1.</strong>) you will need to enter “<strong>smb://192.168.0.159/pimylifeupshare</strong>“.</p>
+<p>You will need to swap out the IP address “<strong>192.168.0.159</strong>” with the IP address of your Raspberry Pi that you retrieved in <strong>step 9</strong> of the setting up section of this tutorial.</p>
+<p>Also, if you changed the name of the share name from “<strong>pimylifeupshare</strong>“, you will need to change that section of the address.</p>
+<p>Once you have entered the address, you can click the “<strong>Connect</strong>” button (<strong>2.</strong>) to begin the connection to your Raspberry Pi’s Samba share.</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Mac-OS-X-03-Connect-to-Server-dialog.png" alt="Raspberry Pi Samba Cifs - Mac OS X - 03 Connect to Server dialog"></p>
+<p><strong>4.</strong> Before the connection is complete, you will be asked to enter both the username and password that you set up using the “<strong>smbpasswd</strong>” (<strong>1.</strong>) tool earlier in this guide.</p>
+<p>Once you have entered in both of these details, go ahead and press the “<strong>Connect</strong>” button (<strong>2.</strong>) to finalize the connection.</p>
+<p><img src="/images/Raspberry-Pi-Samba-Cifs-Mac-OS-X-04-Enter-Login-Details.png" alt="Raspberry Pi Samba Cifs - Mac OS X - 04 Enter Login Details"></p>
+<p>By now you should have successfully set up a network drive that you can access on both a Windows PC or a Mac computer. You should also be able to access it on other devices such as mobile phones.</p>
+<p>I hope that this Raspberry Pi Samba server tutorial has shown you everything you need to know to have your network storage up and working. If you have any feedback then please don’t hesitate to leave a comment below. </p>
+<h2 id="LINK-2"><a href="#LINK-2" class="headerlink" title="LINK-2"></a>LINK-2</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/266495858">https://zhuanlan.zhihu.com/p/266495858</a></p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

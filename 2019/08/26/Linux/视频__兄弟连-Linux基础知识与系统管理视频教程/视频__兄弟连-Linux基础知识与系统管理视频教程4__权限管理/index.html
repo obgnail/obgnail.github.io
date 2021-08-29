@@ -1,0 +1,319 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;权限管理&quot;&gt;&lt;a href=&quot;#权限管理&quot; class=&quot;headerlink&quot; title=&quot;权限管理&quot;&gt;&lt;/a&gt;权限管理&lt;/h1&gt;&lt;h2 id=&quot;ACL权限&quot;&gt;&lt;a href=&quot;#ACL权限&quot; class=&quot;headerlink&quot; title=&quot;ACL权限&quot;&gt;&lt;/a&gt;ACL权限&lt;/h2&gt;&lt;p&gt;对于一个文件,有所有者,所属组,其他人三个身份 . 不同身份的人对这个文件有不同的权限"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>兄弟连-Linux基础知识与系统管理视频教程4 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Linux/" rel="tag">Linux</a></div><div class="post-time">2019-08-26</div></div></div><div class="container post-header"><h1>兄弟连-Linux基础知识与系统管理视频教程4</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">权限管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.</span> <span class="toc-text">ACL权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ACL%E6%9D%83%E9%99%90%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%BC%80%E5%90%AF"><span class="toc-number">1.1.1.</span> <span class="toc-text">ACL权限简介与开启</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%88%86%E5%8C%BAACL%E6%9D%83%E9%99%90%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">查看分区ACL权限是否开启</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%B4%E6%97%B6%E5%BC%80%E5%90%AF%E5%88%86%E5%8C%BAACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">临时开启分区ACL权限</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E5%BC%80%E5%90%AF%E5%88%86%E5%8C%BAACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">永久开启分区ACL权限</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%8E%E8%AE%BE%E5%AE%9AACL%E6%9D%83%E9%99%90-setfacl%E5%92%8Cgetfacle"><span class="toc-number">1.1.2.</span> <span class="toc-text">查看与设定ACL权限 setfacl和getfacle</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BACl%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">查看ACl命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E5%AE%9AACL%E6%9D%83%E9%99%90%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">设定ACL权限的命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%99%E7%94%A8%E6%88%B7%E7%BB%84%E8%AE%BE%E7%BD%AEACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">给用户组设置ACL权限</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E6%9C%89%E6%95%88%E6%9D%83%E9%99%90%E4%B8%8E%E5%88%A0%E9%99%A4ACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.3.</span> <span class="toc-text">最大有效权限与删除ACL权限</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E6%9C%89%E6%95%88%E6%9D%83%E9%99%90mask"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">最大有效权限mask</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4ACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">删除ACL权限</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4ACL%E6%9D%83%E9%99%90%E5%92%8C%E9%80%92%E5%BD%92ACL%E6%9D%83%E9%99%90"><span class="toc-number">1.1.4.</span> <span class="toc-text">默认ACL权限和递归ACL权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%89%B9%E6%AE%8A%E6%9D%83%E9%99%90"><span class="toc-number">1.2.</span> <span class="toc-text">文件特殊权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SetUID"><span class="toc-number">1.2.1.</span> <span class="toc-text">SetUID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SetUID%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">SetUID的功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E5%AE%9ASetUID%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">设定SetUID的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%96%E6%B6%88SetUID%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">取消SetUID的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#chmod-755-%E6%96%87%E4%BB%B6%E5%90%8D-%E5%92%8Cchmod-u-s-%E6%96%87%E4%BB%B6%E5%90%8D-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">chmod 755 文件名 和chmod u-s 文件名 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B1%E9%99%A9%E7%9A%84SetUID"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">危险的SetUID</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SetGID"><span class="toc-number">1.2.2.</span> <span class="toc-text">SetGID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SetGID%E9%92%88%E5%AF%B9%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">SetGID针对文件的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SetGID%E9%92%88%E5%AF%B9%E7%9B%AE%E5%BD%95%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">SetGID针对目录的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SetUID-%E5%92%8C-SetGID-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">SetUID 和 SetGID 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%96%E6%B6%88-SetGID"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">取消 SetGID</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sticky-BIT"><span class="toc-number">1.2.3.</span> <span class="toc-text">Sticky BIT</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SBIT%E7%B2%98%E7%9D%80%E4%BD%8D%E4%BD%9C%E7%94%A8"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">SBIT粘着位作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%8E%E5%8F%96%E6%B6%88%E7%B2%98%E7%9D%80%E4%BD%8D"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">设置与取消粘着位</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SUID-SGID-SBIT-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">SUID, SGID, SBIT 的区别</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7chattr%E6%9D%83%E9%99%90"><span class="toc-number">1.3.</span> <span class="toc-text">文件系统属性chattr权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4sudo%E6%9D%83%E9%99%90"><span class="toc-number">1.4.</span> <span class="toc-text">系统命令sudo权限</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h1><h2 id="ACL权限"><a href="#ACL权限" class="headerlink" title="ACL权限"></a>ACL权限</h2><p>对于一个文件,有所有者,所属组,其他人三个身份 . 不同身份的人对这个文件有不同的权限</p>
+<h3 id="ACL权限简介与开启"><a href="#ACL权限简介与开启" class="headerlink" title="ACL权限简介与开启"></a>ACL权限简介与开启</h3><ul>
+<li>任何文件都<strong>只能有一个所属组</strong></li>
+<li>ACL权限专门解决<strong>身份不够用</strong>的情况</li>
+<li>解决方法 : 不关注三个身份 , 直接给用户赋予权限</li>
+</ul>
+<blockquote>
+<ul>
+<li>ACL 是 Access Control List 的缩写，称为访问控制列表，包含了对一个对象或一条记录可进行何种操作的权限定义。</li>
+<li>例如一个文件对象的 ACL 为 <code>Alice: read,write; Bob: read</code>，这代表 Alice 对该文件既能读又能写，而 Bob 只能读取。</li>
+<li><strong>ACL允许你给任何的用户或用户组设置任何文件/目录的访问权限</strong>。</li>
+</ul>
+</blockquote>
+<h4 id="查看分区ACL权限是否开启"><a href="#查看分区ACL权限是否开启" class="headerlink" title="查看分区ACL权限是否开启"></a>查看分区ACL权限是否开启</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dumpe2fs -h /dev/sda</span><br><span class="line"><span class="comment"># 支持 : </span></span><br><span class="line"><span class="comment"># Default mount options:    user_xattr acl</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>dumpe2fs命令是查询指定分区详细文件系统信息的命令</li>
+<li>-h : 仅显示超级块中信息，而不显示磁盘块组的详细信息</li>
+</ul>
+<h4 id="临时开启分区ACL权限"><a href="#临时开启分区ACL权限" class="headerlink" title="临时开启分区ACL权限"></a>临时开启分区ACL权限</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新挂载根分区，并挂载加入acl权限</span></span><br><span class="line">mount -o remounnt,acl /</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="永久开启分区ACL权限"><a href="#永久开启分区ACL权限" class="headerlink" title="永久开启分区ACL权限"></a>永久开启分区ACL权限</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改UUID , 添加acl</span></span><br><span class="line">vim /etc/fstab</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新挂载文件系统或重启动系统，使修改生效</span></span><br><span class="line">mount -o remount</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="查看与设定ACL权限-setfacl和getfacle"><a href="#查看与设定ACL权限-setfacl和getfacle" class="headerlink" title="查看与设定ACL权限 setfacl和getfacle"></a>查看与设定ACL权限 setfacl和getfacle</h3><h4 id="查看ACl命令"><a href="#查看ACl命令" class="headerlink" title="查看ACl命令"></a>查看ACl命令</h4><ul>
+<li>get file Access Control List</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看acl权限</span></span><br><span class="line">getfacle 文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="设定ACL权限的命令"><a href="#设定ACL权限的命令" class="headerlink" title="设定ACL权限的命令"></a>设定ACL权限的命令</h4><ul>
+<li>set file Access Control List</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl 选项 文件名</span><br></pre></td></tr></table></figure>
+
+<p>选项 :</p>
+<ul>
+<li>-m : 设定ACL权限</li>
+<li>-x : 删除指定的ACL权限</li>
+<li>-b : 删除所有的ACL权限</li>
+<li>-d : 设定默认ACL权限。</li>
+<li>-k : 删除默认ACL权限</li>
+<li>-R : 递归设定ACL权限。</li>
+</ul>
+<p>准备工作 : </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line">mkdir project_dir</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建两个用户</span></span><br><span class="line">useradd user1</span><br><span class="line">useradd user2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个组</span></span><br><span class="line">groupadd group1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将两个用户加入group1</span></span><br><span class="line">gpasswd -a user1 group1</span><br><span class="line">gpasswd -a user2 group1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将project_dir的所属者从root改为group1</span></span><br><span class="line">chgrp group1  project_dir</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置project_dir的权限为770</span></span><br><span class="line">chmod 770 project_dir</span><br><span class="line"></span><br><span class="line">ll </span><br><span class="line"><span class="comment"># drwxrwx--- 2 root group1 4096 Aug 25 13:01 project_dir</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先添加一个用户A , A等待被赋予权限</span></span><br><span class="line">useradd testing_user</span><br><span class="line"><span class="comment"># 设置密码</span></span><br><span class="line">passwd </span><br><span class="line"></span><br><span class="line"><span class="comment"># 针对于project_user文件 给用户testing_user赋予rx权限</span></span><br><span class="line"><span class="comment"># 给用户赋予r-x权限，使用 &quot; u:用户名:权限 &quot;格式</span></span><br><span class="line">setfacl -m u:testing_user:rx project_dir</span><br><span class="line"></span><br><span class="line">ll</span><br><span class="line"><span class="comment"># drwxrwx---+ 2 root group1 4096 Aug 25 13:01 project_dir</span></span><br><span class="line"><span class="comment"># +表示,该文件除了普通权限之外,还拥有ACL权限</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取project_user文件的ACL权限</span></span><br><span class="line">getfacl project_dir</span><br><span class="line"><span class="comment">## file: project_dir   (文件)</span></span><br><span class="line"><span class="comment">## owner: root   (所有者是谁)</span></span><br><span class="line"><span class="comment">## group: group1   (所属组是谁)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># user::rwx   (所有者的权限)</span></span><br><span class="line"><span class="comment"># user:testing_user:r-x</span></span><br><span class="line"><span class="comment"># group::rwx   (所属组的权限)</span></span><br><span class="line"><span class="comment"># mask::rwx   (见后续 : 最大有效权限)</span></span><br><span class="line"><span class="comment"># other::---   (其他人的权限)</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>user:testing_user:r-x</code> : 既不是所有者,也不是所属组 , 但他确实对文件/目录具有权限r-x</p>
+</blockquote>
+<h4 id="给用户组设置ACL权限"><a href="#给用户组设置ACL权限" class="headerlink" title="给用户组设置ACL权限"></a>给用户组设置ACL权限</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 给文件设置ACL权限</span></span><br><span class="line">setfacl -m u:testing_user:rx project_dir</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给组设置ACL权限</span></span><br><span class="line">setfacl -m g:group1:rwx project_dir</span><br><span class="line"></span><br><span class="line">ll</span><br><span class="line"><span class="comment"># drwxrwx---+ 2 root group1 4096 Aug 25 13:01 project_dir</span></span><br><span class="line"></span><br><span class="line">getfacl project_dir</span><br><span class="line"><span class="comment">##  file: project_dir</span></span><br><span class="line"><span class="comment">##  owner: root</span></span><br><span class="line"><span class="comment">##  group: group1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># user::rwx</span></span><br><span class="line"><span class="comment"># user:testing_user:r-x</span></span><br><span class="line"><span class="comment"># group::rwx</span></span><br><span class="line"><span class="comment"># group:group1:rwx</span></span><br><span class="line"><span class="comment"># mask::rwx</span></span><br><span class="line"><span class="comment"># other::---</span></span><br></pre></td></tr></table></figure>
+
+<p>给组赋予权限，使用 <code>g:组名:权限</code>格式</p>
+<blockquote>
+<p><code>group:group1:rwx</code> : 既不是所有者,也不是所属组 , 但他确实对文件/目录具有权限r-x</p>
+</blockquote>
+<h3 id="最大有效权限与删除ACL权限"><a href="#最大有效权限与删除ACL权限" class="headerlink" title="最大有效权限与删除ACL权限"></a>最大有效权限与删除ACL权限</h3><h4 id="最大有效权限mask"><a href="#最大有效权限mask" class="headerlink" title="最大有效权限mask"></a>最大有效权限mask</h4><ul>
+<li><p>mask是用来指定最大有效权限的。</p>
+</li>
+<li><p>赋予的ACL权限并不是真正的权限，是需要和mask的权限<code>相与</code>才能得到用户的真正权限</p>
+<blockquote>
+<p>简单来说就是mask和ACL都有的权限才是真正的权限</p>
+</blockquote>
+</li>
+<li><p>所以,我们可以通过调整最大权限mask来控制ACL的权限</p>
+<blockquote>
+<p>所以 ,<strong>mask就是给一个天花板</strong> , 我们主要是通过mask来防止我们在设置ACL权限时设置得过高.</p>
+</blockquote>
+</li>
+<li><p>使用<code>setfacl -m m:rx 文件名</code>修改最大有效权限<br>(设定mask权限为-x。使用<code>m：权限</code>格式)</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">getfacl project_dir</span><br><span class="line"><span class="comment"># user:testing_user:r-x</span></span><br><span class="line"><span class="comment"># mask::rwx</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改最大有效权限</span></span><br><span class="line">setfacl -m m:rx project_dir</span><br><span class="line"></span><br><span class="line">getfacl project_dir</span><br><span class="line"><span class="comment">## file: project_dir</span></span><br><span class="line"><span class="comment">## owner: root</span></span><br><span class="line"><span class="comment">## group: group1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># user::rwx</span></span><br><span class="line"><span class="comment"># user:testing_user:r-x</span></span><br><span class="line"><span class="comment"># group::rwx			#effective:r-x</span></span><br><span class="line"><span class="comment"># group:group1:rwx		#effective:r-x</span></span><br><span class="line"><span class="comment"># mask::r-x</span></span><br><span class="line"><span class="comment"># other::---</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>#effective:r-x</code> : 说明了真正的有效权限为r-x</p>
+</blockquote>
+<h4 id="删除ACL权限"><a href="#删除ACL权限" class="headerlink" title="删除ACL权限"></a>删除ACL权限</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除指定用户的ACL权限</span></span><br><span class="line">setfacl -x u:用户名 文件名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除指定用户组的ACL权限</span></span><br><span class="line">setfacl -x g:组名 文件名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除文件的所有的ACL权限</span></span><br><span class="line">setfacl -b 文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="默认ACL权限和递归ACL权限"><a href="#默认ACL权限和递归ACL权限" class="headerlink" title="默认ACL权限和递归ACL权限"></a>默认ACL权限和递归ACL权限</h3><p>递归权限 : </p>
+<p><code>递归权限</code>是父目录在设定ACL权限时，所有的子文件和子目录也会拥有相同的ACL权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m u:用户名:权限 -R 文件名</span><br></pre></td></tr></table></figure>
+
+<p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m u:user1:rx -R project_dir</span><br></pre></td></tr></table></figure>
+
+
+
+<p>默认ACL权限 :<br><code>默认ACL权限</code>的作用是如果给父目录设定了默认ACL权限，那么父目录中所有新建的子文件**都会继承父目录的ACL权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m d:u:用户名:权限 文件名</span><br></pre></td></tr></table></figure>
+
+<p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m d:u:user1:rx -R project_dir</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>默认ACL权限</code>和<code>递归权限</code>只能用于目录</p>
+</blockquote>
+<h2 id="文件特殊权限"><a href="#文件特殊权限" class="headerlink" title="文件特殊权限"></a>文件特殊权限</h2><h3 id="SetUID"><a href="#SetUID" class="headerlink" title="SetUID"></a>SetUID</h3><h4 id="SetUID的功能"><a href="#SetUID的功能" class="headerlink" title="SetUID的功能"></a>SetUID的功能</h4><ul>
+<li><p>只有可以执行的二进制程序才能设定SUID权限</p>
+</li>
+<li><p>命令执行者要对该程序拥有x（执行）权限</p>
+</li>
+<li><p>命令执行者在执行该程序时获得该程序文件所有者的身份</p>
+<blockquote>
+<ul>
+<li>在执行程序的过程中灵魂附体为文件的所有者</li>
+<li>简单来说 : 当前用户U,想要执行某个可执行文件F,文件F拥有SUID权限,并且所有者是root.当用户U执行文件F的时候,用户U就会暂时性获得root身份</li>
+</ul>
+</blockquote>
+</li>
+<li><p>SetUID权限只在该程序执行过程中有效，也就是说<strong>身份改变只在程序执行过程中有效</strong></p>
+</li>
+<li><p>SUID权限的意义:</p>
+<ul>
+<li>普通用户可以修改自己的密码,而密码是放在了<code>/etc/passwd</code>文件里面 , </li>
+<li>但是这个文件的权限是020,只有root才有权限能修改.</li>
+<li>这时候就需要<strong>借用root权限</strong>来修改了</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ll /etc/shadow</span><br><span class="line"><span class="comment"># --w------- 1 root root 992 Aug 25 13:09 /etc/shadow</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><p>passwd命令拥有 SetUID 权限，所以普通可以修改自己的密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ll /usr/bin/passwd</span><br><span class="line"><span class="comment"># -rwsr-xr-x. 1 root root 30768 Nov 23  2015 /usr/bin/passwd</span></span><br></pre></td></tr></table></figure></li>
+<li><p>cat命令没有 SetUID 权限，所以普通用户不能查看/etc/shadow文件内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ll /bin/cat</span><br><span class="line"><span class="comment"># -rwxr-xr-x 1 root root 45224 Jun 19  2018 /bin/cat</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h4 id="设定SetUID的方法"><a href="#设定SetUID的方法" class="headerlink" title="设定SetUID的方法"></a>设定SetUID的方法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> ll /usr/bin/passwd</span><br><span class="line"><span class="comment"># -rwsr-xr-x. 1 root root 30768 Nov 23  2015 /usr/bin/passwd</span></span><br><span class="line"><span class="comment"># 这里有一个s</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里的s出现在哪里,就表示是拥有什么权限:</p>
+<ul>
+<li>-rw<code>s</code>r-xr-x : SUID权限</li>
+<li>-rwr-x<code>s</code>r-x : SGID权限</li>
+<li>-rwr-xr-x<code>s</code> : SBID 权限</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>4代表SUID</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 4755 文件名</span><br><span class="line">chmod u+s 文件名</span><br></pre></td></tr></table></figure></li>
+<li><p>2代表SGID</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 2755 文件名</span><br></pre></td></tr></table></figure></li>
+<li><p>1代表SBID</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 1755 文件名</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>示例 :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">touch file1</span><br><span class="line"><span class="comment"># -rw-r--r--  1 root root      0 Aug 26 03:25 file1</span></span><br><span class="line"></span><br><span class="line">chmod 4755 file1</span><br><span class="line"> ll</span><br><span class="line"><span class="comment"># -rwsr-xr-x  1 root root      0 Aug 26 03:24 file1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="取消SetUID的方法"><a href="#取消SetUID的方法" class="headerlink" title="取消SetUID的方法"></a>取消SetUID的方法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 文件名</span><br><span class="line">chmod u-s 文件名</span><br></pre></td></tr></table></figure>
+
+<p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 file1</span><br><span class="line"> ll</span><br><span class="line"><span class="comment"># -rw-r--r--  1 root root      0 Aug 26 03:24 file1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="chmod-755-文件名-和chmod-u-s-文件名-的区别"><a href="#chmod-755-文件名-和chmod-u-s-文件名-的区别" class="headerlink" title="chmod 755 文件名 和chmod u-s 文件名 的区别"></a>chmod 755 文件名 和chmod u-s 文件名 的区别</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">touch file1</span><br><span class="line"><span class="comment"># -rw-r--r--  1 root root      0 Aug 26 03:25 file1</span></span><br><span class="line"></span><br><span class="line">chmod u+s file1</span><br><span class="line">ll</span><br><span class="line"><span class="comment"># -rwSr--r--  1 root root      0 Aug 26 03:24 file1</span></span><br><span class="line"></span><br><span class="line">chmod u-s file1</span><br><span class="line">ll</span><br><span class="line"><span class="comment"># -rw-r--r--  1 root root      0 Aug 26 03:24 file1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我们发现<code>chmod 4755 file1</code> 和 <code>chmod u+s file1</code>的结果不一样:</p>
+<ul>
+<li>-rw<code>s</code>r-xr-x</li>
+<li>-rw<code>S</code>r–r–</li>
+</ul>
+<p>大写的<code>S</code>其实是报错的 , 因为<strong>一开始file1并没有执行权限</strong></p>
+</blockquote>
+<h4 id="危险的SetUID"><a href="#危险的SetUID" class="headerlink" title="危险的SetUID"></a>危险的SetUID</h4><ul>
+<li>关键目录应严格控制写权限。比如<code>/</code>,<code>/usr/</code> ,<code>/bin/</code>等</li>
+<li>用户的密码设置要严格遵守密码三原则</li>
+<li>对系统中默认应该具有 SetUID 权限的文件作一个列表，定时检查有没有这之外的文件被设置了 SetUID 权限</li>
+</ul>
+<h3 id="SetGID"><a href="#SetGID" class="headerlink" title="SetGID"></a>SetGID</h3><h4 id="SetGID针对文件的作用"><a href="#SetGID针对文件的作用" class="headerlink" title="SetGID针对文件的作用"></a>SetGID针对文件的作用</h4><ul>
+<li>只有可执行的二进制程序才能设置SGID权限</li>
+<li>命令执行者要对该程序拥有ⅹ（执行）权限</li>
+<li>命令执行在执行程序的时候，组身份升级为该程序文件的属组</li>
+<li>SetGID权限同样只在该程序执行过程中有效，也就是说组身份改变只在程序执行过程中有效</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ll /usr/bin/locate</span><br><span class="line"><span class="comment"># -rwx--s--x 1 root slocate ....</span></span><br><span class="line"></span><br><span class="line">ll /var/lib/mlocate/mlocate.db</span><br><span class="line"><span class="comment"># -rw-r---- 1 root slocate ....</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>/usr/bin/locate是可执行二进制程序，可以赋予SGID </li>
+<li>执行用户lamp对/usr/bin/locate命令拥有执行权限执行/usr/bin/ocate命令时，组身份会升级为 slocate组，而<br>slocate组对/var/ib/locate/locate db数据库拥有r权限，所以普通用户可以使用 locate命令查询 locate<br>db数据库</li>
+<li>命令结束，lamp用户的组身份返回为lamp组</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 2755 文件名</span><br><span class="line">chmod g+s 文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="SetGID针对目录的作用"><a href="#SetGID针对目录的作用" class="headerlink" title="SetGID针对目录的作用"></a>SetGID针对目录的作用</h4><ul>
+<li>普通用户必须对此目录拥有r和x权限，才能进入此目录</li>
+<li>普通用户在此目录中的有效组会变成此目录的属组</li>
+<li>若普通用户对此目录拥有w权限时，<strong>新建的文件的默认所属组是这个目录的所属组</strong></li>
+</ul>
+<p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">whoami</span><br><span class="line"><span class="comment"># root</span></span><br><span class="line"></span><br><span class="line">mkdir <span class="built_in">test</span></span><br><span class="line">chmod 2777 <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">ll -d <span class="built_in">test</span></span><br><span class="line"><span class="comment"># drwxrwsrwx 2 root root 4096 Aug 26 04:21 test</span></span><br><span class="line"><span class="comment"># 目录有s权限 , 所有者和所属组都是root</span></span><br><span class="line"></span><br><span class="line">su - blog_user</span><br><span class="line"><span class="comment"># 切换用户</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在test目录下新建一个file1</span></span><br><span class="line"><span class="built_in">cd</span> <span class="built_in">test</span></span><br><span class="line">touch file1</span><br><span class="line">ll</span><br><span class="line"><span class="comment"># -rw-rw-r-- 1 blog_user root 0 Aug 26 04:22 file1</span></span><br><span class="line"><span class="comment"># 所有者是blog_user,但是所属组是root</span></span><br><span class="line"><span class="comment"># 新建的文件的默认所属组是这个目录的所属组</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="SetUID-和-SetGID-的区别"><a href="#SetUID-和-SetGID-的区别" class="headerlink" title="SetUID 和 SetGID 的区别"></a>SetUID 和 SetGID 的区别</h4><ul>
+<li>SetUID是变成可执行文件的所有者 , SetGID是变成可执行文件的所属组</li>
+<li>SetGID能针对文件和目录 , SetUID只能针对文件</li>
+</ul>
+<h4 id="取消-SetGID"><a href="#取消-SetGID" class="headerlink" title="取消 SetGID"></a>取消 SetGID</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 文件名</span><br><span class="line">chmod g-s 文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Sticky-BIT"><a href="#Sticky-BIT" class="headerlink" title="Sticky BIT"></a>Sticky BIT</h3><h4 id="SBIT粘着位作用"><a href="#SBIT粘着位作用" class="headerlink" title="SBIT粘着位作用"></a>SBIT粘着位作用</h4><ul>
+<li>粘着位目前<strong>只对目录有效</strong></li>
+<li>普通用户对该目录拥有w和x权限，即普通用户可以在此目录拥有写入权限</li>
+<li>作用:<ul>
+<li>如果没有粘着位，因为普通用户拥有w权限，所以可以删除此目录下所有文件，包括其他用户建立的文件。</li>
+<li>一但赋予了粘着位，除了root可以删除所有文件，普通用户就算拥有w权限，也<strong>只能删除自己建立的文件</strong>，但是不能删除其他用户建立的文件</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ll -d /tmp</span><br><span class="line"><span class="comment"># drwxrwxrwt. 5 root root 4096 Aug 26 04:21 /tmp</span></span><br><span class="line"><span class="comment"># 存在t : 每个用户只能删除自己创建的文件</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="设置与取消粘着位"><a href="#设置与取消粘着位" class="headerlink" title="设置与取消粘着位"></a>设置与取消粘着位</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置粘着位</span></span><br><span class="line">chmod 1755 目录名</span><br><span class="line">chmod o+t 目录名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消粘着位</span></span><br><span class="line">chmod 7777 目录名</span><br><span class="line">chmod o-t 目录名</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="SUID-SGID-SBIT-的区别"><a href="#SUID-SGID-SBIT-的区别" class="headerlink" title="SUID, SGID, SBIT 的区别"></a>SUID, SGID, SBIT 的区别</h4><p>权限作用对象不同</p>
+<ul>
+<li>SUID 只针对可执行文件 , 权限号为4</li>
+<li>SGID 针对可执行文件和目录 , 权限号为2</li>
+<li>SBIT 只针对目录 , 权限号为1</li>
+</ul>
+<blockquote>
+<p>所以,特殊权限号为<code>7</code>是没有意义的(但可以设置),因为不管是文件还是目录 , 肯定有部分权限不能生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 7555 文件名</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="文件系统属性chattr权限"><a href="#文件系统属性chattr权限" class="headerlink" title="文件系统属性chattr权限"></a>文件系统属性chattr权限</h2><ul>
+<li><p>change file attributes on a linux file system(改变文件属性)</p>
+</li>
+<li><p>用于防止文件误删除</p>
+</li>
+<li><p>```bash<br>char [+-=] [选项] 文件或目录名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- +：增加权限</span><br><span class="line"></span><br><span class="line">  -：删除权限</span><br><span class="line"></span><br><span class="line">  =：等于某权限</span><br><span class="line"></span><br><span class="line">- **chattr对root用户也生效**</span><br><span class="line"></span><br><span class="line">- 选项:</span><br><span class="line"></span><br><span class="line">  - `i `：</span><br><span class="line">    - 如果对文件设置i属性，那么不允许对文件进行删除、改名，也不能添加和修改数据；(**只能看**)</span><br><span class="line">    - 如果对目录设置i属性，那么只能修改目录下文件的数据，但不允许建立和删除文件。(**只能修改现有文件**)</span><br><span class="line">  - `a`：add</span><br><span class="line">    - 如果对文件设置a属性，那么只能在文件中增加数据，但是不能删除也不能修改数据；(**不能删除现有数据,但是能加**)</span><br><span class="line">    - 如果对目录设置a属性，那么只允许在目录中建立和修改文件，但是不允许删除(**只能新建和修改文件**)</span><br><span class="line"></span><br><span class="line">  &gt; i属性比a属性更为严格</span><br><span class="line">  &gt;</span><br><span class="line">  &gt; - 对于文件来说 , a可以追加数据</span><br><span class="line">  &gt; - 对于目录来说 , a可以新建文件 </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 查看文件系统属性</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">lsattr 选项 文件名</span><br></pre></td></tr></table></figure></li>
+<li><p>-a : 显示所有文件和目录</p>
+</li>
+<li><p>-d : 若目标是目录 , 仅列出目录本身的属性 , 而不是子文件的</p>
+</li>
+</ul>
+<p>示例:</p>
+<p>对文件操作 : <strong>只能看</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">chattr +i file1</span><br><span class="line"></span><br><span class="line">lsattr -a file1</span><br><span class="line"><span class="comment"># ----i--------e- file1</span></span><br><span class="line"><span class="comment"># 拥有i属性</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只能看</span></span><br><span class="line">cat file1</span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line"><span class="built_in">echo</span> hyl &gt;&gt; file1</span><br><span class="line"><span class="comment"># -bash: file1: Operation not permitted</span></span><br><span class="line">rm -rf file1</span><br><span class="line"><span class="comment"># rm: cannot remove `file1&#x27;: Operation not permitted</span></span><br></pre></td></tr></table></figure>
+
+<p>对目录操作 : <strong>只能修改现有文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mkdir dir2</span><br><span class="line">touch di2/file2</span><br><span class="line"><span class="built_in">echo</span> 123456 &gt;&gt; file2</span><br><span class="line"></span><br><span class="line">chattr +i dir2</span><br><span class="line"></span><br><span class="line">rm -rf dir2</span><br><span class="line"><span class="comment"># rm: cannot remove `dir2/file2&#x27;: Operation not permitted</span></span><br><span class="line">rm -rf dir2/file2 </span><br><span class="line"><span class="comment"># rm: cannot remove `dir2/file2&#x27;: Operation not permitted</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> 7777 &gt;&gt; dir2/file2 </span><br><span class="line"> cat dir2/file2 </span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line"><span class="comment"># 7777</span></span><br><span class="line"></span><br><span class="line">chattr -i dir2/</span><br><span class="line">rm -rf dir2/file2 </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="系统命令sudo权限"><a href="#系统命令sudo权限" class="headerlink" title="系统命令sudo权限"></a>系统命令sudo权限</h2><ul>
+<li>root把本来只能超级用户执行的命令赋予普通用户执行。</li>
+<li>sudo的操作对象是<strong>系统命令</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">visudo</span><br><span class="line"><span class="comment"># 此命令用户赋予普通用户权限</span></span><br><span class="line"><span class="comment"># 实际修改的是 /etc/sudoers文件</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><code>root    ALL =(ALL)    ALL</code> : 给某个用户赋予权限</li>
+<li><code>%wheel       ALL=(ALL)       ALL</code> : 给某一组赋予权限</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root    ALL =(ALL)    ALL</span><br><span class="line"><span class="comment"># 用户名      被管理主机的地址=(可使用的身份)      授权命令(绝对路径)</span></span><br><span class="line"></span><br><span class="line">%wheel       ALL=(ALL)       ALL</span><br><span class="line"><span class="comment"># %组名      被管理主机的地址=(可使用的身份)      授权命令(绝利路径)</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>root    ALL =(ALL)    ALL</code>:<br>允许   <strong>某个用户</strong>   <strong>在某台计算机上</strong>   <strong>执行某条命令</strong></p>
+<ul>
+<li>这里的<code>在某台计算机上</code>似乎很难理解</li>
+<li>如果一个网站是分布式服务器,每个服务器有IP地址</li>
+<li>那么就要将这些服务器的IP地址全都加进去 , 保证命令能在这些服务器上执行.</li>
+</ul>
+<p>说人话:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user1    192.168.0.156=/sbin/shutdown -r now</span><br></pre></td></tr></table></figure>
+
+<p><strong>给user1用户在输入的IP指定的机器(192.168.0.156)里运行shutdown -r now命令的权限</strong></p>
+</blockquote>
+<p>示例 :</p>
+<ol>
+<li><p>授权user1用户可以重启服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user1     ALL=/sbin/shutdown -r now</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>user1     ALL=/sbin/shutdown</code>表示user1能执行shutdown的所有选项</li>
+<li><code>user1     ALL=/sbin/shutdown -r now</code>表示user1只能执行shutdown的-r选项</li>
+</ul>
+</li>
+<li><p>user1的使用方法:</p>
+<ul>
+<li><p>不能直接写:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shutdown -r now</span><br></pre></td></tr></table></figure></li>
+<li><p>必须使用sudo:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /sbin/shutdown -r now</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>查看user1可用的sudo命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure></li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

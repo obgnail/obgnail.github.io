@@ -1,0 +1,539 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://www.bilibili.com/video/av76294331&quot;&gt;Shell教程&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Shell教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Shell/" rel="tag">Shell</a></div><div class="post-time">2019-12-06</div></div></div><div class="container post-header"><h1>Shell教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Shell%E5%8A%9F%E8%83%BD"><span class="toc-number">1.1.</span> <span class="toc-text">Shell功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#helloworld"><span class="toc-number">1.2.</span> <span class="toc-text">helloworld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bash%E7%9A%84%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.</span> <span class="toc-text">bash的变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#declare-%E5%A3%B0%E6%98%8E%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.4.</span> <span class="toc-text">declare 声明变量类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%B7%A5%E5%85%B7"><span class="toc-number">1.5.</span> <span class="toc-text">数值运算工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shell%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">Shell中的正则表达式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E6%88%AA%E5%8F%96%E5%91%BD%E4%BB%A4"><span class="toc-number">1.7.</span> <span class="toc-text">字符截取命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cut%E5%AD%97%E6%AE%B5%E6%8F%90%E5%8F%96%E5%91%BD%E4%BB%A4"><span class="toc-number">1.7.1.</span> <span class="toc-text">cut字段提取命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#printf%E5%91%BD%E4%BB%A4"><span class="toc-number">1.7.2.</span> <span class="toc-text">printf命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#awk%E5%91%BD%E4%BB%A4"><span class="toc-number">1.7.3.</span> <span class="toc-text">awk命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA"><span class="toc-number">1.7.3.1.</span> <span class="toc-text">格式化输出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E8%AE%B0%E5%BD%95"><span class="toc-number">1.7.3.2.</span> <span class="toc-text">过滤记录</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E9%99%A4%E6%8A%80%E5%B7%A7"><span class="toc-number">1.8.</span> <span class="toc-text">字符串切除技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87"><span class="toc-number">1.9.</span> <span class="toc-text">字符串的索引和切片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.10.</span> <span class="toc-text">字符串的替换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E5%91%BD%E4%BB%A4"><span class="toc-number">1.11.</span> <span class="toc-text">sed命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#crontab%E5%91%BD%E4%BB%A4"><span class="toc-number">1.12.</span> <span class="toc-text">crontab命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="toc-number">1.13.</span> <span class="toc-text">条件测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0"><span class="toc-number">1.14.</span> <span class="toc-text">练习</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av76294331">Shell教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://coolshell.cn/articles/9070.html">AWK 简明教程</a></p>
+<h2 id="Shell功能"><a href="#Shell功能" class="headerlink" title="Shell功能"></a>Shell功能</h2><ol>
+<li>自动化批量部署系统的初始化（update软件安裝时区设置时间对时安全策略）</li>
+<li>自动化批量部署程序（lamp Inmp  tomcat lvs ngx）</li>
+<li>应用管理程序（km集群管理扩容缩容 mysql  DELL720 批量RAID</li>
+<li>日志分析处理程序（PV UV 200 !200 Top10 grep/awk)</li>
+<li>自动化备份及恢复程序（mysql安全备份/增量备份  crond）</li>
+<li>自动化按照时间（日期）命名规范去备份你的网站的代码</li>
+<li>自动化信息采集（收集系统/应用服务的状态信息 CPU EM DISK NE TWORK TCP  APACHE NGINX MYSQL）【配合 zabbix】</li>
+<li>自动化管理程序（批量远程修改主机的密码软件升级配置更新）</li>
+<li>自动扩容及缩容（云服务器阿里云一增加/删除云主机已支持业务上线）对重要的应用服务进行调换机器。</li>
+</ol>
+<h2 id="helloworld"><a href="#helloworld" class="headerlink" title="helloworld"></a>helloworld</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;hello world&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 ./test.sh</span><br><span class="line">./test.sh</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> test.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<p>eg : </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c3 -i 0.2 -W 3 <span class="variable">$1</span> &amp;&gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&amp;</code> 代表程序在后台运行 ,<code>&gt;</code>代表输出的定向符号。 </li>
+<li>所以<code>&amp;&gt;</code>代表输出重定向 , <code>&amp;&gt; /dev/null</code>的意思就是把你运行ping命令的过程转向到/dev/null中</li>
+</ul>
+<p>所以:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo sh</span></span><br><span class="line">host=baidu.com</span><br><span class="line">ping -c1 <span class="variable">$host</span> &amp;&gt;/dev/null &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$host</span> is up&quot;</span> || <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$host</span> is down&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>ping一次baidu.com,重定向到null</li>
+<li>如果前面ping命令成功 , 执行<code>echo &quot;$host is up&quot;</code></li>
+<li>否则执行<code>echo &quot;$host is down&quot;</code></li>
+</ol>
+<p>也可以写成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo sh</span></span><br><span class="line">host=baidu.com</span><br><span class="line"><span class="keyword">if</span> ping -c1 <span class="variable">$host</span> &amp;&gt;/dev/null;<span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$host</span> is up&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$host</span> is down&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="bash的变量"><a href="#bash的变量" class="headerlink" title="bash的变量"></a>bash的变量</h2><ul>
+<li>我们在命令行写的<code>ip=1.1.1.1</code> , 这是<strong>自定义变量</strong> , bash里面使用<code>$ip</code>是拿不到的</li>
+<li>我们在命令行写入<code>export ip=2.2.2.2</code> , 这是<strong>环境变量</strong> , 在bash里面使用<code>$ip</code> 是可以拿到的</li>
+</ul>
+<blockquote>
+<p>总结 :</p>
+<ol>
+<li>自定义变量 : 仅在当前shell中有效 , 在子shell中是无效的</li>
+<li>环境变量 : <strong>当前Shell和这个Shell子Shell中生效</strong></li>
+</ol>
+</blockquote>
+<p>取消变量<code>unset 变量名</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo sh</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;first var is <span class="variable">$1</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;second var is <span class="variable">$2</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;all var are $*&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;var&#x27;s num is <span class="variable">$#</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;process PIDis $$&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>之后就可以调用shell脚本<code>bash test.sh q w er t yty t wx</code></p>
+<ul>
+<li>shell中<code>&quot;&quot;</code> 和 <code>&#39;&#39;</code>都可以用来做引用，</li>
+<li>当引用对象不是一个变量时候，两种没区别，但是当引用对象是一个变量时候，</li>
+<li><code>&quot;&quot;</code>弱引用，引用的是变量值</li>
+<li><code>&#39;&#39;</code>强引用，引用的是变量本身的值</li>
+</ul>
+<h2 id="declare-声明变量类型"><a href="#declare-声明变量类型" class="headerlink" title="declare 声明变量类型"></a>declare 声明变量类型</h2><p>Linux的变量类型默认是字符串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">declare</span> [+/-][rxi][变量名称＝设置值]</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">declare</span> -f</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>参数说明</strong>：</p>
+<ul>
+<li><code>-</code> : 给变量设定类型属性</li>
+<li><code>+</code> : 取消变量的类型属性</li>
+<li><code>-i</code> : 将变量声明为整数型（Integer）</li>
+<li><code>-x</code> : 将变量声明为环境变量</li>
+<li><code>-p</code> : 显示指定变量的被声明的类型</li>
+<li><code>-f</code> : 仅显示函数。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo sh</span></span><br><span class="line">var1=11</span><br><span class="line">var2=22</span><br><span class="line"><span class="built_in">declare</span> -i var3=<span class="variable">$var1</span>+<span class="variable">$var2</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$var3</span>   <span class="comment"># 33</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/usr/bin/bash</span></span><br><span class="line"><span class="comment">## this is demo sh</span></span><br><span class="line"><span class="built_in">declare</span> -a foo=<span class="string">&#x27;([0]=&quot;a&quot; [1]=&quot;b&quot; [2]=&quot;c&quot;)&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;foo[1]&#125;</span>  <span class="comment"># b</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;foo[@]&#125;</span> <span class="comment"># a b c</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数值运算工具"><a href="#数值运算工具" class="headerlink" title="数值运算工具"></a>数值运算工具</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aa=11</span><br><span class="line">bb=22</span><br><span class="line">cc=$[<span class="variable">$aa</span>+<span class="variable">$bb</span>]</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$cc</span>  <span class="comment"># 33</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aa=11</span><br><span class="line">bb=22</span><br><span class="line">cc=$((<span class="variable">$aa</span>+<span class="variable">$bb</span>))  </span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$cc</span>  <span class="comment">#33</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aa=11</span><br><span class="line">bb=22</span><br><span class="line">dd=$(expr <span class="variable">$aa</span> + <span class="variable">$bb</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$dd</span>  <span class="comment"># 33</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Shell中的正则表达式"><a href="#Shell中的正则表达式" class="headerlink" title="Shell中的正则表达式"></a>Shell中的正则表达式</h2><p>shell中的正则是<strong>在文件中匹配字符串</strong>的 , shell中的通配符是用来<strong>匹配符合条件的文件名</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll | grep <span class="string">&quot;test*&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="字符截取命令"><a href="#字符截取命令" class="headerlink" title="字符截取命令"></a>字符截取命令</h2><h3 id="cut字段提取命令"><a href="#cut字段提取命令" class="headerlink" title="cut字段提取命令"></a>cut字段提取命令</h3><ul>
+<li>-f  列号 : 提取第几列</li>
+<li>-d  分隔符 : 按照指定分隔符分割列</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> docker ps | cut -f 1 -d <span class="string">&quot; &quot;</span></span><br><span class="line"><span class="comment">#CONTAINER</span></span><br><span class="line"><span class="comment">#df4d59714558</span></span><br><span class="line"><span class="comment">#81bd6a69a884</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat test.txt | grep 100 | grep -v hyl | cut -f 2</span><br><span class="line"><span class="comment">#包含100,不包含hyl , 截取第2列</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="printf命令"><a href="#printf命令" class="headerlink" title="printf命令"></a>printf命令</h3><p>格式化输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;输出类型输出格式&#x27;</span> 输出内容</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>%ns</code> : 输出<strong>字符串</strong>，n是数字指代输出几个字符</li>
+<li><code>%ni</code> : 输出<strong>整数</strong>，n是数字指代输出几个数字</li>
+<li><code>%m.nf</code> : 输出<strong>浮点数</strong>，m和n是数字，指代输出的整数位数和小数位数。如<code>%8.2f</code>代表共输出8位数其中2位是小数，6位是整数。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span> %s 1 2 3 4 5 6</span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> %s %s %s  1 2 3 4 5 6</span><br><span class="line"><span class="comment"># %s%s123456</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s %s %s&#x27;</span>  1 2 3 4 5 6</span><br><span class="line"><span class="comment"># 1 2 34 5 6</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s %s %s\n&#x27;</span>  1 2 3 4 5 6</span><br><span class="line"><span class="comment"># 1 2 3</span></span><br><span class="line"><span class="comment"># 4 5 6</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="awk命令"><a href="#awk命令" class="headerlink" title="awk命令"></a>awk命令</h3><blockquote>
+<p>AWK是因为其取了三位创始人 Alfred Aho，Peter Weinberger, 和 Brian Kernighan 的 Family Name 的首字符。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;条件1 &#123;动作1&#125; 条件2 &#123;动作2&#125;...&#x27;</span> 文件名</span><br><span class="line"><span class="comment"># 如果条件1符合,执行动作1,条件2符合,执行动作2</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>比起cut命令更加<strong>全能的截取<code>列</code>的命令</strong></li>
+<li>在awk命令的输出中支持print和printf命令<ul>
+<li>print：print会在每个输出之后自动加入一个换行符（Linux默认没有print命令）</li>
+<li>printf：printf是标准格式输岀命令，并不会自动加入换行符，如果需要换行，需要手工加入换行符</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;&#123;printf $2 &quot;\t&quot; $6 &quot;\n&quot;&#125;&#x27;</span> student.txt</span><br><span class="line"><span class="comment"># 不用条件,全部都执行</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df | awk <span class="string">&#x27;&#123;printf $2 &quot;\t&quot; $5 &quot;\n&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>df的第一列就是变量<code>$1</code> , 第二列就是变量<code>$2</code></li>
+<li><code>$0</code>代表一整行 </li>
+<li>所以上面命令就是打印第二列和第五列,中间有一个\t,最后有一个\n</li>
+<li>变量不需要加双引号 , 但是字符串需要添加双引号</li>
+</ul>
+<p>BEGIN : <strong>在读取数据之前</strong>先执行某些语句</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;BEGIN&#123;print &quot;test!!&quot;&#125; &#123;print $2 &quot;\t&quot; $3&#125;&#x27;</span> test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定分隔符</span></span><br><span class="line">awk <span class="string">&#x27;&#123;FS=&quot; &quot;&#125; &#123;print $1 &quot;\t&quot; $3&#125;&#x27;</span> test.txt</span><br></pre></td></tr></table></figure>
+
+<p>同理 , 还有END</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;BEGIN&#123;print &quot;test!!&quot;&#125;END &#123;printf &quot;The End \n&quot;&#125; &#123;print $2 &#125;&#x27;</span> xxx.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="格式化输出"><a href="#格式化输出" class="headerlink" title="格式化输出"></a>格式化输出</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df -h | awk <span class="string">&#x27;&#123;printf &quot;%-12s %-8s %-8s %-18s %-22s %-15s\n&quot;,$1,$2,$3,$4,$5,$6&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="过滤记录"><a href="#过滤记录" class="headerlink" title="过滤记录"></a>过滤记录</h4><p>第三列的值为0 &amp;&amp; 第6列的值为LISTEN</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;$3==0 &amp;&amp; $6==&quot;LISTEN&quot; &#x27;</span> netstat.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="字符串切除技巧"><a href="#字符串切除技巧" class="headerlink" title="字符串切除技巧"></a>字符串切除技巧</h2><p><code>#</code> :切除字符串前面的子串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">url=www.sina.com.cn</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url&#125;</span>  <span class="comment"># www.sina.com.cn</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url#www.sina&#125;</span> <span class="comment"># .com.cn</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url#*si&#125;</span>  <span class="comment"># na.com.cn</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一个井号<code>#</code> 是非贪婪匹配</li>
+<li>两个井号<code>##</code>是贪婪匹配</li>
+</ul>
+<p><code>%</code> : 切除字符串后面的子串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">url=www.baidu.com</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url%.*&#125;</span>  <span class="comment"># www.baidu</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url%%.*&#125;</span>  <span class="comment"># www</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="字符串的索引和切片"><a href="#字符串的索引和切片" class="headerlink" title="字符串的索引和切片"></a>字符串的索引和切片</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">url=www.baidu.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从索引为4开始 , 获取后面3个字符</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url:4:3&#125;</span>  <span class="comment"># bai</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="字符串的替换"><a href="#字符串的替换" class="headerlink" title="字符串的替换"></a>字符串的替换</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url=www.baidu.com</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url/baidu/google&#125;</span>  <span class="comment"># www.google.com</span></span><br></pre></td></tr></table></figure>
+
+<p>默认非贪婪</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url/w/W&#125;</span> <span class="comment"># Www.baidu.com</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url//w/W&#125;</span> <span class="comment"># WWW.baidu.com</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用替换来进行切除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;url/www/w&#125;</span> <span class="comment"># w.baidu.com</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="sed命令"><a href="#sed命令" class="headerlink" title="sed命令"></a>sed命令</h2><ul>
+<li>sed主要是用来将数据进行选取、替换、删除、新增的命令。</li>
+<li>简单来说 ,<strong>sed就像是vim</strong> , 但是vim只能修改文件 , 而sed可以修改命令返回的数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed [选项] <span class="string">&#x27;[动作]&#x27;</span> 文件名</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>选项:<ul>
+<li><code>-n</code> : <strong>一般sed命令会把所有数据都输出到屏幕</strong>，如果加入此选择，则只会把经过sed命令处理的行输出到屏幕。</li>
+<li><code>-e</code> : 允许对输入数据应用多条sed命令编辑</li>
+<li><code>-i</code> : 用sed的修改结果<strong>直接修改读取数据的文件</strong>，而不是由屏幕输出</li>
+</ul>
+</li>
+<li>动作:<ul>
+<li>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～</li>
+<li>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！</li>
+<li>d ：删除，因为是删除啊，所以 d 后面通常不接任何咚咚；</li>
+<li>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；</li>
+<li>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行</li>
+<li>s ：取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配正规表示法！例如 1,20s/old/new/g </li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cat xxx.txt</span><br><span class="line"><span class="comment"># id:name:score</span></span><br><span class="line"><span class="comment"># 1:hyl:96</span></span><br><span class="line"><span class="comment"># 2:dsz:100</span></span><br><span class="line"><span class="comment"># 3:gzr:120</span></span><br><span class="line"></span><br><span class="line">sed -n <span class="string">&#x27;2p&#x27;</span> xxx.txt</span><br><span class="line"><span class="comment"># 1:hyl:96</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/旧字串/新字串/g&#x27;</span> 文件名</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cat xxx.txt</span><br><span class="line">id:name:score</span><br><span class="line"><span class="comment"># 1:hyl:96</span></span><br><span class="line"><span class="comment"># 2:dsz:100</span></span><br><span class="line"><span class="comment"># 3:gzr:120</span></span><br><span class="line"></span><br><span class="line">sed <span class="string">&#x27;s/gzr/XXX/g&#x27;</span> xxx.txt</span><br><span class="line"><span class="comment"># id:name:score</span></span><br><span class="line"><span class="comment"># 1:hyl:96</span></span><br><span class="line"><span class="comment"># 2:dsz:100</span></span><br><span class="line"><span class="comment"># 3:<span class="doctag">XXX:</span>120</span></span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-z string</td>
+<td>如果 string 长度为零，则为真</td>
+<td>[ -z “$myvar” ]</td>
+</tr>
+<tr>
+<td>-n string</td>
+<td>如果 string 长度非零，则为真</td>
+<td>[ -n “$myvar” ]</td>
+</tr>
+<tr>
+<td>string1 = string2</td>
+<td>如果 string1 与 string2 相同，则为真</td>
+<td>[ “$myvar” = “one two three” ]</td>
+</tr>
+<tr>
+<td>string1 != string2</td>
+<td>如果 string1 与 string2 不同，则为真</td>
+<td>[ “$myvar” != “one two three” ]</td>
+</tr>
+</tbody></table>
+<h2 id="crontab命令"><a href="#crontab命令" class="headerlink" title="crontab命令"></a>crontab命令</h2><ul>
+<li>crontab是一个命令，常见于Unix和类Unix的操作系统之中，用于设置周期性被执行的指令。</li>
+<li>该命令从标准输入设备读取指令，并将其存放于<code>crontab</code>文件中，以供之后读取和执行。与windows下的计划任务类似，当安装完成操作系统后，默认会安装此服务工具，并且会自动启动crond进程，crond进程每分钟会定期检查是否有要执行的任务，如果有要执行的任务，则自动执行该任务。</li>
+</ul>
+<blockquote>
+<ul>
+<li>cron是服务名称；</li>
+<li>crond是后台进程；</li>
+<li>crontab是计划任务表；</li>
+</ul>
+</blockquote>
+<p>任务分类</p>
+<ul>
+<li><p><strong>系统任务调度</strong></p>
+<blockquote>
+<ul>
+<li><code>系统</code>周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。</li>
+<li>在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件</li>
+</ul>
+</blockquote>
+</li>
+<li><p><strong>用户任务调度</strong></p>
+<blockquote>
+<ul>
+<li><code>用户</code>定期要执行的工作，比如用户数据备份、定时邮件提醒等。</li>
+<li>用户可以使用crontab来定制自己的计划任务。所有用户定义的crontab文件都被保存在/var/spool/cron目录下，其文件名与用户名一致。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>用法</p>
+<ol>
+<li><p><code>crontab [-u user] file</code></p>
+<blockquote>
+<ul>
+<li>-u用来指定某个用户的crontab服务，一般是像root这种高权限用户使用。</li>
+<li>file是命令文件的名字，表示将file做为crontab的任务列表文件并载入crontab。</li>
+<li>如果在命令行中没有指定这个文件，crontab命令将接受标准输入（键盘）上键入的命令，并将它们载入crontab。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>crontab [-u user] -e</code></p>
+<blockquote>
+<ul>
+<li>编辑某个用户的crontab文件内容。</li>
+<li>如果不指定用户，则表示编辑当前用户的crontab文件内容。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>crontab [-u user] -l</code></p>
+<blockquote>
+<ul>
+<li>显示某个用户的crontab文件内容。</li>
+<li>如果不指定用户，则表示显示当前用户的crontab文件内容。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>crontab [-u user] -[i]r</code></p>
+<blockquote>
+<ul>
+<li>从/var/spool/cron目录中删除某个用户的crontab文件，</li>
+<li>如果不指定用户，则默认删除当前用户的crontab文件。</li>
+<li>-i参数指定在删除用户的crontab文件时是否给确认提示。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<p>crontab内容格式</p>
+<ul>
+<li><p>户所建立的crontab文件中，每一行都代表一项任务，</p>
+</li>
+<li><p>每行的每个字段代表一项设置，它的格式共分为六个字段，前五段是时间设定段，第六段是要执行的命令段</p>
+<blockquote>
+<p>minute   hour   day   month   week   command   </p>
+<ul>
+<li>minute： <strong>每个小时的第几分钟执行该任务</strong> ，可以是从0到59之间的任何整数；</li>
+<li>hour：每天的第几个小时执行该任务 ，可以是从<strong>0到23之间的任何整数</strong>；</li>
+<li>day：每月的第几天执行该任务 ，可以是从1到31之间的任何整数；</li>
+<li>month：每年的第几个月执行该任务 ，可以是从1到12之间的任何整数；</li>
+<li>week：每周的第几天执行该任务 ，可以是从0到6之间的任何整数，这里的0代表星期日；</li>
+<li>command：要执行的命令，可以是系统命令，也可以是自己编写的脚本文件。</li>
+</ul>
+<p>前五个时间设定段，可以含如下特殊字符：</p>
+<ol>
+<li>星号（*）：代表所有可能的值，例如<strong>month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作</strong>；</li>
+<li>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”；</li>
+<li>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”；</li>
+<li>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如***/10，如果用在minute字段，表示每十分钟执行一次。**</li>
+</ol>
+<p>示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">5 * * * * Command                          每小时的第5分钟执行一次命令</span><br><span class="line">30 18 * * * Command                     指定每天的 18:30 执行一次命令 </span><br><span class="line">30 7 8 * * Command                      指定每月8号的7：30分执行一次命令 </span><br><span class="line">30 5 8 6 * Command                     指定每年的6月8日5：30执行一次命令 </span><br><span class="line">30 6 * * 0 Command                      指定每星期日的6:30执行一次命令</span><br><span class="line"></span><br><span class="line">每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。 </span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * Command</span><br><span class="line"></span><br><span class="line">1 1,2 * * * reboot    其中的1,2代表每天的1点和2点的第一分钟的时候执行reboot命令，中间的逗号表示不同的时间点</span><br><span class="line">*/1 * * * * reboot     这里的*/1表示每隔一分钟就执行reboot命令了</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>crond服务操作命令</p>
+<ul>
+<li>/sbin/service crond start          启动服务</li>
+<li>/sbin/service crond stop          关闭服务  </li>
+<li>/sbin/service crond restart       重启服务  </li>
+<li>/sbin/service crond reload       重新载入配置</li>
+<li>/sbin/service crond status       服务是否运行</li>
+</ul>
+</li>
+</ul>
+<h2 id="条件测试"><a href="#条件测试" class="headerlink" title="条件测试"></a>条件测试</h2><ul>
+<li>格式1：<code>test 条件表达式</code></li>
+<li>格式2：<code>[ 条件表达式 ]</code></li>
+<li>格式3：<code>[[ 条件表达式 ]]</code></li>
+</ul>
+<blockquote>
+<p>两个[[]]支持正则表达式</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">test</span> -d /root/</span><br><span class="line"><span class="built_in">echo</span> $?  <span class="comment"># 0</span></span><br><span class="line"></span><br><span class="line"> [ -d /root/ ]</span><br><span class="line"> <span class="built_in">echo</span> $?  <span class="comment"># 0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>检测创建</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ ! -d ./ccc ] &amp;&amp; mkdir ./ccc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ $(id -u) -eq 0 ]  &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;当前用户是超级用户&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">work_dir=<span class="string">&quot;./aaa/&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$work_dir</span> ] ;</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    mkdir -p <span class="variable">$work_dir</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;现已经创建了该目录&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;已存在该目录,创建失败&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;please enter a num&quot;</span> num</span><br><span class="line"><span class="keyword">if</span> [[ ! <span class="string">&quot;<span class="variable">$num</span>&quot;</span> =~ ^[0-9]+$  ]];</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;你输入的不是数字&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;ok&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> :</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">read</span> -p <span class="string">&quot;please enter a num&quot;</span> num</span><br><span class="line">	<span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$num</span>&quot;</span> =~ ^[0-9]+$ ]];</span><br><span class="line">	<span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;ok&quot;</span></span><br><span class="line">	<span class="built_in">break</span></span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ip=192.168.126.142</span><br><span class="line">ping -c1 <span class="variable">$ip</span> $&gt;/dev/null</span><br><span class="line"><span class="keyword">if</span> [ $? -eq 0 ] ; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$ip</span> is up&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$ip</span> is down&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av76294331/?p=13">https://www.bilibili.com/video/av76294331/?p=13</a></p>
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p> 先测试“/etc/vsftpd”、“/etc/hosts”是否为目录，并通过“$?”变量查看返回状态值，据此判断测试结果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">file1=<span class="string">&quot;/etc/vsftpd&quot;</span></span><br><span class="line">file2=<span class="string">&quot;/etc/hosts&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> <span class="variable">$file1</span> <span class="variable">$file2</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        [ -d f ]</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;$?&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>测试“/media/cdrom/Server”及其父目录是否存在，如果存在则显示“YES”，否则不输出任何信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">file1=<span class="string">&quot;/media/cdrom/Server&quot;</span></span><br><span class="line">file2=<span class="string">&quot;/media/cdrom/&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -e <span class="variable">$file1</span> ] &amp;&amp; [ -d <span class="variable">$file2</span> ];</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用普通用户teacher登录，并测试是否对“/etc/passwd”文件有读、写权限，如果是则显示“YES”。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">file1=<span class="string">&quot;/etc/passwd&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -w <span class="variable">$file1</span> ] &amp;&amp; [ -r <span class="variable">$file1</span> ];</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>测试当前登录到系统中的用户数量是否小于或等于10，是则输出“YES”。</p>
+<blockquote>
+<p>who命令 : 显示系统中有哪些使用者正在上面，显示的资料包含了使用者 ID、使用的终端机、从哪边连上来的、上线时间、呆滞时间、CPU 使用量、动作等等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">who</span><br><span class="line"><span class="comment"># root     tty1         2019-11-20 06:46</span></span><br><span class="line"><span class="comment"># root     pts/1        2019-11-20 20:45 (10.0.1.125)</span></span><br><span class="line"><span class="comment"># root     pts/4        2019-11-20 21:11 (10.0.1.125)</span></span><br><span class="line"><span class="comment"># root     pts/5        2019-11-21 00:36 (10.0.0.197)</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ `who|wc -l` -le 10 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>提取出“/boot”分区的磁盘使用率，并判断是否超过95%</p>
+<blockquote>
+<p><code>awk -F</code> : -F相当于内置变量FS, 指定分割字符</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ `df  | grep <span class="string">&#x27;/boot&#x27;</span> | awk <span class="string">&#x27;&#123;print $5&#125;&#x27;</span> | awk -F <span class="string">&#x27;%&#x27;</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>`  -ge 95 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;Warning&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>提示用户输入一个文件路径，并判断是否是“/etc/inittab”,如果是 输出“yes”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;please enter a num:&quot;</span> num</span><br><span class="line">[ <span class="variable">$num</span> == <span class="string">&quot;/etc/inittab&quot;</span> ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span> || <span class="built_in">echo</span> <span class="string">&quot;no&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>[ $num == &quot;/etc/inittab&quot; ]</code></p>
+<ul>
+<li>if和[ ]之间要空格。</li>
+<li>[ ]和“ ”之间要空格</li>
+<li>“ ”和=之间要空格，</li>
+</ul>
+</blockquote>
+<p>若当前环境变量LANG的内容不是“en.US”,则输出LANG变量的值，否则无输出。</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ `<span class="built_in">echo</span> <span class="variable">$LANG</span>` != <span class="string">&quot;en.US&quot;</span> ];<span class="keyword">then</span> <span class="built_in">echo</span> <span class="variable">$LANG</span>;<span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>测试“/etc/profile” 文件是否有可执行权限，若确实没有可执行权限，则提示“No x mode.”的信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ ! -x  /etc/profile ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No x mode&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ -x <span class="string">&quot;/etc/profile&quot;</span> ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span> || <span class="built_in">echo</span> <span class="string">&quot;Not x mode&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>若当前的用户是root且使用的shell程序是“/bin/bash”, 则显示“YES”，否则无任何输出。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ <span class="variable">$USER</span> == <span class="string">&quot;root&quot;</span> ] &amp;&amp; [ <span class="variable">$SHELL</span> == <span class="string">&quot;/bin/bash&quot;</span> ]  &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ `<span class="built_in">echo</span> <span class="variable">$USER</span>` == <span class="string">&quot;root&quot;</span> ] &amp;&amp; [ `<span class="built_in">echo</span> <span class="variable">$SHELL</span>` == <span class="string">&quot;/bin/bash&quot;</span> ] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;yes&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>检查“/tmp/test/bbb.sh”文件是否存在，若存在则统计文件内容的行数并输出，否则不做任何操作（合理使用变量，可以提高编写效率）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ -f <span class="string">&#x27;/tmp/test/bbb.sh&#x27;</span> ] &amp;&amp; `<span class="built_in">echo</span> wc -l /tmp/<span class="built_in">test</span>/bbb.sh`</span><br></pre></td></tr></table></figure>
+
+
+
+<p>提示用户指定备份目录的路径，若目录已存在则显示提示信息后跳过，否则显示相应提示信息后创建该目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;enter your dir:&quot;</span> dir</span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$dir</span>&quot;</span> ];</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        mkdir <span class="variable">$dir</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>统计当前登录到系统中的用户数量，并判断是否超过三个，若是则显示实际数量并给出警告信息，否则列出登录的用户账号名称及所在终端。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">un=<span class="string">&#x27;who&#x27;</span> | wc -l</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$un</span> -gt 3 ];<span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;warning: too much users.(total: <span class="variable">$un</span>)&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;login users:&quot;</span></span><br><span class="line">  who | awk <span class="string">&#x27;&#123;print $1,$2&#125;&#x27;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>检查portmap进程是否已经存在，若已经存在则输出“portmap service if running.” ;否则检查是否存在“/etc/rc.d/init.d/portmap” 可执行脚本，存在则启动portmap服务，否则提示“no portmap script file.”。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Process=`ps aux | grep portmap | grep -v grep`</span><br><span class="line"><span class="keyword">if</span> [ -n <span class="variable">$Process</span> ] ; <span class="keyword">then</span></span><br><span class="line">	<span class="keyword">if</span> [ ! -f /etc/rc.d/init.d/portmap ] ; <span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;no portmap scipt file&quot;</span></span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;portmap sercice is running&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> pgrep kacdwadhpid &amp;&gt;/dev/null</span><br><span class="line">   <span class="keyword">if</span> [ $? -eq 0 ] ;</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">     <span class="built_in">echo</span> <span class="string">&quot;portmap service is running&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ -x <span class="string">&quot;/etc/rc.d/init.d/portmap&quot;</span> ] ;</span><br><span class="line">     <span class="keyword">then</span></span><br><span class="line">        Service portmap start</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">       <span class="built_in">echo</span> <span class="string">&quot;no portmap script file&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>每隔五分钟监测一次mysqld服务进程的运行状态，若发现mysqld进程已终止，则在“/var/log/messages”文件中追加写入日志信息（包括当时时间），并重启mysqld服务；否则不进行任何操作</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Pgrep mysqld &amp;&gt;/dev/null</span><br><span class="line">If [$? –ne 0];</span><br><span class="line">  Then</span><br><span class="line">  <span class="built_in">echo</span> “`<span class="variable">$date</span> +%F` is restart mysqld services ” &gt;/var/<span class="built_in">log</span>/messages</span><br><span class="line">  services mysqld restart </span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">crontab –e </span><br><span class="line">5 * * * * /bin/bash /server/scripts/mysqld.sh</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
+
+
+
+<p>依次输出三条文字信息，包括一天中的“Moring”、“Noon”、“Evening”字串。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="string">&quot;morning&quot;</span> <span class="string">&quot;noon&quot;</span> <span class="string">&quot;evening&quot;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="variable">$t</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>对于使用“/bin/bash”作为登录shell的系统用户，检查他们在“/opt”目录中拥有的子目录或文件数量，如果超过100个，则列出具体数值及对应的用户账号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User=`grep <span class="string">&quot;/bin/bash&quot;</span> /etc/passwd | awk -F <span class="string">&#x27;:&#x27;</span> <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>`</span><br><span class="line">Number=`find /opt -user <span class="variable">$User</span> | grep -v ^/opt$  | wc -l`</span><br><span class="line"><span class="keyword">if</span> [  <span class="variable">$Number</span> -gt 100 ] ; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="variable">$User</span>:<span class="variable">$Number</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

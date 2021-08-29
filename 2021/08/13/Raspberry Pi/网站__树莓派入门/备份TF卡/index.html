@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="地址：&lt;a href=&quot;https://sspai.com/post/66938&quot;&gt;https://sspai.com/post/66938&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>备份TF卡 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-13</div></div></div><div class="container post-header"><h1>备份TF卡</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%87%E4%BB%BD%E6%A0%91%E8%8E%93%E6%B4%BE%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">备份树莓派系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9-TF-%E5%8D%A1%E8%BF%9B%E8%A1%8C%E5%AE%8C%E6%95%B4%E5%A4%87%E4%BB%BD"><span class="toc-number">1.1.</span> <span class="toc-text">对 TF 卡进行完整备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-rpi-backup-%E8%84%9A%E6%9C%AC%E8%BF%9B%E8%A1%8C%E5%A4%87%E4%BB%BD"><span class="toc-number">1.2.</span> <span class="toc-text">使用 rpi-backup 脚本进行备份</span></a></li></ol></li></ol></details></div><div class="container post-content"><p>地址：<a target="_blank" rel="noopener" href="https://sspai.com/post/66938">https://sspai.com/post/66938</a></p>
+<h2 id="备份树莓派系统"><a href="#备份树莓派系统" class="headerlink" title="备份树莓派系统"></a>备份树莓派系统</h2><p>在折腾树莓派的过程中，我们少不了在系统中安装和配置各种软件、Python 库、环境依赖等等。搞机是有风险的，为了在我们将系统折腾翻车的时候有一个撤回的机会，我们可以在适当的时候对系统进行备份，以备有需要时可以恢复系统。</p>
+<p>根据调研和实测，目前有两种备份树莓派系统的方法，它们有各自的适用范围。以下分别介绍这两种方法。</p>
+<h3 id="对-TF-卡进行完整备份"><a href="#对-TF-卡进行完整备份" class="headerlink" title="对 TF 卡进行完整备份"></a>对 TF 卡进行完整备份</h3><p>我们在 PC 上用来向 TF 卡烧录系统的软件 Win32DiskImager，也可以用来将 TF 卡上的系统完整备份为一个镜像文件。</p>
+<p>我们把树莓派关机后，将 TF 卡拔出，通过读卡器连到 PC 上（照例忽视系统弹出的「需要格式化」等警告）。在 PC 上打开 Win32DiskImager，在「映像文件」中选择准备存放镜像文件的路径，并输入镜像文件名称和「.img」后缀。确认「设备」选中的是 TF 卡 boot 分区对应的盘符，然后点击「读取」，此时软件会从「设备」向「映像文件」传输文件，完成后，TF 卡上的树莓派系统就备份到 <code>D:/Raspberry Pi/systemBackUp.img</code> 这个镜像文件中了。</p>
+<p><img src="/images/1.png" alt="img"></p>
+<p>现在，我们就将树莓派现在的系统完整备份到了这个镜像文件。想恢复这个系统时，我们只需要将 TF 卡格式化之后，按照上文「2. 烧录树莓派系统」中的操作，将此镜像文件烧录到 TF 卡中即可。</p>
+<p>推荐大家使用 <a target="_blank" rel="noopener" href="https://www.sdcardformatter.com/download/">SD Card Formatter</a> 来格式化 TF 卡，有 Windows 和 MacOS 版本。它可以十分方便、干净完成对 TF 卡的格式化，不容易误格式化其他硬盘。</p>
+<p><img src="/images/1-20210809141655700.png" alt="img"></p>
+<p>无需其他设置，直接按「Format」即可完成格式化。</p>
+<p>这个备份系统的方法操作简单，但是它的缺点是需要将 TF 卡完整备份，所生成的镜像文件体积等于 TF 卡的容量。因此这种方法比较适用于对小容量 TF 卡（≤ 16 GB）的备份，对于大容量的 TF 卡（比如 ≥ 128 GB），每次备份都会产生一个 128 GB 的镜像文件，这显然是不科学的。这就引出了我们的第二个备份方法。</p>
+<h3 id="使用-rpi-backup-脚本进行备份"><a href="#使用-rpi-backup-脚本进行备份" class="headerlink" title="使用 rpi-backup 脚本进行备份"></a>使用 rpi-backup 脚本进行备份</h3><p>这种方法使用大佬编写的 rpi-backup 脚本对树莓派系统进行备份。这个备份方法所生成的镜像文件体积是系统已用空间的 1.2 倍，相比于第一种备份方法，这种方法可以显著缩小镜像文件的体积，节省镜像文件所占用的磁盘空间。</p>
+<p>这个备份方案需要在树莓派上操作。我们需要将 rpi-backup 脚本文件拷贝到树莓派中。从 Github 克隆脚本文件到树莓派上：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/nanhantianyi/rpi-backup.git</span><br></pre></td></tr></table></figure>
+
+<p>接下来，在树莓派命令行窗口中执行 cd 指令跳转到脚本所在的路径，比如我将脚本文件存放在 <code>pi/Downloads/rpi-backup-master</code> 路径下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd Downloads/rpi-backup-master</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1-20210809141655899.png" alt="img">脚本文件所在的路径</p>
+<p><img src="/images/1-20210809141655886.png" alt="img"></p>
+<p>▲利用 cd 指令进入到脚本文件所在路径中</p>
+<p>现在，在此路径下执行以下指令即可执行「back.sh」脚本来将树莓派系统备份为镜像文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo bash back.sh xxx.img</span><br></pre></td></tr></table></figure>
+
+<p>其中「xxx」为镜像文件名称。所生成的镜像文件将存放在「back.sh」同一路径下。我们可以修改「xxx」内容来指定镜像文件的存放路径和名称，如 <code>Documents/systemBackUp.img</code> 等。恢复系统时，同样只需要将 TF 卡格式化，然后将备份的镜像文件烧录到 TF 卡中即可。</p>
+<p>我使用这个方法对我的树莓派的系统进行备份，结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>体积</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TF 卡</td>
+<td>32 GB</td>
+</tr>
+<tr>
+<td>系统已用空间</td>
+<td>6.7 GB</td>
+</tr>
+<tr>
+<td>备份系统后生成的镜像文件</td>
+<td>8.3 GB</td>
+</tr>
+</tbody></table>
+<p>可以看到， 镜像文件体积大约是系统已用空间的 1.24 倍，远小于 TF 卡的容量。</p>
+<p>这种备份方法并非没有缺点。它所生成的镜像文件是保存 TF 卡中的，如果 TF 卡容量不大，剩余的空间不多，我们需要将硬盘挂载到树莓派上合适的目录下，然后将镜像文件保存到硬盘中。因此，大家根据自己实际情况选择合适自己的系统备份方法吧。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

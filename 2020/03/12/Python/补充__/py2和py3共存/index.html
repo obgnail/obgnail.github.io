@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;设置py2和py3&quot;&gt;&lt;a href=&quot;#设置py2和py3&quot; class=&quot;headerlink&quot; title=&quot;设置py2和py3&quot;&gt;&lt;/a&gt;设置py2和py3&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;py3使用anaconda安装 , 自动设置环境变量&lt;/li&gt;
+&lt;li&gt;py2官网安装&lt;/li&gt;
+&lt;li&gt;将py2安装包的&lt;code&gt;python.exe&lt;/code&gt;重命名为&lt;code&gt;python2.exe&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;设置环境变量 , 键为&lt;code&gt;python2&lt;/code&gt;,值为&lt;code&gt;C:\python27&lt;/code&gt;(也就是安装路径) . 同时在Path里添加&lt;code&gt;C:\python27&lt;/code&gt;和&lt;code&gt;C:\python27\Scripts&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;这样&lt;code&gt;python -V&lt;/code&gt; 对应的就是py3 , &lt;code&gt;python2 -V&lt;/code&gt;对应的就是py2&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;设置pip2和pip3&quot;&gt;&lt;a href=&quot;#设置pip2和pip3&quot; class=&quot;headerlink&quot; title=&quot;设置pip2和pip3&quot;&gt;&lt;/a&gt;设置pip2和pip3&lt;/h2&gt;&lt;p&gt;如果不想折腾 , 那么使用&lt;code&gt;python2 -m pip &lt;/code&gt; 来使用py2的&lt;code&gt;pip&lt;/code&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>py2和py3共存 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Python/" rel="tag">Python</a></div><div class="post-time">2020-03-12</div></div></div><div class="container post-header"><h1>py2和py3共存</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEpy2%E5%92%8Cpy3"><span class="toc-number">1.</span> <span class="toc-text">设置py2和py3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEpip2%E5%92%8Cpip3"><span class="toc-number">2.</span> <span class="toc-text">设置pip2和pip3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEpy2%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">3.</span> <span class="toc-text">设置py2虚拟环境</span></a></li></ol></details></div><div class="container post-content"><h2 id="设置py2和py3"><a href="#设置py2和py3" class="headerlink" title="设置py2和py3"></a>设置py2和py3</h2><ol>
+<li>py3使用anaconda安装 , 自动设置环境变量</li>
+<li>py2官网安装</li>
+<li>将py2安装包的<code>python.exe</code>重命名为<code>python2.exe</code></li>
+<li>设置环境变量 , 键为<code>python2</code>,值为<code>C:\python27</code>(也就是安装路径) . 同时在Path里添加<code>C:\python27</code>和<code>C:\python27\Scripts</code></li>
+<li>这样<code>python -V</code> 对应的就是py3 , <code>python2 -V</code>对应的就是py2</li>
+</ol>
+<h2 id="设置pip2和pip3"><a href="#设置pip2和pip3" class="headerlink" title="设置pip2和pip3"></a>设置pip2和pip3</h2><p>如果不想折腾 , 那么使用<code>python2 -m pip </code> 来使用py2的<code>pip</code></p>
+<p>如果想折腾:</p>
+<blockquote>
+<p>因为修改了python.exe 的名称，pip2无法根据<code>C:\python27\python.exe</code>来找到python程序 ,只要升级pip就可以了。</p>
+<p>因为重新安装pip后，会根据修改后的python的执行文件（python2.exe）来重新创建关联。如下：</p>
+</blockquote>
+<ol>
+<li>执行<code>python2  -m pip install --upgrade</code> , 但是如果你当前的pip已经是最新版本了，就无法升级，可以使用强制重新安装最新版本pip解决：<code>python2  -m pip install --upgrade --force-reinstall pip</code></li>
+<li>上面操作之后 , pip就变成了pip2了 , 我们只需将<code>C:\Python27\Scripts\pip.exe</code>重命名为<code>C:\Python27\Scripts\pip.exe.bak</code>即可 , 这样因为找不到<code>pip.exe</code>,就只能去使用<code>pip2.exe</code> </li>
+<li>这样<code>pip -V</code>对应就是py3 , <code>pip2 -V</code>对应就是py2</li>
+</ol>
+<h2 id="设置py2虚拟环境"><a href="#设置py2虚拟环境" class="headerlink" title="设置py2虚拟环境"></a>设置py2虚拟环境</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtualenv venv</span><br></pre></td></tr></table></figure>
+
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

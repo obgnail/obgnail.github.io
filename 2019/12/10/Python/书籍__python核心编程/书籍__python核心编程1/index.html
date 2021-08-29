@@ -1,0 +1,303 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第一章-正则表达式&quot;&gt;&lt;a href=&quot;#第一章-正则表达式&quot; class=&quot;headerlink&quot; title=&quot;第一章:正则表达式&quot;&gt;&lt;/a&gt;第一章:正则表达式&lt;/h2&gt;&lt;h3 id=&quot;匹配模式&quot;&gt;&lt;a href=&quot;#匹配模式&quot; class=&quot;headerlink&quot; title=&quot;匹配模式&quot;&gt;&lt;/a&gt;匹配模式&lt;/h3&gt;&lt;p&gt;&lt;code&gt;(?id/name)Y|N)&lt;/code&gt; : 如果分组所提供的id或者name(名称)存在,就返回正则表达式的条件匹配Y,如果不存在,就返回N;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>python核心编程1 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Python/" rel="tag">Python</a></div><div class="post-time">2019-12-10</div></div></div><div class="container post-header"><h1>python核心编程1</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">第一章:正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">匹配模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E7%AC%A6%E6%B3%A8%E6%84%8F"><span class="toc-number">1.2.</span> <span class="toc-text">管道符注意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%B7%B2%E7%BC%96%E8%AF%91%E7%9A%84%E5%AF%B9%E8%B1%A1%E8%BF%9B%E8%A1%8C%E7%BC%93%E5%AD%98"><span class="toc-number">1.3.</span> <span class="toc-text">对已编译的对象进行缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8regex%E6%9B%B4%E6%8D%A2%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">使用regex更换位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#re-split"><span class="toc-number">1.5.</span> <span class="toc-text">re.split</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iLmsux-%E6%8B%93%E5%B1%95%E7%AC%A6%E5%8F%B7"><span class="toc-number">1.6.</span> <span class="toc-text">(?iLmsux)拓展符号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#re-I"><span class="toc-number">1.6.1.</span> <span class="toc-text">re.I</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#re-m"><span class="toc-number">1.6.2.</span> <span class="toc-text">re.m</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#re-s"><span class="toc-number">1.6.3.</span> <span class="toc-text">re.s</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#re-x"><span class="toc-number">1.6.4.</span> <span class="toc-text">re.x</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%8E%B7%E5%8F%96%E8%A1%A8%E6%A0%BC%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.7.</span> <span class="toc-text">正则获取表格的最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8split%E5%92%8C-s-s-%E5%88%86%E5%88%97"><span class="toc-number">1.7.1.</span> <span class="toc-text">使用split和\s\s+分列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8split%E5%92%8C-s-s-%E5%88%86%E5%88%97-1"><span class="toc-number">1.7.2.</span> <span class="toc-text">使用split和\s\s*分列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E9%83%A8%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E5%8C%B9%E9%85%8D"><span class="toc-number">1.7.3.</span> <span class="toc-text">全部使用正则匹配</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">第二章:网络编程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%97%E6%8E%A5%E5%AD%97%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">套接字概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E8%BF%9E%E6%8E%A5%E7%9A%84%E5%A5%97%E6%8E%A5%E5%AD%97%E4%B8%8E%E6%97%A0%E8%BF%9E%E6%8E%A5%E7%9A%84%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="toc-number">2.2.</span> <span class="toc-text">面向连接的套接字与无连接的套接字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python-%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">Python 中的网络编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%97%E6%8E%A5%E5%AD%97%E5%AF%B9%E8%B1%A1%EF%BC%88%E5%86%85%E7%BD%AE%EF%BC%89%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">套接字对象（内置）方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="toc-number">2.4.1.</span> <span class="toc-text">服务端套接字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="toc-number">2.4.2.</span> <span class="toc-text">客户端套接字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AC%E5%85%B1%E7%94%A8%E9%80%94%E7%9A%84%E5%A5%97%E6%8E%A5%E5%AD%97%E5%87%BD%E6%95%B0"><span class="toc-number">2.4.3.</span> <span class="toc-text">公共用途的套接字函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E9%98%BB%E5%A1%9E%E7%9A%84%E5%A5%97%E6%8E%A5%E5%AD%97%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.4.</span> <span class="toc-text">面向阻塞的套接字方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E6%96%87%E4%BB%B6%E7%9A%84%E5%A5%97%E6%8E%A5%E5%AD%97%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.5.</span> <span class="toc-text">面向文件的套接字方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">2.4.6.</span> <span class="toc-text">数据属性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E9%9B%85%E5%9C%B0%E9%80%80%E5%87%BA%E5%92%8C%E8%B0%83%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8-close-%E6%96%B9%E6%B3%95"><span class="toc-number">2.5.</span> <span class="toc-text">优雅地退出和调用服务器 close()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP-%E5%92%8C-TCP-%E7%9A%84%E5%9C%A8%E7%BC%96%E7%A0%81%E6%97%B6%E5%B7%AE%E5%BC%82"><span class="toc-number">2.6.</span> <span class="toc-text">UDP 和 TCP 的在编码时差异</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="第一章-正则表达式"><a href="#第一章-正则表达式" class="headerlink" title="第一章:正则表达式"></a>第一章:正则表达式</h2><h3 id="匹配模式"><a href="#匹配模式" class="headerlink" title="匹配模式"></a>匹配模式</h3><p><code>(?id/name)Y|N)</code> : 如果分组所提供的id或者name(名称)存在,就返回正则表达式的条件匹配Y,如果不存在,就返回N;</p>
+<blockquote>
+<ol>
+<li>|N是可选项</li>
+<li>eg : <code>(?(1)y|x)</code></li>
+</ol>
+</blockquote>
+<h3 id="管道符注意"><a href="#管道符注意" class="headerlink" title="管道符注意"></a>管道符注意</h3><p>管道符表示一个<strong>从多个模式中选择其一</strong>的操作 , 所以不必添加括号</p>
+<blockquote>
+<p><code>abc | bcd | efg</code><br>不必写成 <code>(abc) | (bcd) | (efg)</code></p>
+</blockquote>
+<p><code>&lt;/?[^&gt;]+&gt;</code> : 匹配全部有效的（和无效的）HTML 标签</p>
+<h3 id="对已编译的对象进行缓存"><a href="#对已编译的对象进行缓存" class="headerlink" title="对已编译的对象进行缓存"></a>对已编译的对象进行缓存</h3><ol>
+<li>强烈建议使用预编译</li>
+<li>模块函数会对已编译的对象进行缓存，所以不是所有使用相同正则表达式模式的 search()和 match()都需要编译。</li>
+<li>即使这样，使用预编译也节省了缓存查询时间，并且不必对于相同的字符串反复进行函数调用。</li>
+<li>在不同的 Python 版本中，缓存中已编译过的正则表达式对象的数目可能不同。</li>
+<li>purge()函数能够用于清除这些缓存。</li>
+</ol>
+<h3 id="使用regex更换位置"><a href="#使用regex更换位置" class="headerlink" title="使用regex更换位置"></a>使用regex更换位置</h3><p>当我们需要更换字符串的位置的时候 , 不一定需要使用split()函数,然后重组字符串 .可以直接使用regex</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">cn_names = [<span class="string">&#x27;he-yingliang&#x27;</span>,<span class="string">&#x27;deng-shouze&#x27;</span>,<span class="string">&#x27;chen-zhuji&#x27;</span>,<span class="string">&#x27;guo-zhirong&#x27;</span>]</span><br><span class="line"></span><br><span class="line">en_names = []</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> cn_names:</span><br><span class="line">    x = re.sub(<span class="string">r&#x27;(\w+)-(\w+)&#x27;</span>,<span class="string">r&#x27;\2 \1&#x27;</span>,name)</span><br><span class="line">    en_names.append(x)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(en_names) </span><br><span class="line"><span class="comment"># [&#x27;yingliang he&#x27;, &#x27;shouze deng&#x27;, &#x27;zhuji chen&#x27;, &#x27;zhirong guo&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="re-split"><a href="#re-split" class="headerlink" title="re.split"></a>re.split</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">DATA = (</span><br><span class="line">    <span class="string">&#x27;Mountain View, CA 94040&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Sunnyvale, CA&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Los Altos, 94023&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Cupertino 95014&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Palo Alto CA&#x27;</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> datum <span class="keyword">in</span> DATA:</span><br><span class="line">    <span class="built_in">print</span>(re.split(<span class="string">r&#x27;, |(?= (?:\d&#123;5&#125;|[A-Z]&#123;2&#125;)) &#x27;</span>, datum))</span><br><span class="line"><span class="comment"># [&#x27;Mountain View&#x27;, &#x27;CA&#x27;, &#x27;94040&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;Sunnyvale&#x27;, &#x27;CA&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;Los Altos&#x27;, &#x27;94023&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;Cupertino&#x27;, &#x27;95014&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;Palo Alto&#x27;, &#x27;CA&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<p><code>&#39;, |(?= (?:\d&#123;5&#125;|[A-Z]&#123;2&#125;)) &#39;</code> : 匹配<code>逗号+空格</code> 或者 <code>前面是5个数字或2个字母的空格</code></p>
+<p>通常这样说：如果空格紧跟在五个数字或者两个大写字母之后，就用 split 语句分割该空格。这就允许我们在城市名中放置空格。</p>
+<h3 id="iLmsux-拓展符号"><a href="#iLmsux-拓展符号" class="headerlink" title="(?iLmsux)拓展符号"></a>(?iLmsux)拓展符号</h3><h4 id="re-I"><a href="#re-I" class="headerlink" title="re.I"></a>re.I</h4><p>如果我们要想使用<code>re.I/IGNORECASE</code>标志,可以直接<strong>在正则表达式里面指定</strong>一个或者多个标记，而不是通过 compile()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="built_in">print</span>(re.findall(<span class="string">r&#x27;(?i)yes&#x27;</span>, <span class="string">&#x27;yes? Yes. YES!!&#x27;</span>))</span><br><span class="line"><span class="comment"># [&#x27;yes&#x27;, &#x27;Yes&#x27;, &#x27;YES&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="re-m"><a href="#re-m" class="headerlink" title="re.m"></a>re.m</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">x = re.findall(<span class="string">r&#x27;(^th[\w ]+)&#x27;</span>, </span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">This line is the first,</span></span><br><span class="line"><span class="string">another line,</span></span><br><span class="line"><span class="string">that line, it&#x27;s the best</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># []</span></span><br><span class="line"></span><br><span class="line">x = re.findall(<span class="string">r&#x27;(?im)(^th[\w ]+)&#x27;</span>, </span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">This line is the first,</span></span><br><span class="line"><span class="string">another line,</span></span><br><span class="line"><span class="string">that line, it&#x27;s the best</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># [&#x27;This line is the first&#x27;, &#x27;that line&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>re.M/MULTILINE</code> : 多行模式改变了^和$的匹配行为 .能够在目标字符串中实现跨行搜索，而不必将整个字符串视为单个实体。</p>
+</blockquote>
+<h4 id="re-s"><a href="#re-s" class="headerlink" title="re.s"></a>re.s</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">x = re.findall(<span class="string">r&#x27;th.+&#x27;</span>, <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">the second line</span></span><br><span class="line"><span class="string">the third line</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># [&#x27;the second line&#x27;, &#x27;the third line&#x27;]</span></span><br><span class="line"></span><br><span class="line">x = re.findall(<span class="string">r&#x27;(?s)th.+&#x27;</span>, <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">The first line</span></span><br><span class="line"><span class="string">the second line</span></span><br><span class="line"><span class="string">the third line</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># [&#x27;the second line\nthe third line\n&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="re-x"><a href="#re-x" class="headerlink" title="re.x"></a>re.x</h4><p>该标记允许用户通过抑制在正则表达式中使用空白符（除了在字符类中或者在反斜线转义中）来创建更易读的正则表达式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">x = re.search(</span><br><span class="line"><span class="string">r&#x27;&#x27;&#x27;(?x)</span></span><br><span class="line"><span class="string">    \((\d&#123;3&#125;)\) # 区号</span></span><br><span class="line"><span class="string">    [ ] # 空白符</span></span><br><span class="line"><span class="string">    (\d&#123;3&#125;) # 前缀</span></span><br><span class="line"><span class="string">    - # 横线</span></span><br><span class="line"><span class="string">    (\d&#123;4&#125;) # 终点数字</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>, </span><br><span class="line"><span class="string">&#x27;(800) 555-1212&#x27;</span>).groups()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># (&#x27;800&#x27;, &#x27;555&#x27;, &#x27;1212&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="正则获取表格的最佳实践"><a href="#正则获取表格的最佳实践" class="headerlink" title="正则获取表格的最佳实践"></a>正则获取表格的最佳实践</h3><h4 id="使用split和-s-s-分列"><a href="#使用split和-s-s-分列" class="headerlink" title="使用split和\s\s+分列"></a>使用split和\s\s+分列</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">x=<span class="string">&#x27;&#x27;&#x27;UID        PID  PPID  C STIME TTY          TIME CMD</span></span><br><span class="line"><span class="string">root         2     0  0 Nov30 ?        00:00:00 [kthreadd]</span></span><br><span class="line"><span class="string">root         3     2  0 Nov30 ?        00:00:14 [ksoftirqd/0]</span></span><br><span class="line"><span class="string">root         5     2  0 Nov30 ?        00:00:00 [kworker/0:0H]</span></span><br><span class="line"><span class="string">root         7     2  0 Nov30 ?        00:00:00 [migration/0]</span></span><br><span class="line"><span class="string">root         8     2  0 Nov30 ?        00:00:00 [rcu_bh]</span></span><br><span class="line"><span class="string">root         9     2  0 Nov30 ?        00:00:57 [rcu_sched]&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> re.split(<span class="string">r&#x27;\n&#x27;</span>,x):</span><br><span class="line">	res = re.split(<span class="string">r&#x27;\s\s+&#x27;</span>,line)</span><br><span class="line">	<span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># [&#x27;UID&#x27;, &#x27;PID&#x27;, &#x27;PPID&#x27;, &#x27;C STIME TTY&#x27;, &#x27;TIME CMD&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;2&#x27;, &#x27;0&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:00 [kthreadd]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;3&#x27;, &#x27;2&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:14 [ksoftirqd/0]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;5&#x27;, &#x27;2&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:00 [kworker/0:0H]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;7&#x27;, &#x27;2&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:00 [migration/0]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;8&#x27;, &#x27;2&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:00 [rcu_bh]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;9&#x27;, &#x27;2&#x27;, &#x27;0 Nov30 ?&#x27;, &#x27;00:00:57 [rcu_sched]&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>先使用<code>\n</code>分行</li>
+<li>再使用<code>\s\s+</code>分列</li>
+</ol>
+<h4 id="使用split和-s-s-分列-1"><a href="#使用split和-s-s-分列-1" class="headerlink" title="使用split和\s\s*分列"></a>使用split和\s\s*分列</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&#x27;&#x27;&#x27;UID        PID  PPID  C STIME TTY          TIME CMD</span></span><br><span class="line"><span class="string">root         1     0  0 Nov30 ?        00:01:19 /usr/lib/systemd/systemd --system --deserialize 21</span></span><br><span class="line"><span class="string">root         2     0  0 Nov30 ?        00:00:00 [kthreadd]</span></span><br><span class="line"><span class="string">root         3     2  0 Nov30 ?        00:00:14 [ksoftirqd/0]&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> re.split(<span class="string">r&#x27;\n&#x27;</span>,s):</span><br><span class="line">	res = re.split(<span class="string">r&#x27;\s\s*&#x27;</span>,line,maxsplit=<span class="number">7</span>)</span><br><span class="line">	<span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># [&#x27;UID&#x27;, &#x27;PID&#x27;, &#x27;PPID&#x27;, &#x27;C&#x27;, &#x27;STIME&#x27;, &#x27;TTY&#x27;, &#x27;TIME&#x27;, &#x27;CMD&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;1&#x27;, &#x27;0&#x27;, &#x27;0&#x27;, &#x27;Nov30&#x27;, &#x27;?&#x27;, &#x27;00:01:19&#x27;, &#x27;/usr/lib/systemd/systemd --system --deserialize 21&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;2&#x27;, &#x27;0&#x27;, &#x27;0&#x27;, &#x27;Nov30&#x27;, &#x27;?&#x27;, &#x27;00:00:00&#x27;, &#x27;[kthreadd]&#x27;]</span></span><br><span class="line"><span class="comment"># [&#x27;root&#x27;, &#x27;3&#x27;, &#x27;2&#x27;, &#x27;0&#x27;, &#x27;Nov30&#x27;, &#x27;?&#x27;, &#x27;00:00:14&#x27;, &#x27;[ksoftirqd/0]&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>当遇到<code>C STIME TTY</code>两个字段只有一个空格的时候,可以<strong>使用<code>\s\s*</code>分列</strong></li>
+<li>对于使用<code>\t</code>的 , 我们可以<strong>使用<code>\s\s*|\t</code>分列</strong></li>
+</ul>
+<h4 id="全部使用正则匹配"><a href="#全部使用正则匹配" class="headerlink" title="全部使用正则匹配"></a>全部使用正则匹配</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">映像名称                       PID 会话名</span><br><span class="line">========================= ========</span><br><span class="line">System Idle Process              0</span><br><span class="line">System                           4</span><br><span class="line">Registry                       120</span><br><span class="line">smss.exe                       472</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">jerry_pick</span>():</span></span><br><span class="line">    <span class="keyword">with</span> os.popen(<span class="string">&#x27;tasklist&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            res = re.findall(<span class="string">r&#x27;((?:\w+\s?)+?)\s\s*(\d+)&#x27;</span>,line)</span><br><span class="line">            <span class="built_in">print</span>(res)</span><br><span class="line"><span class="comment"># [(&#x27;System Idle Process &#x27;, &#x27;0&#x27;), (&#x27;Services &#x27;, &#x27;0&#x27;)]</span></span><br><span class="line"><span class="comment"># [(&#x27;System &#x27;, &#x27;4&#x27;), (&#x27;Services &#x27;, &#x27;0&#x27;)]</span></span><br><span class="line"><span class="comment"># [(&#x27;Registry &#x27;, &#x27;120&#x27;), (&#x27;Services &#x27;, &#x27;0&#x27;)]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="第二章-网络编程"><a href="#第二章-网络编程" class="headerlink" title="第二章:网络编程"></a>第二章:网络编程</h2><h3 id="套接字概述"><a href="#套接字概述" class="headerlink" title="套接字概述"></a>套接字概述</h3><ul>
+<li><p>说白了 , <strong>套接字就是<code>通信端点</code>。</strong></p>
+</li>
+<li><p>套接字最初是为同一主机上的应用程序所创建，使得主机上运行的一个进程与另一个运行的程序进行通信。这就是所谓的<code>进程间通信</code>（Inter Process Communication，IPC）。</p>
+</li>
+<li><p>最常用的两种类型的套接字：</p>
+<ul>
+<li><p>基于文件的UNIX 套接字 : 即 <code>AF_UNIX</code> ,</p>
+<blockquote>
+<p>因为两个进程运行在同一台计算机上 , 多个进程之间经常的共享常量。所以<strong>进程间通信的套接字都是基于文件的</strong></p>
+</blockquote>
+</li>
+<li><p>面向网络的套接字 : <code>AF_INET</code> , </p>
+<blockquote>
+<p>另一个地址家族 <code>AF_INET6</code> : 用于第 6 版因特网协议（IPv6）寻址</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>Python 只支持 AF_UNIX、AF_NETLINK、AF_TIPC 和 AF_INET 家族。</p>
+</li>
+</ul>
+<h3 id="面向连接的套接字与无连接的套接字"><a href="#面向连接的套接字与无连接的套接字" class="headerlink" title="面向连接的套接字与无连接的套接字"></a>面向连接的套接字与无连接的套接字</h3><p>面向连接的套接字</p>
+<ul>
+<li><p>面向连接的套接字，这意味着在进行通信之前必须先建立一个连接，例如，使用电话系统给一个朋友打电话</p>
+<p>这种类型的通信也称为<code>虚拟电路</code>或<code>流套接字</code>。</p>
+</li>
+<li><p>实现这种连接类型的主要协议是传输控制协议（即<code>TCP</code>）。</p>
+</li>
+<li><p>为了创建 TCP 套接字，必须使用 <code>SOCK_STREAM </code>作为套接字类型。</p>
+</li>
+</ul>
+<p>无连接的套接字</p>
+<ul>
+<li><p>数据报类型的套接字</p>
+</li>
+<li><p>在数据传输过程中并无法保证它的顺序性、可靠性或重复性</p>
+</li>
+<li><p>实现这种连接类型的主要协议是用户数据报协议（即<code>UDP</code>）。</p>
+</li>
+<li><p>创建 UDP 套接字，必须使用 <code>SOCK_DGRAM</code> 作为套接字类型。</p>
+<blockquote>
+<p>SOCK_DGRAM 名字来自于单词“datagram”（数据报）。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Python-中的网络编程"><a href="#Python-中的网络编程" class="headerlink" title="Python 中的网络编程"></a>Python 中的网络编程</h3><p>要创建套接字，必须使用 socket.socket()函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket(socket_family, socket_type, protocol)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>socket_family 是 AF_UNIX 或 AF_INET，</li>
+<li>socket_type 是 SOCK_STREAM或 SOCK_DGRAM</li>
+</ul>
+<p>所以:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">udpSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="套接字对象（内置）方法"><a href="#套接字对象（内置）方法" class="headerlink" title="套接字对象（内置）方法"></a>套接字对象（内置）方法</h3><h4 id="服务端套接字"><a href="#服务端套接字" class="headerlink" title="服务端套接字"></a>服务端套接字</h4><table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">s.bind()</td>
+<td align="left">绑定地址（host,port）到套接字， 在AF_INET下,以元组（host,port）的形式表示地址。</td>
+</tr>
+<tr>
+<td align="left">s.listen()</td>
+<td align="left"><strong>开始TCP监听</strong>。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。</td>
+</tr>
+<tr>
+<td align="left">s.accept()</td>
+<td align="left"><strong>被动接受TCP客户端连接</strong>,(阻塞式)等待连接的到来</td>
+</tr>
+</tbody></table>
+<h4 id="客户端套接字"><a href="#客户端套接字" class="headerlink" title="客户端套接字"></a>客户端套接字</h4><table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">s.connect()</td>
+<td align="left">主动初始化TCP服务器连接。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</td>
+</tr>
+<tr>
+<td align="left">s.connect_ex()</td>
+<td align="left">connect()函数的扩展版本,出错时返回出错码,而不是抛出异常</td>
+</tr>
+</tbody></table>
+<h4 id="公共用途的套接字函数"><a href="#公共用途的套接字函数" class="headerlink" title="公共用途的套接字函数"></a>公共用途的套接字函数</h4><table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">s.recv()</td>
+<td align="left"><strong>接收TCP数据</strong>，数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。</td>
+</tr>
+<tr>
+<td align="left">s.recv_into()</td>
+<td align="left">接收 TCP 消息到指定的缓冲区</td>
+</tr>
+<tr>
+<td align="left">s.send()</td>
+<td align="left"><strong>发送TCP数据</strong>，将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。</td>
+</tr>
+<tr>
+<td align="left">s.sendall()</td>
+<td align="left"><strong>完整发送TCP数据</strong>，完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成功返回None，失败则抛出异常。</td>
+</tr>
+<tr>
+<td align="left">s.recvfrom()</td>
+<td align="left">接收 UDP 消息</td>
+</tr>
+<tr>
+<td align="left">s.recvfrom_into()</td>
+<td align="left">接收 UDP 消息到指定的缓冲区</td>
+</tr>
+<tr>
+<td align="left">s.sendto()</td>
+<td align="left">发送 UDP 消息</td>
+</tr>
+<tr>
+<td align="left">s.getpeername()</td>
+<td align="left">连接到套接字（TCP）的远程地址</td>
+</tr>
+<tr>
+<td align="left">s.getsockname()</td>
+<td align="left">当前套接字的地址</td>
+</tr>
+<tr>
+<td align="left">s.getsockopt()</td>
+<td align="left">返回给定套接字选项的值</td>
+</tr>
+<tr>
+<td align="left">s.setsockopt()</td>
+<td align="left">设置给定套接字选项的值</td>
+</tr>
+<tr>
+<td align="left">s.shutdown()</td>
+<td align="left">关闭连接</td>
+</tr>
+<tr>
+<td align="left">s.close()</td>
+<td align="left">关闭套接字</td>
+</tr>
+<tr>
+<td align="left">s.detach()</td>
+<td align="left">在未关闭文件描述符的情况下关闭套接字，返回文件描述符</td>
+</tr>
+<tr>
+<td align="left">s.ioctl()</td>
+<td align="left">控制套接字的模式（仅支持 Windows）</td>
+</tr>
+</tbody></table>
+<h4 id="面向阻塞的套接字方法"><a href="#面向阻塞的套接字方法" class="headerlink" title="面向阻塞的套接字方法"></a>面向阻塞的套接字方法</h4><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>s.setblocking()</td>
+<td>设置套接字的阻塞或非阻塞模式</td>
+</tr>
+<tr>
+<td>s.settimeout()</td>
+<td>设置阻塞套接字操作的超时时间</td>
+</tr>
+<tr>
+<td>s.gettimeout()</td>
+<td>获取阻塞套接字操作的超时时间</td>
+</tr>
+</tbody></table>
+<h4 id="面向文件的套接字方法"><a href="#面向文件的套接字方法" class="headerlink" title="面向文件的套接字方法"></a>面向文件的套接字方法</h4><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>s.fileno()</td>
+<td>套接字的文件描述符</td>
+</tr>
+<tr>
+<td>s.makefile()</td>
+<td>创建与套接字关联的文件对象</td>
+</tr>
+</tbody></table>
+<h4 id="数据属性"><a href="#数据属性" class="headerlink" title="数据属性"></a>数据属性</h4><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>s.family</td>
+<td>套接字家族</td>
+</tr>
+<tr>
+<td>s.type</td>
+<td>套接字类型</td>
+</tr>
+<tr>
+<td>s.proto</td>
+<td>套接字协议</td>
+</tr>
+</tbody></table>
+<p>服务端的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data = sock.recv(<span class="number">1024</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一旦服务器接受了一个连接，就会返回一个独立的客户端套接字，用来与即将到来的消息进行交换。</li>
+<li>当新的客户端请求过来时 , 服务器会<strong>创建一个新的通信端口来直接与客户端进行通信</strong>，</li>
+<li>这样就能够<strong>空出主线</strong>（原始服务器套接字），以便接线员可以继续等待客户请求</li>
+<li>一旦创建了临时套接字，通信就可以开始，通过使用这个新的套接字，客户端与服务器就可以开始参与发送和接收的对话中，直到连接终止。当一方关闭连接或者向对方发送一个<strong>空字符串</strong>时，通常就会关闭连接。</li>
+</ul>
+<h3 id="优雅地退出和调用服务器-close-方法"><a href="#优雅地退出和调用服务器-close-方法" class="headerlink" title="优雅地退出和调用服务器 close()方法"></a>优雅地退出和调用服务器 close()方法</h3><ul>
+<li>在开发中，“友好的”退出方式的一种方法就是，将服务器的 while 循环放在一个 try-except 语句中的 except 子句中，并监控 EOFError 或 KeyboardInterrupt 异常，这样你就可以在 except 或 finally 字句中关闭服务器的套接字。</li>
+<li>在生产环境中，会以一种更加自动化的方式启动和关闭服务器 : 通过使用一个线程或创建一个特殊文件或数据库条目来设置一个标记以关闭服务。</li>
+</ul>
+<h3 id="UDP-和-TCP-的在编码时差异"><a href="#UDP-和-TCP-的在编码时差异" class="headerlink" title="UDP 和 TCP 的在编码时差异"></a>UDP 和 TCP 的在编码时差异</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line"></span><br><span class="line">server.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="number">8000</span>))</span><br><span class="line">server.listen()</span><br><span class="line"><span class="comment"># 转换操作</span></span><br><span class="line">sock,addr = server.accept()</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">    <span class="built_in">print</span>(data.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    re_data = <span class="built_in">input</span>(<span class="string">&#x27;请输入信息:\n&#x27;</span>)</span><br><span class="line">    sock.send(re_data.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line">BUFSIZ = <span class="number">1024</span></span><br><span class="line"></span><br><span class="line">udpServerSock = socket(AF_INET,SOCK_DGRAM)</span><br><span class="line">udpServerSock.bind((<span class="string">&#x27;localhost&#x27;</span>,<span class="number">10086</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    data,addr = udpServerSock.recvfrom(BUFSIZ)</span><br><span class="line">    udpServerSock.sendto(<span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">udpServerSock.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>因为数据报套接字是无连接的，所以就没有<strong>为了成功通信而使一个客户端连接到一个独立的套接字“转换”的操作</strong>。</li>
+<li>UDP服务器仅仅接受消息并有可能回复数据。</li>
+</ul>
+<p>84   创建 UDP 客户端</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://www.cnblogs.com/f-ck-need-u/p/7129122.html&quot;&gt;第1章 ssh命令和SSH服务详解&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ssh及ssh-agent | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Linux/" rel="tag">Linux</a></div><div class="post-time">2019-12-06</div></div></div><div class="container post-header"><h1>ssh及ssh-agent</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH%E6%A6%82%E8%A6%81"><span class="toc-number">1.2.</span> <span class="toc-text">SSH概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">SSH原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E7%94%A8%E6%88%B7%E5%92%8C%E5%8F%A3%E4%BB%A4%E7%99%BB%E5%BD%95%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text">基于用户和口令登录验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%85%AC%E9%92%A5%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8F%8C%E6%9C%BA%E4%BA%92%E4%BF%A1"><span class="toc-number">1.5.</span> <span class="toc-text">基于公钥认证机制实现双机互信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.5.1.</span> <span class="toc-text">实现步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E4%BA%BA%E8%AF%9D"><span class="toc-number">1.5.2.</span> <span class="toc-text">说人话</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E4%B8%BA%E7%AE%80%E5%8D%95%E7%9A%84ssh-key%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.6.</span> <span class="toc-text">更为简单的ssh-key步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sshd"><span class="toc-number">1.7.</span> <span class="toc-text">sshd</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sshd%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.7.1.</span> <span class="toc-text">sshd任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8ssh%E7%99%BB%E5%BD%95%EF%BC%8C%E5%B9%B6%E5%8F%91%E9%80%81%E6%8A%A5%E8%AD%A6%E9%82%AE%E4%BB%B6"><span class="toc-number">1.7.2.</span> <span class="toc-text">监控服务器ssh登录，并发送报警邮件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SCP"><span class="toc-number">1.8.</span> <span class="toc-text">SCP</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/7129122.html">第1章 ssh命令和SSH服务详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/96918eeda4ca">Windows 下通过 cmder 远程连接 Linux 服务器</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.jinbuguo.com/openssh/sshd.html">sshd 中文手册</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yaohong/p/8379252.html">监控服务器ssh登录，并发送报警邮件</a></p>
+<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p><strong>对称加密：加密和解密使用一样的算法，只要解密时提供与加密时一致的密码就可以完成解密。</strong>例如QQ登录密码，银行卡密码，只要保证密码正确就可以。</p>
+<p><strong>非对称加密：</strong>通过公钥(public key)和私钥(private key)来加密、解密。公钥加密的内容可以使用私钥解密，私钥加密的内容可以使用公钥解密。一般使用公钥加密，私钥解密，但并非绝对如此，例如CA签署证书时就是使用自己的私钥加密。在接下来介绍的SSH服务中，虽然一直建议分发公钥，但也可以分发私钥。</p>
+<p>所以，如果A生成了(私钥A，公钥A)，B生成了(私钥B，公钥B)，那么A和B之间的非对称加密会话情形包括：</p>
+<ol>
+<li>A将自己的公钥A分发给B，B拿着公钥A将数据进行加密，并将加密的数据发送给A，A将使用自己的私钥A解密数据。</li>
+<li>A将自己的公钥A分发给B，并使用自己的私钥A加密数据，然后B使用公钥A解密数据。</li>
+<li>B将自己的公钥B分发给A，A拿着公钥B将数据进行加密，并将加密的数据发送给B，B将使用自己的私钥B解密数据。</li>
+<li>B将自己的公钥B分发给A，并使用自己的私钥B加密数据，然后A使用公钥B解密数据。</li>
+</ol>
+<p>SSH的<strong>身份验证阶段，SSH只支持服务端保留公钥，客户端保留私钥的方式，</strong>所以方式只有两种：</p>
+<ol>
+<li>客户端生成密钥对，将公钥分发给服务端；</li>
+<li>服务端生成密钥对，将私钥分发给客户端。</li>
+</ol>
+<h2 id="SSH概要"><a href="#SSH概要" class="headerlink" title="SSH概要"></a>SSH概要</h2><ul>
+<li><p>SSH服务的守护进程为<code>sshd</code>，默认监听在22端口上。</p>
+</li>
+<li><p>所有ssh客户端工具，包括ssh命令，scp，sftp，ssh-copy-id等命令都是借助于ssh连接来完成任务的。也就是说它们都连接服务端的22端口，只不过连接上之后将待执行的相关命令转换传送到远程主机上，由远程主机执行。</p>
+</li>
+<li><p>ssh客户端命令(ssh、scp、sftp等)读取两个配置文件：</p>
+<ol>
+<li>全局配置文件<code>/etc/ssh/ssh_config</code></li>
+<li>用户配置文件<code>~/.ssh/config</code>。</li>
+</ol>
+<blockquote>
+<p>生效的优先级是：命令行配置选项 &gt; ~/.ssh/config &gt; /etc/ssh/ssh_config。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="SSH原理"><a href="#SSH原理" class="headerlink" title="SSH原理"></a>SSH原理</h2><p>SSH加密传输原理类似<code>HTTPS的加密传输</code>，即使用混合加密传输：</p>
+<ol>
+<li>A要与B通信</li>
+<li>A生成一对密钥</li>
+<li>A将公钥发送给B</li>
+<li>B拿到公钥，生成一个随机密码串（对称加密的key，用于认证完成后的通信），并用公钥加密这个密码串，发送给A</li>
+<li>A拿到密文，用私钥解密，获得到这个随机密码串</li>
+<li>B继续发送一个利用上个随机密码串加密的数据给A，A收到后用随机密码串解密这个数据</li>
+<li>A解密正常后通知B</li>
+<li>加密通道建立完成，以后的通信都用这个随机密码串加解密</li>
+</ol>
+<h2 id="基于用户和口令登录验证"><a href="#基于用户和口令登录验证" class="headerlink" title="基于用户和口令登录验证"></a>基于用户和口令登录验证</h2><p><img src="/images/2585a309674c09392b8be9aad0a092ec.png" alt="image"></p>
+<ol>
+<li>首先在客户端生成一对密钥（ssh-keygen）</li>
+<li>并将客户端的公钥ssh-copy-id 拷贝到服务端</li>
+<li>当客户端再次发送一个连接请求，包括ip、用户名</li>
+<li>服务端得到客户端的请求后，会到authorized_keys中查找，如果有响应的IP和用户，就会随机生成一个字符串，例如：acdf</li>
+<li>服务端将使用客户端拷贝过来的公钥进行加密，然后发送给客户端</li>
+<li>得到服务端发来的消息后，客户端会使用私钥进行解密，然后将解密后的字符串发送给服务端</li>
+<li>服务端接受到客户端发来的字符串后，跟之前的字符串进行对比，如果一致，就允许免密码登录</li>
+</ol>
+<h2 id="基于公钥认证机制实现双机互信"><a href="#基于公钥认证机制实现双机互信" class="headerlink" title="基于公钥认证机制实现双机互信"></a>基于公钥认证机制实现双机互信</h2><p>在身份验证阶段，由于默认情况下基于公钥认证的机制顺序优先于基于密码认证的机制，所以基于公钥认证身份，就可以免输入密码，即实现双机互信(实际上只是单方向的信任)。</p>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><p><strong>在客户端使用ssh-keygen生成密钥对，存放路径按照配置文件的指示，默认是在~/.ssh/目录下。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa    <span class="comment"># -t参数指定算法，可以是rsa或dsa</span></span><br><span class="line"></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/root/.ssh/id_rsa):  <span class="comment"># 询问私钥保存路径</span></span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):               <span class="comment"># 询问是否加密私钥文件</span></span><br><span class="line">Enter same passphrase again:            </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /root/.ssh/id_rsa. </span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.pub. </span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>将上面生成的公钥使用ssh-copy-id分发(即复制)到远程待信任主机上。</strong></p>
+<p>ssh-copy-id用法很简单，只需指定待信任主机及目标用户即可。如果生成的公钥文件，路径不是~/.ssh/id_rsa.pub，则使用”-i”选项指定要分发的公钥。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id [-i [identity_file]] [user@]machine</span><br></pre></td></tr></table></figure>
+
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id 172.16.10.6</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="说人话"><a href="#说人话" class="headerlink" title="说人话"></a>说人话</h3><ol>
+<li><p>在客户端生成密钥对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br><span class="line">cat id_rsa</span><br><span class="line">id_rsa      id_rsa.pub </span><br></pre></td></tr></table></figure></li>
+<li><p>把公钥文件传输至远程服务器对应用户的家目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i id_rsa.pub root@192.168.4.100</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果在COPY的时候不小心把公钥写成了私钥，放心，实际执行时只会复制公钥。</p>
+<p>会在用户的家目录的.ssh/目录生成authorized_keys文件</p>
+</blockquote>
+</li>
+<li><p>测试</p>
+</li>
+</ol>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.4.100</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>实现了免密登录了</li>
+</ol>
+<h2 id="更为简单的ssh-key步骤"><a href="#更为简单的ssh-key步骤" class="headerlink" title="更为简单的ssh-key步骤"></a>更为简单的ssh-key步骤</h2><ol>
+<li><p>在本机生成 SSH 密钥对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure></li>
+<li><p>上传公钥到 Linux 服务器</p>
+<p>创建文件(远程)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ~/.ssh &amp;&amp; touch ~/.ssh/authorized_keys</span><br><span class="line">chmod 700 ~/.ssh &amp;&amp; chmod 600 ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>本机上传(本机)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp C:\Users\&lt;用户名&gt;\.ssh\id_rsa.pub &lt;username&gt;@&lt;server-ip-address&gt;:~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure></li>
+<li><p>上传成功后输入以下命令即可成功连接服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh &lt;username&gt;@&lt;server-ip-address&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>配置 <code>config</code> 文件简化登录输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim C:\Users\&lt;用户名&gt;\.ssh\config</span><br></pre></td></tr></table></figure></li>
+<li><p>输入以下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host &lt;name-you-want&gt;</span><br><span class="line">  HostName &lt;server-ip-address&gt;</span><br><span class="line">  User &lt;username&gt;</span><br><span class="line">  PubkeyAuthentication yes</span><br></pre></td></tr></table></figure></li>
+<li><p><code>config</code> 文件创建好后，直接输入以下命令登录服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh &lt;name-you-want&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="sshd"><a href="#sshd" class="headerlink" title="sshd"></a>sshd</h2><ul>
+<li>sshd 是 OpenSSH SSH 守护进程。用于在不可信网络上提供安全的连接通道。</li>
+<li>sshd 守护进程通常由root用户启动，它<strong>监听来自客户端的连接，然后为每个连接派生一个子进程</strong>。子进程负责处理密钥交换、加密、认证、执行命令、数据交换等具体事务。</li>
+<li>sshd 的行为可以通过使用命令行选项和配置文件(默认是<code>sshd_config</code>进行控制，但命令行选项会覆盖配置文件中的设置。</li>
+</ul>
+<h3 id="sshd任务"><a href="#sshd任务" class="headerlink" title="sshd任务"></a>sshd任务</h3><p> 当某个用户成功登录后，sshd 将会按照下列顺序做一系列动作：</p>
+<ol>
+<li><p>如果在一个 tty 登录，并且没有指定执行任何命令，那么将打印上次登录时间和 /etc/motd 的内容。<br>  /etc/motd 的内容可以通过配置文件或者 ~/.hushlogin 禁止。</p>
+</li>
+<li><p>  如果在一个 tty 登录，那么记录登录时间。</p>
+</li>
+<li><p>  如果存在 /etc/nologin 文件，并且登录用户不是root，那么打印 /etc/nologin 文件的内容并结束。</p>
+</li>
+<li><p>  切换身份至非特权用户运行</p>
+</li>
+<li><p>  设置基本环境变量</p>
+</li>
+<li><p>如果配置文件允许用户修改环境变量，则处理 ~/.ssh/environment 文件并设置相应的环境变量<br>  细节参见 sshd_config(5) 手册页中的 PermitUserEnvironment 指令。</p>
+</li>
+<li><p>  切换到该用户的家目录</p>
+</li>
+<li><p>如果存在 ~/.ssh/rc 文件则运行它，否则运行 /etc/ssh/sshrc (如果存在)。<br>  如果上面两个都不存在则运行 xauth 程序。参见下面的”SSHRC”小节。</p>
+</li>
+<li><p>  启动用户的 shell 或运行指定的命令。</p>
+</li>
+</ol>
+<h3 id="监控服务器ssh登录，并发送报警邮件"><a href="#监控服务器ssh登录，并发送报警邮件" class="headerlink" title="监控服务器ssh登录，并发送报警邮件"></a>监控服务器ssh登录，并发送报警邮件</h3><p><code>/etc/sshsshrc</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment">#获取登录者的用户名</span></span><br><span class="line">user=<span class="variable">$USER</span></span><br><span class="line"><span class="comment">#获取登录者的IP地址</span></span><br><span class="line">ip=<span class="variable">$&#123;SSH_CLIENT%% *&#125;</span></span><br><span class="line"><span class="comment">#获取登录的时间</span></span><br><span class="line">time=$(date +%F%t%k:%M)</span><br><span class="line"><span class="comment">#服务器的IP地址</span></span><br><span class="line">hostname=$(hostname)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;content=<span class="variable">$time</span>,<span class="variable">$user</span>,<span class="variable">$ip</span>,<span class="variable">$hostname</span>&quot;</span> &gt; <span class="built_in">log</span></span><br><span class="line"> </span><br><span class="line">python /etc/ssh/testEmail.py   <span class="string">&quot;<span class="variable">$time</span>&quot;</span> <span class="string">&quot;<span class="variable">$user</span>&quot;</span> <span class="string">&quot;<span class="variable">$ip</span>&quot;</span> <span class="string">&quot;<span class="variable">$hostname</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/ssh/testEmail.py</code> :</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> smtplib</span><br><span class="line"><span class="keyword">from</span> email <span class="keyword">import</span> encoders</span><br><span class="line"><span class="keyword">from</span> email.header <span class="keyword">import</span> Header</span><br><span class="line"><span class="keyword">from</span> email.mime.text <span class="keyword">import</span> MIMEText</span><br><span class="line"><span class="keyword">from</span> email.utils <span class="keyword">import</span> parseaddr, formataddr</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_mail</span>(<span class="params">dtime,duser,dip,dhostname</span>):</span></span><br><span class="line">    <span class="comment">#基础信息</span></span><br><span class="line">    <span class="comment"># from_addr = input(&quot;From:&quot;)</span></span><br><span class="line">    from_addr = <span class="string">&quot;yaohong@qq.com&quot;</span></span><br><span class="line">    password = <span class="string">&quot;授权码&quot;</span></span><br><span class="line">    <span class="comment">#to_addr = from_addr</span></span><br><span class="line">    to_addr = <span class="string">&quot;yaohong@qq.com&quot;</span></span><br><span class="line">    <span class="comment"># password = raw_input(&quot;Password:&quot;)</span></span><br><span class="line">    <span class="comment"># to_addr = input(&quot;To:&quot;)</span></span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_format_addr</span>(<span class="params">s</span>):</span></span><br><span class="line">            name, addr = parseaddr(s)</span><br><span class="line">            <span class="keyword">return</span> formataddr((Header(name, <span class="string">&#x27;utf-8&#x27;</span>).encode(), addr))</span><br><span class="line"> </span><br><span class="line">    smtp_server = <span class="string">&quot;smtp.qq.com&quot;</span></span><br><span class="line">        mimetex = <span class="string">&#x27;您的机器:&#x27;</span>,dhostname,<span class="string">&#x27;，于:&#x27;</span>,dtime,<span class="string">&#x27;，被IP:&#x27;</span>,dip,<span class="string">&#x27;以账号&#x27;</span>,duser,<span class="string">&#x27;进行登录,请确认是否为公司员工。&#x27;</span></span><br><span class="line">    <span class="comment">#构造邮件</span></span><br><span class="line">    msg = MIMEText(<span class="string">&#x27;&#x27;</span>.join(mimetex), <span class="string">&#x27;plain&#x27;</span>, <span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    msg[<span class="string">&#x27;From&#x27;</span>] = _format_addr(<span class="string">&quot;yaohong&quot;</span>)</span><br><span class="line">    msg[<span class="string">&#x27;To&#x27;</span>] = _format_addr(<span class="string">&quot;yaohong@qq.com&quot;</span>)</span><br><span class="line">    msg[<span class="string">&#x27;Subject&#x27;</span>] = Header(<span class="string">&quot;来自yaohong&quot;</span>, <span class="string">&#x27;utf-8&#x27;</span>).encode()</span><br><span class="line">    <span class="comment">#发送邮件</span></span><br><span class="line">    server = smtplib.SMTP_SSL(smtp_server, <span class="number">465</span>)</span><br><span class="line">    server.set_debuglevel(<span class="number">1</span>)</span><br><span class="line">    server.login(from_addr, password)</span><br><span class="line">    server.sendmail(from_addr, [to_addr], msg.as_string())</span><br><span class="line">    server.quit()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    send_mail(sys.argv[<span class="number">1</span>], sys.argv[<span class="number">2</span>], sys.argv[<span class="number">3</span>], sys.argv[<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="SCP"><a href="#SCP" class="headerlink" title="SCP"></a>SCP</h2><ul>
+<li><p>scp是全量拷贝</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;scp [-12BCpqrv] [-l limit] [-o ssh_option] [-P port] [[user@]host1:]src_file ... [[user@]host2:]dest_file</span><br></pre></td></tr></table></figure>
+
+<p>选项说明：<br>-1：使用ssh v1版本，这是默认使用协议版本<br>-2：使用ssh v2版本<br>-C：拷贝时先压缩，节省带宽<br>-l limit：限制拷贝速度，Kbit/s，1Byte=8bit，所以”-l 800”表示的速率是100K/S<br>-o ssh_option：指定ssh连接时的特殊选项，一般用不上。<br>-P port：指定目标主机上ssh端口，大写的字母P，默认是22端口<br>-p：拷贝时保持源文件的mtime,atime,owner,group,privileges<br>-r：递归拷贝，用于拷贝目录。注意，scp拷贝遇到链接文件时，会拷贝链接的源文件内容填充到目标文件中(scp的本质就是填充而非拷贝)<br>-v：输出详细信息，可以用来调试或查看scp的详细过程，分析scp的机制</p>
+</blockquote>
+</li>
+<li><p>rsync是增量拷贝，要判断每个文件是否修改过，在小文件众多的情况下，判断次数非常多，导致rsync效率较差，而scp基本不影响系统正常使用。</p>
+</li>
+</ul>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

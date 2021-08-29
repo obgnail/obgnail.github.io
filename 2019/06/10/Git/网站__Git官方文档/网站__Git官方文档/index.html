@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" Git 有三种状态，你的文件可能处于其中之一："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Git官方文档 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Git/" rel="tag">Git</a></div><div class="post-time">2019-06-10</div></div></div><div class="container post-header"><h1>Git官方文档</h1></div><div class="container post-content"><p> Git 有三种状态，你的文件可能处于其中之一：</p>
+<ol>
+<li>已提交（committed）<br>表示数据已经安全的保存在本地数据库中。 </li>
+<li>已暂存（staged）<br>表示对一个已修改文件的当前版本做了标记，使之包含在下次提交的快照中。</li>
+<li>已修改（modified）<br>表示修改了文件，但还没保存到数据库中。</li>
+</ol>
+<p><img src="/images/areas.png" alt="工作目录、暂存区域以及 Git 仓库"></p>
+<p>基本的 Git 工作流程如下：</p>
+<ol>
+<li>在工作目录中修改文件。</li>
+<li>暂存文件，将文件的快照放入暂存区域。</li>
+<li>提交更新，找到暂存区域的文件，将快照永久性存储到 Git 仓库目录。</li>
+</ol>
+<p>你工作目录下的每一个文件都不外乎这两种状态：已跟踪或未跟踪。<br>已跟踪的文件是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于未修改，已修改或已放入暂存区。<br>工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。</p>
+<p>使用 Git 时文件的生命周期如下：</p>
+<p><img src="/images/lifecycle.png" alt="使用Git时文件的生命周期"></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nothing to commit, working directory clean</span><br></pre></td></tr></table></figure>
+
+<p>你现在的工作目录相当干净。换句话说，==所有已跟踪文件在上次提交后都未被更改过。==<br>此外，上面的信息还表明，当前目录下没有出现任何处于未跟踪状态的新文件，否则 Git 会在这里列出来。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

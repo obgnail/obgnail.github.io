@@ -1,0 +1,143 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;并发的时间片和切换成本&quot;&gt;&lt;a href=&quot;#并发的时间片和切换成本&quot; class=&quot;headerlink&quot; title=&quot;并发的时间片和切换成本&quot;&gt;&lt;/a&gt;并发的时间片和切换成本&lt;/h2&gt;&lt;p&gt;时间片："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Golang深入理解GPM模型 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2021-04-20</div></div></div><div class="container post-header"><h1>Golang深入理解GPM模型</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%9A%84%E6%97%B6%E9%97%B4%E7%89%87%E5%92%8C%E5%88%87%E6%8D%A2%E6%88%90%E6%9C%AC"><span class="toc-number">1.</span> <span class="toc-text">并发的时间片和切换成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E8%A7%A3%E8%80%A6%E6%88%90%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B%E5%92%8C%E7%94%A8%E6%88%B7%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">线程解耦成内核线程和用户线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GMP%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">GMP符号表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang%E5%AF%B9%E6%97%A9%E6%9C%9F%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">Golang对早期调度器的处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GMP%E6%A8%A1%E5%9E%8B%E7%AE%80%E4%BB%8B"><span class="toc-number">5.</span> <span class="toc-text">GMP模型简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#P%E7%9A%84%E6%9C%AC%E5%9C%B0%E9%98%9F%E5%88%97%E5%92%8C%E5%85%A8%E5%B1%80%E9%98%9F%E5%88%97"><span class="toc-number">5.1.</span> <span class="toc-text">P的本地队列和全局队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#P%E5%88%97%E8%A1%A8"><span class="toc-number">5.2.</span> <span class="toc-text">P列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#M%E5%88%97%E8%A1%A8"><span class="toc-number">5.3.</span> <span class="toc-text">M列表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%AD%96%E7%95%A5"><span class="toc-number">6.</span> <span class="toc-text">Golang调度器的设计策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%94%A8%E7%BA%BF%E7%A8%8B"><span class="toc-number">6.1.</span> <span class="toc-text">复用线程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#work-stealing%E6%9C%BA%E5%88%B6%EF%BC%88%E5%81%B7%E5%8F%96%E6%9C%BA%E5%88%B6%EF%BC%89"><span class="toc-number">6.1.1.</span> <span class="toc-text">work stealing机制（偷取机制）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#head-off%E6%9C%BA%E5%88%B6%EF%BC%88%E5%88%86%E7%A6%BB%E6%9C%BA%E5%88%B6%EF%BC%89"><span class="toc-number">6.1.2.</span> <span class="toc-text">head off机制（分离机制）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%B9%B6%E8%A1%8C"><span class="toc-number">6.2.</span> <span class="toc-text">利用并行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A2%E5%8D%A0"><span class="toc-number">6.3.</span> <span class="toc-text">抢占</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80G%E9%98%9F%E5%88%97"><span class="toc-number">6.4.</span> <span class="toc-text">全局G队列</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#work-stealing%E6%9C%BA%E5%88%B6%EF%BC%8C%E4%BB%8E%E5%85%A8%E5%B1%80G%E9%98%9F%E5%88%97%E5%81%B7%E5%8F%96"><span class="toc-number">6.4.1.</span> <span class="toc-text">work stealing机制，从全局G队列偷取</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%9Cgo-func-%E2%80%9D%E7%BB%8F%E5%8E%86%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">7.</span> <span class="toc-text">“go func()”经历了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">8.</span> <span class="toc-text">调度器的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#M0%E5%92%8CG0"><span class="toc-number">8.1.</span> <span class="toc-text">M0和G0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%AF%95%E5%90%8E%E5%88%87%E6%8D%A2"><span class="toc-number">8.2.</span> <span class="toc-text">G执行完毕后切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E9%98%9F%E5%88%97%E5%B7%B2%E6%BB%A1%E6%97%B6%E5%86%8D%E5%88%9B%E5%BB%BAG"><span class="toc-number">8.3.</span> <span class="toc-text">本地队列已满时再创建G</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%94%A4%E9%86%92%E6%AD%A3%E5%9C%A8%E4%BC%91%E7%9C%A0%E7%9A%84M"><span class="toc-number">8.4.</span> <span class="toc-text">唤醒正在休眠的M</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G%E4%BB%8E%E9%98%BB%E5%A1%9E%E6%81%A2%E5%A4%8D"><span class="toc-number">8.5.</span> <span class="toc-text">G从阻塞恢复</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">9.</span> <span class="toc-text">地址</span></a></li></ol></details></div><div class="container post-content"><h2 id="并发的时间片和切换成本"><a href="#并发的时间片和切换成本" class="headerlink" title="并发的时间片和切换成本"></a>并发的时间片和切换成本</h2><p>时间片：</p>
+<p><img src="/images/image-20210225234946313.png" alt="image-20210225234946313"></p>
+<p>切换成本：</p>
+<p><img src="/images/image-20210225235207324.png" alt="image-20210225235207324"></p>
+<h2 id="线程解耦成内核线程和用户线程"><a href="#线程解耦成内核线程和用户线程" class="headerlink" title="线程解耦成内核线程和用户线程"></a>线程解耦成内核线程和用户线程</h2><ul>
+<li>将线程解耦成内核线程和用户线程</li>
+<li>用户线程用于业务，内核线程专门与硬件沟通。然后我们将用户线程绑定到内核线程</li>
+<li>此时CPU的视野只关注内核线程</li>
+</ul>
+<p><img src="/images/image-20210225235903472.png" alt="image-20210225235903472"></p>
+<p>给上面模型改一下名称，就得到如下：</p>
+<p><img src="/images/image-20210226000209278.png" alt="image-20210226000209278"></p>
+<p>所以就知道：协程为什么叫轻量级线程。因为协程把与硬件沟通的逻辑交给了协程所在在线程，协程自己只是关注业务层面</p>
+<p>一个线程可以绑定多个协程，多个线程也可以绑定同一个协程，因此上面的图就可以变成：</p>
+<p><img src="/images/image-20210226000441090.png" alt="image-20210226000441090"></p>
+<p><img src="/images/image-20210226000626388.png" alt="image-20210226000626388"></p>
+<h2 id="GMP符号表示"><a href="#GMP符号表示" class="headerlink" title="GMP符号表示"></a>GMP符号表示</h2><p><img src="/images/image-20210226001457942.png" alt="image-20210226001457942"></p>
+<h2 id="Golang对早期调度器的处理"><a href="#Golang对早期调度器的处理" class="headerlink" title="Golang对早期调度器的处理"></a>Golang对早期调度器的处理</h2><ul>
+<li>基本的全局Go队列</li>
+<li>传统的轮询，利用多个thread去调度</li>
+</ul>
+<p><img src="/images/image-20210226000913104.png" alt="image-20210226000913104"></p>
+<h2 id="GMP模型简介"><a href="#GMP模型简介" class="headerlink" title="GMP模型简介"></a>GMP模型简介</h2><ul>
+<li>goroutine：协程</li>
+<li>Proccessor: 包含了一个goroutine队列，和执行goroutine需要的资源（所以，要想执行goroutine必须先获取Proccessor）</li>
+<li>M：thread线程</li>
+</ul>
+<p><img src="/images/image-20210226002424992.png" alt="image-20210226002424992"></p>
+<ul>
+<li>一个四核CPU就拥有4个CPU核心</li>
+<li>CPU核心通过操作系统的调度器去执行内核线程</li>
+<li>一个内核线程要想执行一个G的话，必须去获取一个P，从P的本地队列中获取G</li>
+<li>一个P同时只能执行一个G，所以程序的最高<strong>并发数</strong>就是P的个数，也就是<code>GOMAXPROCS</code></li>
+<li>全局队列存放了一些等待运行的G</li>
+</ul>
+<h3 id="P的本地队列和全局队列"><a href="#P的本地队列和全局队列" class="headerlink" title="P的本地队列和全局队列"></a>P的本地队列和全局队列</h3><ul>
+<li>全局队列和P的本地队列都是用于：存放等待运行的G。</li>
+<li>P的本地队列有数量限制，一般不超过265个G。</li>
+<li>当我们在P中创建一个新的G时，这个G就会被放到本地队列中，如果本地队列满了，就会放到全局队列中。</li>
+</ul>
+<h3 id="P列表"><a href="#P列表" class="headerlink" title="P列表"></a>P列表</h3><ul>
+<li>P列表：全部的P组成的列表</li>
+<li>P列表在程序启动时创建</li>
+<li>P列表最多有<code>GOMAXPROCS</code>个P</li>
+</ul>
+<h3 id="M列表"><a href="#M列表" class="headerlink" title="M列表"></a>M列表</h3><ul>
+<li>当前操作系统分配给Go程序的内核线程数。</li>
+<li>一旦有一个M阻塞，就会创建一个新的M。如果有一个M空闲，就会将其回收，或者设置为睡眠。</li>
+<li>M数量最高为10000，实际根本用不到这么多。</li>
+</ul>
+<h2 id="Golang调度器的设计策略"><a href="#Golang调度器的设计策略" class="headerlink" title="Golang调度器的设计策略"></a>Golang调度器的设计策略</h2><ul>
+<li>复用线程</li>
+<li>利用并行</li>
+<li>抢占</li>
+<li>全局G队列</li>
+</ul>
+<h3 id="复用线程"><a href="#复用线程" class="headerlink" title="复用线程"></a>复用线程</h3><h4 id="work-stealing机制（偷取机制）"><a href="#work-stealing机制（偷取机制）" class="headerlink" title="work stealing机制（偷取机制）"></a>work stealing机制（偷取机制）</h4><p>当本线程没有可以运行的G时，就会尝试从其他线程绑定的P中偷取G，而不是销毁线程。</p>
+<p><img src="/images/image-20210226004148996.png" alt="image-20210226004148996"></p>
+<p>如上图，此时</p>
+<ul>
+<li>M1绑定了一个P，P正在执行G1</li>
+<li>M2是空闲的，M2绑定的P的本地队列为空。</li>
+</ul>
+<p>为了利用上空闲的M2，所以M2会去<strong>偷取</strong>M1绑定的P的本地队列里的G，结果如下：</p>
+<p><img src="/images/image-20210226004428670.png" alt="image-20210226004428670"></p>
+<h4 id="head-off机制（分离机制）"><a href="#head-off机制（分离机制）" class="headerlink" title="head off机制（分离机制）"></a>head off机制（分离机制）</h4><p>当本线程因为G进行系统调用阻塞时，线程释放绑定的P，把P转移给其他空闲的线程执行。</p>
+<p><img src="/images/image-20210226004647262.png" alt="image-20210226004647262"></p>
+<p>如上图，此时：</p>
+<ul>
+<li>操作系统调度器给golang分配M1和M2（也就是说，此时的物理CPU正在M1和M2中）</li>
+<li>M1绑定的P正在执行G1，且G1是一个阻塞操作</li>
+<li>M2绑定的P刚刚获取到G3，马上就要执行G3</li>
+</ul>
+<p>为了不耽误G2的执行，此时就会对物理CPU进行切换操作：</p>
+<p><img src="/images/image-20210226004935821.png" alt="image-20210226004935821"></p>
+<ul>
+<li>第一步，创建/唤醒M3</li>
+<li>第二步，将M1绑定的P，连同P上的本地队列，重新绑定到M3（也就是说，M3接管了原先在M1上的P）</li>
+<li>第三步，将原先在M1上的P上的G1直接交给M1</li>
+<li>第四步，物理CPU切换到M2和M3，继续执行M2和M3上的P</li>
+<li>第五步，因为M1没有P，无法执行G1 。所以会将M1销毁或设置为睡眠。然后等待，待到G1的阻塞操作执行完毕，G1会重新加入其他P的本地队列 </li>
+</ul>
+<h3 id="利用并行"><a href="#利用并行" class="headerlink" title="利用并行"></a>利用并行</h3><p>使用GOMAXPROCS来限定P的个数</p>
+<h3 id="抢占"><a href="#抢占" class="headerlink" title="抢占"></a>抢占</h3><p>传统的co-routine（就像python的协程）必须主动释放</p>
+<p><img src="/images/image-20210226010244312.png" alt="image-20210226010244312"></p>
+<p>如上图，</p>
+<ul>
+<li>现在是单核CPU，且有一个co-routine已经和这个CPU绑定了。</li>
+<li>此时来了一个新的co-routine。因为没有CPU可以使用了，所以新来的的co-routine必须等到旧的co-routine主动释放才能执行。如下：</li>
+</ul>
+<p><img src="/images/image-20210226010526131.png" alt="image-20210226010526131"></p>
+<p>对于goroutine来说，每个G最高只能执行10ms，时间一到就会被新的G抢占CPU：</p>
+<p><img src="/images/image-20210226010626607.png" alt="image-20210226010626607"></p>
+<p>也就是说，所有的G一律平等，大家都只能执行一段时间，时间一到就要换人。</p>
+<h3 id="全局G队列"><a href="#全局G队列" class="headerlink" title="全局G队列"></a>全局G队列</h3><h4 id="work-stealing机制，从全局G队列偷取"><a href="#work-stealing机制，从全局G队列偷取" class="headerlink" title="work stealing机制，从全局G队列偷取"></a>work stealing机制，从全局G队列偷取</h4><p>其实是对原先的work stealing机制的补充，当M执行work stealing从其他P偷不到G时，他可以从全局G队列获取G。</p>
+<p><img src="/images/image-20210226011030534.png" alt="image-20210226011030534"></p>
+<p>如上图，此时：</p>
+<ul>
+<li>M1的P正在执行G1，且P本地队列已经空了</li>
+<li>M2空闲，全局G队列不为空。</li>
+<li>此时M2空闲，会优先去其他P的本地队列里偷窃G，但是其他的P已经没有G了，这时就会去全局G队列里偷</li>
+</ul>
+<p>因为全局G队列是有锁的，因此会比从本地P队列里拿更慢</p>
+<h2 id="“go-func-”经历了什么"><a href="#“go-func-”经历了什么" class="headerlink" title="“go func()”经历了什么"></a>“go func()”经历了什么</h2><p><img src="/images/image-20210226012358468.png" alt="image-20210226012358468"></p>
+<ol>
+<li>通过go func()创建一个goroutine</li>
+<li>有两个存储G的队列，一个是局部调度器P的本地队列，一个是全局G队列。新创建的G会优先保存在P的本地队列中，如果P的本地队列已经满了，就会保存在全局的队列中</li>
+<li>G只能运行在M中，一个M必须持有一个P。M和P是一比一的关系。M会从P的本地队列弹出一个可执行状态的G来执行，如果P的本地队列为空，就会想从其他的MP组合偷取一个可执行的G来执行。</li>
+<li>一个M调度G执行分的过程一个循环机制。也就是说第3步到第7步是一个大循环。如果func()函数不是阻塞函数，但是执行时间超过10ms，那么那个G就会被重新放回P队列的尾部，P队列首位的G就会重新走第三步流程，也就是说轮到他执行了。</li>
+<li>当M执行某个G的时候，如果发生了syscall或者其余阻塞操作，M会阻塞，如果当前有一些G在执行，runtime会吧这个线程M从P中摘除（detach），然后再创建一个新的操作系统的线程（如果有空闲的线程可用就复用空闲线程）来服务于这个P</li>
+<li>当M系统调用结束的时候，这个G会尝试获取一个空闲的P执行，并放入到这个P的本地队列中。如果获取不到P，那么这个线程M编程休眠状态，加入到空闲线程中，然后这个G会被放入全局队列中。</li>
+</ol>
+<h2 id="调度器的生命周期"><a href="#调度器的生命周期" class="headerlink" title="调度器的生命周期"></a>调度器的生命周期</h2><h3 id="M0和G0"><a href="#M0和G0" class="headerlink" title="M0和G0"></a>M0和G0</h3><p>M0:</p>
+<ul>
+<li>程序启动后的编号为0的主线程</li>
+<li> M0保存在进程的全局变量<code>runtime.m0</code>中，不需要在heap上分配 </li>
+<li>M0负责初始化和启动第一个G</li>
+<li>在启动第一个G之后，M0就和其他的M一样了</li>
+</ul>
+<p>G0:</p>
+<ul>
+<li>每个M都会有一个自己的G0</li>
+<li>每次启动一个M，都会第一个创建的goroutine，就是G0</li>
+<li>G0仅用于负责调度的G</li>
+<li>G0步指向任何可执行的函数</li>
+<li>在调度或系统调用时，会使用M切换到G0，来进行调度</li>
+</ul>
+<h3 id="G执行完毕后切换"><a href="#G执行完毕后切换" class="headerlink" title="G执行完毕后切换"></a>G执行完毕后切换</h3><p>当G1运行完成后（函数：goexit），M上运行的goroutine切换为G0，G0负责调度协程的切换（函数：schedule）。从P的本地队列取G2，从G0切换到G2，并开始运行G2函数（函数execute）。思想了线程M1的复用。</p>
+<p><img src="/images/image-20210227144625421.png" alt="image-20210227144625421"></p>
+<h3 id="本地队列已满时再创建G"><a href="#本地队列已满时再创建G" class="headerlink" title="本地队列已满时再创建G"></a>本地队列已满时再创建G</h3><p><img src="/images/image-20210227145720981.png" alt="image-20210227145720981"></p>
+<p>注意并不是直接见G7加入全局队列就完事了。而是将本地队列的前面一半打乱顺序，然后和G7一起放在全局队列中</p>
+<h3 id="唤醒正在休眠的M"><a href="#唤醒正在休眠的M" class="headerlink" title="唤醒正在休眠的M"></a>唤醒正在休眠的M</h3><ul>
+<li>在创建G的时候，运行的G会尝试换新其他空闲的P和M组合去执行。</li>
+<li>假定唤醒了M2，M2绑定了P2，并运行G0，但是P2本地队列没有G，M2此时被称为<code>自旋线程</code>（没有G，当为运行状态的线程，会不断的去寻找G）</li>
+</ul>
+<p><img src="/images/image-20210227150148437.png" alt="image-20210227150148437"></p>
+<h3 id="G从阻塞恢复"><a href="#G从阻塞恢复" class="headerlink" title="G从阻塞恢复"></a>G从阻塞恢复</h3><p>M2和P2会解绑，但是M2会记住P2，然后G8和M2进入系统调用状态，当G8和M2退出系统调用时，会尝试获取P2，如果无法获取，着获取空闲的P，如果依然没有，G8会记为可运行状态，并加入到全局队列。M2因为没有P的绑定而变成休眠状态（长时间休眠等待GC会收到销毁）</p>
+<p><img src="/images/image-20210227151642481.png" alt="image-20210227151642481"></p>
+<h2 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h2><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV19r4y1w7Nx">https://www.bilibili.com/video/BV19r4y1w7Nx</a></p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

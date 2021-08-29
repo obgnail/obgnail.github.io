@@ -1,0 +1,486 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Tornado入门到应用&quot;&gt;&lt;a href=&quot;#Tornado入门到应用&quot; class=&quot;headerlink&quot; title=&quot;Tornado入门到应用&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://www.bilibili.com/video/av36908070&quot;&gt;Tornado入门到应用&lt;/a&gt;&lt;/h1&gt;&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;什么是Tornado : 全称 Tornado Web Server，是一种Web服务器软件的开源版本，是一个轻量级的Web框架"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Tornado入门到应用1_请求和响应 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Tornado/" rel="tag">Tornado</a></div><div class="post-time">2019-09-01</div></div></div><div class="container post-header"><h1>Tornado入门到应用1_请求和响应</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Tornado%E5%85%A5%E9%97%A8%E5%88%B0%E5%BA%94%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Tornado入门到应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8EDjango%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.1.1.</span> <span class="toc-text">与Django的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">基础流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE%E7%A4%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">流程图示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tornado%E8%83%BD%E5%90%8C%E6%97%B6%E5%A4%84%E7%90%86%E5%A4%A7%E9%87%8F%E8%BF%9E%E6%8E%A5%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.2.2.</span> <span class="toc-text">Tornado能同时处理大量连接的原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAHttpServer%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.3.</span> <span class="toc-text">创建HttpServer对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.2.4.</span> <span class="toc-text">多进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#options"><span class="toc-number">1.2.5.</span> <span class="toc-text">options</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97"><span class="toc-number">1.2.6.</span> <span class="toc-text">日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.7.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94"><span class="toc-number">1.3.</span> <span class="toc-text">请求与响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Application"><span class="toc-number">1.3.1.</span> <span class="toc-text">Application</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#settings"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">settings</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">路由</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RequestHandler"><span class="toc-number">1.4.</span> <span class="toc-text">RequestHandler</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8Http%E5%8D%8F%E8%AE%AE%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%92%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.1.</span> <span class="toc-text">利用Http协议向服务器递参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E5%8F%96url%E7%9A%84%E7%89%B9%E5%AE%9A%E9%83%A8%E5%88%86"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">提取url的特定部分</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#get%E6%96%B9%E5%BC%8F%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">get方式传递参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#post%E6%96%B9%E5%BC%8F%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">post方式传递参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A2%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%8F%96get%E8%AF%B7%E6%B1%82%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%8F%96post%E8%AF%B7%E6%B1%82"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">既可以获取get请求，也可以获取post请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8http%E6%8A%A5%E6%96%87%E7%9A%84%E5%A4%B4%E4%B8%AD%E5%A2%9E%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="toc-number">1.4.1.5.</span> <span class="toc-text">在http报文的头中增加自定义的字段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#request%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.4.2.</span> <span class="toc-text">request对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tornado-httputil-HTTPFile%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.4.3.</span> <span class="toc-text">tornado.httputil.HTTPFile对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%8D%E5%BA%94"><span class="toc-number">1.5.</span> <span class="toc-text">响应</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#write"><span class="toc-number">1.5.1.</span> <span class="toc-text">write</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set-header-name-value"><span class="toc-number">1.5.2.</span> <span class="toc-text">set_header(name,value)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set-default-headers-name-value"><span class="toc-number">1.5.3.</span> <span class="toc-text">set_default_headers(name,value)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91-rediret-url"><span class="toc-number">1.5.4.</span> <span class="toc-text">重定向 rediret(url)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#self-send-error-status-code-500-kwargs"><span class="toc-number">1.5.5.</span> <span class="toc-text">self.send_error(status_code&#x3D;500,**kwargs)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#write-error-status-code-kwargs"><span class="toc-number">1.5.6.</span> <span class="toc-text">write_error(status_code,**kwargs)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.6.</span> <span class="toc-text">接口调用顺序</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="Tornado入门到应用"><a href="#Tornado入门到应用" class="headerlink" title="Tornado入门到应用"></a><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av36908070">Tornado入门到应用</a></h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
+<li><p>什么是Tornado : 全称 Tornado Web Server，是一种Web服务器软件的开源版本，是一个轻量级的Web框架</p>
+</li>
+<li><p>特点 : 作为Web服务器，拥有异步非阻塞O的处理方式，Tornado有较为出色的抗负载能力，官方用 nginx反向代理的方式部署 Tornado</p>
+</li>
+<li><p>使用场景 :</p>
+<ul>
+<li><p>用户量大，高并发</p>
+</li>
+<li><p>大量的HTTP持久连接</p>
+<blockquote>
+<ul>
+<li>使用同一个TCP连接来发送和接收多个HTP请求/应答，而不是为每一个新的请求/应答打开新的连接的方法</li>
+<li>对于HTTP1.0，可以在请求的包头（Header）中添加Connection:Keop-Aive=</li>
+<li>对于HTTP11，所有的连接默认都是持久连接</li>
+</ul>
+</blockquote>
+</li>
+<li><p>C10K : 上面的高井发问题，通常用C10K这一概念来描述.</p>
+<blockquote>
+<p>C10K — <code>Concurrently handling ten thousand  connections</code>，即并发10000个连接。对于单台服务器而言，根本无法承担，而采用多台服务器分布式又意味看高昂的成本</p>
+</blockquote>
+</li>
+<li><p>性能 : Tornado在设计之初就考虑到了性能因素，旨在解决C10K问题，这样的设计使得其成为一个拥有非常高性能的解决方案(服务器与框架的集合体)</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="与Django的对比"><a href="#与Django的对比" class="headerlink" title="与Django的对比"></a>与Django的对比</h3><ul>
+<li>Django是走大而全的方向，注重的是高效开发，它最出名的是其全自动化的管理后台：只需要使用起ORM，做简单的对象定义，它就能自动生成数据库结构、以及全功能的管理后台</li>
+<li>Django提供的方便，也意味着 Django内置的ORM跟框架内的其他模块耦合程度高，<strong>应用程序必须使用 Django内置的ORM，否则就不能享受到框架内提供的种种基于其ORM的便利</strong>.</li>
+<li>Django特性 : <ul>
+<li>session功能</li>
+<li>后台管理</li>
+<li>ORM</li>
+</ul>
+</li>
+<li>Tornado : <strong>Tornado走的是少而精的方向，注重的是性能优越，它最出名的是异步非阻塞的设计方式</strong></li>
+<li>特点 : <ul>
+<li>HTTP服务器</li>
+<li>异步编程</li>
+<li>WebSockets</li>
+</ul>
+</li>
+<li>要性能，Tornado 首选；要开发速度，Django 和Flask 都行，区别是Flask 把许多功能交给第三方库去完成了，因此Flask 更为灵活。Django适合初学者或者小团队的快速开发，适合做管理类、博客类网站、或者功能十分复杂需求十分多的网站，Tornado适合高度定制，适合访问量大，异步情况多的网站。</li>
+</ul>
+<h2 id="基础流程"><a href="#基础流程" class="headerlink" title="基础流程"></a>基础流程</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tornado的基础web框架模块</span></span><br><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"><span class="comment"># tornado的核心IO循环模块,封装Linux的epoll和BSD的kqueue,这是tornado高效的基础</span></span><br><span class="line"><span class="keyword">import</span> tornado.ioloop</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 视图(业务处理类)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">&#x27;hello world&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	<span class="comment"># 实例app对象</span></span><br><span class="line">	<span class="comment"># APPlication :是tornado web框架的核心应用类，是与服务器对应的接口</span></span><br><span class="line">	<span class="comment"># 里面保存了路出映射表</span></span><br><span class="line">	app = tornado.web.Application([</span><br><span class="line">		(<span class="string">r&#x27;/&#x27;</span>,IndexHandler)</span><br><span class="line">	])</span><br><span class="line">	<span class="comment"># listen 方法用来创建一个http服务器的实例并绑定了监听端口</span></span><br><span class="line">	<span class="comment"># 注意 : 此时服务器并没有开启监听</span></span><br><span class="line">	app.listen(<span class="number">8000</span>)</span><br><span class="line">	<span class="comment"># IOLoop.current() : 返回当前线程的IOLoop实例</span></span><br><span class="line">	<span class="comment"># IOLoop.start()：启动 IOloop实例的I/O循环,同时开启监听</span></span><br><span class="line">	tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="流程图示"><a href="#流程图示" class="headerlink" title="流程图示"></a>流程图示</h3><ol>
+<li>首先生成一个监听客户端连接的socket , 一旦有新的连接过来就会生成一个新的socket</li>
+<li>linux-epoll会管理所有的socket</li>
+<li>IOLoop会监听linux-epoll中是否有IO操作</li>
+</ol>
+<p><img src="/images/5.jpg" alt="img"></p>
+<blockquote>
+<ol>
+<li><p>首先Tornado需要建立监听，会创建一个socket用于监听，如果有客户端A请求建立连接之后，Tornado会基于原先的socket新创建一个包含客户端A连接的有关信息的socket(分配新的监听端口)，用于监听和客户端A的请求。此时对Tornado来说就有两个socket需要进行监控，原先的socket继续用来监听建立新连接，新的socket用于和客户端A进行通信，假如没有epoll技术的话，Tornado需要自己去循环询问哪个socket有新的请求。</p>
+</li>
+<li><p>有了epoll技术，Tornado只需要把所有的socket丢给epoll，epoll作为管家帮忙监控，然后Torando.ioloop.IOLoop.current().start()开启循环，不断的去询问epoll是否有请求需要处理，这就是ioloop所做的工作，也是Tornado的核心部分。</p>
+</li>
+<li><p>当有客户端进行请求，epoll就发现有socket可处理，当ioloop再次询问epoll时，epoll就把需要处理的socket交由Tornado处理</p>
+</li>
+<li><p>Tornado对请求进行处理，取出报文，从报文中获取请求路径，然后从tornado.web.Applcation里配置的路由映射中把请求路径映射成对应的处理类，如上图IndexHandler就是处理类。</p>
+</li>
+<li><p>处理类处理完成后，生成响应，将响应内容封装成http报文，通过请求时建立的连接（尚未中断）将响应内容返回给客户端。</p>
+</li>
+<li><p>当有多个请求同时发生，Tornado会按顺序挨个处理。</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="Tornado能同时处理大量连接的原因"><a href="#Tornado能同时处理大量连接的原因" class="headerlink" title="Tornado能同时处理大量连接的原因"></a>Tornado能同时处理大量连接的原因</h3><ol>
+<li>利用高效的epoll技术处理请求，单线程/单进程同时处理大量连接。</li>
+<li><strong>没用使用传统的wsgi协议</strong>，而是利用Tornado自己的web框架和http服务形成了一整套WSGI方案进行处理。</li>
+<li>异步处理方式，Tornado提供了异步接口可供调用。</li>
+</ol>
+<h3 id="创建HttpServer对象"><a href="#创建HttpServer对象" class="headerlink" title="创建HttpServer对象"></a>创建HttpServer对象</h3><p>其实<code>app.listen(8000)</code>会自动帮我们创建一个httpserver,此时我们可以自定义一个服务器:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"><span class="keyword">import</span> tornado.ioloop</span><br><span class="line"><span class="keyword">import</span> tornado.httpserver</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">&#x27;hello world&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	app = tornado.web.Application([</span><br><span class="line">		(<span class="string">r&#x27;/&#x27;</span>,IndexHandler)</span><br><span class="line">	])</span><br><span class="line">	<span class="comment"># 实例化一个http服务器对象</span></span><br><span class="line">	HttpServer = tornado.httpserver.HTTPServer(app)</span><br><span class="line">	<span class="comment"># 绑定端口</span></span><br><span class="line">	HttpServer.listen(<span class="number">8000</span>)</span><br><span class="line"></span><br><span class="line">	tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>也就是说</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>等于</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实例化一个http服务器对象</span></span><br><span class="line">HttpServer = tornado.httpserver.HTTPServer(app)</span><br><span class="line"><span class="comment"># 绑定端口</span></span><br><span class="line">HttpServer.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h3><p>tordano服务默认启动是单进程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"><span class="keyword">import</span> tornado.ioloop</span><br><span class="line"><span class="keyword">import</span> tornado.httpserver</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">&#x27;hello world&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	app = tornado.web.Application([</span><br><span class="line">		(<span class="string">r&#x27;/&#x27;</span>,IndexHandler)</span><br><span class="line">	])</span><br><span class="line">	<span class="comment"># 实例化一个http服务器对象</span></span><br><span class="line">	HttpServer = tornado.httpserver.HTTPServer(app)</span><br><span class="line">	<span class="comment"># 绑定端口</span></span><br><span class="line">	HttpServer.bind(<span class="number">8000</span>)</span><br><span class="line">	<span class="comment"># 启动5个进程</span></span><br><span class="line">	HttpServer.start(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">	tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><code>HttpServer.bind(8000)</code> : 将服务绑定到指定的端口</li>
+<li><code>HttpServer.start(num)</code> : <ul>
+<li>默认为1 </li>
+<li>若num&gt;0,创建num个子进程 </li>
+<li>若num&lt;=0或者None : 开启对应硬件机器的cup核心数个子进程</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>也就是说:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HttpServer.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>相当于:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HttpServer.bind(<span class="number">8000</span>)</span><br><span class="line">HttpServer.start(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<ul>
+<li><p><code>app.listen()</code>只能在单进程模式中使用</p>
+</li>
+<li><p>虽然tornado给我们提供了一次性启动多个进程的方式，但是由于一些问题(见下)，不建议使用上面方式启动多进程，而是<strong>手动启动多个进程，并且还能绑定不同的端囗</strong></p>
+</li>
+<li><p>问题:</p>
+<ul>
+<li>每个子进程都会从父进程中复制一份 IOLoop 的实例，如果在创建子进程前修改了 IOLoop，会影所有的子进程</li>
+<li>所有的讲程都是由一个命令启动的，无法做到在不停止服劳的情况下修改代码(比如仅仅想修改某个进程的代码)</li>
+<li>所有进程共享一个端囗，想要分别监控很困难</li>
+</ul>
+</li>
+</ul>
+<h3 id="options"><a href="#options" class="headerlink" title="options"></a>options</h3><ul>
+<li><p>非正常结束 : 因为tornado需要占用端口号.如果tornado非正常结束 . 那么就有可能端口号没有被释放 .这时就要使用options</p>
+</li>
+<li><p> 基础方法与属性: </p>
+</li>
+<li><p>tornado为我们提供了一个 tornado.options模块 .<br>作用 : 全局参数的定义,存储,转换</p>
+</li>
+<li><p><code>tornado.options.define()方法</code> : 功能 : 用来定义options选项变量的方法</p>
+<ul>
+<li><p>参数 name : 选项变量名，必须保证其唯一性</p>
+</li>
+<li><p>参数 default : 设置选项变量的赋认值，默认为None</p>
+</li>
+<li><p>参数 type : 设置选项变量的类型 , 从命令行或配置文件导入参数时tornado会根据类型输入值进行转换.</p>
+<blockquote>
+<ul>
+<li>可以是str,float,int,datetime,timedelta</li>
+<li>如果没有设置type , 会根据default的值进行转换</li>
+<li>如果没有设置default , 那么就不进行转换</li>
+</ul>
+</blockquote>
+</li>
+<li><p>参数 multiple : 设置选项变量是否可以为多个值,吗默认false</p>
+</li>
+<li><p>参数 help : 选项变量的帮助信息</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tornado.options.define(<span class="string">&#x27;port&#x27;</span>,default=<span class="number">8000</span>,<span class="built_in">type</span>=<span class="built_in">int</span>)</span><br><span class="line">tornado.options.define(<span class="string">&#x27;list&#x27;</span>,default=[],<span class="built_in">type</span>=<span class="built_in">str</span>,multiple=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>tornado.options.options属性</code> : 全局的 options对象，所有定义的选项变量都会作为该对象的属性</p>
+</li>
+<li><p>获取参数的方法:</p>
+<ul>
+<li><p><code>tornado.options.parse_command_line()</code>:</p>
+<p>作用 : 转换命令行参数,并保存到tornado.options.options</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tornado.options.parse_command_line()</span><br></pre></td></tr></table></figure></li>
+<li><p><code>tornado.options.parse_config_file(path)</code><br>作用 : 从配置文件导入参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找config.py文件</span></span><br><span class="line">tornado.options.parse_config_file(<span class="string">&#x27;config.py&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p>甚至直接使用config.py文件:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.py</span></span><br><span class="line">options = &#123;</span><br><span class="line">    <span class="string">&#x27;post&#x27;</span> : <span class="number">8080</span>,</span><br><span class="line">    <span class="string">&#x27;other_args&#x27;</span>:<span class="number">55</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># server.py</span></span><br><span class="line"><span class="keyword">from</span> config <span class="keyword">import</span> options</span><br><span class="line">HttpServer.bind(config.options.port)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>示例:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server.py</span></span><br><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"><span class="keyword">import</span> tornado.ioloop</span><br><span class="line"><span class="keyword">import</span> tornado.httpserver</span><br><span class="line"><span class="keyword">import</span> tornado.options</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个hyl参数</span></span><br><span class="line">tornado.options.define(<span class="string">&#x27;hyl&#x27;</span>,default=<span class="number">8000</span>,<span class="built_in">type</span>=<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">&#x27;hello world&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	<span class="comment"># 转换命令行参数,并保存到tornado.options.options</span></span><br><span class="line">	tornado.options.parse_command_line()</span><br><span class="line"></span><br><span class="line">	app = tornado.web.Application([</span><br><span class="line">		(<span class="string">r&#x27;/&#x27;</span>,IndexHandler)</span><br><span class="line">	])</span><br><span class="line"></span><br><span class="line">	HttpServer = tornado.httpserver.HTTPServer(app)</span><br><span class="line">	<span class="comment"># 使用tornado.options.options</span></span><br><span class="line">	HttpServer.bind(tornado.options.options.hyl)</span><br><span class="line">	HttpServer.start(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python server.py --hyl=9000</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><ul>
+<li><p>当我们在代码中使用<code>parse_command_line()</code>或者<code>parse_config_file(path)</code>方法是,tornado会默认开启logging模块功能,向屏幕终端输出打印信息</p>
+</li>
+<li><p>关闭:</p>
+<ul>
+<li><p>对于<code>parse_config_file(path)</code> : </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这行一定要放在前面</span></span><br><span class="line">tornado.options.options.logging = <span class="literal">None</span></span><br><span class="line">tornado.options.parse_command_line()</span><br></pre></td></tr></table></figure></li>
+<li><p>对于<code>parse_command_line()</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python server.py --hyl=111 --logging=none</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以在代码文件里写<code>tornado.options.options.logging = None</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目录结构:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">    ├─application.py</span><br><span class="line">    ├─config.py</span><br><span class="line">    ├─server.py</span><br><span class="line">    ├─static</span><br><span class="line">    ├─templates</span><br><span class="line">       └─index.html    </span><br><span class="line">    └─views</span><br><span class="line">       ├─index.py</span><br><span class="line">       └─__init__.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># main.py</span></span><br><span class="line"><span class="keyword">import</span> tornado.ioloop</span><br><span class="line"><span class="keyword">import</span> tornado.httpserver</span><br><span class="line"><span class="keyword">import</span> tornado.options</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> application <span class="keyword">import</span> Application</span><br><span class="line"><span class="keyword">import</span> config</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	app = Application()</span><br><span class="line"></span><br><span class="line">	HttpServer = tornado.httpserver.HTTPServer(app)</span><br><span class="line">	HttpServer.bind(config.options[<span class="string">&#x27;port&#x27;</span>])</span><br><span class="line">	HttpServer.start(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.py</span></span><br><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> views.index</span><br><span class="line"><span class="keyword">import</span> config</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span>(<span class="params">tornado.web.Application</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">		headlers = [</span><br><span class="line">			(<span class="string">r&#x27;/&#x27;</span>,views.index.IndexHandler)</span><br><span class="line">		]</span><br><span class="line"></span><br><span class="line">		<span class="built_in">super</span>().__init__(headlers,**config.settings)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># views/index.py</span></span><br><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		<span class="keyword">return</span> self.render(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">		<span class="comment"># self.write(f&quot;hello world&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">BASE_DIRS = os.path.dirname(__file__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">options = &#123;</span><br><span class="line">	<span class="string">&#x27;port&#x27;</span> : <span class="number">8000</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">settings = &#123;</span><br><span class="line">	<span class="string">&#x27;debug&#x27;</span> : <span class="literal">True</span>,</span><br><span class="line">	<span class="string">&#x27;static_path&#x27;</span>:os.path.join(BASE_DIRS,<span class="string">&#x27;static&#x27;</span>),</span><br><span class="line">	<span class="string">&#x27;template_path&#x27;</span>:os.path.join(BASE_DIRS,<span class="string">&#x27;templates&#x27;</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--index.html  --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;#&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;用户名(不填则默认匿名)&quot;</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;邮箱(选填)&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="请求与响应"><a href="#请求与响应" class="headerlink" title="请求与响应"></a>请求与响应</h2><h3 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h3><h4 id="settings"><a href="#settings" class="headerlink" title="settings"></a>settings</h4><ul>
+<li><p>debug : 设置tornado在调试模式还是生成模式 , 默认Flase</p>
+<blockquote>
+<p>调试模式:</p>
+<ul>
+<li><p>自动重启 :<br>tornado应用会监控源代码文件，当有保存改动时便会重新启动服务器，可以减少手动重启的次数 . 如果保存后代码有错误会导致重启失败，修改惜误后需要手动重目 </p>
+<p>(如果仅仅想启动此功能 , 可以使用<code>autoreload=True</code>设置)</p>
+</li>
+<li><p>取消缓存编译的模板<br>(如果仅仅想关闭此功能 , 可以使用<code>compiled_tempate_cache=False</code>设置)</p>
+</li>
+<li><p>取消缓存静态文件的hash值<br>(如果仅仅想启动关闭此功能 , 可以使用<code>static_hash_cache=False</code>设置)</p>
+</li>
+<li><p>提供追追信息<br>(如果仅仅想启动此功能 , 可以使用<code>server_traceback=True</code>设置)</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p>static_path : 设置静态文件目录</p>
+</li>
+<li><p>template_path : 设置模板文件目录</p>
+</li>
+<li><p>autoescape : 关闭当前项目的自动转义</p>
+</li>
+<li><p>cookie_secret : 配置安全cookies密钥</p>
+</li>
+<li><p>xsrf_cookies : 当为True开启XSRF保护</p>
+</li>
+<li><p>login_url : 用户验证失败会映射该路由</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">settings = &#123;</span><br><span class="line">	<span class="string">&#x27;debug&#x27;</span> : <span class="literal">True</span>,</span><br><span class="line">	<span class="string">&#x27;cookie_secret&#x27;</span>:<span class="string">&#x27;fq/tqtjCRGG9kIAOtu2QQp0MbOtQ8kxdnYsS8lLQZlg=&#x27;</span>,</span><br><span class="line">	<span class="string">&#x27;xsrf_cookies&#x27;</span>:<span class="literal">True</span>,</span><br><span class="line">	<span class="string">&#x27;static_path&#x27;</span>:os.path.join(BASE_DIRS,<span class="string">&#x27;static&#x27;</span>),</span><br><span class="line">	<span class="string">&#x27;template_path&#x27;</span>:os.path.join(BASE_DIRS,<span class="string">&#x27;templates&#x27;</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h4><ul>
+<li><p>简单使用<code>(r&#39;/&#39;,views.index.IndexHandler)</code></p>
+</li>
+<li><p>服务器自己传递的参数:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/test&#x27;</span>,views.index.TestHandler,&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;hyl&#x27;</span>,<span class="string">&#x27;age&#x27;</span>:<span class="number">21</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用initialize获取参数</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="comment"># 会在get方法前调用</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">initialize</span>(<span class="params">self,name,age</span>):</span></span><br><span class="line">		self.name = name</span><br><span class="line">		self.age = age</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">f&#x27;TestHandler...<span class="subst">&#123;self.name&#125;</span>...<span class="subst">&#123;self.age&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p>使用反向解析:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.py</span></span><br><span class="line">headlers = [</span><br><span class="line">	(<span class="string">r&#x27;/&#x27;</span>,views.index.IndexHandler),</span><br><span class="line">	<span class="comment"># 使用tornado.web.url</span></span><br><span class="line">	tornado.web.url(<span class="string">r&#x27;/test2&#x27;</span>,views.index.TestHandler2,&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;hyl&#x27;</span>,<span class="string">&#x27;age&#x27;</span>:<span class="number">21</span>&#125;,name=<span class="string">&#x27;test2&#x27;</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># views.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler2</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">initialize</span>(<span class="params">self,name,age</span>):</span></span><br><span class="line">		self.name = name</span><br><span class="line">		self.age = age</span><br><span class="line">		</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		self.write(<span class="string">f&#x27;TestHandler2...<span class="subst">&#123;self.name&#125;</span>...<span class="subst">&#123;self.age&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用反向解析:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		url = self.reverse_url(<span class="string">&#x27;test2&#x27;</span>)</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&#x27;--------&#x27;</span>,url)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="RequestHandler"><a href="#RequestHandler" class="headerlink" title="RequestHandler"></a>RequestHandler</h2><h3 id="利用Http协议向服务器递参数"><a href="#利用Http协议向服务器递参数" class="headerlink" title="利用Http协议向服务器递参数"></a>利用Http协议向服务器递参数</h3><h4 id="提取url的特定部分"><a href="#提取url的特定部分" class="headerlink" title="提取url的特定部分"></a>提取url的特定部分</h4><p>提取<code>http://127.0.0.1:8000/shop/goods/pan</code>中的<code>goods/pan</code></p>
+<ul>
+<li><p>位置参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/shop/(\w+)/(\w+)&#x27;</span>,views.index.Test3Handler)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler3</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&#x27;*****&#x27;</span>,args)</span><br><span class="line">		self.write(<span class="string">&#x27;-------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>当访问<code>http://127.0.0.1:8000/test3/shop/goods/pan</code>时,<code>print(&#39;*****&#39;,args)</code>会返回<code>goods</code>和<code>pan</code></p>
+</li>
+<li><p>关键字参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/test3/shop/(?P&lt;name&gt;\w+)/(?P&lt;age&gt;\w+)&#x27;</span>,views.index.TestHandler3),</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler3</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&#x27;*****&#x27;</span>,kwargs)</span><br><span class="line">		self.write(<span class="string">&#x27;-------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>当访问<code>http://127.0.0.1:8000/test3/shop/goods/pan</code>时,<code>print(&#39;*****&#39;,kwargs)</code>会返回<code>&#123;&#39;name&#39;: &#39;goods&#39;, &#39;age&#39;: &#39;pan&#39;</code></p>
+</li>
+</ul>
+<h4 id="get方式传递参数"><a href="#get方式传递参数" class="headerlink" title="get方式传递参数"></a>get方式传递参数</h4><p>提取<code>http://127.0.0.1:8000/test4?a=1&amp;b=2</code>中的<code>a,b</code></p>
+<ul>
+<li>Django中使用<code>x = request.GET.get(&#39;a&#39;,100)</code></li>
+<li>tornado中使用<code>x = self.get_query_argument(&#39;a&#39;,default=100,strip=True)</code></li>
+<li>多了一个功能 , strip:去除左右两边的空白符(默认为True)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/test4&#x27;</span>,views.index.TestHandler4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler4</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">		x = self.get_query_argument(<span class="string">&#x27;a&#x27;</span>,default=<span class="number">100</span>,strip=<span class="literal">True</span>)</span><br><span class="line">		self.write(x)</span><br></pre></td></tr></table></figure>
+
+<p><code>http://127.0.0.1:8000/test4?a=4</code>,返回4</p>
+<ul>
+<li>对于像<code>http://127.0.0.1:8000/test4?a=4&amp;a=5</code>,默认<code>self.get_query_argument</code>获取最后一个,</li>
+<li>此时可以使用<code>x = self.get_query_arguments(&#39;a&#39;)</code>,返回的x是一个list</li>
+</ul>
+<h4 id="post方式传递参数"><a href="#post方式传递参数" class="headerlink" title="post方式传递参数"></a>post方式传递参数</h4><ul>
+<li>Django中使用<code>x = request.POST.get(&#39;a&#39;,100)</code></li>
+<li>tornado中使用<code>self.get_body_argument(&#39;a&#39;,default=100,strip=True)</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/&#x27;</span>,views.index.IndexHandler),</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.render(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        user = self.get_body_argument(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;xxxx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;用户名(不填则默认匿名)&quot;</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;邮箱(选填)&quot;</span> <span class="attr">name</span>=<span class="string">&quot;email&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;提交&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>同理 ,对于复选框,我们可以使用<code>get_body_arguments()</code></p>
+<h4 id="既可以获取get请求，也可以获取post请求"><a href="#既可以获取get请求，也可以获取post请求" class="headerlink" title="既可以获取get请求，也可以获取post请求"></a>既可以获取get请求，也可以获取post请求</h4><ul>
+<li>get为<code>x = self.get_requry_argument(&#39;a&#39;,default=100,strip=True)</code></li>
+<li>post为<code>x = self.get_body_argument(&#39;a&#39;,default=100,strip=True)</code></li>
+<li>既可以获取get请求，也可以获取post请求使用<code>x = self.get_argument(&#39;a&#39;,default=100,strip=True)</code></li>
+<li>同理也有<code>self.get_arguments</code></li>
+</ul>
+<h4 id="在http报文的头中增加自定义的字段"><a href="#在http报文的头中增加自定义的字段" class="headerlink" title="在http报文的头中增加自定义的字段"></a>在http报文的头中增加自定义的字段</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&#x27;name&#x27;</span> : <span class="string">&#x27;hyl&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;age&#x27;</span> : <span class="number">21</span></span><br><span class="line">        &#125;</span><br><span class="line">        self.set_header(<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;hyl&#x27;</span>)</span><br><span class="line">        self.write(data)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="request对象"><a href="#request对象" class="headerlink" title="request对象"></a>request对象</h3><p>和Django一样,<strong>request对象存储了关于请求的相关信息</strong></p>
+<p>属性:</p>
+<ul>
+<li>method : HTTP请求方式</li>
+<li>host : 被请求的主机名</li>
+<li>uri : 请求的权证资源地址 , 包括路径和get请求参数<br><code>http://www.baidu.com:8000/pan/goods/a.html?a=1&amp;v=4#abc</code></li>
+<li>path : 请求的路径部分</li>
+<li>query : 请求的参数部分</li>
+<li>version : 请求的HTTP部分</li>
+<li>headers : 请求头</li>
+<li>body : 请求踢</li>
+<li>remote_ip : 客户的IP</li>
+<li>files : 上传的文件</li>
+</ul>
+<h3 id="tornado-httputil-HTTPFile对象"><a href="#tornado-httputil-HTTPFile对象" class="headerlink" title="tornado.httputil.HTTPFile对象"></a>tornado.httputil.HTTPFile对象</h3><ul>
+<li>功能 : 接受到的文件对象</li>
+<li>属性 : <ul>
+<li>filename : 文件实际名</li>
+<li>boby : 文件数据实体</li>
+<li>content_type : 文件类型</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">r&#x27;/test5&#x27;</span>,views.index.TestHandler5),</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler5</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        self.render(<span class="string">&#x27;index2.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        files = self.request.files</span><br><span class="line">        <span class="built_in">print</span>(files)</span><br><span class="line">        self.write(<span class="string">&#x27;------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=<span class="string">&quot;/test5&quot;</span> method=<span class="string">&quot;post&quot;</span> enctype=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span><br><span class="line">&lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;file&quot;</span> name=<span class="string">&quot;file1&quot;</span>&gt;</span><br><span class="line">&lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;file&quot;</span> name=<span class="string">&quot;img&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;上传&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传<code>hyl.txt</code>,内容为<code>hyl is sb</code>. 得到</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&#x27;file1&#x27;</span>: </span><br><span class="line">	[</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="string">&#x27;filename&#x27;</span>: <span class="string">&#x27;hyl.txt&#x27;</span>, </span><br><span class="line">		<span class="string">&#x27;body&#x27;</span>: <span class="string">b&#x27;hyl is sb&#x27;</span>,</span><br><span class="line">		 <span class="string">&#x27;content_type&#x27;</span>: <span class="string">&#x27;text/plain&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上传<code>hyl.txt</code>和<code>B_1564.jpg</code>,得到</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&#x27;file1&#x27;</span>: </span><br><span class="line">	[</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="string">&#x27;filename&#x27;</span>: <span class="string">&#x27;hyl.txt&#x27;</span>, </span><br><span class="line">		<span class="string">&#x27;body&#x27;</span>: <span class="string">b&#x27;hyl is sb&#x27;</span>, </span><br><span class="line">		<span class="string">&#x27;content_type&#x27;</span>: <span class="string">&#x27;text/plain&#x27;</span>&#125;</span><br><span class="line">	], </span><br><span class="line">	<span class="string">&#x27;img&#x27;</span>: </span><br><span class="line">	[</span><br><span class="line">		&#123;<span class="string">&#x27;filename&#x27;</span>: <span class="string">&#x27;B_1564.jpg&#x27;</span>, </span><br><span class="line">		<span class="string">&#x27;body&#x27;</span>: <span class="string">b&#x27;\xff\xd8...\xd9&#x27;</span>, </span><br><span class="line">		<span class="string">&#x27;content_type&#x27;</span>: <span class="string">&#x27;image/jpeg&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="响应"><a href="#响应" class="headerlink" title="响应"></a>响应</h2><h3 id="write"><a href="#write" class="headerlink" title="write"></a>write</h3><ul>
+<li><p><code>self.write(chunk)</code> : 将chunk数据写到缓冲区</p>
+</li>
+<li><p>因为是写到缓冲区 , 所以可以使用多次的哦<code>self.write</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        self.write(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;4&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>终端显示<code>1234</code></p>
+</li>
+<li><p><code>self.finish()</code> : <strong>手动刷新缓冲区 , 关闭本次请求通道</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        self.write(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">        self.finish()</span><br><span class="line">        self.write(<span class="string">&#x27;3&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>终端只会显示<code>12</code></p>
+</li>
+<li><p>使用<code>self.write()</code>写json数据(Ajax)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&#x27;name&#x27;</span> : <span class="string">&#x27;hyl&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;age&#x27;</span> : <span class="number">21</span></span><br><span class="line">        &#125;</span><br><span class="line">        self.write(json.dumps(data))</span><br></pre></td></tr></table></figure>
+
+<p>或者:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&#x27;name&#x27;</span> : <span class="string">&#x27;hyl&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;age&#x27;</span> : <span class="number">21</span></span><br><span class="line">        &#125;</span><br><span class="line">        self.write(data)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>区别:</p>
+<ul>
+<li>self.write(json.dumps(data))返回的数据的content_type为<code>text/html</code></li>
+<li>self.write(data)返回的数据的content_type为<code>application/json</code></li>
+</ul>
+</blockquote>
+</li>
+<li><blockquote>
+<p>print刷新缓冲区的时机(刷新缓冲区就是将缓冲区的数据写到输出设备上) :</p>
+<ol>
+<li>程序结束</li>
+<li>手动刷新</li>
+<li>缓冲区满了 </li>
+<li>遇到<code>\n</code></li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h3 id="set-header-name-value"><a href="#set-header-name-value" class="headerlink" title="set_header(name,value)"></a>set_header(name,value)</h3><ul>
+<li><p>手动没置一个名为name，值力value的响应头字段</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.set_header(<span class="string">&#x27;Content-Type&#x27;</span>:<span class="string">&#x27;application/json;charset=UTF-8&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p><code>self.set_header</code>可以自定义响应头</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.set_header(<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;hyl&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="set-default-headers-name-value"><a href="#set-default-headers-name-value" class="headerlink" title="set_default_headers(name,value)"></a>set_default_headers(name,value)</h3><ul>
+<li><p>在进入HTTP响应处理方法(get,post等)之前调用<code>set_default_headers(name,value)</code> , 可以重写该方法来预先设置默认的headers</p>
+</li>
+<li><p>```python<br>class TestHandler6(tornado.web.RequestHandler):</p>
+<pre><code>def set_default_headers(self):
+    self.set_header(&#39;name&#39;,&#39;hyl&#39;)
+    self.set_header(&#39;name1&#39;,&#39;hyl2&#39;)
+
+def get(self,*args,**kwargs):
+    data = &#123;
+        &#39;name&#39; : &#39;hyl&#39;,
+        &#39;age&#39; : 21
+    &#125;
+    self.write(data)
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 对同一个header设置的话,后者会覆盖前者 : `self.set_header(&#x27;name&#x27;,&#x27;hyl&#x27;)`,`self.set_header(&#x27;name&#x27;,&#x27;hyl2&#x27;)`</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### self.set_status(status_code,reason=None)</span><br><span class="line"></span><br><span class="line">- 设置状态码 </span><br><span class="line"></span><br><span class="line">- 如果reason的值为None , 那么状态码必须设置为有效值</span><br><span class="line"></span><br><span class="line">- 示例:</span><br><span class="line"></span><br><span class="line">  ```python</span><br><span class="line">  class TestHandler6(tornado.web.RequestHandler):</span><br><span class="line">      def set_default_headers(self):</span><br><span class="line">          self.set_header(&#x27;name&#x27;,&#x27;hyl&#x27;)</span><br><span class="line">  </span><br><span class="line">      def get(self,*args,**kwargs):</span><br><span class="line">          self.set_status(404)</span><br><span class="line">          data = &#123;</span><br><span class="line">              &#x27;name&#x27; : &#x27;hyl&#x27;,</span><br><span class="line">              &#x27;age&#x27; : 21</span><br><span class="line">          &#125;</span><br><span class="line">          self.write(data)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_default_headers</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.set_header(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;hyl&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        <span class="comment"># 999是非有效值 , 但是因为reason!=None,不会出错</span></span><br><span class="line">        self.set_status(<span class="number">999</span>,<span class="string">&#x27;this is reason&#x27;</span>)</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&#x27;name&#x27;</span> : <span class="string">&#x27;hyl&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;age&#x27;</span> : <span class="number">21</span></span><br><span class="line">        &#125;</span><br><span class="line">        self.write(data)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.set_status(<span class="number">999</span>)</span><br></pre></td></tr></table></figure>
+
+<p>则报错</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="重定向-rediret-url"><a href="#重定向-rediret-url" class="headerlink" title="重定向 rediret(url)"></a>重定向 rediret(url)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler6</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        self.redirect(<span class="string">&#x27;/&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>配合反向解析 :</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler7</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        url = self.reverse_url(<span class="string">&#x27;test2&#x27;</span>)</span><br><span class="line">        self.redirect(url)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="self-send-error-status-code-500-kwargs"><a href="#self-send-error-status-code-500-kwargs" class="headerlink" title="self.send_error(status_code=500,**kwargs)"></a>self.send_error(status_code=500,**kwargs)</h3><ul>
+<li>抛出HTTP错误状态码,默认是500,<strong>抛出错误后 tornado会词用 write_error方法进行处理，并返回给浏器错误界面</strong></li>
+<li>类似于Django自定义404页面</li>
+</ul>
+<h3 id="write-error-status-code-kwargs"><a href="#write-error-status-code-kwargs" class="headerlink" title="write_error(status_code,**kwargs)"></a>write_error(status_code,**kwargs)</h3><p>用来处理 send_error抛出的错误信息，并返回给浏览器错误界面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler7</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span>  <span class="title">write_error</span>(<span class="params">self,status_code,**kwargs</span>):</span></span><br><span class="line">        <span class="keyword">if</span> status_code == <span class="number">500</span>:</span><br><span class="line">            self.write(<span class="string">&#x27;服务器内部错误&#x27;</span>)</span><br><span class="line">        <span class="keyword">elif</span> status_code == <span class="number">404</span>:</span><br><span class="line">            self.write(<span class="string">&#x27;资源不存在&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.write(<span class="string">&#x27;其他错误&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self,*args,**kwargs</span>):</span></span><br><span class="line">        flag = self.get_query_argument(<span class="string">&#x27;flag&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> flag == <span class="string">&#x27;0&#x27;</span>:</span><br><span class="line">            self.send_error(<span class="number">500</span>)</span><br><span class="line">        self.write(<span class="string">&#x27;you are right&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="接口调用顺序"><a href="#接口调用顺序" class="headerlink" title="接口调用顺序"></a>接口调用顺序</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestHandler7</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br></pre></td></tr></table></figure>
+
+<p>RequestHandler的方法 :</p>
+<ol>
+<li><p>initialize</p>
+</li>
+<li><p>prepare : </p>
+<ul>
+<li>预处理方法,在执行对应的请求方法之前调用</li>
+<li><strong>任何一种HTTP请求都会执行 prepare 方法</strong></li>
+</ul>
+</li>
+<li><p>HTTP方法 :</p>
+<ul>
+<li>get</li>
+<li>post</li>
+<li>head : 类似get请求，只不过响应中没有具体的内容，用户获取报头</li>
+<li>delete : 请求服务器删除指定的资源</li>
+<li>put : 从客户端向服务器传送指定内容</li>
+<li>patch : 请求修改局部内容</li>
+<li>options :  返回URL支持的所有HTTP方法</li>
+</ul>
+</li>
+<li><p>set_default_headers</p>
+</li>
+<li><p>write_error</p>
+</li>
+<li><p>on_finish : <strong>在请求处理结束后调用</strong>,在该方法中进行资源的清理释放，或者是日志处理</p>
+<blockquote>
+<p>尽量不要在该方法中进行响应输出</p>
+</blockquote>
+</li>
+</ol>
+<p>上述方法的执行顺序:</p>
+<ul>
+<li>正常情况时:<ol>
+<li>set_default_headers</li>
+<li>initialize</li>
+<li>prepare</li>
+<li>HTTP方法</li>
+<li>on_finish</li>
+</ol>
+</li>
+<li>抛出错误时:<ol>
+<li>set_default_headers</li>
+<li>initialize</li>
+<li>prepare</li>
+<li>HTTP方法</li>
+<li><strong>set_default_headers</strong>(第二次调用)</li>
+<li>write_error</li>
+<li>on_finish</li>
+</ol>
+</li>
+</ul>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

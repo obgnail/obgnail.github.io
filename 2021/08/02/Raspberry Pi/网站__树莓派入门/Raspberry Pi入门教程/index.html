@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;起步&quot;&gt;&lt;a href=&quot;#起步&quot; class=&quot;headerlink&quot; title=&quot;起步&quot;&gt;&lt;/a&gt;起步&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;去到raspberrypi.com/software,下载rpi-imger"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Raspberry Pi入门教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-02</div></div></div><div class="container post-header"><h1>Raspberry Pi入门教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%B7%E6%AD%A5"><span class="toc-number">1.</span> <span class="toc-text">起步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BCPU%E6%B8%A9%E5%BA%A6"><span class="toc-number">2.</span> <span class="toc-text">查看CPU温度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E6%98%A0%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">路由器映射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Nrgok%E8%BF%9B%E8%A1%8C%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.2.</span> <span class="toc-text">使用Nrgok进行内网穿透</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8Frp%E8%BF%9B%E8%A1%8C%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">3.3.</span> <span class="toc-text">利用Frp进行内网穿透</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><ol>
+<li><p>去到raspberrypi.com/software,下载rpi-imger</p>
+</li>
+<li><p>安装运行,operating system选择第一个(Raspberry Pi OS(32-bit))</p>
+</li>
+<li><p>ctrl+shfit+X打开配置</p>
+<ul>
+<li>选择<code>for this session only</code></li>
+<li>勾选<code>ENABLE SSH</code></li>
+<li>勾选<code>CONFIGURE WIFI</code></li>
+<li>勾选<code>SET LOCALE SETTNGS</code></li>
+<li>SAVE</li>
+</ul>
+</li>
+<li><p>插入SD卡</p>
+</li>
+<li><p>write</p>
+</li>
+<li><p>在sd卡根目录下，新建wifi配置文件wpa_supplicant.conf。如果用windows系统编辑这个文件，需要选择采用Linux/Unix style格式的行结尾，例如用Notepad++，需要选择 “Edit” &gt; “EOL Conversion” &gt; “UNIX/OSX Format”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev</span><br><span class="line">update_config=1</span><br><span class="line">country=CN</span><br><span class="line"> </span><br><span class="line">network=&#123;</span><br><span class="line">ssid=&quot;your-WiFi-name&quot;</span><br><span class="line">psk=&quot;your-wifi-password&quot;</span><br><span class="line">key_mgmt=WPA-PSK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>在sd卡根目录下，新建名为SSH的空文件</p>
+</li>
+<li><p>SD卡从电脑弹出了然后把SD卡从读卡器中取出，将其插入到树莓派背面的SD卡槽上，SD卡金手指面向板子插入。</p>
+</li>
+<li><p>路由器的WiFi控制页面即可查看DHCP设备,找到主机名为raspberrypi的IP</p>
+</li>
+<li><p>ssh pi@树莓派的IP地址,密码默认是raspberry</p>
+</li>
+</ol>
+<h2 id="查看CPU温度"><a href="#查看CPU温度" class="headerlink" title="查看CPU温度"></a>查看CPU温度</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/opt/vc/bin/vcgencmd measure_temp</span><br><span class="line"></span><br><span class="line">or:</span><br><span class="line">cat /sys/class/thermal/thermal_zone0/temp</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="内网穿透"><a href="#内网穿透" class="headerlink" title="内网穿透"></a>内网穿透</h2><p>内网穿透有很多种方法，这里主要说以下三种：</p>
+<ol>
+<li>如果家里有公网IP的话，可以用路由器做映射，进而实现内网穿透；</li>
+<li>花生壳、natapp、ngrok等商业化或非商业化内网穿透工具，用的其实是人家的公网IP；</li>
+<li>买云主机服务器以获得公网IP</li>
+</ol>
+<p>这三种方法有一个共性就是，要想在公网访问到树莓派，必须要有一个公网的IP，而在这三种方法里，最省钱的无疑是第一种，操作也很简单，最多需要做个动态解析。唯一的问题在于，你很可能没有公网IP，那就无法使用第一种方法了。</p>
+<h3 id="路由器映射"><a href="#路由器映射" class="headerlink" title="路由器映射"></a>路由器映射</h3><p>IP地址其实就是连入互联网的设备在网络上的唯一标识，我们目前用的最多的还是IPv4，可能是由于IPv4地址资源很紧缺，所以不会真正的给每个设备分配一个IP地址。解决方案是，给一群设备分配一个IP地址，这些设备组成一个内网，共用一个公网IP，而这些设备本身拥有一个内网IP，通过内网IP在内网中进行区分，但实际上在公网上它们的IP地址都是一样的。</p>
+<p>有些网络运营商会将一个很大的局域网里的一个内网地址分配到你家，而家里的设备又构成一个更小的局域网，再分配内网的内网的IP。总而言之，如果是这种情况，你是没有公网IP的，你可以想办法问运营商要一个，但能不能要到也不一定。那样的话，可以考虑其他两种方法。</p>
+<p>如何判断你是否拥有公网IP呢，你可以登录路由器查看路由器的IP，一般10，192，172开头的都是内网。另外，还可以去网上搜IP地址，直接看自己在互联网上的IP是不是和路由器显示的相同，如果相同，那说明你的IP是公网IP，反之则为内网。</p>
+<p>关于路由器映射这种方法需要根据路由器的品牌型号以及具体情况具体设计方案。</p>
+<h3 id="使用Nrgok进行内网穿透"><a href="#使用Nrgok进行内网穿透" class="headerlink" title="使用Nrgok进行内网穿透"></a>使用Nrgok进行内网穿透</h3><p>我看网上更普遍的方法是使用花生壳，但花生壳的价格不太香。罢了，寻找别的方案。</p>
+<p>有另外一种比较强大的免费内网穿透工具：<a target="_blank" rel="noopener" href="https://ngrok.com/">Nrgok</a>，但它的服务器在国外，速度可能不太好。并且其域名隔一段时间会发生变化，有点不太友好。国内有很多基于Nrgok的工具，比如Natapp，ittun等，这些产品我基本都试用过，它们有一个共性，就是如果它是免费的，那不是动态域名，就是流量限制，或是速度较慢。拿来做测试还好，但如果是做长期运行的服务器，还是不太行，所以放弃白瞟的想法吧。</p>
+<p>这里推荐Natapp的vip1型，一个月9块钱，2M的带宽，5GB的流量，有点不太够，不过流量包也很便宜，做个自己用的小站还算可以，蛮划算的。（推荐在付费前先用免费版试一试，试用过后再考虑要不要花这份钱，毕竟它是不能退钱的）</p>
+<p>Natapp的使用也很简单，官网上有很详细的小白向教程：<a target="_blank" rel="noopener" href="https://natapp.cn/article">NATAPP 教程/文档</a></p>
+<p>还有一个免费的内网穿透工具，<a target="_blank" rel="noopener" href="http://ittun.com/">ittun</a>，这个适合用做开发调试，同样不适合用于做长期稳定运行的服务器。使用很简单，下载对应的版本（树莓派用arm版），然后稍微对配置文件做些改动即可。</p>
+<h3 id="利用Frp进行内网穿透"><a href="#利用Frp进行内网穿透" class="headerlink" title="利用Frp进行内网穿透"></a>利用Frp进行内网穿透</h3><p>首先你需要有一台拥有公网IP的云主机；这时候有同学会问了，我既然已经有云主机了，干嘛还要费劲地把树莓派穿透出去当服务器。这话说的……在理儿。</p>
+<p>不过我们这么做其实也是有很多好处的。首先，配置能比得上树莓派的主机着实不便宜，每月的租金分分钟超过买一个树莓派。另外，你可以给树莓派随性加硬盘，加存储空间，但给云主机加硬盘，那就又是白花花的银子。我们完全可以买一台全低配的主机，这样不仅省钱，而且无形之中你已经拥有了两台服务器，虽然只有一个公网IP，但其实也算是有了更大的内存可以利用，加上可以无限扩展的存储空间，不香么？</p>
+<p>Frp是一个可以用于内网穿透的反向代理工具：</p>
+<p><img src="/images/20200816152502.png" alt="Frp"></p>
+<p>简单来讲，Frp可以让我们穿透内网和公网之间的那层屏障，它有以下几个特性，我们以后将利用这些特性完成很多酷炫的工程：</p>
+<ol>
+<li>支持http，https，tcp/udp多种类型的协议，你可以通过它SSH到树莓派，也可以通过它访问树莓派的http或https服务，访问web；</li>
+<li>支持域名的绑定，多个域名共用一个端口（比如80或443），这使得我们能在树莓派上搭起多种服务，只要域名不同。（使用不同的二级域名即可）；</li>
+<li>使用和配置都很简单，官方中文文档。</li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

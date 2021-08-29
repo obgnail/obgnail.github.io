@@ -1,0 +1,107 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;HTTP协议格式详解&quot;&gt;&lt;a href=&quot;#HTTP协议格式详解&quot; class=&quot;headerlink&quot; title=&quot;HTTP协议格式详解&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://www.jianshu.com/p/8fe93a14754c&quot;&gt;HTTP协议格式详解&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;本文主要介绍&lt;code&gt;HTTP&lt;/code&gt;协议的&lt;code&gt;URI&lt;/code&gt;、&lt;code&gt;Request&lt;/code&gt;、&lt;code&gt;Response&lt;/code&gt;、状态码等等信息，通过了解这些具体的内容，可以更直观的理解&lt;code&gt;HTTP&lt;/code&gt;的协议格式，以及工作原理。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>HTTP协议格式详解 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Hyper-Text-Mark-up-Language/" rel="tag">Hyper Text Mark-up Language</a></div><div class="post-time">2021-07-30</div></div></div><div class="container post-header"><h1>HTTP协议格式详解</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">HTTP协议格式详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81URI%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">一、URI结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Request"><span class="toc-number">1.2.</span> <span class="toc-text">二、Request</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Response"><span class="toc-number">1.3.</span> <span class="toc-text">三、Response</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">1.4.</span> <span class="toc-text">四、状态码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">五、请求方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text">六、工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81HTTPS%E7%AE%80%E4%BB%8B"><span class="toc-number">1.7.</span> <span class="toc-text">七、HTTPS简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%AA%97%E5%8F%A3%E4%B8%AD%E7%94%A8telnet%E6%B5%8B%E8%AF%95HTTP%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.8.</span> <span class="toc-text">命令行窗口中用telnet测试HTTP协议</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="HTTP协议格式详解"><a href="#HTTP协议格式详解" class="headerlink" title="HTTP协议格式详解"></a><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/8fe93a14754c">HTTP协议格式详解</a></h1><p>本文主要介绍<code>HTTP</code>协议的<code>URI</code>、<code>Request</code>、<code>Response</code>、状态码等等信息，通过了解这些具体的内容，可以更直观的理解<code>HTTP</code>的协议格式，以及工作原理。</p>
+<h2 id="一、URI结构"><a href="#一、URI结构" class="headerlink" title="一、URI结构"></a>一、URI结构</h2><p><code>HTTP</code>使用统一资源标识符（<code>URI</code>）来传输数据和建立连接。<code>URL</code>（统一资源定位符）是一种特殊种类的<code>URI</code>，包含了用于查找的资源的足够的信息，我们一般常用的就是<code>URL</code>，而一个完整的<code>URL</code>包含下面几部分：</p>
+<p><a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=http://www.fishbay.cn:80/mix/76.html?name=kelvin&password=123456#first">http://www.fishbay.cn:80/mix/76.html?name=kelvin&amp;password=123456#first</a></p>
+<ol>
+<li>协议部分：该<code>URL</code>的协议部分为<code>http:</code>，表示网页用的是<code>HTTP</code>协议，后面的<code>//</code>为分隔符</li>
+<li>域名部分：域名是<code>www.fishbay.cn</code>，发送请求时，需要向<code>DNS</code>服务器解析<code>IP</code>。如果为了优化请求，可以直接用<code>IP</code>作为域名部分使用</li>
+<li>端口部分：域名后面的<code>80</code>表示端口，和域名之间用<code>:</code>分隔，端口不是一个<code>URL</code>的必须的部分。如果端口是<code>80</code>，也可以省略不写</li>
+<li>虚拟目录部分：从域名的第一个<code>/</code>开始到最后一个<code>/</code>为止，是虚拟目录的部分。其中，虚拟目录也不是<code>URL</code>必须的部分，本例中的虚拟目录是<code>/mix/</code></li>
+<li>文件名部分：从域名最后一个<code>/</code>开始到<code>?</code>为止，是文件名部分；如果没有<code>?</code>，则是从域名最后一个<code>/</code>开始到<code>#</code>为止，是文件名部分；如果没有<code>?</code>和<code>#</code>，那么就从域名的最后一个<code>/</code>从开始到结束，都是文件名部分。本例中的文件名是<code>76.html</code>，文件名也不是一个<code>URL</code>的必须部分，如果没有文件名，则使用默认文件名</li>
+<li>锚部分：从<code>#</code>开始到最后，都是锚部分。本部分的锚部分是<code>first</code>，锚也不是一个<code>URL</code>必须的部分</li>
+<li>参数部分：从<code>?</code>开始到<code>#</code>为止之间的部分是参数部分，又称为搜索部分、查询部分。本例中的参数是<code>name=kelvin&amp;password=123456</code>，如果有多个参数，各个参数之间用<code>&amp;</code>作为分隔符。</li>
+</ol>
+<h2 id="二、Request"><a href="#二、Request" class="headerlink" title="二、Request"></a>二、Request</h2><p>HTTP的请求包括：请求行(request line)、请求头部(header)、空行 和 请求数据 四个部分组成。</p>
+<p><img src="/images/1843940-d3214aa6ebf47292.png" alt="img"></p>
+<p>Http请求消息结构，抓包的<code>request</code>结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET /mix/76.html?name=kelvin&amp;password=123456 HTTP/1.1</span><br><span class="line">Host: www.fishbay.cn</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Encoding: gzip, deflate, sdch</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en;q=0.6</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>请求行：<code>GET</code>为请求类型，<code>/mix/76.html?name=kelvin&amp;password=123456</code>为要访问的资源，<code>HTTP/1.1</code>是协议版本</li>
+<li>请求头部：从第二行起为请求头部，<code>Host</code>指出请求的目的地（主机域名）；<code>User-Agent</code>是客户端的信息，它是检测浏览器类型的重要信息，由浏览器定义，并且在每个请求中自动发送。</li>
+<li>空行：请求头后面必须有一个空行</li>
+<li>请求数据：请求的数据也叫请求体，可以添加任意的其它数据。这个例子的请求体为空。</li>
+</ol>
+<h2 id="三、Response"><a href="#三、Response" class="headerlink" title="三、Response"></a>三、Response</h2><p>一般情况下，服务器收到客户端的请求后，就会有一个<code>HTTP</code>的响应消息，HTTP响应也由<code>4</code>部分组成，分别是：状态行、响应头、空行 和 响应体。</p>
+<p><img src="/images/1843940-9161c0c67fb3bad1.jpg" alt="img"></p>
+<p>http响应消息格式</p>
+<p>抓包的数据如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">Server: nginx</span><br><span class="line">Date: Mon, <span class="number">20</span> Feb <span class="number">2017</span> <span class="number">09</span>:<span class="number">13</span>:<span class="number">59</span> GMT</span><br><span class="line">Content-<span class="built_in">Type</span>: text/plain;charset=UTF<span class="number">-8</span></span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Cache-Control: no-store</span><br><span class="line">Pragrma: no-cache</span><br><span class="line">Expires: Thu, <span class="number">01</span> Jan <span class="number">1970</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> GMT</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Proxy-Connection: Keep-alive</span><br><span class="line"></span><br><span class="line">&#123;<span class="string">&quot;code&quot;</span>:<span class="number">200</span>,<span class="string">&quot;notice&quot;</span>:<span class="number">0</span>,<span class="string">&quot;follow&quot;</span>:<span class="number">0</span>,<span class="string">&quot;forward&quot;</span>:<span class="number">0</span>,<span class="string">&quot;msg&quot;</span>:<span class="number">0</span>,<span class="string">&quot;comment&quot;</span>:<span class="number">0</span>,<span class="string">&quot;pushMsg&quot;</span>:<span class="keyword">null</span>,<span class="string">&quot;friend&quot;</span>:&#123;<span class="string">&quot;snsCount&quot;</span>:<span class="number">0</span>,<span class="string">&quot;count&quot;</span>:<span class="number">0</span>,<span class="string">&quot;celebrityCount&quot;</span>:<span class="number">0</span>&#125;,<span class="string">&quot;lastPrivateMsg&quot;</span>:<span class="keyword">null</span>,<span class="string">&quot;event&quot;</span>:<span class="number">0</span>,<span class="string">&quot;newProgramCount&quot;</span>:<span class="number">0</span>,<span class="string">&quot;createDJRadioCount&quot;</span>:<span class="number">0</span>,<span class="string">&quot;newTheme&quot;</span>:<span class="keyword">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>状态行：状态行由协议版本号、状态码、状态消息组成</li>
+<li>响应头：响应头是客户端可以使用的一些信息，如：<code>Date</code>（生成响应的日期）、<code>Content-Type</code>（MIME类型及编码格式）、<code>Connection</code>（默认是长连接）等等</li>
+<li>空行：响应头和响应体之间必须有一个空行</li>
+<li>响应体：响应正文，本例中是键值对信息</li>
+</ol>
+<h2 id="四、状态码"><a href="#四、状态码" class="headerlink" title="四、状态码"></a>四、状态码</h2><p><code>HTTP</code>协议的状态码由<code>3</code>位数字组成，第一个数字定义了响应的类别，共有<code>5</code>中类别：</p>
+<ol>
+<li><code>1xx</code>: 指示信息–表示请求已接收，继续处理</li>
+<li><code>2xx</code>: 成功–表示请求已被成功接收、理解、接受</li>
+<li><code>3xx</code>: 重定向–要完成请求必须进行更进一步的操作</li>
+<li><code>4xx</code>: 客户端错误–请求有语法错误或请求无法实现</li>
+<li><code>5xx</code>: 服务器端错误–服务器未能实现合法的请求</li>
+</ol>
+<p>其中，常用的状态码如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">200</span> OK                        <span class="comment">//客户端请求成功</span></span><br><span class="line"><span class="number">400</span> Bad Request               <span class="comment">//客户端请求有语法错误，不能被服务器所理解</span></span><br><span class="line"><span class="number">401</span> Unauthorized              <span class="comment">//请求未经授权，这个状态代码必须和WWW-Authenticate报头域一起使用 </span></span><br><span class="line"><span class="number">403</span> Forbidden                 <span class="comment">//服务器收到请求，但是拒绝提供服务</span></span><br><span class="line"><span class="number">404</span> Not Found                 <span class="comment">//请求资源不存在，eg：输入了错误的URL</span></span><br><span class="line"><span class="number">500</span> Internal Server <span class="built_in">Error</span>     <span class="comment">//服务器发生不可预期的错误</span></span><br><span class="line"><span class="number">503</span> Server Unavailable        <span class="comment">//服务器当前不能处理客户端的请求，一段时间后可能恢复正常</span></span><br></pre></td></tr></table></figure>
+
+<p>如需了解更多的状态码，请参考这个网址：<a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=http://www.runoob.com/http/http-status-codes.html">HTTP状态码</a></p>
+<h2 id="五、请求方法"><a href="#五、请求方法" class="headerlink" title="五、请求方法"></a>五、请求方法</h2><p><code>HTTP</code>定义了多种请求方法，来满足各种需求。<code>HTTP/1.0</code>定义了三种请求方法：<code>GET</code>、<code>POST</code> 和 <code>HEAD</code>，到了<code>HTTP/1.1</code>，新增了五种请求方法：<code>OPTIONS</code>、<code>PUT</code>、<code>DELETE</code>、<code>TRACE</code> 和 <code>CONNECT</code>。各个请求方法的具体功能如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET         请求指定的页面信息，并返回实体主体。</span><br><span class="line">HEAD        类似于<span class="keyword">get</span>请求，只不过返回的响应中没有具体的内容，用于获取报头</span><br><span class="line">POST        向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的建立和/或已有资源的修改。</span><br><span class="line">PUT         从客户端向服务器传送的数据取代指定的文档的内容。</span><br><span class="line">DELETE      请求服务器删除指定的页面。</span><br><span class="line">CONNECT     HTTP/<span class="number">1.1</span>协议中预留给能够将连接改为管道方式的代理服务器。</span><br><span class="line">OPTIONS     允许客户端查看服务器的性能。</span><br><span class="line">TRACE       回显服务器收到的请求，主要用于测试或诊断。</span><br></pre></td></tr></table></figure>
+
+<p>实际应用过程中，<code>GET</code>和<code>POST</code>使用的比较多，下面主要介绍一下二者的区别：</p>
+<ol>
+<li><p>请求参数的区别</p>
+<ul>
+<li><code>GET</code>请求会把请求的参数拼接在<code>URL</code>后面，以<code>?</code>分隔，多个参数之间用<code>&amp;</code>连接；如果是英文或数字，原样发送，如果是空格或中文，则用<a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=https://segmentfault.com/a/1190000004533485?_ea=657625">Base64</a>编码</li>
+<li><code>POST</code>请求会把提交的数据放在请求体中，不会在<code>URL</code>中显示出来</li>
+</ul>
+</li>
+<li><p>传输数据的大小</p>
+<ul>
+<li><code>GET</code>: 浏览器和服务器会限制<code>URL</code>的长度，所以传输的数据有限，一般是2K</li>
+<li><code>POST</code>: 由于数据不是通过<code>URL</code>传递，所以一般可以传输较大量的数据</li>
+</ul>
+</li>
+<li><p>数据解析</p>
+<ul>
+<li><code>GET</code>: 通过<code>Request.QueryString</code>获取变量的值</li>
+<li><code>POST</code>: 通过<code>Request.form</code>获取变量的值</li>
+</ul>
+</li>
+<li><p>安全性</p>
+<ul>
+<li><code>GET</code>: 请求参数在<code>URL</code>后面，可以直接看到，尤其是登录时，如果登录界面被浏览器缓存，其他人就可以通过查看历史记录，拿到账户和密码</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><code>POST</code>: 请求参数在请求体里面传输，无法直接拿到，相对<code>GET</code>安全性较高；但是<strong>通过抓包工具，还是可以看到请求参数的</strong></li>
+</ul>
+<h2 id="六、工作原理"><a href="#六、工作原理" class="headerlink" title="六、工作原理"></a>六、工作原理</h2><p><code>HTTP</code>协议采用请求/响应模式，客户端向服务器发送一个请求报文，然后服务器响应请求。下面介绍一下一次<code>HTTP</code>请求的过程：</p>
+<ol>
+<li>在浏览器中输入<code>URL</code>，并按下回车键</li>
+<li>浏览器向<code>DNS</code>服务器请求解析该<code>URL</code>中的域名对应的<code>IP</code>地址(如果是<code>IP</code>请求，则不需要该步骤)</li>
+<li>解析出<code>IP</code>后，根据<code>IP</code>和端口号，和服务器建立<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ef892323e68f">TCP</a>连接</li>
+<li>浏览器向服务器发送请求，该请求报文作为<code>TCP</code>三次握手的第三个报文发送给服务器</li>
+<li>服务器做出响应，把数据发送给浏览器</li>
+<li>通信完成，断开<code>TCP</code>连接</li>
+<li>浏览器解析收到的数据并显示</li>
+</ol>
+<h2 id="七、HTTPS简介"><a href="#七、HTTPS简介" class="headerlink" title="七、HTTPS简介"></a>七、HTTPS简介</h2><p><code>HTTPS</code>是安全的<code>HTTP</code>通道，即在HTTP通信中加入了<code>SSL</code>层（当前版本是<code>TLS1.2</code>），通信的数据被加密了，防止被窃取，具体的通信流程如下：</p>
+<p><img src="/images/1843940-c29ede39ec5f6540.png" alt="img"></p>
+<p>HTTPS使用的加密方式结合了对称加密和不对称加密的特点，在保证安全的情况下，又提高了传输效率。HTTP和HTTPS的区别如下：</p>
+<ol>
+<li>https协议需要到ca申请证书，一般免费证书很少，需要交费。</li>
+<li>http的信息是明文传输，https 则是具有安全性的ssl加密传输协议。</li>
+<li>http和https用的端口不一样，前者是80，后者是443。</li>
+<li>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全</li>
+</ol>
+<h2 id="命令行窗口中用telnet测试HTTP协议"><a href="#命令行窗口中用telnet测试HTTP协议" class="headerlink" title="命令行窗口中用telnet测试HTTP协议"></a>命令行窗口中用telnet测试HTTP协议</h2><p>HTTP消息是由普通ASCII文本组成。消息包括消息头和数据体部分。消息头以行为单位，每行以CRLF（回车和换行）结束，消息头结束后，额外增加一个CRLF，之后内容就是数据体部分了。</p>
+<p>我们可以在命令行窗口，通过TELNET，来测试HTTP协议。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用telnet连接到HTTP服务器，如要从google上请求index.html页面，首先要连接到服务器的80端口 </span></span><br><span class="line">telnet www.google.cn 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个请求的意思是：通过1.1版本协议请求index.html页面；connection: close是实用短连接，即服务器返回后就断开连接；Host字段知名页面所在的主机名。</span></span><br><span class="line">GET /index.html HTTP/1.1</span><br><span class="line">connection: close</span><br><span class="line">Host: www.google.cn</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20210730114316574.png" alt="image-20210730114316574"></p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

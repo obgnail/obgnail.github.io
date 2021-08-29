@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;RabbitMQ-基本概念&quot;&gt;&lt;a href=&quot;#RabbitMQ-基本概念&quot; class=&quot;headerlink&quot; title=&quot;RabbitMQ 基本概念&quot;&gt;&lt;/a&gt;RabbitMQ 基本概念&lt;/h2&gt;&lt;p&gt; RabbitMQ 是 AMQP 协议的一个开源实现，所以其内部实际上也是 AMQP 中的基本概念："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>RabbitMQ梳理 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></div><div class="post-time">2021-03-23</div></div></div><div class="container post-header"><h1>RabbitMQ梳理</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMQ-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">RabbitMQ 基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AMQP-%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E8%B7%AF%E7%94%B1"><span class="toc-number">2.</span> <span class="toc-text">AMQP 中的消息路由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exchange-%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">Exchange 类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#direct"><span class="toc-number">3.1.</span> <span class="toc-text">direct</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fanout"><span class="toc-number">3.2.</span> <span class="toc-text">fanout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#topic"><span class="toc-number">3.3.</span> <span class="toc-text">topic</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="RabbitMQ-基本概念"><a href="#RabbitMQ-基本概念" class="headerlink" title="RabbitMQ 基本概念"></a>RabbitMQ 基本概念</h2><p> RabbitMQ 是 AMQP 协议的一个开源实现，所以其内部实际上也是 AMQP 中的基本概念：</p>
+<p><img src="/images/image-20210323115038456.png" alt="image-20210323115038456"></p>
+<ol>
+<li><p>Message</p>
+<p>消息，消息是不具名的，它由<code>消息头</code>和<code>消息体</code>组成。消息体是不透明的，而消息头则由一系列的可选属性组成，这些属性包括routing-key（路由键）、priority（相对于其他消息的优先权）、delivery-mode（指出该消息可能需要持久性存储）等。</p>
+</li>
+<li><p>Publisher</p>
+<p>消息的生产者，也是一个向交换器发布消息的客户端应用程序。</p>
+</li>
+<li><p>Exchange</p>
+<p>交换器，用来接收生产者发送的消息并将这些消息路由给服务器中的队列。</p>
+</li>
+<li><p>Binding</p>
+<p>绑定，用于<strong>消息队列和交换器之间的关联</strong>。一个绑定就是基于路由键将交换器和消息队列连接起来的路由规则，所以可以将交换器理解成一个由绑定构成的路由表。</p>
+</li>
+<li><p>Queue</p>
+<p>消息队列，用来保存消息直到发送给消费者。它是消息的容器，也是消息的终点。一个消息可投入一个或多个队列。消息一直在队列里面，等待消费者连接到这个队列将其取走。</p>
+</li>
+<li><p>Connection</p>
+<p>网络连接，比如一个TCP连接。</p>
+</li>
+<li><p>Channel</p>
+<p>信道，多路复用连接中的一条独立的双向数据流通道。信道是建立在真实的TCP连接内地虚拟连接，AMQP 命令都是通过信道发出去的，不管是发布消息、订阅队列还是接收消息，这些动作都是通过信道完成。因为对于操作系统来说建立和销毁 TCP 都是非常昂贵的开销，所以引入了信道的概念，以复用一条 TCP 连接。</p>
+</li>
+<li><p>Consumer</p>
+<p>消息的消费者，表示一个从消息队列中取得消息的客户端应用程序。</p>
+</li>
+<li><p>Virtual Host</p>
+<p>虚拟主机，表示一批交换器、消息队列和相关对象。<strong>虚拟主机是共享相同的身份认证和加密环境的独立服务器域</strong>。每个 vhost 本质上就是一个 mini 版的 RabbitMQ 服务器，拥有自己的队列、交换器、绑定和权限机制。vhost 是 AMQP 概念的基础，必须在连接时指定，RabbitMQ 默认的 vhost 是 / 。</p>
+<blockquote>
+<ul>
+<li>rabbitMQ的<code>virtual host</code>和<code>Queue</code>可以视为MySQL中的<code>database</code>和<code>datatable</code></li>
+<li>MySQL通过使用database来对于服务进行隔离，同一个服务使用到不同的数据使用不同的datatable进行隔离，rabbitMQ同理，相同的服务使用同一virtual host，virtual host中又有不同的queue用于不同的业务数据。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>Broker</p>
+<p>表示消息队列服务器实体。</p>
+</li>
+</ol>
+<h2 id="AMQP-中的消息路由"><a href="#AMQP-中的消息路由" class="headerlink" title="AMQP 中的消息路由"></a>AMQP 中的消息路由</h2><p>生产者把消息发布到 Exchange 上，消息最终到达队列并被消费者接收，而 Binding 决定交换器的消息应该发送到那个队列。</p>
+<p><img src="/images/image-20210323120539826.png" alt="image-20210323120539826"></p>
+<h2 id="Exchange-类型"><a href="#Exchange-类型" class="headerlink" title="Exchange 类型"></a>Exchange 类型</h2><p>Exchange分发消息时根据类型的不同分发策略有区别，目前共四种类型：direct、fanout、topic、headers 。</p>
+<p>headers 匹配 AMQP 消息的 header 而不是路由键，此外 headers 交换器和 direct 交换器完全一致，但性能差很多，目前几乎用不到了，所以直接看另外三种类型：</p>
+<h3 id="direct"><a href="#direct" class="headerlink" title="direct"></a>direct</h3><p><img src="/images/image-20210323121102811.png" alt="image-20210323121102811"></p>
+<p><strong>消息中的路由键（routing key）如果和 Binding 中的 binding key 一致， 交换器就将消息发到对应的队列中</strong>。</p>
+<p>路由键与队列名完全匹配，如果一个队列绑定到交换机要求路由键为“dog”，则只转发 routing key 标记为“dog”的消息，不会转发“dog.puppy”，也不会转发“dog.guard”等等。它是完全匹配、单播的模式。</p>
+<h3 id="fanout"><a href="#fanout" class="headerlink" title="fanout"></a>fanout</h3><p><img src="/images/image-20210323121220228.png" alt="image-20210323121220228"></p>
+<p><strong>每个发到 fanout 类型交换器的消息都会分到所有绑定的队列上去。</strong></p>
+<p>fanout 交换器不处理路由键，只是简单的将队列绑定到交换器上，每个发送到交换器的消息都会被转发到与该交换器绑定的所有队列上。很像子网广播，每台子网内的主机都获得了一份复制的消息。fanout 类型转发消息是最快的。</p>
+<h3 id="topic"><a href="#topic" class="headerlink" title="topic"></a>topic</h3><p><img src="/images/image-20210323121320039.png" alt="image-20210323121320039"></p>
+<p><strong>topic 交换器通过模式匹配分配消息的路由键属性，将路由键和某个模式进行匹配，此时队列需要绑定到一个模式上</strong>。</p>
+<p>它将路由键和绑定键的字符串切分成单词，这些单词之间用点隔开。它同样也会识别两个通配符：符号<code>#</code>和符号<code>*</code>。<code>#</code>匹配0个或多个单词，<code>*</code>匹配不多不少一个单词。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

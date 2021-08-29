@@ -1,0 +1,169 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;HTTP-Host头攻击&quot;&gt;&lt;a href=&quot;#HTTP-Host头攻击&quot; class=&quot;headerlink&quot; title=&quot;HTTP Host头攻击&quot;&gt;&lt;/a&gt;HTTP Host头攻击&lt;/h1&gt;&lt;h2 id=&quot;漏洞背景&quot;&gt;&lt;a href=&quot;#漏洞背景&quot; class=&quot;headerlink&quot; title=&quot;漏洞背景&quot;&gt;&lt;/a&gt;漏洞背景&lt;/h2&gt;&lt;p&gt;Host 首部字段是 HTTP/1.1 新增的，旨在告诉服务器，客户端请求的主机名和端口号，主要用来实现虚拟主机技术。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>HTTP Host头攻击 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Web-Security/" rel="tag">Web Security</a></div><div class="post-time">2021-07-06</div></div></div><div class="container post-header"><h1>HTTP Host头攻击</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP-Host%E5%A4%B4%E6%94%BB%E5%87%BB"><span class="toc-number">1.</span> <span class="toc-text">HTTP Host头攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%83%8C%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8D%B1%E5%AE%B3"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞危害</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E9%87%8D%E7%BD%AE"><span class="toc-number">1.2.1.</span> <span class="toc-text">密码重置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%A1%88%E4%BE%8B"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">基础案例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%A6%86%E7%9B%96"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">注入覆盖</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%B1%A1%E6%9F%93"><span class="toc-number">1.2.2.</span> <span class="toc-text">缓存污染</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">基础分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E6%A1%88%E4%BE%8B"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">实际案例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E5%8D%B1%E5%AE%B3"><span class="toc-number">1.3.</span> <span class="toc-text">进阶危害</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">绕过访问控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF-Attack"><span class="toc-number">1.3.2.</span> <span class="toc-text">SSRF Attack</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B"><span class="toc-number">1.4.</span> <span class="toc-text">漏洞检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.4.1.</span> <span class="toc-text">跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%BC%E6%8E%A5"><span class="toc-number">1.4.2.</span> <span class="toc-text">拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.3.</span> <span class="toc-text">代码注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E6%8C%96%E6%8E%98"><span class="toc-number">1.5.</span> <span class="toc-text">进阶挖掘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="toc-number">1.6.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="HTTP-Host头攻击"><a href="#HTTP-Host头攻击" class="headerlink" title="HTTP Host头攻击"></a>HTTP Host头攻击</h1><h2 id="漏洞背景"><a href="#漏洞背景" class="headerlink" title="漏洞背景"></a>漏洞背景</h2><p>Host 首部字段是 HTTP/1.1 新增的，旨在告诉服务器，客户端请求的主机名和端口号，主要用来实现虚拟主机技术。</p>
+<p>运用虚拟主机技术，单个主机可以运行多个站点。以下图为例，hacker 和 usagidesign 两个站点都运行在同一服务器A上，不管我们请求哪个域名，最终都会被解析成服务器 A 的 IP 地址，这个时候服务器就不知道该将请求交给哪个站点处理，因此需要 Host 字段指定请求的主机名。</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
+<p>我们访问 hacker 域名，经 DNS 解析，变成了服务器 A 的 IP，请求传达到服务器A，A接收到请求后，发现请求报文中的 Host 字段值为 hacker，进而将请求交给 hacker 站点处理。</p>
+<p>这个时候，问题就出现了。为了方便获取网站域名，开发人员一般依赖于请求包中的Host首部字段。例如，在php里用<code>_SERVER[&quot;HTTP_HOST&quot;]</code>。但是这个Host字段值是不可信赖的(可通过HTTP代理工具篡改)，如果应用程序没有对Host字段值进行处理，就有可能造成恶意代码的传入。</p>
+<h2 id="漏洞危害"><a href="#漏洞危害" class="headerlink" title="漏洞危害"></a>漏洞危害</h2><p>很多应用是直接把这个值不做 HTML 编码便输出到了页面中，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link href=<span class="string">&quot;http://_SERVER[&#x27;HOST&#x27;]&quot;</span>    (Joomla)</span><br></pre></td></tr></table></figure>
+
+<p>还有的地方还包含有 secret key 和 token:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=<span class="string">&quot;http://_SERVER[&#x27;HOST&#x27;]?token=topsecret&quot;</span>&gt;  (Django, Gallery, others)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这样处理问题一般会很容易遭遇到两种常见的攻击：<strong>缓存污染</strong>和<strong>密码重置</strong>。</p>
+<ul>
+<li><code>缓存污染</code>是指攻击者通过控制一个缓存系统来将一个恶意站点的页面返回给用户。</li>
+<li><code>密码重置</code>这种攻击主要是因为发送给用户的内容是可以污染的，也就是说可以间接的劫持邮件发送内容。</li>
+</ul>
+</blockquote>
+<h3 id="密码重置"><a href="#密码重置" class="headerlink" title="密码重置"></a>密码重置</h3><p>根据 HTTP Host 头攻击的攻击特点，它被广泛应用于密码重置中毒：</p>
+<p>攻击者可以操纵网站在重置密码情况下生成的密码重置链接，使其发送攻击者指定的域下，利用此来窃取重置任意用户密码的令牌。</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112541073.png" alt="在这里插入图片描述"></p>
+<p>常见的一个重设密码(忘记密码)功能的大致流程如下：</p>
+<ol>
+<li>用户输入其用户名或电子邮件地址，然后提交密码重置请求；</li>
+<li>该网站检查该用户是否存在，然后生成一个临时的、唯一的、复杂的令牌，该令牌与后端的用户帐户相关联；</li>
+<li>该网站向用户发送一封电子邮件，其中包含用于重置其密码的链接。重置令牌的参数包含在相应的URL中：<code>https://normal-website.com/reset?token=0a1b2c3d4e5f6g7h8i9j</code>；</li>
+<li>当用户访问此URL时，网站将检查提供的令牌是否有效，并使用它来确定要重置哪个帐户。如果一切都符合，则可以进入用户重置密码步骤。最后，令牌被销毁。</li>
+</ol>
+<p>以上步骤的安全性依赖于：只有目标用户才能访问其电子邮件，从而可以访问其唯一的令牌。密码重置中毒是<strong>窃取此令牌以更改另一个用户密码</strong>的一种漏洞。</p>
+<p>如果网站重置密码的流程完全依赖用户的可控输入（如HTTP Host头），这可能导致密码重置中毒：</p>
+<ol>
+<li>攻击者获取受害者的用户名或者电子邮件，作为提交重置密码的请求，攻击者会<strong>拦截重置密码的请求并修改 HTTP Host 头</strong>为其指定的域，如<code>evil-user.net</code>；</li>
+<li>受害者会收到一封重置密码的邮件，但由于攻击者修改了 Host 头，而 web 程序生成重置链接又完全依赖于 Host 头，导致生成以下URL：<code>https://evil-user.net/reset?token=0a1b2c3d4e5f6g7h8i9j</code>；</li>
+<li>如果受害者点击了该链接，重置密码的令牌就会发送到攻击者的服务器 <code>evil-user.net</code> 上；</li>
+<li>当攻击者获取到重置密码的令牌之后，就会进行相应的构造访问真实重置密码的 URL 进行密码重置。</li>
+</ol>
+<p>下面会通过两个具体的案例演示以上攻击场景。</p>
+<h4 id="基础案例"><a href="#基础案例" class="headerlink" title="基础案例"></a>基础案例</h4><p>详细了解了上面的密码重置中毒的流程和原理之后，这里通过 HTTP Host 头攻击导致的基础的密码重置中毒来演示。</p>
+<p>1、首先输入用户名或者用户的电子邮箱来重置指定用户的密码：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625126.png" alt="在这里插入图片描述"><br>2、提交之后，会发送一封重置密码的电子邮件到 wiener 用户的邮箱中（数据包如右图）：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625981.png" alt="在这里插入图片描述"></p>
+<p>3、注意重置密码的链接，可能是受Host头的值的影响？我们来验证一下是否存在 HTTP Host 头攻击，修改 Host头 的值为 baidu.com：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625968-5541985.png" alt="在这里插入图片描述"></p>
+<p>4、以上结果证明请求是可以被后端服务器接收的，所以是存在 HTTP Host 头攻击的。这里就输入受害用户 carlos 进行重置密码，然后抓包将 Host 头的值改为我们自己的服务器：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626061.png" alt="在这里插入图片描述"></p>
+<p>5、然后在我们自己的服务器上就可以通过访问日志看到被窃取的重置密码 Token：<br><img src="/images/20210220201316495.png" alt="在这里插入图片描述"></p>
+<p>6、然后根据已知链接规律，构造重置密码的链接：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ac651f551e5317b8800207bd008f000f.web-security-academy.net/forgot-password?temp-forgot-password-token=00YIexUDyNLEJkaBXDoCILWtZAGaxgi7</span><br></pre></td></tr></table></figure>
+
+<p>7、随即进入输入新密码的界面，密码重置中毒成功：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625316.png" alt="在这里插入图片描述"></p>
+<h4 id="注入覆盖"><a href="#注入覆盖" class="headerlink" title="注入覆盖"></a>注入覆盖</h4><p>有时候直接修改 Host 头、添加重复 Host 头的值以及混淆 Host 头都不行：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625196.png" alt="在这里插入图片描述"></p>
+<p>可以尝试使用与Host头功能相同的 HTTP 字段，如 X-Forwarded-Host、X-Forwarded-For 等，可以进行 Fuzz：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112625968.png" alt="在这里插入图片描述"></p>
+<p>实际上他能够被 X-Forwarded-Host 字段影响，导致 Host 头攻击，当同时添加多个字段使请求被拦截时，可以尝试类似排除法、二分法来排查哪个字段有效。</p>
+<p>对受害用户 carlos 进行密码重置投毒：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626401.png" alt="在这里插入图片描述"></p>
+<p>然后构造链接即可：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626047.png" alt="在这里插入图片描述"></p>
+<h3 id="缓存污染"><a href="#缓存污染" class="headerlink" title="缓存污染"></a>缓存污染</h3><h4 id="基础分析"><a href="#基础分析" class="headerlink" title="基础分析"></a>基础分析</h4><p>通过 Host header 来污染缓存的攻击方法最初是 Carlos Beuno 在2008年提出来的。但是在现在的网络架构中，这种攻击还是比较困难的，因为现在的缓存设备都能够识别 Host。比如对于下面的这两种情况他们绝对不会弄混淆：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; GET /index.html HTTP/<span class="number">1.1</span>       &gt; GET /index.html HTTP/<span class="number">1.1</span></span><br><span class="line">&gt; Host: example.com              &gt; Host: evil.com</span><br></pre></td></tr></table></figure>
+
+<p>因此为了能使缓存能将污染后的 response 返回给用户，我们还必须让缓存服务器看到的 host header 和应用看到的 host header 不一样。</p>
+<p>比如说对于 Varnish（一个很有名的缓存服务软件），可以使用一个复制的 Host header。Varnish 是通过最先到达的请求的 host header 来辨别 host 的，而 Apache 则是看所有请求的 host，Nginx 则只是看最后一个请求的 host。这就意味着你可以通过下面这个请求来欺骗 Varnish 达到污染的目的：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; GET / HTTP/<span class="number">1.1</span></span><br><span class="line">&gt; Host: example.com</span><br><span class="line">&gt; Host: evil.com</span><br></pre></td></tr></table></figure>
+
+<p>应用本身的缓存也可能受到污染。比如 Joomla 就将取得的 host 值不经 html编码便写进任意页面，而它的缓存则对这些没有任何处理。比如可以通过下面的请求来写入一个存储型的 xss：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; GET / HTTP/<span class="number">1.1</span></span><br><span class="line">&gt; Host: cow<span class="string">&quot;onerror=&#x27;alert(1)&#x27;rel=&#x27;stylesheet&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>响应其实已经受到污染：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link href=<span class="string">&quot;http://cow&quot;</span>onerror=<span class="string">&#x27;alert(1)&#x27;</span>rel=<span class="string">&#x27;stylesheet&#x27;</span>/<span class="string">&quot; rel=&quot;</span>canonical<span class="string">&quot;/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时只需要浏览首页看是否有弹窗就知道缓存是否已经被污染了。</p>
+<h4 id="实际案例"><a href="#实际案例" class="headerlink" title="实际案例"></a>实际案例</h4><p>当存在 Host头 攻击的 Web 站点不存在密码重置的功能的时候，此时该漏洞就显得没有影响，因为不可能驱使用户去抓包修改 Host 头，辅助攻击者完成一系列的攻击。但是，如果目标站点使用 Web 缓存，则可以通过缓存投毒给其他用户提供带有病毒的缓存响应。此时的 Host 头攻击漏洞转变为类似 XSS 存储型类的漏洞。</p>
+<p>构造 Web 缓存投毒攻击的步骤：</p>
+<ol>
+<li>需要寻找映射到其他用户请求的缓存键；</li>
+<li>下一步则是缓存此恶意响应；</li>
+<li>然后，此恶意缓存将提供给尝试访问受影响页面的所有用户。</li>
+</ol>
+<p><strong>1、寻找Host头攻击点</strong></p>
+<p>通过对站点的主页添加重复的 Host 值，可以达到覆盖的效果，并验证存在 Host 头攻击：<br><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627233.png" alt="在这里插入图片描述"></p>
+<p><strong>2、寻找是否使用了Web缓存</strong></p>
+<p>缓存键是什么？从上图中也可以发现，站点使用了 Web 缓存功能，并且配合 Host头 攻击，可以缓存 <code>/resources/js/tracking.js</code> 资源文件。</p>
+<p><strong>3、构造恶意资源文件</strong></p>
+<p>在攻击者服务器上创建一个同名的 <code>/resources/js/tracking.js</code> 资源文件，内容为：<code>alert(document.cookie);</code>。然后通过 Host 头注入攻击者服务器域名，可以看到在响应中正确地对应了我们的 <code>/resources/js/tracking.js</code> 资源文件：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626448.png" alt="在这里插入图片描述"></p>
+<p><strong>4、进行缓存投毒</strong></p>
+<p>发送多次请求，使该请求的响应变为缓存：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626746.png" alt="在这里插入图片描述"></p>
+<p>当其他用户请求站点主页时，服务端就会提供该恶意缓存给用户，造成缓存投毒。</p>
+<h2 id="进阶危害"><a href="#进阶危害" class="headerlink" title="进阶危害"></a>进阶危害</h2><h3 id="绕过访问控制"><a href="#绕过访问控制" class="headerlink" title="绕过访问控制"></a>绕过访问控制</h3><p>出于安全考虑，通常网站对某些功能的访问限制为内部用户使用。但是通过Host头攻击一定可能上可以绕过这些限制。对于一个站点，从发现 Host 头攻击到利用，下面来展示一个完整的流程：</p>
+<p>1、访问主页，随意修改 Host 的值：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627260.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>【注意】这里的 Host 的值不会出现响应包中，但是依然可能存在 Host 头攻击，因为响应依然成功，说明服务端没有对 Host 头做验证。</p>
+</blockquote>
+<p>2、寻找敏感页面，通过 <code>/robots.txt</code> 知道 <code>/admin</code> 为做了访问控制的页面（根据错误信息提示，/admin 页面只允许本地用户访问）：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627035.png" alt="在这里插入图片描述"></p>
+<p>3、将 Host 改为服务端内部地址，从而绕过 IP 访问控制：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627268.png" alt="在这里插入图片描述"></p>
+<h3 id="SSRF-Attack"><a href="#SSRF-Attack" class="headerlink" title="SSRF Attack"></a>SSRF Attack</h3><p>Host 头攻击可能会导致基于路由的 SSRF 攻击，称为：Host SSRF Attack。经典的 SSRF 攻击通常基于 XXE 或可利用的业务逻辑，将用户可控的 URL 作为 HTTP 请求发送；而基于路由的 SSRF 依赖于云部署的体系结构中，包括负载均衡和反向代理，这些中间件将请求分配发送到对应的后端服务器处理，如果服务端未校验 Host 头转发的请求，则攻击者可能会将请求发送（重定向）到体系中的任意系统。</p>
+<p>这可能需要知道内部系统的IP地址（私有地址），一般可以通过信息收集或者 Fuzz 来判断有效的私有IP地址（如枚举192.168.1.1/16）。</p>
+<p>下面来看一个实际案例，普通方式访问不到 <code>/admin</code> 页面（404）：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112626812.png" alt="在这里插入图片描述"></p>
+<p>猜测 <code>/admin</code> 存在于内网中，需要内网机器才能访问，但是配合 Host 头攻击+SSRF 可以绕过并访问。</p>
+<p><strong>1、判断Host是否被使用，可用 DNSLog 外带</strong></p>
+<p>这里我使用 Burp 自带的 “Burp Collaborator client” 来实现外带：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627838.png" alt="在这里插入图片描述"></p>
+<p>说明服务端是根据 Host 头的域名来请求资源的。</p>
+<p><strong>2、基于 Host 头的 SSRF 探测内网主机</strong></p>
+<p>假如一些敏感的页面（比如管理页面），深处于内网，外网无法访问，但是通过 Host 头攻击+ SSRF 可达到绕过访问控制，从而访问内网资产，这里 Fuzz 内网的IP的C段为 192.168.0.0/24，直接利用 Intruder 枚举：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627186.png" alt="在这里插入图片描述"></p>
+<p>得到内网IP为 192.168.0.240：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627400.png" alt="在这里插入图片描述"></p>
+<p>最后构造 <code>/admin</code> 页面，在 Host 处换位内网IP：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112627703.png" alt="在这里插入图片描述"></p>
+<h2 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h2><p>Host头攻击漏洞的检测比较简单，只需要抓包，修改Host字段值，提交，查看响应中是否包含修改后的Host字段值即可。</p>
+<p>下面分三个场景，介绍一下Host头攻击漏洞存在的表现。</p>
+<h3 id="跳转"><a href="#跳转" class="headerlink" title="跳转"></a>跳转</h3><p>正常请求，响应302，Location首部字段指明跳转的地址，其中Location字段值为Host字段指定的地址。</p>
+<p><img src="/images/213aa1b67c042d8abbfc3ce3eb1427f3.jpeg" alt="img"></p>
+<p>将请求包的Host字段值修改为<a target="_blank" rel="noopener" href="http://www.baidu.com提交,响应包中的location地址也被更改为www.baidu.com./">www.baidu.com提交，响应包中的Location地址也被更改为www.baidu.com。</a></p>
+<h3 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h3><p>正常请求，正常响应，将Host字段值拼接到标签属性值中。</p>
+<p><img src="/images/d54f69d5ecfb05bff69fdf4f37127d25.jpeg" alt="img"></p>
+<p>将请求包的Host字段值修改为<a target="_blank" rel="noopener" href="http://www.baidu.com提交,发现服务器将www.baidu.com拼接到了script标签的src属性值中./">www.baidu.com提交，发现服务器将www.baidu.com拼接到了script标签的src属性值中。</a></p>
+<h3 id="代码注入"><a href="#代码注入" class="headerlink" title="代码注入"></a>代码注入</h3><p>场景三：这其实也属于拼接，只不过在场景二的基础上写入了恶意代码。</p>
+<p><img src="/images/8cd04bf58e3c1b815784dcf8c7b1ef4b.jpeg" alt="img"></p>
+<p>利用Host字段写入script标签，弹出警告框。</p>
+<h2 id="进阶挖掘"><a href="#进阶挖掘" class="headerlink" title="进阶挖掘"></a>进阶挖掘</h2><p>如何发掘 HTTP Host 头攻击？首先要判断服务端是否检测 Host 头？检测完了是否还使用Host头的值？</p>
+<p>通过修改 Host 的值，如果服务端返回错误信息：</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTE5MDg5Nw==,size_16,color_FFFFFF,t_70-20210706112703326.png" alt="在这里插入图片描述"></p>
+<p>则说明服务端检测了 Host 的内容。至于有没有使用 Host 头的值，有以下几种方法去发掘：</p>
+<p><strong>1、修改Host值</strong></p>
+<p>简单的来说，可以修改 HTTP 头中的 Host 值，如果观察到响应包中含有修改后的值，说明存在漏洞。</p>
+<p><strong>2、添加重复的Host头</strong></p>
+<p>添加重复的 Host 头，通常两个 Host 头之中有一个是有效的，可以理解为一个是确保请求正确地发送到目标服务器上；另一个则是传递 payload 到后端服务器中。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /example HTTP/<span class="number">1.1</span></span><br><span class="line"><span class="attr">Host</span>: vulnerable-website.com</span><br><span class="line"><span class="attr">Host</span>: attackd-stuff</span><br><span class="line"><span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3、使用绝对路径的URL</strong></p>
+<p>尽管许多请求通常在请求域上使用相对路径，但是也同时配置了绝对URL的请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET https:<span class="comment">//vulnerable-website.com/ HTTP/1.1</span></span><br><span class="line">Host: attack-stuff</span><br><span class="line"><span class="number">12</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4、注入覆盖 Host 头的字段</strong></p>
+<p>与 Host 头功能相近的字段，如<code>X-Forwarded-Host、X-Forwarded-For</code>等，这些有时候是默认开启的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /example HTTP/<span class="number">1.1</span></span><br><span class="line"><span class="attr">Host</span>: vulnerable-website.com</span><br><span class="line">X-Forwarded-Host: attack-stuff</span><br><span class="line"><span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+<p>诸如此类，还有其他的字段：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X-Host</span><br><span class="line">X-Forwarded-Server</span><br><span class="line">X-HTTP-Host-Override</span><br><span class="line">Forwarded</span><br><span class="line"><span class="number">1234</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>5、忽略端口仅校验域名</strong></p>
+<p>当修改、添加重复 Host 头被拦截的时候，可以尝试了解 Web 应用程序是怎样解析 Host 头的。比如，一些解析算法会忽略 Host 头中的端口值，仅仅校验域名。这时候可以将 Host 修改为如下形式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /example HTTP/<span class="number">1.1</span></span><br><span class="line"><span class="attr">Host</span>: vulnerable-website.com:attack-stuff</span><br><span class="line"><span class="number">12</span></span><br></pre></td></tr></table></figure>
+
+<p>保持域名不变，修改端口值为非端口号的其他值（非数字）， 将 Host 头攻击的 payload 放在端口值处，同样能进行 Host 头攻击。</p>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>最简单的方法是避免在服务器端代码中完全使用Host头，可以只使用相对URL。其他方法包括：</p>
+<p><strong>1、正确配置绝对域名URL</strong></p>
+<p>当必须使用绝对域名 URL 时，应在配置文件中手动指定当前域的 URL，并引用配置的值，而不是从 HTTP 的 Host头中获取。这种方法可防止密码重置的缓存投毒。</p>
+<p>建议对 Host 字段进行检测，检测应用是否在请求目标站点时返回的 URL 是直接将 Host 头拼接在 URI 前。</p>
+<ul>
+<li>Nginx，修改 ngnix.conf 文件，在 server 中指定一个 server_name 名单，并添加检测。</li>
+<li>Apache，修改 httpd.conf 文件，指定 ServerName，并开启 UseCanonicalName 选项。</li>
+<li>Tomcat，修改 server.xml 文件，配置 Host 的 name 属性。</li>
+</ul>
+<p>Web应用程序应该使用<code>SERVER_NAME</code>而不是<code>host header</code>。在 Apache 和 Nginx 里可以通过设置一个虚拟机来记录所有的非法 host header。在 Nginx 里还可以通过指定一个 SERVER_NAME 名单，Apache 也可以通过指定一个 SERVER_NAME 名单并开启 UseCanonicalName 选项。</p>
+<p>不要使用类似JSP中<code>request.getServerName( )</code>方法引用客户端输入的 hostname 值。拼接生成 URL 时引用静态变量定义的服务器域名，或者使用相对路径生成URL。</p>
+<p><strong>2、白名单校验Host头的域</strong></p>
+<p>如果必须使用 Host 头，需要正确校验它的合法性。这包括允许的域，并使用白名单校验它，以及拒绝或重定向对无法识别的主机请求。这包括但不仅限于单个 Web 应用程序、负载均衡以及反向代理设备上。</p>
+<p><strong>3、不支持主机头覆盖</strong></p>
+<p>确保不适用与 Host 头功能相近的字段，如<code>X-Forwarded-Host、X-Forwarded-For</code>等，这些有时候是默认开启的。</p>
+<p>值得一提的是，不应该将内网使用的 Host 主机（不出网）与公网的应用程序托管在同一个服务器上，否则攻击者可能会操纵 Host 头来访问内部域。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

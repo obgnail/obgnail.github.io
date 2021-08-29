@@ -1,0 +1,270 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" 是当下最热门的&lt;strong&gt;前端资源模块化管理&lt;/strong&gt;和&lt;strong&gt;打包工具&lt;/strong&gt;。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Webpack中文指南 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Webpack/" rel="tag">Webpack</a></div><div class="post-time">2020-08-02</div></div></div><div class="container post-header"><h1>Webpack中文指南</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">Webpack是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">2.</span> <span class="toc-text">作用域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%AF%BC%E5%87%BA%E6%9C%BA%E5%88%B6%E7%9A%84%E6%BC%94%E5%8F%98%E5%8E%86%E5%8F%B2"><span class="toc-number">3.</span> <span class="toc-text">模块导出机制的演变历史</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AMD"><span class="toc-number">3.1.</span> <span class="toc-text">AMD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CommonJS"><span class="toc-number">3.2.</span> <span class="toc-text">CommonJS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES6-Module"><span class="toc-number">3.3.</span> <span class="toc-text">ES6 Module</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack%E7%9A%84%E6%89%93%E5%8C%85%E9%80%BB%E8%BE%91"><span class="toc-number">5.</span> <span class="toc-text">Webpack的打包逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#npm%E4%B8%8E%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">npm与包管理器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E8%AF%AD%E4%B9%89%E5%8C%96"><span class="toc-number">7.</span> <span class="toc-text">版本语义化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#npm-install%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">8.</span> <span class="toc-text">npm install的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F"><span class="toc-number">9.</span> <span class="toc-text">模块系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack-dev-server"><span class="toc-number">10.</span> <span class="toc-text">webpack-dev-server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack%E4%B8%AD%E4%B8%80%E5%88%87%E7%9A%86%E8%B5%84%E6%BA%90"><span class="toc-number">11.</span> <span class="toc-text">webpack中一切皆资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack%E6%9E%84%E5%BB%BAreact%E5%B7%A5%E7%A8%8B"><span class="toc-number">12.</span> <span class="toc-text">webpack构建react工程</span></a></li></ol></details></div><div class="container post-content"><p> 是当下最热门的<strong>前端资源模块化管理</strong>和<strong>打包工具</strong>。</p>
+<ul>
+<li>它可以将许多松散的模块按照依赖和规则打包成符合生产环境部署的前端资源。</li>
+<li>还可以将按需加载的模块进行代码分隔，等到实际需要的时候再异步加载。</li>
+<li>通过 <code>loader</code> 的转换，任何形式的资源都可以视作模块，比如 CommonJs 模块、 AMD 模块、 ES6 模块、CSS、图片、 JSON、Coffeescript、 LESS 等。</li>
+</ul>
+<h2 id="Webpack是什么"><a href="#Webpack是什么" class="headerlink" title="Webpack是什么"></a>Webpack是什么</h2><p>Webpack是<strong>JavaScript</strong>应用程序的静态模块<strong>打包器</strong></p>
+<ul>
+<li>逻辑多,文件多,项目的复杂度提高了.就是因为Webpack是打包神器</li>
+<li>Wepack能支持翻译能力</li>
+<li>可插拔</li>
+</ul>
+<h2 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h2><p>全局变量是挂在的在<code>全局对象</code>上的</p>
+<ul>
+<li>在windows的全局对象是windows</li>
+<li>在Mac的全局对象是brower</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">window</span>.a <span class="comment">// 这里就能拿到</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们在页面上引入的script文件是全局的,因此文件里面的变量也是全局的,这样就有可能造成作用域被污染,变量发生冲突</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;/.moduleA.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;/.moduleB.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;/.moduleC.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时可以考虑使用闭包</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// moduleA.js</span></span><br><span class="line"><span class="comment">// 此时name和sex已经被存缓好了,可以被return的function访问</span></span><br><span class="line"><span class="comment">// 这样name和age就被保护(隐藏)起来了,因为这样外部就访问不到他们了</span></span><br><span class="line"><span class="keyword">var</span> moduleA= (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">              <span class="keyword">var</span> name = <span class="string">&quot;susan&quot;</span></span><br><span class="line">              <span class="keyword">var</span> sex = <span class="string">&quot;nv&quot;</span></span><br><span class="line">              <span class="keyword">return</span> &#123;</span><br><span class="line">                  <span class="attr">tell</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">                      <span class="built_in">console</span>.log(<span class="string">&quot;my name is &quot;</span>,name)</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+
+<p>第二种写法:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name = <span class="string">&quot;susan&quot;</span></span><br><span class="line">    <span class="keyword">var</span> sex =<span class="string">&quot;nv&quot;</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">tell</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;my name is &quot;</span>,name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">window</span>.susanModule = &#123; tell  &#125;</span><br><span class="line">&#125;)(<span class="built_in">window</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="模块导出机制的演变历史"><a href="#模块导出机制的演变历史" class="headerlink" title="模块导出机制的演变历史"></a>模块导出机制的演变历史</h2><h3 id="AMD"><a href="#AMD" class="headerlink" title="AMD"></a>AMD</h3><p><code>asynchronous Module Definition</code>:异步模块定义</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一参数:模块的名字</span></span><br><span class="line"><span class="comment">// 第二参数:模块的依赖</span></span><br><span class="line"><span class="comment">// 第三参数:模块的导出</span></span><br><span class="line">define(<span class="string">&quot;getSum&quot;</span>, [<span class="string">&quot;math&quot;</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sum:&quot;</span>, math.sum(a,b))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过require函数来引入</span></span><br><span class="line"><span class="keyword">const</span> math = <span class="built_in">require</span>(<span class="string">&quot;./math&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过exports将其导出</span></span><br><span class="line"><span class="built_in">exports</span>.getSum = <span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// import 导入</span></span><br><span class="line"><span class="keyword">import</span> math <span class="keyword">from</span> <span class="string">&quot;./math&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// export 导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><ul>
+<li>作用域封装</li>
+<li>重用性</li>
+<li>接触耦合</li>
+</ul>
+<h2 id="Webpack的打包逻辑"><a href="#Webpack的打包逻辑" class="headerlink" title="Webpack的打包逻辑"></a>Webpack的打包逻辑</h2><ul>
+<li>从入口文件开始,分析整个应用的依赖树</li>
+<li>将每个依赖模块包装起来,放到一个数组中 等待调用</li>
+<li>实现模块加载方法,并把它放到模块执行的环境中,确保模块间可以互相调用</li>
+<li>把执行入口文件的逻辑放在一个函数表达式中,并立即执行这个函数</li>
+</ul>
+<h2 id="npm与包管理器"><a href="#npm与包管理器" class="headerlink" title="npm与包管理器"></a>npm与包管理器</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化包</span></span><br><span class="line">npm init</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// package.json</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>:<span class="string">&quot;demo&quot;</span>, <span class="comment">// 包名称</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span>:<span class="string">&quot;1.1.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;description&quot;</span>:<span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;main&quot;</span>:<span class="string">&quot;index.js&quot;</span> <span class="comment">// 执行入口</span></span><br><span class="line">    <span class="string">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;test&quot;</span>:<span class="string">&quot;each \&quot;Error :no test spified\&quot; &amp;&amp; exit 1&quot;</span></span><br><span class="line">    &#125;, <span class="comment">// 自定义脚本</span></span><br><span class="line">    <span class="attr">&quot;author&quot;</span>:<span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;license&quot;</span>:<span class="string">&quot;ISC&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 设置淘宝镜像仓库</span></span><br><span class="line">npm config set registry https://npm.taobao.org</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> save的功能:自动将下载的包写入package.json的dependencies字段</span></span><br><span class="line">npm install lodash -s</span><br><span class="line"><span class="meta">#</span><span class="bash"> or</span></span><br><span class="line">npm install lodash --save</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 写入package.json的devDependencies字段</span></span><br><span class="line">npm install lodash --save-dev</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认-s参数,所以会同时写入dependencies字段和devDependencies字段</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果想写入一个的话,使用only</span></span><br><span class="line">npm insall --only=dev</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 删除所有的包,然后重装</span></span></span><br><span class="line">rm -rf node_modules &amp;&amp; npm install</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="版本语义化"><a href="#版本语义化" class="headerlink" title="版本语义化"></a>版本语义化</h2><ul>
+<li><p>1.2.3:大版本为1,中版本为2,小版本为3</p>
+</li>
+<li><p><code>^version</code>:中版本中最新的版本</p>
+<ul>
+<li><code>^1.0.1</code>:对于所有形为<code>1.x.x</code>版本中,<code>1.0.1</code>是最新的版本</li>
+</ul>
+</li>
+<li><p><code>~version</code>:小版本中最新的版本</p>
+<ul>
+<li><code>~1.0.1</code>:对于所有形为<code>1.0.x</code>版本中,<code>1.0.1</code>是最新的版本</li>
+</ul>
+</li>
+</ul>
+<h2 id="npm-install的过程"><a href="#npm-install的过程" class="headerlink" title="npm install的过程"></a>npm install的过程</h2><ol>
+<li>寻找包版本信息文件(<code>package.json</code>),依照他进行安装</li>
+<li>查package.json中的依赖,并检查项目中其他的版本信息文件</li>
+<li>如果发现了新包,就更新版本信息文件</li>
+</ol>
+<h2 id="模块系统"><a href="#模块系统" class="headerlink" title="模块系统"></a>模块系统</h2><ul>
+<li>当今越来越多的网站已经从网页模式进化到了 Webapp 模式。</li>
+<li><strong>webapp通常是一个单页面应用，每一个视图通过异步的方式加载</strong>，这导致页面初始化和使用过程中会加载越来越多的 JavaScript 代码，这给前端开发的流程和资源组织带来了巨大的挑战。</li>
+<li>在开发环境组织好这些碎片化的代码和资源，并且保证他们在浏览器端快速、优雅的加载和更新，就需要一个模块化系统。</li>
+</ul>
+<ul>
+<li>webpack默认的入口就是<code>src/indesx.js</code>，默认的出口文件就是<code>dist/main.js</code></li>
+<li>如果想要修改的话，就需要修改<code>webpack.config.js</code></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&quot;./app.js&quot;</span>,   <span class="comment">// entry 为打包的入口</span></span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">&quot;dist&quot;</span>),</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&quot;bundle.js&quot;</span>  <span class="comment">// filename 为打包出口</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">    <span class="attr">port</span>: <span class="number">3000</span>, <span class="comment">// 服务端口</span></span><br><span class="line">    <span class="attr">pubilcPath</span>: <span class="string">&quot;/dist&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="webpack-dev-server"><a href="#webpack-dev-server" class="headerlink" title="webpack-dev-server"></a>webpack-dev-server</h2><p>监听工程目录的改动，动态的打包和更新</p>
+<h2 id="webpack中一切皆资源"><a href="#webpack中一切皆资源" class="headerlink" title="webpack中一切皆资源"></a>webpack中一切皆资源</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack.config.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>)</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&quot;./src/app.js&quot;</span>, </span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">&quot;dist&quot;</span>),</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&quot;bundle.js&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">module</span>:&#123;</span><br><span class="line">      <span class="attr">rules</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">              <span class="attr">test</span>: <span class="regexp">/\.css$/</span>,</span><br><span class="line">              use: [</span><br><span class="line">                <span class="string">&quot;style-loader&quot;</span>,</span><br><span class="line">                <span class="string">&quot;css-loader&quot;</span></span><br><span class="line">              ]</span><br><span class="line">          &#125;</span><br><span class="line">      ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;./style/mycss.css&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&quot;1232&quot;</span>)</span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">&quot;123123213asdasda&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Hello Webpack<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;../dist/bundle.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="webpack构建react工程"><a href="#webpack构建react工程" class="headerlink" title="webpack构建react工程"></a>webpack构建react工程</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">npm init -y</span><br><span class="line"></span><br><span class="line">npm install react react-dom</span><br><span class="line">npm install redux react-redux</span><br><span class="line">npm install webpack webpack-cli -D</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 核心包和命令行包</span></span><br><span class="line">npm install @babel/core @babel/cli</span><br><span class="line"><span class="meta">#</span><span class="bash"> bebel的转换规则(preset-env负责ES版本的转换,preset-react负责解析jsx)</span></span><br><span class="line">npm install @babel/preset-env @babel/preset-react</span><br><span class="line"><span class="meta">#</span><span class="bash"> plugin-proposal-class-properties 负责解析static PropsType的静态写法</span></span><br><span class="line">npm install @babel/plugin-proposal-class-properties</span><br><span class="line">npm install babel-loader</span><br><span class="line"></span><br><span class="line">npm install html-webpack-plugin -d</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>创建<code>src</code>目录，在目录里创建<code>App.jsx</code></p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&quot;react&quot;</span></span><br><span class="line"><span class="keyword">import</span> ReactDom <span class="keyword">from</span> <span class="string">&quot;react-dom&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> App = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> App</span><br><span class="line"></span><br><span class="line">ReactDom.render(<span class="xml"><span class="tag">&lt;<span class="name">App</span>&gt;</span><span class="tag">&lt;/<span class="name">App</span>&gt;</span></span>,<span class="built_in">document</span>.getElementById(<span class="string">&quot;root&quot;</span>))</span><br></pre></td></tr></table></figure></li>
+<li><p>创建<code>index.html</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Hello Webpack<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>创建<code>index.jsx</code>：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&quot;./App&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="built_in">module</span>.hot) &#123;</span><br><span class="line">    <span class="built_in">module</span>.hot.accept(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(err) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;热替换出错&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>创建babel的配置</p>
+<ul>
+<li><p>方案一：在<code>package.json</code>里面填写</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;reactdomo&quot;</span>,</span><br><span class="line">  <span class="string">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="string">&quot;description&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  ...</span><br><span class="line">  <span class="string">&quot;babel&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;presets&quot;</span>: [<span class="string">&quot;@babel/presets-env&quot;</span>]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>方案二：创建<code>.babelrc</code>文件（优先级比较高）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;preset&quot;: [&quot;@babel/presets-env&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>编写<code>webpack.config.js</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HtmlWebPackPlugin = <span class="built_in">require</span>(<span class="string">&quot;html-webpack-plugin&quot;</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>)</span><br><span class="line"><span class="keyword">const</span> webpack = <span class="built_in">require</span>(<span class="string">&quot;webpack&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">resolve</span>: &#123;</span><br><span class="line">        <span class="attr">extensions</span>: [<span class="string">&quot;.js&quot;</span>, <span class="string">&quot;.jsx&quot;</span>, <span class="string">&quot;.json&quot;</span>] <span class="comment">// 带有此类后缀的文件，可以不写后缀</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">entry</span>: path.resolve(__dirname, <span class="string">&quot;src/index.jsx&quot;</span>),</span><br><span class="line">    <span class="attr">module</span>: &#123;</span><br><span class="line">        <span class="attr">rules</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">test</span>: <span class="regexp">/\.jsx?/</span>,</span><br><span class="line">                exclude: <span class="regexp">/node_modules/</span>,</span><br><span class="line">                use: &#123;</span><br><span class="line">                    <span class="attr">loader</span>: <span class="string">&quot;babel-loader&quot;</span>,</span><br><span class="line">                    <span class="attr">options</span>: &#123;</span><br><span class="line">                        <span class="attr">babelrc</span>: <span class="literal">false</span>, <span class="comment">// 不使用.babelrc文件</span></span><br><span class="line">                        <span class="attr">presets</span>: [</span><br><span class="line">                            <span class="built_in">require</span>.resolve(<span class="string">&quot;@babel/preset-react&quot;</span>),</span><br><span class="line">                            [<span class="built_in">require</span>.resolve(<span class="string">&quot;@babel/preset-env&quot;</span>,&#123;<span class="attr">module</span>:<span class="literal">false</span>&#125;)]</span><br><span class="line">                        ]</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">devServer</span>: &#123;</span><br><span class="line">        <span class="attr">hot</span>: <span class="literal">true</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="keyword">new</span> HtmlWebPackPlugin(&#123;</span><br><span class="line">            <span class="attr">template</span>: path.resolve(__dirname, <span class="string">&quot;src/index.html&quot;</span>),</span><br><span class="line">            <span class="attr">filename</span>: <span class="string">&quot;index.html&quot;</span></span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> webpack.HotModuleReplacementPlugin()</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>执行<code>webpack --mode devlepoment</code> ， 执行<code>webpack-dev-server --open</code></p>
+</li>
+</ol>
+<p>或者：直接填写<code>package.json</code>，然后<code>npm install</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;todolist_demo&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;main&quot;</span>: <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;test&quot;</span>: <span class="string">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;keywords&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;ISC&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;@babel/cli&quot;</span>: <span class="string">&quot;^7.10.3&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;@babel/core&quot;</span>: <span class="string">&quot;^7.10.5&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;@babel/preset-env&quot;</span>: <span class="string">&quot;^7.10.4&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;@babel/preset-react&quot;</span>: <span class="string">&quot;^7.10.4&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;babel-loader&quot;</span>: <span class="string">&quot;^8.1.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;html-webpack-plugin&quot;</span>: <span class="string">&quot;^4.3.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;react&quot;</span>: <span class="string">&quot;^16.13.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;react-dom&quot;</span>: <span class="string">&quot;^16.13.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;react-redux&quot;</span>: <span class="string">&quot;^7.2.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;redux&quot;</span>: <span class="string">&quot;^4.0.5&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;devDependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;@babel/plugin-proposal-class-properties&quot;</span>: <span class="string">&quot;^7.10.4&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;webpack&quot;</span>: <span class="string">&quot;^4.44.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;webpack-cli&quot;</span>: <span class="string">&quot;^3.3.12&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

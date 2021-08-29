@@ -1,0 +1,123 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;OS模块&quot;&gt;&lt;a href=&quot;#OS模块&quot; class=&quot;headerlink&quot; title=&quot;OS模块&quot;&gt;&lt;/a&gt;OS模块&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;os.name:&lt;br&gt;操作系统类型"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>千锋教育1_模块的使用 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Python/" rel="tag">Python</a></div><div class="post-time">2019-08-06</div></div></div><div class="container post-header"><h1>千锋教育1_模块的使用</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OS%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">OS模块</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%92%E5%BD%92"><span class="toc-number">2.</span> <span class="toc-text">递归</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9D%97"><span class="toc-number">3.</span> <span class="toc-text">时间模块:</span></a></li></ol></details></div><div class="container post-content"><h1 id="OS模块"><a href="#OS模块" class="headerlink" title="OS模块"></a>OS模块</h1><ol>
+<li><p>os.name:<br>操作系统类型</p>
+</li>
+<li><p>os.environ:<br>操作系统的环境变量</p>
+</li>
+<li><p>os.environ.get(‘PROMPT’):<br>获取指定环境变量</p>
+</li>
+<li><p>os.curdir:<br>获取当前目录</p>
+</li>
+<li><p>os.getcwd()<br>获取当前工作目录,即当前python脚本所在的目录</p>
+</li>
+<li><p>os.listdir(r’D:\trainingfile’):<br>以列表形式返回指定目录下的所有文件</p>
+</li>
+<li><p>os.mkdir(‘hyl’):<br>创建目录</p>
+</li>
+<li><p>os.rmdir(‘hyl’):<br>删除目录</p>
+</li>
+<li><p>os.stat(‘hyl’):<br>获取文件属性</p>
+</li>
+<li><p>os.rename(‘hyl’,’hyl2’):<br>重命名</p>
+</li>
+<li><p>os.remove(‘hyl.txt’):<br>删除文件</p>
+</li>
+<li><p>os.system():<br>运行命令</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭进程</span></span><br><span class="line">os.system(<span class="string">&#x27;taskkill /f /im notepad.exe&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li><p>os.path.abspath(‘.liangbo’):<br>获取当前的绝对路径</p>
+</li>
+<li><p>os.path.join(p1,p2):<br>拼接路径<br>注意:p2开始不能有反斜杠</p>
+</li>
+<li><p>os.path.split(p1):<br>拆分路径</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(os.path.split(<span class="string">r&#x27;F:\乱七八糟\360安全浏览器下载\chrome\下载\messing\apk\2.1.0.4_picacg.apk&#x27;</span>))</span><br><span class="line"><span class="comment"># (&#x27;F:\\乱七八糟\\360安全浏览器下载\\chrome\\下载\\messing\\apk&#x27;, &#x27;2.1.0.4_picacg.apk&#x27;)</span></span><br></pre></td></tr></table></figure></li>
+<li><p>os.path.splitext(p1):<br>获取扩展名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(os.path.splitext(<span class="string">r&#x27;F:\乱七八糟\360安全浏览器下载\chrome\下载\messing\apk\2.1.0.4_picacg.apk&#x27;</span>))</span><br><span class="line"><span class="comment"># (&#x27;F:\\乱七八糟\\360安全浏览器下载\\chrome\\下载\\messing\\apk\\2.1.0.4_picacg&#x27;, &#x27;.apk&#x27;)</span></span><br></pre></td></tr></table></figure></li>
+<li><p>os.path.isdir:<br>是否为目录</p>
+</li>
+<li><p>os.path.isfile(p1)<br>判断文件是否存在</p>
+</li>
+<li><p>os.path.exists()<br>判断文件是否存在</p>
+</li>
+<li><p>os.path.getsize(path3):<br>获取文件大小</p>
+</li>
+<li><p>获取文件名<br>os.path.dirname</p>
+</li>
+</ol>
+<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><p>方式:</p>
+<ol>
+<li>写出基线条件</li>
+<li>找这一次和上一次的关系</li>
+<li>假设当前函数已经能用,==调用自身计算上一次的结果==,再求出本次的结果</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 递归调用,打印目录下所有文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_all_dir</span>(<span class="params">path,sp=<span class="string">&#x27;   &#x27;</span></span>):</span></span><br><span class="line">	files_list = os.listdir(path)</span><br><span class="line">	sp += <span class="string">&#x27;   &#x27;</span></span><br><span class="line">	<span class="keyword">for</span> file_name <span class="keyword">in</span> files_list:</span><br><span class="line">		fileAbsPath = os.path.join(path,file_name)</span><br><span class="line">		<span class="keyword">if</span> os.path.isdir(fileAbsPath):</span><br><span class="line">			<span class="built_in">print</span>(<span class="string">&#x27;目录:&#x27;</span>,file_name)</span><br><span class="line">			find_all_dir(fileAbsPath)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="built_in">print</span>(<span class="string">&#x27;文件:&#x27;</span>,file_name)</span><br></pre></td></tr></table></figure>
+
+<p>如果要用深度变量,一般都是使用==栈==,</p>
+<p><img src="/images/%E7%9B%AE%E5%BD%95%E6%A0%91.jpg" alt="目录树"></p>
+<p>思路:每层压入,然后弹出</p>
+<ol>
+<li>压入A,弹出A(弹出的同时获取A下面的文件夹B和C)</li>
+<li>压入BC</li>
+<li>弹出B(弹出的同时获取B下面的文件夹D和E)</li>
+<li>压入DE</li>
+<li>弹出D(弹出的同时获取D下面的文件夹H和I)</li>
+<li>弹出H<br>所以现在的栈就是[c,e,i](i为栈顶)</li>
+<li>弹出I</li>
+<li>弹出E(弹出的同时获取E下面的文件夹J和K)</li>
+<li>弹出J</li>
+<li>弹出K</li>
+<li>弹出C(弹出的同时获取C下面的文件夹F和G)</li>
+<li>弹出F</li>
+<li>弹出G</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_all_dir</span>(<span class="params">path</span>):</span></span><br><span class="line">	stack = []</span><br><span class="line">	stack.append(path)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> <span class="built_in">len</span>(stack) != <span class="number">0</span>:</span><br><span class="line">		dirPath = stack.pop()</span><br><span class="line">		file_list = os.listdir(dirPath)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> filename <span class="keyword">in</span> file_list:</span><br><span class="line">			fileAbsPath = os.path.join(dirPath,filename)</span><br><span class="line">			<span class="keyword">if</span> os.path.join.isdir(fileAbsPath):</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&#x27;目录:&#x27;</span>,filename)</span><br><span class="line">				stack.append(fileAbsPath)</span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&#x27;文件:&#x27;</span>,filename)</span><br></pre></td></tr></table></figure>
+
+<p>如果使用广度优先:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getAllDir</span>(<span class="params">path</span>):</span></span><br><span class="line">	queue = collections.deque()</span><br><span class="line">	queue.append(path)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> <span class="built_in">len</span>(queue) != <span class="number">0</span>:</span><br><span class="line">		dirpath = queue.popleft()</span><br><span class="line">		fileslist = os.listdir(dirpath)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> filename <span class="keyword">in</span> fileslist:</span><br><span class="line">			fileAbsPath = os.path.join(dirpath,filename)</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> os.path.isdir(fileAbsPath):</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&#x27;目录:&#x27;</span>,filename)</span><br><span class="line">				queue.append(fileAbsPath)</span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&#x27;文件:&#x27;</span>,filename)</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="时间模块"><a href="#时间模块" class="headerlink" title="时间模块:"></a>时间模块:</h1><ol>
+<li>时间戳:<br>以整形或浮点型表示时间的一个以秒为单位的时间间隔</li>
+<li>元组:<br>这个元组有9个整形内容:<br>(year,month,day,hours,minutes,seconds,weekdey,julia day,DST)</li>
+<li>格式化字符串</li>
+</ol>
+<ol>
+<li><p>time.time():<br>返回当前时间的时间戳(浮点数形式)</p>
+</li>
+<li><p>time.gmtime:<br>将时间戳转为UTC时间元组:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">c = time.time()</span><br><span class="line">x = time.gmtime(c)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意是格林尼治时间</span></span><br><span class="line"><span class="comment"># time.struct_time(tm_year=2019, tm_mon=4, tm_mday=22, tm_hour=8, tm_min=44, tm_sec=58, tm_wday=0, tm_yday=112, tm_isdst=0)</span></span><br></pre></td></tr></table></figure></li>
+<li><p>time.localtime():<br>转为当地时间的元组:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">c = time.time()</span><br><span class="line">x = time.localtime(c)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="comment"># time.struct_time(tm_year=2019, tm_mon=4, tm_mday=22, tm_hour=16, tm_min=47, tm_sec=5, tm_wday=0, tm_yday=112, tm_isdst=0)</span></span><br></pre></td></tr></table></figure></li>
+<li><p>time.mktime:<br>将本地时间转为时间元组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">a = time.time()</span><br><span class="line">b = time.localtime(a)</span><br><span class="line"></span><br><span class="line">m = time.mktime(b)</span><br><span class="line"><span class="comment"># 注意会省略小数</span></span><br><span class="line"><span class="built_in">print</span>(m)  <span class="comment"># 1555922992.0</span></span><br><span class="line"><span class="built_in">print</span>(a)  <span class="comment"># 1555922992.8914602</span></span><br></pre></td></tr></table></figure></li>
+<li><p>time.asctime():<br>将时间元组转成字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a = time.localtime()</span><br><span class="line">x = time.asctime(a)</span><br><span class="line"><span class="built_in">print</span>(x) <span class="comment"># Mon Apr 22 16:52:30 2019</span></span><br></pre></td></tr></table></figure></li>
+<li><p>time.ctime():<br>将时间戳转为字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a = time.time()</span><br><span class="line">x = time.ctime(a)</span><br><span class="line"><span class="built_in">print</span>(x) <span class="comment"># Mon Apr 22 16:54:24 2019</span></span><br></pre></td></tr></table></figure></li>
+<li><p>time.strftime():<br>将时间转成特定格式的字符串:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = time.localtime()</span><br><span class="line">time.strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>,a)</span><br></pre></td></tr></table></figure></li>
+<li><p>time.strptime()<br>将时间字符串转为时间元组</p>
+</li>
+</ol>
+<p><img src="/images/1555925969119.png" alt="1555925969119"></p>
+<ol start="9">
+<li>time.sleep():<br>延迟时间</li>
+<li>time.clock:<br>返回当前程序的cup执行时间</li>
+</ol>
+<p>datetime是基于time进行了封装,提供了更为使用的函数.接口更直观,更容易调用.</p>
+<p>datetime的五个类:</p>
+<ol>
+<li>datetime:<br>同时有日期和时间</li>
+<li>timedelta<br>主要用于计算时间的跨度</li>
+<li>tzinfo<br>时区相关</li>
+<li>time<br>只关注时间</li>
+<li>date<br>只关注日期</li>
+</ol>
+<ol>
+<li>datetime.datetime.now():<br>获取当前时间</li>
+<li>datetime.datetime(1999,9,9,10,28,25,123456):<br>获取指定时间</li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

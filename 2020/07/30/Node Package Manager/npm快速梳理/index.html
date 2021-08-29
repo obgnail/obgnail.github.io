@@ -1,0 +1,144 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;NPM的组成及简单原理&quot;&gt;&lt;a href=&quot;#NPM的组成及简单原理&quot; class=&quot;headerlink&quot; title=&quot;NPM的组成及简单原理&quot;&gt;&lt;/a&gt;NPM的组成及简单原理&lt;/h2&gt;&lt;p&gt;npm 由三个独立的部分组成："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>npm快速梳理 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Node-Package-Manager/" rel="tag">Node Package Manager</a></div><div class="post-time">2020-07-30</div></div></div><div class="container post-header"><h1>npm快速梳理</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NPM%E7%9A%84%E7%BB%84%E6%88%90%E5%8F%8A%E7%AE%80%E5%8D%95%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">NPM的组成及简单原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-npm-%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">使用 npm 命令安装模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AE%89%E8%A3%85%E4%B8%8E%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">全局安装与本地安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85"><span class="toc-number">3.1.</span> <span class="toc-text">本地安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AE%89%E8%A3%85"><span class="toc-number">3.2.</span> <span class="toc-text">全局安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%89%E8%A3%85%E4%BF%A1%E6%81%AF"><span class="toc-number">3.3.</span> <span class="toc-text">查看安装信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-package-json"><span class="toc-number">4.</span> <span class="toc-text">使用 package.json</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Package-json-%E5%B1%9E%E6%80%A7%E8%AF%B4%E6%98%8E"><span class="toc-number">4.1.</span> <span class="toc-text">Package.json 属性说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD%E6%A8%A1%E5%9D%97"><span class="toc-number">5.</span> <span class="toc-text">卸载模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E6%A8%A1%E5%9D%97"><span class="toc-number">6.</span> <span class="toc-text">更新模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text">搜索模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E7%94%A8%E6%88%B7"><span class="toc-number">8.</span> <span class="toc-text">注册用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%91%E5%B8%83%E6%A8%A1%E5%9D%97"><span class="toc-number">9.</span> <span class="toc-text">发布模块</span></a></li></ol></details></div><div class="container post-content"><h2 id="NPM的组成及简单原理"><a href="#NPM的组成及简单原理" class="headerlink" title="NPM的组成及简单原理"></a>NPM的组成及简单原理</h2><p>npm 由三个独立的部分组成：</p>
+<ul>
+<li>网站</li>
+<li>注册表（registry）</li>
+<li>命令行工具 (CLI)</li>
+</ul>
+<ol>
+<li><code>网站</code> 是开发者查找包（package）、设置参数以及管理 npm 使用体验的主要途径。</li>
+<li><code>注册表</code>是一个巨大的数据库，保存了每个包（package）的信息。</li>
+<li><code>CLI</code>通过命令行或终端运行。开发者通过 CLI 与 npm 打交道。</li>
+</ol>
+<p>NPM 的实现原理大概是这样的：</p>
+<ol>
+<li><p>买个服务器作为代码仓库（registry），在里面放所有需要被共享的代码</p>
+</li>
+<li><p>发邮件通知 jQuery、Bootstrap、Underscore 作者使用 npm publish 把代码提交到 registry 上，分别取名 jquery、bootstrap 和 underscore（注意大小写）</p>
+</li>
+<li><p>社区里的其他人如果想使用这些代码，就把 jquery、bootstrap 和 underscore 写到 package.json 里，然后运行 npm install ，npm 就会帮他们下载代码</p>
+</li>
+<li><p>下载完的代码出现在 node_modules 目录里，可以随意使用了。</p>
+</li>
+</ol>
+<p>这些可以被使用的代码被叫做「包」（package），这就是 NPM 名字的由来：<code>Node Package(包) Manager(管理器)</code>。</p>
+<h2 id="使用-npm-命令安装模块"><a href="#使用-npm-命令安装模块" class="headerlink" title="使用 npm 命令安装模块"></a>使用 npm 命令安装模块</h2><p>我们使用 npm 命令安装模块 <strong>express</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install express</span><br></pre></td></tr></table></figure>
+
+<p>安装好之后，express 包就放在了工程目录下的 node_modules 目录中，因此在代码中只需要通过 <strong>require(‘express’)</strong> 的方式就好，<strong>无需指定第三方包路径</strong>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="全局安装与本地安装"><a href="#全局安装与本地安装" class="headerlink" title="全局安装与本地安装"></a>全局安装与本地安装</h2><p>npm 的包安装分为本地安装（local）、全局安装（global）两种，从敲的命令行来看，差别只是有没有-g而已，比如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install express      # 本地安装</span><br><span class="line">npm install express -g   # 全局安装</span><br></pre></td></tr></table></figure>
+
+<p>如果出现以下错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm err! Error: connect ECONNREFUSED 127.0.0.1:8087 </span><br></pre></td></tr></table></figure>
+
+<p>解决办法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm config set proxy null</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="本地安装"><a href="#本地安装" class="headerlink" title="本地安装"></a>本地安装</h3><ul>
+<li>将安装包放在 ./node_modules 下（运行 npm 命令时所在的目录），如果没有 node_modules 目录，会在当前执行 npm 命令的目录下生成 node_modules 目录。</li>
+<li>可以通过 require() 来引入本地安装的包。</li>
+</ul>
+<h3 id="全局安装"><a href="#全局安装" class="headerlink" title="全局安装"></a>全局安装</h3><ul>
+<li>将安装包放在 /usr/local 下或者你 node 的安装目录。</li>
+<li>可以直接在命令行里使用。</li>
+</ul>
+<p>如果你希望具备两者功能，则需要在两个地方安装它或使用 <strong>npm link</strong>。</p>
+<p>使用全局方式安装 express</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install express -g</span><br></pre></td></tr></table></figure>
+
+
+
+<p>安装过程输出如下内容，第一行输出了<strong>模块的版本号</strong>及<strong>安装位置</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">express@4.13.3 node_modules/express</span><br><span class="line">├── escape-html@1.0.2</span><br><span class="line">├── range-parser@1.0.2</span><br><span class="line">├── merge-descriptors@1.0.0</span><br><span class="line">├── array-flatten@1.1.1</span><br><span class="line">├── cookie@0.1.3</span><br><span class="line">├── utils-merge@1.0.0</span><br><span class="line">├── parseurl@1.3.0</span><br><span class="line">├── cookie-signature@1.0.6</span><br><span class="line">├── methods@1.1.1</span><br><span class="line">├── fresh@0.3.0</span><br><span class="line">├── vary@1.0.1</span><br><span class="line">├── path-to-regexp@0.1.7</span><br><span class="line">├── content-type@1.0.1</span><br><span class="line">├── etag@1.7.0</span><br><span class="line">├── serve-static@1.10.0</span><br><span class="line">├── content-disposition@0.5.0</span><br><span class="line">├── depd@1.0.1</span><br><span class="line">├── qs@4.0.0</span><br><span class="line">├── finalhandler@0.4.0 (unpipe@1.0.0)</span><br><span class="line">├── on-finished@2.3.0 (ee-first@1.1.1)</span><br><span class="line">├── proxy-addr@1.0.8 (forwarded@0.1.0, ipaddr.js@1.0.1)</span><br><span class="line">├── debug@2.2.0 (ms@0.7.1)</span><br><span class="line">├── type-is@1.6.8 (media-typer@0.3.0, mime-types@2.1.6)</span><br><span class="line">├── accepts@1.2.12 (negotiator@0.5.3, mime-types@2.1.6)</span><br><span class="line">└── send@0.13.0 (destroy@1.0.3, statuses@1.2.1, ms@0.7.1, mime@1.3.4, http-errors@1.3.1)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="查看安装信息"><a href="#查看安装信息" class="headerlink" title="查看安装信息"></a>查看安装信息</h3><p><code>npm list -g</code>命令来查看所有全局安装的模块：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ npm list -g</span><br><span class="line"></span><br><span class="line">├─┬ cnpm@4.3.2</span><br><span class="line">│ ├── auto-correct@1.0.0</span><br><span class="line">│ ├── bagpipe@0.3.5</span><br><span class="line">│ ├── colors@1.1.2</span><br><span class="line">│ ├─┬ commander@2.9.0</span><br><span class="line">│ │ └── graceful-readlink@1.0.1</span><br><span class="line">│ ├─┬ cross-spawn@0.2.9</span><br><span class="line">│ │ └── lru-cache@2.7.3</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>npm list XXX</code>查看某个模块的版本号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm list webpack</span><br><span class="line"></span><br><span class="line">projectName@projectVersion /path/to/project/folder</span><br><span class="line">└── webpack@4.43.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用-package-json"><a href="#使用-package-json" class="headerlink" title="使用 package.json"></a>使用 package.json</h2><p>package.json 位于模块的目录下，用于定义包的属性。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;express&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Fast, unopinionated, minimalist web framework&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;4.13.3&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;author&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;TJ Holowaychuk&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;tj@vision-media.ca&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;contributors&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Aaron Heckmann&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;aaron.heckmann+github@gmail.com&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;MIT&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;repository&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;git&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;git+https://github.com/strongloop/express.git&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;homepage&quot;</span>: <span class="string">&quot;http://expressjs.com/&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;keywords&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;express&quot;</span>,</span><br><span class="line">    <span class="string">&quot;framework&quot;</span>,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;accepts&quot;</span>: <span class="string">&quot;~1.2.12&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;array-flatten&quot;</span>: <span class="string">&quot;1.1.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;content-disposition&quot;</span>: <span class="string">&quot;0.5.0&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;devDependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;after&quot;</span>: <span class="string">&quot;0.8.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;ejs&quot;</span>: <span class="string">&quot;2.3.3&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;istanbul&quot;</span>: <span class="string">&quot;0.3.17&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;marked&quot;</span>: <span class="string">&quot;0.3.5&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;mocha&quot;</span>: <span class="string">&quot;2.2.5&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;engines&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;node&quot;</span>: <span class="string">&quot;&gt;= 0.10.0&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;files&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;LICENSE&quot;</span>,</span><br><span class="line">    <span class="string">&quot;History.md&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Readme.md&quot;</span>,</span><br><span class="line">    <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">    <span class="string">&quot;lib/&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;test&quot;</span>: <span class="string">&quot;mocha --require test/support/env --reporter spec --bail --check-leaks test/ test/acceptance/&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;test-ci&quot;</span>: <span class="string">&quot;istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks test/ test/acceptance/&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;test-cov&quot;</span>: <span class="string">&quot;istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks test/ test/acceptance/&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;test-tap&quot;</span>: <span class="string">&quot;mocha --require test/support/env --reporter tap --check-leaks test/ test/acceptance/&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;gitHead&quot;</span>: <span class="string">&quot;ef7ad681b245fba023843ce94f6bcb8e275bbb8e&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;bugs&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://github.com/strongloop/express/issues&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;_id&quot;</span>: <span class="string">&quot;express@4.13.3&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;_shasum&quot;</span>: <span class="string">&quot;ddb2f1fb4502bf33598d2b032b037960ca6c80a3&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;_from&quot;</span>: <span class="string">&quot;express@*&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;_npmVersion&quot;</span>: <span class="string">&quot;1.4.28&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;_npmUser&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;dougwilson&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;doug@somethingdoug.com&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;maintainers&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;tjholowaychuk&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;tj@vision-media.ca&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;dist&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;shasum&quot;</span>: <span class="string">&quot;ddb2f1fb4502bf33598d2b032b037960ca6c80a3&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;tarball&quot;</span>: <span class="string">&quot;http://registry.npmjs.org/express/-/express-4.13.3.tgz&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;directories&quot;</span>: &#123;&#125;,</span><br><span class="line">  <span class="attr">&quot;_resolved&quot;</span>: <span class="string">&quot;https://registry.npmjs.org/express/-/express-4.13.3.tgz&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;readme&quot;</span>: <span class="string">&quot;ERROR: No README data found!&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Package-json-属性说明"><a href="#Package-json-属性说明" class="headerlink" title="Package.json 属性说明"></a>Package.json 属性说明</h3><ul>
+<li><strong>name</strong> - 包名。</li>
+<li><strong>version</strong> - 包的版本号。</li>
+<li><strong>description</strong> - 包的描述。</li>
+<li><strong>homepage</strong> - 包的官网 url 。</li>
+<li><strong>author</strong> - 包的作者姓名。</li>
+<li><strong>contributors</strong> - 包的其他贡献者姓名。</li>
+<li><strong>dependencies</strong> - 依赖包列表。如果依赖包没有安装，npm 会自动将依赖包安装在 node_module 目录下。</li>
+<li><strong>repository</strong> - 包代码存放的地方的类型，可以是 git 或 svn，git 可在 Github 上。</li>
+<li><strong>main</strong> - main 字段指定了程序的主入口文件，require(‘moduleName’) 就会加载这个文件。这个字段的<strong>默认值是模块根目录下面的 index.js。</strong></li>
+<li><strong>keywords</strong> - 关键字</li>
+</ul>
+<h2 id="卸载模块"><a href="#卸载模块" class="headerlink" title="卸载模块"></a>卸载模块</h2><p>我们可以使用以下命令来卸载 Node.js 模块。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm uninstall webpack</span><br></pre></td></tr></table></figure>
+
+
+
+<p>卸载后，你可以到 /node_modules/ 目录下查看包是否还存在，或者使用以下命令查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm ls</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="更新模块"><a href="#更新模块" class="headerlink" title="更新模块"></a>更新模块</h2><p>我们可以使用以下命令更新模块：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm update webpack</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="搜索模块"><a href="#搜索模块" class="headerlink" title="搜索模块"></a>搜索模块</h2><p>使用以下来搜索模块：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm search webpack</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="注册用户"><a href="#注册用户" class="headerlink" title="注册用户"></a>注册用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm adduser</span><br><span class="line">Username: mcmohd</span><br><span class="line">Password:</span><br><span class="line">Email: (this IS public) mcmohd@gmail.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="发布模块"><a href="#发布模块" class="headerlink" title="发布模块"></a>发布模块</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm publish</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

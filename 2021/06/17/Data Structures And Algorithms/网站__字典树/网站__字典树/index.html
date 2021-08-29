@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.cxyxiaowu.com/1873.html&quot;&gt;看动画轻松理解「Trie树」&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;字典树常用来进行&lt;strong&gt;字符串检索&lt;/strong&gt;，例如用给定的字符串序列建立字典树。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>字典树 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Data-Structures-And-Algorithms/" rel="tag">Data Structures And Algorithms</a></div><div class="post-time">2021-06-17</div></div></div><div class="container post-header"><h1>字典树</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%843%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%80%A7%E8%B4%A8"><span class="toc-number">1.</span> <span class="toc-text">字典树的3个基本性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E6%8F%92%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">字典树的插入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E5%85%B3%E9%94%AE%E8%AF%8D%E6%9F%A5%E6%89%BE%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">字典树关键词查找过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">字典树的删除操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%95%B4%E4%B8%AA%E5%8D%95%E8%AF%8D%EF%BC%88%E6%AF%94%E5%A6%82hi%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">删除整个单词（比如hi）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%89%8D%E7%BC%80%E5%8D%95%E8%AF%8D%EF%BC%88%E6%AF%94%E5%A6%82cod%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">删除前缀单词（比如cod）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%88%86%E6%94%AF%E5%8D%95%E8%AF%8D%EF%BC%88%E6%AF%94%E5%A6%82cook%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">删除分支单词（比如cook）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">字典树的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%89%8D%E7%BC%80%E5%8C%B9%E9%85%8D"><span class="toc-number">5.1.</span> <span class="toc-text">1. 前缀匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E7%B4%A2"><span class="toc-number">5.2.</span> <span class="toc-text">2. 字符串检索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">6.</span> <span class="toc-text">字典树的局限性</span></a></li></ol></details></div><div class="container post-content"><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cxyxiaowu.com/1873.html">看动画轻松理解「Trie树」</a></li>
+</ul>
+<p>字典树常用来进行<strong>字符串检索</strong>，例如用给定的字符串序列建立字典树。</p>
+<p>字典树利用了字符串的<strong>共同前缀（Common Prefix）</strong>作为存储依据，以此来节省存储空间，并加速搜索时间。</p>
+<p>Trie 的字符串搜索时间复杂度为 **O(m)**，m 为最长的字符串的长度，其查询性能与集合中的字符串的数量无关。其在搜索字符串时表现出的高效，使得特别适用于构建文本搜索和词频统计等应用。</p>
+<h2 id="字典树的3个基本性质"><a href="#字典树的3个基本性质" class="headerlink" title="字典树的3个基本性质"></a>字典树的3个基本性质</h2><ol>
+<li>根节点不包含字符，除根节点外每一个节点都只包含一个字符。</li>
+<li>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。</li>
+<li>每个节点的所有子节点包含的字符都不相同。</li>
+</ol>
+<p>如下图的 Trie 树中包含了字符串集合 [“Joe”, “John”, “Johnny”, “Jane”, “Jack”]。</p>
+<p><img src="/images/242258574966066.jpg" alt="img"></p>
+<h2 id="字典树的插入"><a href="#字典树的插入" class="headerlink" title="字典树的插入"></a>字典树的插入</h2><p>假设有 5 个字符串，它们分别是：code，cook，five，file，fat。现在需要在里面多次查找某个字符串是否存在。如果每次查找，都是拿要查找的字符串跟这 5 个字符串依次进行字符串匹配，那效率就比较低，有没有更高效的方法呢？</p>
+<p>如果将这 5 个字符串组织成下图的结构，从肉眼上扫描过去感官上是不是比查找起来会更加迅速。</p>
+<p><img src="/images/1571058190-0303d0659a8b6a3.gif" alt="看动画轻松理解「Trie树」"></p>
+<p>Trie树的插入操作很简单，其实就是将单词的每个字母逐一插入 Trie树。插入前先看字母对应的节点是否存在，存在则共享该节点，不存在则创建对应的节点。比如要插入新单词<code>cook</code>，就有下面几步：</p>
+<ul>
+<li><p>插入第一个字母 <code>c</code>，发现 <code>root</code> 节点下方存在子节点 <code>c</code>，则共享节点 <code>c</code></p>
+</li>
+<li><p>插入第二个字母 <code>o</code>，发现 <code>c</code> 节点下方存在子节点 <code>o</code>，则共享节点 <code>o</code></p>
+</li>
+<li><p>插入第三个字母 <code>o</code>，发现 <code>o</code> 节点下方不存在子节点 <code>o</code>，则创建子节点 <code>o</code></p>
+</li>
+<li><p>插入第三个字母 <code>k</code>，发现 <code>o</code> 节点下方不存在子节点 <code>k</code>，则创建子节点 <code>k</code></p>
+</li>
+<li><p>至此，单词 <code>cook</code> 中所有字母已被插入 Trie树 中，然后设置节点 <code>k</code> 中的标志位，标记路径 root-&gt;c-&gt;o-&gt;o-&gt;k 这条路径上所有节点的字符可以组成一个单词<code>cook</code></p>
+</li>
+</ul>
+<h2 id="字典树关键词查找过程"><a href="#字典树关键词查找过程" class="headerlink" title="字典树关键词查找过程"></a>字典树关键词查找过程</h2><ol>
+<li>每次从根结点开始搜索；</li>
+<li>获取关键词的第一个字符，根据该字符选择对应的子节点，转到该子节点继续检索；</li>
+<li>在相应的子节点上，获取关键词的第二个字符，进一步选择对应的子节点进行检索；</li>
+<li>以此类推，进行迭代过程；</li>
+<li>在某个节点处，关键词的所有字母已被取出，则读取附在该节点上的信息，查找完成。</li>
+</ol>
+<p>在 Trie 树中查找一个字符串的时候，比如查找字符串 <code>code</code>，可以将要查找的字符串分割成单个的字符 c，o，d，e，然后从 Trie 树的根节点开始匹配。如图所示，绿色的路径就是在 Trie 树中匹配的路径。</p>
+<p>  <img src="/images/1571058190-0303d0659a8b6a3.jpg" alt="看动画轻松理解「Trie树」"></p>
+<p>如果要查找的是字符串<code>cod</code>呢？还是可以用上面同样的方法，从根节点开始，沿着某条路径来匹配，如图所示，绿色的路径，是字符串<code>cod</code>匹配的路径。但是，路径的最后一个节点「d」并不是橙色的，并不是单词标志位，所以<code>cod</code>字符串不存在。也就是说，<code>cod</code>是某个字符串的前缀子串，但并不能完全匹配任何字符串。</p>
+<p>  <img src="/images/1571058190-618375dd47efc6c.jpg" alt="看动画轻松理解「Trie树」"></p>
+<h2 id="字典树的删除操作"><a href="#字典树的删除操作" class="headerlink" title="字典树的删除操作"></a>字典树的删除操作</h2><p>Trie树的删除操作与二叉树的删除操作有类似的地方，需要考虑删除的节点所处的位置，这里分三种情况进行分析：</p>
+<h3 id="删除整个单词（比如hi）"><a href="#删除整个单词（比如hi）" class="headerlink" title="删除整个单词（比如hi）"></a>删除整个单词（比如hi）</h3><p><img src="/images/1571058191-94165b26e701ff2.gif" alt="看动画轻松理解「Trie树」"></p>
+<ul>
+<li>从根节点开始查找第一个字符<code>h</code></li>
+<li>找到<code>h</code>子节点后，继续查找<code>h</code>的下一个子节点<code>i</code></li>
+<li><code>i</code>是单词<code>hi</code>的标志位，将该标志位去掉</li>
+<li><code>i</code>节点是<code>hi</code>的叶子节点，将其删除</li>
+<li>删除后发现<code>h</code>节点为叶子节点，并且不是单词标志位，也将其删除</li>
+<li>这样就完成了<code>hi</code>单词的删除操作</li>
+</ul>
+<h3 id="删除前缀单词（比如cod）"><a href="#删除前缀单词（比如cod）" class="headerlink" title="删除前缀单词（比如cod）"></a>删除前缀单词（比如cod）</h3><p><img src="/images/1571058192-709fd3046873bab.gif" alt="看动画轻松理解「Trie树」">=</p>
+<p>这种方式删除比较简单。只需要将<code>cod</code>单词整个字符串查找完后，<code>d</code>节点因为不是叶子节点，只需将其单词标志去掉即可。</p>
+<h3 id="删除分支单词（比如cook）"><a href="#删除分支单词（比如cook）" class="headerlink" title="删除分支单词（比如cook）"></a>删除分支单词（比如cook）</h3><p><img src="/images/1571058193-3839f4986701ec6.gif" alt="看动画轻松理解「Trie树」"></p>
+<p>与 <strong>删除整个单词</strong> 情况类似，区别点在于删除到 <code>cook</code> 的第一个 <code>o</code> 时，该节点为非叶子节点，停止删除，这样就完成<code>cook</code>字符串的删除操作。</p>
+<h2 id="字典树的应用"><a href="#字典树的应用" class="headerlink" title="字典树的应用"></a>字典树的应用</h2><p>事实上 Trie树 在日常生活中的使用随处可见，具体来说就是经常用于统计和排序大量的字符串（但不仅限于字符串），所以经常被搜索引擎系统用于文本词频统计。它的优点是：最大限度地减少无谓的字符串比较，查询效率比哈希表高。</p>
+<h3 id="1-前缀匹配"><a href="#1-前缀匹配" class="headerlink" title="1. 前缀匹配"></a>1. 前缀匹配</h3><p>例如：找出一个字符串集合中所有以 <code>五分钟</code> 开头的字符串。我们只需要用所有字符串构造一个 trie树，然后输出以 五−&gt;分−&gt;钟 开头的路径上的关键字即可。</p>
+<p>trie树前缀匹配常用于搜索提示。如当输入一个网址，可以自动搜索出可能的选择。当没有完全匹配的搜索结果，可以返回前缀最相似的可能。</p>
+<p><img src="/images/1571058193-0b75e4a20936622.jpg" alt="看动画轻松理解「Trie树」"></p>
+<h3 id="2-字符串检索"><a href="#2-字符串检索" class="headerlink" title="2. 字符串检索"></a>2. 字符串检索</h3><p>给出 N 个单词组成的熟词表，以及一篇全用小写英文书写的文章，按最早出现的顺序写出所有不在熟词表中的生词。</p>
+<p>检索/查询功能是Trie树最原始的功能。给定一组字符串，查找某个字符串是否出现过，思路就是从根节点开始一个一个字符进行比较：</p>
+<ul>
+<li>如果沿路比较，发现不同的字符，则表示该字符串在集合中不存在。</li>
+<li>如果所有的字符全部比较完并且全部相同，还需判断最后一个节点的标志位（标记该节点是否代表一个关键字）。</li>
+</ul>
+<h2 id="字典树的局限性"><a href="#字典树的局限性" class="headerlink" title="字典树的局限性"></a>字典树的局限性</h2><p>如前文所讲，Trie的核心思想是空间换时间，利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的。</p>
+<p>假设字符的种数有<code>m</code>个，有若干个长度为n的字符串构成了一个 Trie树 ，则每个节点的出度为 <code>m</code>（即每个节点的可能子节点数量为<code>m</code>），Trie树 的高度为<code>n</code>。很明显我们浪费了大量的空间来存储字符，此时Trie树的最坏空间复杂度为<code>O(m^n)</code>。也正由于每个节点的出度为<code>m</code>，所以我们能够沿着树的一个个分支高效的向下逐个字符的查询，而不是遍历所有的字符串来查询，此时Trie树的最坏时间复杂度为<code>O(n)</code>。</p>
+<p>这正是空间换时间的体现，也是利用公共前缀降低查询时间开销的体现。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

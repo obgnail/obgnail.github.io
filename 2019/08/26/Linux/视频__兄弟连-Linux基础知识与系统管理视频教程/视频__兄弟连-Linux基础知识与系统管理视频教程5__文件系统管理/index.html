@@ -1,0 +1,193 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;文件系统管理&quot;&gt;&lt;a href=&quot;#文件系统管理&quot; class=&quot;headerlink&quot; title=&quot;文件系统管理&quot;&gt;&lt;/a&gt;文件系统管理&lt;/h1&gt;&lt;h2 id=&quot;回顾分区和文件系统&quot;&gt;&lt;a href=&quot;#回顾分区和文件系统&quot; class=&quot;headerlink&quot; title=&quot;回顾分区和文件系统&quot;&gt;&lt;/a&gt;回顾分区和文件系统&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;分区类型&lt;ul&gt;
+&lt;li&gt;主分区：总共最多只能分四个&lt;/li&gt;
+&lt;li&gt;扩展分区：只能有一个，也算作主分区的一种，也就是说主分区加扩展分区最多有四个。但是扩展分区不能存储数据和格式化，必须再划分成逻辑分区才能使用。&lt;/li&gt;
+&lt;li&gt;逻辑分区：逻辑分区是在扩展分区中划分的，如果是IDE硬盘，Linux最多支持59个逻辑分区，如果是SCSI硬盘  Linux最多支持11个逻辑分区&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;文件系统&lt;ul&gt;
+&lt;li&gt;ext2：是ext文件系统的升级版本，RedHat&lt;br&gt;Linux7.2版本以前的系统默认都是ext2文件系统。1993年发布，最大支持16TB的分区和最大2TB的文件&lt;/li&gt;
+&lt;li&gt;ext3：ext3文件系统是ext2文件系统的级版本，最大的区别就是带日志功能，以在系统突然停止时提高文件系统的可靠性。支持最大16TB的分区和最大2TB的文件&lt;/li&gt;
+&lt;li&gt;ext4：它是ext3文件系统的升级版.ext4在性能、伸缩性和可靠性方面进行了大量改进.EXT4的变化可以说是翻天覆地的，比如向下兼容EXT3、最大1EB文件系统和16TB文件、无限数量子目录、Extents连续数据块概念、多块分配、延迟分配、持久预分配、快速FSCK、日志校验、无日志模式、在线碎片整理、inode增强、默认启用&lt;br&gt;barrier等。是 CentOS6.3的默认文件系统 &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;文件系统常用命令&quot;&gt;&lt;a href=&quot;#文件系统常用命令&quot; class=&quot;headerlink&quot; title=&quot;文件系统常用命令&quot;&gt;&lt;/a&gt;文件系统常用命令&lt;/h2&gt;&lt;h3 id=&quot;df命令、du命令、fsck命令和dump2fs命令&quot;&gt;&lt;a href=&quot;#df命令、du命令、fsck命令和dump2fs命令&quot; class=&quot;headerlink&quot; title=&quot;df命令、du命令、fsck命令和dump2fs命令&quot;&gt;&lt;/a&gt;df命令、du命令、fsck命令和dump2fs命令&lt;/h3&gt;&lt;h4 id=&quot;文件系统查看命令df&quot;&gt;&lt;a href=&quot;#文件系统查看命令df&quot; class=&quot;headerlink&quot; title=&quot;文件系统查看命令df&quot;&gt;&lt;/a&gt;文件系统查看命令df&lt;/h4&gt;&lt;p&gt;Disk Free"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>兄弟连-Linux基础知识与系统管理视频教程5 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Linux/" rel="tag">Linux</a></div><div class="post-time">2019-08-26</div></div></div><div class="container post-header"><h1>兄弟连-Linux基础知识与系统管理视频教程5</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">文件系统管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E5%88%86%E5%8C%BA%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.1.</span> <span class="toc-text">回顾分区和文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">文件系统常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#df%E5%91%BD%E4%BB%A4%E3%80%81du%E5%91%BD%E4%BB%A4%E3%80%81fsck%E5%91%BD%E4%BB%A4%E5%92%8Cdump2fs%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.1.</span> <span class="toc-text">df命令、du命令、fsck命令和dump2fs命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9F%A5%E7%9C%8B%E5%91%BD%E4%BB%A4df"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">文件系统查看命令df</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#du%E7%BB%9F%E8%AE%A1%E7%9B%AE%E5%BD%95%E6%88%96%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">du统计目录或文件大小</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#du%E5%91%BD%E4%BB%A4%E5%92%8Cdf%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">du命令和df命令的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4fsck"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">文件系统修复命令fsck</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E7%A3%81%E7%9B%98%E7%8A%B6%E6%80%81%E5%91%BD%E4%BB%A4-dumpe2fs"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">显示磁盘状态命令 dumpe2fs</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.2.</span> <span class="toc-text">挂载命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">查询与自动挂载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">挂载命令格式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD%E5%85%89%E7%9B%98%E4%B8%8EU%E7%9B%98"><span class="toc-number">1.2.3.</span> <span class="toc-text">挂载光盘与U盘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD-%E5%8D%B8%E8%BD%BD%E5%85%89%E7%9B%98"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">挂载&#x2F;卸载光盘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%82%E8%BD%BD-%E5%8D%B8%E8%BD%BDU%E7%9B%98"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">挂载&#x2F;卸载U盘</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81NTFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.4.</span> <span class="toc-text">支持NTFS文件系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fdik%E5%88%86%E5%8C%BA"><span class="toc-number">1.3.</span> <span class="toc-text">fdik分区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fdisk%E5%91%BD%E4%BB%A4%E5%88%86%E5%8C%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">fdisk命令分区过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD"><span class="toc-number">1.3.2.</span> <span class="toc-text">分区自动挂载</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%9D%E6%8D%AE-etc-fstab%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%85%E5%AE%B9-%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD"><span class="toc-number">2.</span> <span class="toc-text">依据&#x2F;etc&#x2F;fstab配置文件的内容 , 自动挂载</span></a></li></ol></details></div><div class="container post-content"><h1 id="文件系统管理"><a href="#文件系统管理" class="headerlink" title="文件系统管理"></a>文件系统管理</h1><h2 id="回顾分区和文件系统"><a href="#回顾分区和文件系统" class="headerlink" title="回顾分区和文件系统"></a>回顾分区和文件系统</h2><ul>
+<li>分区类型<ul>
+<li>主分区：总共最多只能分四个</li>
+<li>扩展分区：只能有一个，也算作主分区的一种，也就是说主分区加扩展分区最多有四个。但是扩展分区不能存储数据和格式化，必须再划分成逻辑分区才能使用。</li>
+<li>逻辑分区：逻辑分区是在扩展分区中划分的，如果是IDE硬盘，Linux最多支持59个逻辑分区，如果是SCSI硬盘  Linux最多支持11个逻辑分区</li>
+</ul>
+</li>
+<li>文件系统<ul>
+<li>ext2：是ext文件系统的升级版本，RedHat<br>Linux7.2版本以前的系统默认都是ext2文件系统。1993年发布，最大支持16TB的分区和最大2TB的文件</li>
+<li>ext3：ext3文件系统是ext2文件系统的级版本，最大的区别就是带日志功能，以在系统突然停止时提高文件系统的可靠性。支持最大16TB的分区和最大2TB的文件</li>
+<li>ext4：它是ext3文件系统的升级版.ext4在性能、伸缩性和可靠性方面进行了大量改进.EXT4的变化可以说是翻天覆地的，比如向下兼容EXT3、最大1EB文件系统和16TB文件、无限数量子目录、Extents连续数据块概念、多块分配、延迟分配、持久预分配、快速FSCK、日志校验、无日志模式、在线碎片整理、inode增强、默认启用<br>barrier等。是 CentOS6.3的默认文件系统 </li>
+</ul>
+</li>
+</ul>
+<h2 id="文件系统常用命令"><a href="#文件系统常用命令" class="headerlink" title="文件系统常用命令"></a>文件系统常用命令</h2><h3 id="df命令、du命令、fsck命令和dump2fs命令"><a href="#df命令、du命令、fsck命令和dump2fs命令" class="headerlink" title="df命令、du命令、fsck命令和dump2fs命令"></a>df命令、du命令、fsck命令和dump2fs命令</h3><h4 id="文件系统查看命令df"><a href="#文件系统查看命令df" class="headerlink" title="文件系统查看命令df"></a>文件系统查看命令df</h4><p>Disk Free</p>
+<p><strong>df统计系统的文件占用情况</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df [选项] [挂载点]</span><br></pre></td></tr></table></figure>
+
+<p>选项:</p>
+<ul>
+<li>-a   显示所有的文件系统信息，包括特殊文件系统，如/proc、/sysfs</li>
+<li>-h   使用习惯单位显示容量，如KB,MB或GB等</li>
+<li>-T   显示文件系统类型</li>
+<li>-m   以MB为单位显示容量</li>
+<li>-k   以KB为单位显示容量。默认就是以KB为单位</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">df</span><br><span class="line"><span class="comment"># Filesystem     1K-blocks    Used Available Use% Mounted on</span></span><br><span class="line"><span class="comment"># /dev/sda        25280028 4305836  19673304  18% /</span></span><br><span class="line"><span class="comment"># tmpfs             492028     216    491812   1% /dev/shm</span></span><br><span class="line"></span><br><span class="line">df -h</span><br><span class="line"><span class="comment"># Filesystem      Size  Used Avail Use% Mounted on</span></span><br><span class="line"><span class="comment"># /dev/sda         25G  4.2G   19G  18% /</span></span><br><span class="line"><span class="comment"># tmpfs           481M  216K  481M   1% /dev/shm</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="du统计目录或文件大小"><a href="#du统计目录或文件大小" class="headerlink" title="du统计目录或文件大小"></a>du统计目录或文件大小</h4><p>show disk usage</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du [选项] [目录或文件名]</span><br></pre></td></tr></table></figure>
+
+<p>选项:</p>
+<ul>
+<li>-a   显示每个子文件的磁盘占用量。默认只统计子目录的磁盘占用量</li>
+<li>-h   使用习惯单位显示磁盘占用量，如KB,MB或GB等</li>
+<li>-s   统计总占用量，而不列出子目录和子文件的占用量</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /</span><br><span class="line">ll -h</span><br><span class="line"><span class="comment">#drwxr-xr-x.  73 root root 4.0K Aug 26 08:12 etc</span></span><br><span class="line"><span class="comment"># 发现etc目录只有4K大小 , 这时需要使用du</span></span><br><span class="line"></span><br><span class="line">du -h /etc</span><br><span class="line"><span class="comment"># 显示所有子目录占了多大空间</span></span><br><span class="line"></span><br><span class="line">du -sh /etc</span><br><span class="line"><span class="comment"># 28M	/etc</span></span><br><span class="line"><span class="comment"># 只显示总大小</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>为什么etc目录只有4K?</p>
+<p>因为之后检查etc目录下所有一级子目录和一级子文件的大小,而不会检查他们的数据占了多大</p>
+</blockquote>
+<h4 id="du命令和df命令的区别"><a href="#du命令和df命令的区别" class="headerlink" title="du命令和df命令的区别"></a>du命令和df命令的区别</h4><ul>
+<li>df命令是从文件系统考虑的，不光要考虑文件占用的空间，还要统计被命令或程序占用的空间（最常见的就是文件已经删除，但是程序并没有释放空间）</li>
+<li>du命令是面向文件的，只会计算文件或目录占用的空间</li>
+</ul>
+<blockquote>
+<p>简单来说 , fd = du + 命令执行时占用的资源</p>
+</blockquote>
+<h4 id="文件系统修复命令fsck"><a href="#文件系统修复命令fsck" class="headerlink" title="文件系统修复命令fsck"></a>文件系统修复命令fsck</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsck [选项] 分区设备文件名</span><br></pre></td></tr></table></figure>
+
+<p>选项:</p>
+<ul>
+<li>-a：不用显示用户提示，自动修复文件系统</li>
+<li>-y：自动修复。和-a作用一致，不过有些文件系统只支持-y</li>
+</ul>
+<p>此命令是系统自动运行 , 一般不需要我们执行 </p>
+<h4 id="显示磁盘状态命令-dumpe2fs"><a href="#显示磁盘状态命令-dumpe2fs" class="headerlink" title="显示磁盘状态命令 dumpe2fs"></a>显示磁盘状态命令 dumpe2fs</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dumpe2fs 分区设备文件名</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dumpe2fs /dev/sda</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="挂载命令"><a href="#挂载命令" class="headerlink" title="挂载命令"></a>挂载命令</h3><h4 id="查询与自动挂载"><a href="#查询与自动挂载" class="headerlink" title="查询与自动挂载"></a>查询与自动挂载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mount [-l]</span><br><span class="line"><span class="comment"># 查询系统中已经挂载的设备，-l会显示卷标名称</span></span><br><span class="line"><span class="comment"># /dev/sda on / type ext4 (rw)</span></span><br><span class="line"><span class="comment"># proc on /proc type proc (rw)</span></span><br><span class="line"><span class="comment"># sysfs on /sys type sysfs (rw)</span></span><br><span class="line"><span class="comment"># devpts on /dev/pts type devpts (rw,gid=5,mode=620)</span></span><br><span class="line"><span class="comment"># tmpfs on /dev/shm type tmpfs (rw)</span></span><br><span class="line"><span class="comment"># none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)</span></span><br><span class="line"></span><br><span class="line">mount -a</span><br><span class="line"><span class="comment"># 依据配置文件etc/fstab的内容，自动挂载</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="挂载命令格式"><a href="#挂载命令格式" class="headerlink" title="挂载命令格式"></a>挂载命令格式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount [-t 文件系统] [-L 卷标名] [-o 特殊选项] 设备文件名 挂载点</span><br></pre></td></tr></table></figure>
+
+<p>选项：</p>
+<ul>
+<li><p>-t  文件系统：加入文件系统类型来指定挂载的类型，可以ext3、ext4、iso960等文件系统</p>
+</li>
+<li><p>-L  卷标名：挂载指定卷标的分区，而不是安装设备文件名挂载(给分区取个名字)</p>
+</li>
+<li><p>-o  特殊选项：可以指定挂载的额外选项<br>最常用:</p>
+<ul>
+<li>remount : 重新挂载已经挂载的文件系统，一般用于指定修改特殊权限</li>
+<li>exec/noexec : 执行/不执行，设定是否允许在文件系统中执行可执行文件，默认是exec</li>
+</ul>
+</li>
+<li><p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mount -o remount,noexec /home</span><br><span class="line"><span class="comment"># 重新挂载boot分区，并使用 noexec 权限</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="挂载光盘与U盘"><a href="#挂载光盘与U盘" class="headerlink" title="挂载光盘与U盘"></a>挂载光盘与U盘</h3><h4 id="挂载-卸载光盘"><a href="#挂载-卸载光盘" class="headerlink" title="挂载/卸载光盘"></a>挂载/卸载光盘</h4><p>光盘的设备文件名是固定的,<code>/dev/cdrom</code>或者<code> /dev/sr0</code> . cdrom是sr0的软连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir /mnt/cdrom</span><br><span class="line"><span class="comment"># 建立挂载点</span></span><br><span class="line"></span><br><span class="line">mount -t iso9660 /dev/cdrom /mnt/cdrom/</span><br><span class="line"><span class="comment">#或者 , 因为cdrom是sr0的软连接</span></span><br><span class="line">mount /dev/sr0 /mnt/cdrom/</span><br><span class="line"><span class="comment"># 把/dev/sr0设备挂载到/mnt/cdrom/目录下</span></span><br></pre></td></tr></table></figure>
+
+<p>卸载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount 设备文件名或挂载点</span><br></pre></td></tr></table></figure>
+
+<p>示例 : </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">umount /mnt/cdrom</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">umount /dev/sr0</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意 : 要卸载的时候,必须cd到其他目录下</p>
+</blockquote>
+<h4 id="挂载-卸载U盘"><a href="#挂载-卸载U盘" class="headerlink" title="挂载/卸载U盘"></a>挂载/卸载U盘</h4><ul>
+<li>不同于光盘 , U盘的设备文件名不是固定的 , 需要先查看U盘设备文件名</li>
+<li>U盘的文件系统为vfat</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l</span><br><span class="line"><span class="comment"># 查看U盘设备文件名</span></span><br><span class="line"></span><br><span class="line">mount -t vfat /dev/sdbl /mnt/usb/</span><br><span class="line"><span class="comment"># 将设备/dev/sdbl挂载到/mnt/usb/目录下</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：Linux默认是不支持NIFS文件系统的</p>
+</blockquote>
+<p>卸载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount /dev/sdb1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="支持NTFS文件系统"><a href="#支持NTFS文件系统" class="headerlink" title="支持NTFS文件系统"></a>支持NTFS文件系统</h3><p>使用NTFS-3G插件</p>
+<p><a target="_blank" rel="noopener" href="http://www.tuxera.com/community/ntfs-3g-download/">http://www.tuxera.com/community/ntfs-3g-download/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf ntfs-3g_ntisprogs-2013.1.13.tgz</span><br><span class="line"><span class="comment"># 解压</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ntfs-3g_ntfsprogs-2013.1.13</span><br><span class="line"><span class="comment"># 进入解压目录</span></span><br><span class="line"></span><br><span class="line">./configue</span><br><span class="line"><span class="comment"># 编译器准备。没有指定安装目录，安装到默认位置中</span></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line"></span><br><span class="line">make install</span><br><span class="line"><span class="comment">#编译安装</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t ntfs-3g 分区设备文件名 挂载点</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="fdik分区"><a href="#fdik分区" class="headerlink" title="fdik分区"></a>fdik分区</h2><h3 id="fdisk命令分区过程"><a href="#fdisk命令分区过程" class="headerlink" title="fdisk命令分区过程"></a>fdisk命令分区过程</h3><ol>
+<li><p>添加新硬盘</p>
+</li>
+<li><p>查看新硬盘</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l</span><br></pre></td></tr></table></figure></li>
+<li><p>使用fdisk命令分区</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/sdb</span><br></pre></td></tr></table></figure></li>
+<li><p>新建分区:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n</span><br></pre></td></tr></table></figure></li>
+<li><p>保存退出:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">w</span><br></pre></td></tr></table></figure></li>
+<li><p>重新读取分区表信息:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">partprobe</span><br></pre></td></tr></table></figure></li>
+<li><p>格式化分区</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs -t ext4 /dev/sdb1</span><br></pre></td></tr></table></figure></li>
+<li><p>建立挂载点并挂载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 建立挂载点</span></span><br><span class="line">mkdir /disk1</span><br><span class="line"><span class="comment"># 挂载</span></span><br><span class="line">mount /dev/sdb1 /disk1/</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="分区自动挂载"><a href="#分区自动挂载" class="headerlink" title="分区自动挂载"></a>分区自动挂载</h3><ul>
+<li><p>我们上面创建的分区在每次开机的时候都要重新挂载 , 现在学习自动挂载分区</p>
+</li>
+<li><p>自动挂载本质就是修改<code>/etc/fstab</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">more /etc/fstab</span><br><span class="line"><span class="comment">## /etc/fstab</span></span><br><span class="line"><span class="comment">## Created by anaconda on Wed Mar  1 20:16:06 2017</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Accessible filesystems, by reference, are maintained under &#x27;/dev/disk&#x27;</span></span><br><span class="line"><span class="comment">## See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># /dev/sda	 /                       ext4    defaults        1 1</span></span><br><span class="line"><span class="comment"># /dev/sdb	 swap                    swap    defaults        0 0</span></span><br><span class="line"><span class="comment"># tmpfs                   /dev/shm                tmpfs   defaults        0 0</span></span><br><span class="line"><span class="comment"># devpts                  /dev/pts                devpts  gid=5,mode=620  0 0</span></span><br><span class="line"><span class="comment"># sysfs                   /sys                    sysfs   defaults        0 0</span></span><br><span class="line"><span class="comment"># proc                    /proc                   proc    defaults        0 0</span></span><br></pre></td></tr></table></figure></li>
+<li><p>字段:</p>
+<ul>
+<li>第一字段：分区设备文件名或UUID(<code>硬盘通用唯一识别码</code>)</li>
+<li>第二字段：挂载点</li>
+<li>第三字段：文件系统名称</li>
+<li>第四字段：挂载参数</li>
+<li>第五字段：指定分区是否被dump备份，0代表不备份，1代表每天备份，2代表不定期备份</li>
+<li>第六字段：指定分区是否被fsck检测，0代表不检测，其他数字代表检测的优先级，那么当然1的优先级比2高</li>
+</ul>
+</li>
+<li><p><strong>挂载分区只要模仿上面的格式写入/etc/fstab就行了</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/sdb1	 /disk1                       ext4    defaults        1 2</span><br></pre></td></tr></table></figure></li>
+<li><p>```bash<br>mount -a</p>
+<h1 id="依据-etc-fstab配置文件的内容-自动挂载"><a href="#依据-etc-fstab配置文件的内容-自动挂载" class="headerlink" title="依据/etc/fstab配置文件的内容 , 自动挂载"></a>依据/etc/fstab配置文件的内容 , 自动挂载</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  所以,我们就可以使用这个命令来检查我们有没有写错</span><br><span class="line"></span><br><span class="line">- `/etc/fstab`是系统的重要文件 , 如果写错了,文件就可以崩了,就需要手动修复此文件</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### /etc/fstab文件修复</span><br><span class="line"></span><br><span class="line">1. 执行</span><br><span class="line"></span><br><span class="line">   ```bash</span><br><span class="line">   mount -o remount,rw /</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>命令作用:</p>
+<ul>
+<li>分区在挂载失败后没有挂载成<code>读写</code>权限 , 而是挂成 <code>只读</code>权限</li>
+<li>该命令的作用就是将此分区重新挂载成<code>读写</code>权限 , 方便后续修改/etc/fstab文件</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<ol start="2">
+<li><p>修改/etc/fstab文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure></li>
+<li><p>重启:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure></li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第一章-了解MySQL&quot;&gt;&lt;a href=&quot;#第一章-了解MySQL&quot; class=&quot;headerlink&quot; title=&quot;第一章:了解MySQL&quot;&gt;&lt;/a&gt;第一章:了解MySQL&lt;/h1&gt;&lt;p&gt;模式（schema） 关于数据库和表的布局及特性的信息。&lt;br&gt;表具有一些特性，这些特性定义了数据在表中如何存储，如可以存储什么样的数据，数据如何分解，各部分信息如何命名，等等。&lt;strong&gt;描述表的这组信息就是所谓的模式&lt;/strong&gt;，模式可以用来描述数据库中特定的表以及整个数据库（和其中表的关系）。 "><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>MySQL必知必会1 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/MySQL/" rel="tag">MySQL</a></div><div class="post-time">2019-08-08</div></div></div><div class="container post-header"><h1>MySQL必知必会1</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E4%BA%86%E8%A7%A3MySQL"><span class="toc-number">1.</span> <span class="toc-text">第一章:了解MySQL</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-MySQL%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">第二章:MySQL简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E4%BD%BF%E7%94%A8MySQL"><span class="toc-number">3.</span> <span class="toc-text">第三章:使用MySQL</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">4.</span> <span class="toc-text">第四章:检索数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E6%8E%92%E5%BA%8F%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text">第五章:排序检索数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E8%BF%87%E6%BB%A4%E6%95%B0%E6%8D%AE"><span class="toc-number">6.</span> <span class="toc-text">第六章 过滤数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4"><span class="toc-number">7.</span> <span class="toc-text">第七章:数据过滤</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E4%BD%BF%E7%94%A8%E9%80%9A%E9%85%8D%E7%AC%A6%E8%BF%9B%E8%A1%8C%E8%BF%87%E6%BB%A4"><span class="toc-number">8.</span> <span class="toc-text">第八章:使用通配符进行过滤</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%9B%E8%A1%8C%E6%90%9C%E7%B4%A2"><span class="toc-number">9.</span> <span class="toc-text">第九章:用正则表达式进行搜索</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E7%AB%A0-%E5%88%9B%E5%BB%BA%E8%AE%A1%E7%AE%97%E5%AD%97%E6%AE%B5"><span class="toc-number">10.</span> <span class="toc-text">第十章:创建计算字段</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="toc-number">11.</span> <span class="toc-text">第十一章:使用数据处理函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E6%B1%87%E6%80%BB%E6%95%B0%E6%8D%AE"><span class="toc-number">12.</span> <span class="toc-text">第十二章:汇总数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0-%E5%88%86%E7%BB%84%E6%95%B0%E6%8D%AE"><span class="toc-number">13.</span> <span class="toc-text">第十三章:分组数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0-%E4%BD%BF%E7%94%A8%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">14.</span> <span class="toc-text">第十四章:使用子查询</span></a></li></ol></details></div><div class="container post-content"><h1 id="第一章-了解MySQL"><a href="#第一章-了解MySQL" class="headerlink" title="第一章:了解MySQL"></a>第一章:了解MySQL</h1><p>模式（schema） 关于数据库和表的布局及特性的信息。<br>表具有一些特性，这些特性定义了数据在表中如何存储，如可以存储什么样的数据，数据如何分解，各部分信息如何命名，等等。<strong>描述表的这组信息就是所谓的模式</strong>，模式可以用来描述数据库中特定的表以及整个数据库（和其中表的关系）。 </p>
+<p>主键:表中每一行中可以唯一标识自己的一列（或一组列）。<br>虽然不是每张表都需要设置一个主键,但是强烈推荐<strong>每张表都要设置一个主键</strong></p>
+<p>主键约束:==唯一并且非空==</p>
+<h1 id="第二章-MySQL简介"><a href="#第二章-MySQL简介" class="headerlink" title="第二章:MySQL简介"></a>第二章:MySQL简介</h1><p>DBMS可分为两类：一类为基于共享文件系统的DBMS，另一类为基于客户机—服务器的DBMS<br>MySQL、Oracle以及Microsoft SQL Server等数据库是基于客户机—服务器的数据库。<br>客户机—服务器应用分为两个不同的部分。服务器部分是负责所有数据访问和处理的一个软件。这个软件运行在称为数据库服务器的计算机上。 </p>
+<p>与数据文件打交道的只有服务器软件。关于数据、数据添加、删除 和数据更新的所有请求都由服务器软件完成。这些请求或更改来自运行 客户机软件的计算机。客户机是与用户打交道的软件。例如，如果你请 求一个按字母顺序列出的产品表，则客户机软件通过网络提交该请求给 服务器软件。服务器软件处理这个请求，根据需要过滤、丢弃和排序数 据；然后把结果送回到你的客户机软件</p>
+<h1 id="第三章-使用MySQL"><a href="#第三章-使用MySQL" class="headerlink" title="第三章:使用MySQL"></a>第三章:使用MySQL</h1><p>为了连接到MySQL，需要以下信息： </p>
+<ol>
+<li>主机名（计算机名）——如果连接到本地MySQL服务器，为localhost；</li>
+<li>端口（如果使用默认端口3306之外的端口）； </li>
+<li>一个合法的用户名；</li>
+<li>用户口令（如果需要）。 </li>
+</ol>
+<p><img src="/images/1554780061764.png" alt="1554780061764"></p>
+<p>如果是使用命令行(称为MySQL monitor)打开数据库,那么就需要键入:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -hlocalhost -uroot -p5KVp2y7,k96o</span><br></pre></td></tr></table></figure>
+
+<p>-h表示主机,-u表示用户名,-p表示密码<br><img src="/images/1554780901574.png" alt="1554780901574"></p>
+<p>要注意一点的就是,在命令行输入语句的时候一定要在最后加上分号:</p>
+<p><img src="/images/1554780972595.png" alt="1554780972595"></p>
+<p>USE关键字:用于选择一个数据库<br><img src="/images/1554781347428.png" alt="1554781347428"></p>
+<hr>
+<p>show的用法:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 展示全部数据库</span><br><span class="line">show databases;</span><br><span class="line"># 展示某个数据库中的全部表</span><br><span class="line">show tables</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 展示acglist表中的全部列</span><br><span class="line">show columns from acglist;</span><br><span class="line">/*</span><br><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br><span class="line">| Field       | Type         | Null | Key | Default | Extra |</span><br><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br><span class="line">| title       | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| sort        | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| size        | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| releasetime | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| publisher   | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| magnet      | varchar(255) | NO   | PRI | NULL    |       |</span><br><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 显示广泛的服务器状态信息</span><br><span class="line">show status</span><br><span class="line"># 显示创建特定数据库</span><br><span class="line">show create database</span><br><span class="line"># 显示创建特定数据表</span><br><span class="line">show create table</span><br><span class="line"># 显示授予用户（所有用户或特定用户）的安全权限</span><br><span class="line">show grants</span><br><span class="line"># 显示服务器错误消息</span><br><span class="line">show errors</span><br><span class="line"># 显示服务器警告消息</span><br><span class="line">show warnings</span><br></pre></td></tr></table></figure>
+
+<p><code>show columns from acglist;</code>有语法糖:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">describe acglist;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="第四章-检索数据"><a href="#第四章-检索数据" class="headerlink" title="第四章:检索数据"></a>第四章:检索数据</h1><p>本章讲select</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 注意这里select的是[列]</span><br><span class="line">select col from table1</span><br><span class="line"># 查找唯一值</span><br><span class="line">select DISTINCT col from table2</span><br><span class="line"># 限定检索的数量</span><br><span class="line">select name from new_list limit 5;</span><br><span class="line"># 检索从第5行(不含)开始的6行(就是6-11行)</span><br><span class="line">select name from new_list limit 5, 6;</span><br></pre></td></tr></table></figure>
+
+<p>注意,对两列使用distinct,只有那么只有当两列都相同的时候才不会被检索出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select distinct id name from new_list</span><br></pre></td></tr></table></figure>
+
+<p>注意:MySQL和很多语言一样,第一行的index是0不是1.所以<code>select name from new_list limit 5, 6;</code>严格来讲是<strong>检索从第5行(包含)开始的6行</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 这种加了点号的写法被称为&#x27;完全限定&#x27;</span><br><span class="line">select new_list.id from iremenberspider.new_list</span><br></pre></td></tr></table></figure>
+
+<h1 id="第五章-排序检索数据"><a href="#第五章-排序检索数据" class="headerlink" title="第五章:排序检索数据"></a>第五章:排序检索数据</h1><p>本章讲order by</p>
+<p>我们检索的数据一般将以它在底层表中出现的顺序显示.<br>如果数据后来进行过更新或删除，则此顺 序将会受到MySQL重用回收存储空间的影响。</p>
+<p>子句（clause）SQL语句由子句构成，有些子句是必需的，而有的是可选的.<br>ORDER BY子句取一个或多个列的名字，据此对输出进行排序</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from new_list order by name</span><br></pre></td></tr></table></figure>
+
+<p>为了统一,本章开始都使用下面的表:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br><span class="line">| Field       | Type         | Null | Key | Default | Extra |</span><br><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br><span class="line">| title       | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| id          |      int(11) | NO   | PRI | NULL    |       |</span><br><span class="line">| commic_url  | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| cover_url   | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| tags        | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| page        |  smallint(6) | NO   |     | NULL    |       |</span><br><span class="line">| artists     | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| categories  | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| languages   | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">| upload_time | varchar(255) | NO   |     | NULL    |       |</span><br><span class="line">+-------------+--------------+------+-----+---------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>Excel里排序有首要关键词,吃药关键字等<br>(例如，如果要显示雇员清单，首先按姓排序，然后在每个姓中再按名排序)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 排序id和languages.首要关键字是page,次要关键字是tags,再次关键字是id</span><br><span class="line">select id,languages from commic_list order by page,tags,id</span><br></pre></td></tr></table></figure>
+
+<p>order by默认是升序.如果要降序必须使用DESC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id,page from commic_list order by id,page DESC limit 5;</span><br></pre></td></tr></table></figure>
+
+<p>如果是多列检索,某列升序,某列降序的话:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 排序id,page</span><br><span class="line"># id为首要关键字,降序.page为次要关键字,升序</span><br><span class="line">select id,page from commic_list order by id DESC ,page limit 5</span><br></pre></td></tr></table></figure>
+
+<p>DESC关键字只应用到直接位于其前面的列名,<strong>哪列要降序就加到哪列上面</strong>.<br>如果想在多个列上进行降序排序，必须对每个列指定DESC关键字</p>
+<p>与DESC相反的关键字是ASC（ASCENDING），在升序排序时可以指定它。 但实际上，ASC没有多大用处，因为升序是默认的</p>
+<p>使用ORDER BY和LIMIT的组合，能够找出一个列中最高或最低的值。 eg:找出最昂贵物品的值</p>
+<h1 id="第六章-过滤数据"><a href="#第六章-过滤数据" class="headerlink" title="第六章 过滤数据"></a>第六章 过滤数据</h1><p>本章将where</p>
+<p>在SELECT语句中，数据根据WHERE子句中指定的搜索条件进行过滤。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 注意order by在最后面</span><br><span class="line">select id,page from commic_list where page=17 order by id</span><br><span class="line"># 字符串要加引号(单双引都行)</span><br><span class="line">select id from commic_list where languages=&quot;english&quot;;</span><br><span class="line"># 注意使用between and,between and包括上下限</span><br><span class="line"># 使用between and的时候没有where</span><br><span class="line">select id,page from commic_list where page between 17 and 20 order by id;</span><br></pre></td></tr></table></figure>
+
+<p>空值检查:<code>is null</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 空值检查使用is null</span><br><span class="line">select id from commic_list where artists is null</span><br></pre></td></tr></table></figure>
+
+<h1 id="第七章-数据过滤"><a href="#第七章-数据过滤" class="headerlink" title="第七章:数据过滤"></a>第七章:数据过滤</h1><p>本章讲NOT和IN操作符,AND子句的方式或OR子句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># and操作符</span><br><span class="line">select id from commic_list where page &lt; 17 and languages=&#x27;english&#x27;</span><br><span class="line"># IN操作符用来指定条件范围.</span><br><span class="line"># 注意:这里就算page是int类型,查找出来的page只会是17和20.并不是17-20</span><br><span class="line">select id,page from commic_list where page in (17,20)</span><br><span class="line">select id,page from commic_list where languages in (&#x27;english&#x27;,&#x27;japanese&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>和python一样,MySQL的and优先级大于or.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 虽然下面两个是一样的效果,但是IN操作符一般比OR操作符清单执行更快</span><br><span class="line">select id,page from commic_list where page in (17,20)</span><br><span class="line">select id,page from commic_list where page = 17 or page = 20</span><br></pre></td></tr></table></figure>
+
+<p>not 可以放在between and可以避免使用or</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 虽然下面两个是一样的效果,但是not between and更直观</span><br><span class="line">select id,page from commic_list where page not between 17 and 20</span><br><span class="line">select id,page from commic_list where page &gt; 20 or page &lt; 17</span><br></pre></td></tr></table></figure>
+
+<h1 id="第八章-使用通配符进行过滤"><a href="#第八章-使用通配符进行过滤" class="headerlink" title="第八章:使用通配符进行过滤"></a>第八章:使用通配符进行过滤</h1><p>本章介绍通配符和LIKE</p>
+<table>
+<thead>
+<tr>
+<th align="left">通配符</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">%</td>
+<td align="left">替代 0 个或多个字符</td>
+</tr>
+<tr>
+<td align="left">_</td>
+<td align="left">替代一个字符</td>
+</tr>
+<tr>
+<td align="left">[<em>charlist</em>]</td>
+<td align="left">字符列中的任何单一字符</td>
+</tr>
+<tr>
+<td align="left">[^<em>charlist</em>] 或 [!<em>charlist</em>]</td>
+<td align="left">不在字符列中的任何单一字符</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 搜索以tags字段包含na的记录</span><br><span class="line">select id,tags from commic_list where tags like &#x27;%na%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>尾空格可能会干扰通配符匹配。<br>例如，在保存词 anvil时，如果它后面有一个或多个空格，则子句WHERE prod_name LIKE ‘%anvil’将不会匹配它们，因为在最后的l 后有多余的字符。解决这个问题的一个简单的办法是在搜索模式最后附加一个%。一个更好的办法是使用函数去掉首尾空格。 </p>
+<p>%与_不能匹配Null.因为Null不是字符.</p>
+<p><strong>因为数据是从左向右扫描的,所以建议通配符不要放在第一位</strong></p>
+<h1 id="第九章-用正则表达式进行搜索"><a href="#第九章-用正则表达式进行搜索" class="headerlink" title="第九章:用正则表达式进行搜索"></a>第九章:用正则表达式进行搜索</h1><p>本章介绍WHERE子句内使用正则表达式</p>
+<p>使用正则表达式不再使用LIKE,而是<code>REGEXP</code></p>
+<table>
+<thead>
+<tr>
+<th align="left">模式</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">^</td>
+<td align="left">匹配输入字符串的开始位置。如果设置了 RegExp 对象的 Multiline 属性，^ 也匹配 ‘\n’ 或 ‘\r’ 之后的位置。</td>
+</tr>
+<tr>
+<td align="left">$</td>
+<td align="left">匹配输入字符串的结束位置。如果设置了RegExp 对象的 Multiline 属性，$ 也匹配 ‘\n’ 或 ‘\r’ 之前的位置。</td>
+</tr>
+<tr>
+<td align="left">.</td>
+<td align="left">匹配除 “\n” 之外的任何单个字符。要匹配包括 ‘\n’ 在内的任何字符，请使用象 ‘[.\n]’ 的模式。</td>
+</tr>
+<tr>
+<td align="left">[…]</td>
+<td align="left">字符集合。匹配所包含的任意一个字符。例如， ‘[abc]’ 可以匹配 “plain” 中的 ‘a’。</td>
+</tr>
+<tr>
+<td align="left">[^…]</td>
+<td align="left">负值字符集合。匹配未包含的任意字符。例如， ‘[^abc]‘ 可以匹配 “plain” 中的’p’。</td>
+</tr>
+<tr>
+<td align="left">p1|p2|p3</td>
+<td align="left">匹配 p1 或 p2 或 p3。例如，’z|food’ 能匹配 “z” 或 “food”。’(z|f)ood’ 则匹配 “zood” 或 “food”。</td>
+</tr>
+<tr>
+<td align="left">*</td>
+<td align="left">匹配前面的子表达式零次或多次。例如，zo* 能匹配 “z” 以及 “zoo”。* 等价于{0,}。</td>
+</tr>
+<tr>
+<td align="left">+</td>
+<td align="left">匹配前面的子表达式一次或多次。例如，’zo+’ 能匹配 “zo” 以及 “zoo”，但不能匹配 “z”。+ 等价于 {1,}。</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">0个或1个匹配。?等价于{0,1}</td>
+</tr>
+<tr>
+<td align="left">{n}</td>
+<td align="left">n 是一个非负整数。匹配确定的 n 次。例如，’o{2}’ 不能匹配 “Bob” 中的 ‘o’，但是能匹配 “food” 中的两个 o。</td>
+</tr>
+<tr>
+<td align="left">{n,m}</td>
+<td align="left">m 和 n 均为非负整数，其中n &lt;= m。最少匹配 n 次且最多匹配 m 次。</td>
+</tr>
+</tbody></table>
+<p>注意:<strong>mysql用\转义时,要使用两个\，因为mysql要解释一个，然后正则要解释一个。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查找所有以(开头的记录</span><br><span class="line">select id,title from commic_list where title regexp &quot;^\\(&quot;;</span><br><span class="line"># page字段必须是12或14或16</span><br><span class="line">select id,page from commic_list where page regexp &#x27;(12|14|16)$&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>mysql里的反斜杠\因为要被mysql解释一个,所以,这也影响到了元字符</p>
+<table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>\\f</td>
+<td>换页</td>
+</tr>
+<tr>
+<td>\\n</td>
+<td>换行</td>
+</tr>
+<tr>
+<td>\\r</td>
+<td>回车</td>
+</tr>
+<tr>
+<td>\\t</td>
+<td>制表</td>
+</tr>
+<tr>
+<td>\\v</td>
+<td>纵向制表</td>
+</tr>
+</tbody></table>
+<p>值得一提的是反斜杠\就会变成三联杠\\\</p>
+<p>LIKE和REGEXP的区别:<br>LIKE是<strong>全字符串匹配</strong>.REGEXP是<strong>部分匹配</strong>.<br><code>select * from commic_list where id like 123%78</code><br>当id是123478<strong>9</strong>的时候是匹配不到的.<br><code>select * from commic_list where id regexp &#39;^123.&#39;</code><br>当id是1234<strong>5</strong>的时候还是能匹配的到的.</p>
+<p>简单来说,==LIKE匹配整个串,而REGEXP匹配子串==</p>
+<p>注意MySQL中的正则表达式默认是<strong>不区分大小写</strong>的,否则要使用binary关键字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># title字段必须以大写A开头</span><br><span class="line">select * from commic_list where title regexp binary &#x27;^A&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>MySQL中的正则表达式被阉割的很厉害.<br>没有\d,要使用[0-9]<br>没有\w,要使用[a-zA-Z0-9]</p>
+<p><img src="/images/1554807936805.png" alt="1554807936805"></p>
+<p>MySQL的正则表达式的<strong>定位符元字符</strong>多了两个东西:</p>
+<table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>^</td>
+<td>文本的开始</td>
+</tr>
+<tr>
+<td>$</td>
+<td>文本的结束</td>
+</tr>
+<tr>
+<td>[[:&lt;:]]</td>
+<td>词的开始</td>
+</tr>
+<tr>
+<td>[[:&gt;:]]</td>
+<td>词的结束</td>
+</tr>
+</tbody></table>
+<h1 id="第十章-创建计算字段"><a href="#第十章-创建计算字段" class="headerlink" title="第十章:创建计算字段"></a>第十章:创建计算字段</h1><p>本章介绍什么是计算字段，如何创建计算字段以及怎样从应用程序中使用别名引用它们。 </p>
+<p>Concat():拼接（concatenate） 将值联结到一起构成单个值<br>(相当于python里的+)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 新建一个字段,该字段形如258126(22),是id和page和左右括号的合成</span><br><span class="line">select concat(id,&#x27;(&#x27;,page,&#x27;)&#x27;),languages from commic_list limit 5;</span><br><span class="line">/*结果如下</span><br><span class="line">+-------------------------+-----------+</span><br><span class="line">| concat(id,&#x27;(&#x27;,page,&#x27;)&#x27;) | languages |</span><br><span class="line">+-------------------------+-----------+</span><br><span class="line">| 258126(22)              | japanese  |</span><br><span class="line">| 258127(17)              | english   |</span><br><span class="line">| 258128(20)              | english   |</span><br><span class="line">| 258129(20)              | english   |</span><br><span class="line">| 258130(17)              | english   |</span><br><span class="line">+-------------------------+-----------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>RTrim()函数:删除数据右侧多余的空格(所以还有LTrim和Trim函数)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">select concat(RTrim(id),&#x27;(&#x27;,Trim(page),&#x27;)&#x27;),languages from commic_list limit 5;</span><br><span class="line">/*结果如下:</span><br><span class="line">+--------------------------------------+-----------+</span><br><span class="line">| concat(RTrim(id),&#x27;(&#x27;,Trim(page),&#x27;)&#x27;) | languages |</span><br><span class="line">+--------------------------------------+-----------+</span><br><span class="line">| 258126(22)                           | japanese  |</span><br><span class="line">| 258127(17)                           | english   |</span><br><span class="line">| 258128(20)                           | english   |</span><br><span class="line">| 258129(20)                           | english   |</span><br><span class="line">| 258130(17)                           | english   |</span><br><span class="line">+--------------------------------------+-----------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>使用别名:<strong>别名用AS关键字赋予</strong>。<br>别名又叫做<code>导出列（derived column)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">select concat(RTrim(id),&#x27;(&#x27;,Trim(page),&#x27;)&#x27;)as new_column,languages from commic_list limit 5;</span><br><span class="line">/*结果如下:</span><br><span class="line">+------------+-----------+</span><br><span class="line">| new_column | languages |</span><br><span class="line">+------------+-----------+</span><br><span class="line">| 258126(22) | japanese  |</span><br><span class="line">| 258127(17) | english   |</span><br><span class="line">| 258128(20) | english   |</span><br><span class="line">| 258129(20) | english   |</span><br><span class="line">| 258130(17) | english   |</span><br><span class="line">+------------+-----------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>执行算术计算:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">select id,page,id*page as new_column from commic_list limit 5;</span><br><span class="line">/*结果如下:</span><br><span class="line">+--------+------+------------+</span><br><span class="line">| id     | page | new_column |</span><br><span class="line">+--------+------+------------+</span><br><span class="line">| 258126 |   22 |    5678772 |</span><br><span class="line">| 258127 |   17 |    4388159 |</span><br><span class="line">| 258128 |   20 |    5162560 |</span><br><span class="line">| 258129 |   20 |    5162580 |</span><br><span class="line">| 258130 |   17 |    4388210 |</span><br><span class="line">+--------+------+------------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<h1 id="第十一章-使用数据处理函数"><a href="#第十一章-使用数据处理函数" class="headerlink" title="第十一章:使用数据处理函数"></a>第十一章:使用数据处理函数</h1><p>本章介绍函数</p>
+<p>大多数SQL实现支持以下类型的函数。 </p>
+<ol>
+<li>用于处理文本串（如删除或填充值，转换值为大写或小写）的文本函数。</li>
+<li>用于在数值数据上进行算术操作（如返回绝对值，进行代数运算） 的数值函数。 </li>
+<li>用于处理日期和时间值并从这些值中提取特定成分（例如，返回 两个日期之差，检查日期有效性等）的日期和时间函数。 </li>
+<li>返回DBMS正使用的特殊信息（如返回用户登录信息，检查版本细节）的系统函数。</li>
+</ol>
+<p>文本处理函数:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">select categories,Upper(categories)as upper_categories from commic_list group by categories;</span><br><span class="line">/*</span><br><span class="line">+------------+------------------+</span><br><span class="line">| categories | upper_categories |</span><br><span class="line">+------------+------------------+</span><br><span class="line">| doujinshi  | DOUJINSHI        |</span><br><span class="line">| manga      | MANGA            |</span><br><span class="line">+------------+------------------+</span><br><span class="line">*/</span><br><span class="line">select commic_url,left(right(commic_url,7),6) as url from commic_list limit 5;</span><br><span class="line">/*</span><br><span class="line">+-------------------------------+--------+</span><br><span class="line">| commic_url                    | url    |</span><br><span class="line">+-------------------------------+--------+</span><br><span class="line">| https://nhentai.net/g/258126/ | 258126 |</span><br><span class="line">| https://nhentai.net/g/258127/ | 258127 |</span><br><span class="line">| https://nhentai.net/g/258128/ | 258128 |</span><br><span class="line">| https://nhentai.net/g/258129/ | 258129 |</span><br><span class="line">| https://nhentai.net/g/258130/ | 258130 |</span><br><span class="line">+-------------------------------+--------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>常用的字符串函数:</p>
+<p><img src="/images/1113510-20181226155910408-1414424975.png" alt="1113510-20181226155910408-1414424975"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">select upload_time,</span><br><span class="line">	concat(mid(upload_time,9,4),&#x27;-&#x27;,&#x27;1&#x27;,&#x27;-&#x27;,mid(upload_time,6,1)) as date 		from commic_list limit 5;</span><br><span class="line">/*</span><br><span class="line">+-------------------------+----------+</span><br><span class="line">| upload_time             | date     |</span><br><span class="line">+-------------------------+----------+</span><br><span class="line">| Jan. 2, 2019, 1:53 a.m. | 2019-1-2 |</span><br><span class="line">| Jan. 2, 2019, 1:54 a.m. | 2019-1-2 |</span><br><span class="line">| Jan. 2, 2019, 1:58 a.m. | 2019-1-2 |</span><br><span class="line">| Jan. 2, 2019, 1:59 a.m. | 2019-1-2 |</span><br><span class="line">| Jan. 2, 2019, 2:02 a.m. | 2019-1-2 |</span><br><span class="line">+-------------------------+----------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>有一个很有意思的函数SOUNDEX:根据发音来检索.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查找一个Y.Lie的人,但是数据库里输错了,输成了Y.Lee</span><br><span class="line"># 直接查找肯定是失败的</span><br><span class="line">select name from table1 where name = &#x27;Y.Lie&#x27;  # return None</span><br><span class="line"># 这时可以使用soundex函数</span><br><span class="line">select name from table1 where Soundex(name) = Soundex(&#x27;Y.Lie&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>日期和时间处理函数 </p>
+<p><img src="/images/1554811480639.png" alt="881554811480639"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># order_date的类型是datetime(形如2019-01-01 11:30:05)</span><br><span class="line"># 这时需要使用date函数将其转化为日期格式(2019-01-01)(就是去掉后面的时间)</span><br><span class="line">select order_date from table1 where Date(order_date) = &#x27;2019-01-01&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 匹配2019年9月的数据</span><br><span class="line">select order_date from table1 </span><br><span class="line">	where Date(order_date) between &#x27;2019-09-01&#x27; and &#x27;2019-9-30&#x27;</span><br><span class="line"># 或者使用month,year,day函数</span><br><span class="line">select order_date from table1</span><br><span class="line">	where year(order_date)=&#x27;2019&#x27; and month(order_date)=&#x27;9&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>数值处理函数:</p>
+<p><img src="/images/1554813110429.png" alt="1554813110429"></p>
+<h1 id="第十二章-汇总数据"><a href="#第十二章-汇总数据" class="headerlink" title="第十二章:汇总数据"></a>第十二章:汇总数据</h1><p>本章介绍什么是SQL的聚集函数以及如何利用它们汇总表的数据。 </p>
+<p>汇总数据有以下几种:</p>
+<ol>
+<li> 确定表中行数（或者满足某个条件或包含某个特定值的行数）。 </li>
+<li> 获得表中行组的和。 </li>
+<li> 找出表列（或所有行或某些特定的行）的最大值、最小值和平均值。 </li>
+</ol>
+<p>聚集函数（aggregate function）常用只有五个:</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AVG()</td>
+<td>返回某列的平均值</td>
+</tr>
+<tr>
+<td>COUNT()</td>
+<td>返回某列的行数</td>
+</tr>
+<tr>
+<td>MAX()</td>
+<td>返回某列的最大值</td>
+</tr>
+<tr>
+<td>MIN()</td>
+<td>返回某列的最小值</td>
+</tr>
+<tr>
+<td>SUM()</td>
+<td>返回某列值之和</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">select avg(page) from commic_list where artists=&#x27;yuzu&#x27;</span><br><span class="line">/*</span><br><span class="line">+-----------+</span><br><span class="line">| avg(page) |</span><br><span class="line">+-----------+</span><br><span class="line">|   29.8430 |</span><br><span class="line">+-----------+</span><br><span class="line">*/</span><br><span class="line">select count(artists) from commic_list where languages=&#x27;english&#x27;;</span><br><span class="line">/*</span><br><span class="line">+----------------+</span><br><span class="line">| count(artists) |</span><br><span class="line">+----------------+</span><br><span class="line">|             46 |</span><br><span class="line">+----------------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>注意:avg(),min(),max(),sum()都忽略列值为NULL的行。 但是count需要分类讨论.</p>
+<p>count函数需要着重注意:COUNT()函数有两种使用方式。 </p>
+<ol>
+<li> 使用COUNT(*)对表中行的数目进行计数，不管表列中包含的是空值（NULL）还是非空值。 </li>
+<li> 使用COUNT(column)对特定列中具有值的行进行计数，忽略 NULL值。 </li>
+</ol>
+<p>也就是说,==如果指定列名，则指定列的值为空的行被COUNT() 函数忽略，但如果COUNT()函数中用的是星号（*），则不忽略==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># max函数允许对使用非数值类型的字段</span><br><span class="line">select max(commic_url) from commic_list;</span><br><span class="line">/*</span><br><span class="line">+-------------------------------+</span><br><span class="line">| max(commic_url)               |</span><br><span class="line">+-------------------------------+</span><br><span class="line">| https://nhentai.net/g/258352/ |</span><br><span class="line">+-------------------------------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select sum(id*page) from commic_list;</span><br></pre></td></tr></table></figure>
+
+<p> 聚集不同值:<br> 聚集函数的DISTINCT的使用</p>
+<p>以上5个聚集函数都可以如下使用：  </p>
+<ol>
+<li>对所有的行执行计算，指定ALL参数或不给参数（因为ALL是默认行为）；  </li>
+<li>只包含不同的值，指定DISTINCT参数。</li>
+</ol>
+<p>(ALL参数不需要指定，因为它是默认行为。如果 不指定DISTINCT，则假定为ALL)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 简单来说就是先让page变成distinct了再求avg</span><br><span class="line"># 类似于python的avg(set(page))和avg(page)的区别</span><br><span class="line">select (distinct avg(page)) as new from commic_list;</span><br><span class="line">/*</span><br><span class="line">+---------+</span><br><span class="line">| new     |</span><br><span class="line">+---------+</span><br><span class="line">| 50.6182 |</span><br><span class="line">+---------+</span><br><span class="line">*/</span><br><span class="line">select avg(page) as  new from commic_list;</span><br><span class="line">/*</span><br><span class="line">+---------+</span><br><span class="line">| new     |</span><br><span class="line">+---------+</span><br><span class="line">| 29.8430 |</span><br><span class="line">+---------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>如果指定列名，则DISTINCT只能用于COUNT(),不能用于COUNT(*)，因此不允许使用COUNT（DISTINCT）， 否则会产生错误。类似地，<strong>DISTINCT必须使用列名，不能用 于计算或表达式</strong>。</p>
+<p>将DISTINCT用于MIN()和MAX() :<br>虽然DISTINCT从技术上可用于MIN()和MAX()，但这样做实际上没有价值。一个列中的最小值和最大值不管是否包含不同值都是相同的。 </p>
+<p>组合聚集函数<br>目前为止的所有聚集函数例子都只涉及单个函数。但实际上SELECT 语句可根据需要包含多个聚集函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">select min(page) as min,max(page) as max,avg(page) as avg from commic_list;</span><br><span class="line">/*</span><br><span class="line">+------+------+---------+</span><br><span class="line">| min  | max  | avg     |</span><br><span class="line">+------+------+---------+</span><br><span class="line">|    3 |  198 | 29.8430 |</span><br><span class="line">+------+------+---------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<h1 id="第十三章-分组数据"><a href="#第十三章-分组数据" class="headerlink" title="第十三章:分组数据"></a>第十三章:分组数据</h1><p>本章将介绍如何分组数据，以便能汇总表内容的子集。这涉及两个新SELECT语句子句，分别是GROUP BY子句和HAVING子句。 </p>
+<p>一般来说,使用汇总数据的5个函数的时候是不可以select原字段的.因为这样根本不能形成一个表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 下面代码是错的</span><br><span class="line">select artists,avg(page) from commic_list;</span><br></pre></td></tr></table></figure>
+
+<p>这时就要使用group by来进行分组:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 计算每个作者的平均页数</span><br><span class="line">select artists,avg(page) from commic_list group by artists;</span><br><span class="line">/*</span><br><span class="line">+--------------+-----------+</span><br><span class="line">| artists      | avg(page) |</span><br><span class="line">+--------------+-----------+</span><br><span class="line">| ago          |   34.0000 |</span><br><span class="line">| aimaitei     |   29.0000 |</span><br><span class="line">| ajishio      |   11.0000 |</span><br><span class="line">+--------------+-----------+</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>在具体使用GROUP BY子句前，需要知道一些重要的规定。 </p>
+<ol>
+<li> GROUP BY子句可以包含任意数目的列。这使得能对分组进行嵌套， 为数据分组提供更细致的控制。 </li>
+<li> 如果在GROUP BY子句中嵌套了分组，数据将在最后规定的分组上进行汇总。换句话说，在建立分组时，指定的所有列都一起计算 （所以不能从个别的列取回数据）。 </li>
+<li>GROUP BY子句中列出的每个列都必须是检索列或有效的表达式 （但不能是聚集函数）。==如果在SELECT中使用表达式，则必须在 GROUP BY子句中指定相同的表达式==。不能使用别名。 </li>
+<li>==除聚集计算语句外，SELECT语句中的每个列都必须在GROUP BY子句中给出==。 </li>
+<li>如果分组列中具有NULL值，则NULL将作为一个分组返回。如果列中有多行NULL值，它们将分为一组。 </li>
+<li> GROUP BY子句必须出现在WHERE子句之后，ORDER BY子句之前。 </li>
+</ol>
+<p><strong>WITH ROLLUP</strong>：在group分组字段的基础上再进行统计数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 计算每种语言的平均页数</span><br><span class="line">select languages,avg(page) from commic_list group by languages;</span><br><span class="line">/*</span><br><span class="line">+-----------+-----------+</span><br><span class="line">| languages | avg(page) |</span><br><span class="line">+-----------+-----------+</span><br><span class="line">| chinese   |   37.3333 |</span><br><span class="line">| english   |   30.0870 |</span><br><span class="line">| japanese  |   27.3130 |</span><br><span class="line">| text      |   13.0000 |</span><br><span class="line">+-----------+-----------+</span><br><span class="line">*/</span><br><span class="line">select languages,avg(page) from commic_list group by languages with rollup;</span><br><span class="line">/*</span><br><span class="line">+-----------+-----------+</span><br><span class="line">| languages | avg(page) |</span><br><span class="line">+-----------+-----------+</span><br><span class="line">| chinese   |   37.3333 |</span><br><span class="line">| english   |   30.0870 |</span><br><span class="line">| japanese  |   27.3130 |</span><br><span class="line">| text      |   13.0000 |</span><br><span class="line">| NULL      |   29.8430 |</span><br><span class="line">+-----------+-----------+</span><br><span class="line">*/</span><br><span class="line"># 上面的NULl其实就是对37.3333,30.0870,27.3130,13.0000再求一次平均值.</span><br></pre></td></tr></table></figure>
+
+<p> 过滤分组:HAVING子句<br>除了能用GROUP BY分组数据外，MySQL还允许过滤分组，规定包括 哪些分组，排除哪些分组。<br>HAVING非常类似于WHERE。事实上，目前为止所 学过的所有类型的WHERE子句都可以用HAVING来替代。==唯一的差别是WHERE过滤行，而HAVING过滤分组==。<br>WHERE子句不起作用，因为过滤是基于分组聚集值而不是特定行值的。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 查找总页数大于150的作者</span><br><span class="line">select artists,sum(page) from commic_list </span><br><span class="line">	group by artists having sum(page) &gt;150;</span><br></pre></td></tr></table></figure>
+
+<p>有另一种理解方法，WHERE在数据分组前进行过滤，HAVING在数据分组后进行过滤。</p>
+<p>那么有没有同时使用where和having呢?只要在分组前过滤,然后在分组后再过滤一遍即可.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查找作品的语言是英语,同时总页数大于60的作者</span><br><span class="line">select artists,languages,sum(page) </span><br><span class="line">	from commic_list </span><br><span class="line">	where languages = &#x27;english&#x27; </span><br><span class="line">	group by artists </span><br><span class="line">	having sum(page) &gt; 60;</span><br></pre></td></tr></table></figure>
+
+<p>分组和排序<br>GROUP BY和ORDER BY的差别:</p>
+<table>
+<thead>
+<tr>
+<th>order by</th>
+<th>group by</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>排序产生的输出</td>
+<td>分组行,但输出可能不是分组的顺序</td>
+</tr>
+<tr>
+<td>任意列都可以使用(甚至非选择列都可以使用)</td>
+<td>只能是选择列或表达式列,而且必须使用每个选择列表达式</td>
+</tr>
+<tr>
+<td>不一定需要</td>
+<td>如果与聚集函数一起使用列(或表达式),则必须使用</td>
+</tr>
+</tbody></table>
+<p>因为group by的顺序可能不是分组的顺序,所以有时候需要同时使用order by和group by</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 查找作品的语言是英语,同时总页数大于60的作者</span><br><span class="line"># 然后按照总页数升序排列</span><br><span class="line">select artists,languages,sum(page) </span><br><span class="line">    from commic_list </span><br><span class="line">    where languages = &#x27;english&#x27; </span><br><span class="line">    group by artists </span><br><span class="line">    having sum(page) &gt; 60 </span><br><span class="line">    order by sum(page);</span><br></pre></td></tr></table></figure>
+
+<p>总结 SELECT子句顺序 :</p>
+<table>
+<thead>
+<tr>
+<th>子句</th>
+<th>说明</th>
+<th>是否必须使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select</td>
+<td>要返回的列或表达式</td>
+<td>是</td>
+</tr>
+<tr>
+<td>from</td>
+<td>从中检索数据的表</td>
+<td>仅在表中选择数据时使用</td>
+</tr>
+<tr>
+<td>where</td>
+<td>行级过滤</td>
+<td>否</td>
+</tr>
+<tr>
+<td>group by</td>
+<td>分组说明</td>
+<td>仅在按组计算聚集时使用</td>
+</tr>
+<tr>
+<td>having</td>
+<td>组级过滤</td>
+<td>否</td>
+</tr>
+<tr>
+<td>order by</td>
+<td>输出排序顺序</td>
+<td>否</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>要检索的行数</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<h1 id="第十四章-使用子查询"><a href="#第十四章-使用子查询" class="headerlink" title="第十四章:使用子查询"></a>第十四章:使用子查询</h1><p>本章介绍什么是子查询以及如何使用它们。 </p>
+<p>迄今为止我们所看到的所有SELECT语句都是简单查询，即从单个数据库表中检索数据的单条语句。<br>子查询（subquery），即嵌套在其他查询中的查询。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select cust_id from orders where order_num in </span><br><span class="line">	(select order_num from orderitems where prod_id = &#x27;TNT2&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>使用子查询可以看到:==外查询where的内容其实就是内查询select的内容==.这就是<code>列匹配原则</code><br>子查询一般与IN操作符结合使用</p>
+<p>作为计算字段使用子查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 计算less_table表中有,more_table表中也有的id总数</span><br><span class="line">select count(id) from more_table </span><br><span class="line">	where id in (select id from less_table);</span><br><span class="line">/*</span><br><span class="line">+-----------+</span><br><span class="line">| count(id) |</span><br><span class="line">+-----------+</span><br><span class="line">|       200 |</span><br><span class="line">+-----------+</span><br><span class="line">*/</span><br><span class="line"># 注意不可以如下使用,要使用子查询</span><br><span class="line">select id from more_table where less_table.id = more_table.id;</span><br><span class="line"># 或者改成</span><br><span class="line">select id from less_table,more_table where less_table.id = more_table.id;</span><br></pre></td></tr></table></figure>
+
+<p>==也就是说,where里用到的表在from一定要提到==</p>
+<p>相关子查询（correlated subquery） 涉及外部查询的子查询。<br>任何时候只要列名可能有多义性，就必须使用这种语法（表名和列名由一个句点分隔）。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

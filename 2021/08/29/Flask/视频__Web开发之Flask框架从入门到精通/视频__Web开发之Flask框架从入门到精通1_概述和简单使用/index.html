@@ -1,0 +1,531 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="官方文档：&lt;a href=&quot;http://flask.pocoo.org/docs/&quot;&gt;http://flask.pocoo.org/docs/&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Web开发之Flask框架从入门到精通1_概述和简单使用 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Flask/" rel="tag">Flask</a></div><div class="post-time">2021-08-29</div></div></div><div class="container post-header"><h1>Web开发之Flask框架从入门到精通1_概述和简单使用</h1></div><div class="container post-content"><p>官方文档：<a target="_blank" rel="noopener" href="http://flask.pocoo.org/docs/">http://flask.pocoo.org/docs/</a></p>
+<p>中文文档：<a target="_blank" rel="noopener" href="http://docs.jinkan.org/docs/flask/">http://docs.jinkan.org/docs/flask/</a></p>
+<p>视频地址:<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av67507215/">https://www.bilibili.com/video/av67507215/</a></p>
+<p>Flask一样是MVC的设计模式:<br>核心思想:解耦</p>
+<ol>
+<li>Model：用于封装与应用程序的业务逻辑相关的数据及对数据的处理方法，是Web应用程序中用于处理应用程序的数据逻辑部分，Model通常只提供功能性的接口，通过这些接口可以获取Model的所有功能。</li>
+<li>View：负责数据的显示和呈现，view是对用户的直接输出。</li>
+<li>Controller：负责从用户端收集用户的输入，可以看成提供view的反向功能，主要处理用户交互。</li>
+</ol>
+<p><img src="/images/1560390654323.png" alt="1560390654323"></p>
+<p>使用Flask</p>
+<p>Flask的使用十分简易,不需要像Django一样创建project,分出apps,template,view,model等等,只需要创建一个py文件:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># firstFlask</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&#x27;Hello Flask&#x27;</span></span><br><span class="line"></span><br><span class="line">app.run()</span><br></pre></td></tr></table></figure>
+
+<p>运行得到:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> * Serving Flask app &quot;firstflask&quot; (lazy loading)</span><br><span class="line"> * Environment: production</span><br><span class="line">   WARNING: Do not use the development server in a production environment.</span><br><span class="line">   Use a production WSGI server instead.</span><br><span class="line"> * Debug mode: off</span><br><span class="line"> * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)</span><br><span class="line">127.0.0.1 - - [13/Jun/2019 10:00:21] &quot;GET / HTTP/1.1&quot; 200 -</span><br><span class="line">127.0.0.1 - - [13/Jun/2019 10:00:22] &quot;GET /favicon.ico HTTP/1.1&quot; 404 -</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560391462472.png" alt="1560391462472"></p>
+<p>当然了,肯定不会真的就把一个项目写在一个py文件中,还是需要分开的.</p>
+<hr>
+<p>Django里有Settings.py,那么Flask如何添加参数,一般是在run()里添加:</p>
+<ul>
+<li>debug是否开启调试模式，开启后修改过python代码会自动重启</li>
+<li>threaded是否开启多线程</li>
+<li>port启动指定服务器的端口号</li>
+<li>host主机，默认是127.0.0.1，指定为0.0.0.0代表本机所有ip</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(debug=<span class="literal">True</span>,port=<span class="number">5000</span>,host=<span class="string">&#x27;0.0.0.0&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>flask-script插件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-script</span><br></pre></td></tr></table></figure>
+
+<p>可以实现命令行参数接收</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">manager = Manager(app=app)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello Flask3&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>manage.py不能被其它文件导入！</p>
+</blockquote>
+<p>之后执行<code>python manage.py runserver</code>即可,像极了Django</p>
+<p>manage的参数使用:</p>
+<ul>
+<li><code>-d </code>: 是否开启调试模式</li>
+<li><code>-r</code> : 是否自动重新加载文件</li>
+<li><code>-h</code>，<code>--host</code> : 指定主机</li>
+<li><code>-p</code>,<code>--port</code> : 指定端口</li>
+<li><code>--threaded</code> : 是否使用多线程</li>
+<li><code>-?</code> <code>--help</code> : 查看帮助</li>
+</ul>
+<p>所以可以如下使用:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py runserver -d -r -h  0.0.0.0 -p 9000</span><br></pre></td></tr></table></figure>
+
+<p>manage可以进入flask的shell环境</p>
+<hr>
+<p>flask的简单应用:<br>文件层级:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">webproject</span><br><span class="line">	|-- static</span><br><span class="line">        |-- css</span><br><span class="line">            |-- hello.css</span><br><span class="line">    |-- templates</span><br><span class="line">    	|-- hello.html</span><br><span class="line">    |-- manage.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask,render_template</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">manager = Manager(app=app)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/hello/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;hello.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* static/css/hello.css */</span></span><br><span class="line"><span class="selector-tag">h2</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: yellow;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- templates/hello.html --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&#x27;cn&#x27;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;/static/css/hello.css&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>123<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560397591557.png" alt="1560397591557"></p>
+<p>静态文件也是可以直接访问:</p>
+<p><img src="/images/1560397621990.png" alt="1560397621990"></p>
+<hr>
+<p>Flask的流程和Django基本一致</p>
+<p><img src="/images/1560398200099.png" alt="1560398200099"></p>
+<p>Django的url分发器是放在urls.py里面,Flask则是放在app.route装饰器里面:<br>Flask获取参数方式就是Django2.0版本的方式,使用尖括号:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意装饰器的url参数要和函数的参数对应(就是这里的hehe)</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/hello/&lt;hehe&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">params</span>(<span class="params">hehe</span>):</span></span><br><span class="line">    <span class="keyword">return</span> hehe</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560398721604.png" alt="1560398721604"></p>
+<p><img src="/images/1560398744126.png" alt="1560398744126"></p>
+<p>Flask的请求参数:</p>
+<ul>
+<li><p>都是关键字参数</p>
+</li>
+<li><p>默认标识是尖括号(如<code>/hello/&lt;name&gt;/</code>)</p>
+</li>
+<li><p>name需要和对应的视图函数的参数名宇保持一致</p>
+</li>
+<li><p>参数允许有默认值:</p>
+<ul>
+<li>如果有默认值，那么在路由中，不传输参数也是ok的</li>
+<li>如果没有默认值，参数在路由中必须传递</li>
+</ul>
+</li>
+<li><p>和Django一样,url参数的默认类型是string,但是Flask可以手动修改:<br>在装饰器里修改如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;int:num&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">num</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(num))  <span class="comment"># int</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>除了int还有:</p>
+<ul>
+<li><p>float</p>
+</li>
+<li><p>string(默认):<br>将斜线认为是参数分隔符</p>
+</li>
+<li><p>path :<br>接受到数据格式是字符串，<br>特性 : 会将斜线认为是一个字符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;----------&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(name))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>当输入url为<code>http://127.0.0.1:5000/get/123/789/liangbo/heyingliang/</code>得到:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(name)  <span class="comment"># 123/789/liangbo/heyingliang</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(name)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>uuid:<br>验证uuid格式</p>
+</li>
+<li><p>any:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;any&#123;c,d,e&#125;:name&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get2</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>限定路径必须为下面其中之一 :<br><code>/get/c/</code><br><code>/get/d/</code><br><code>/get/e/</code></p>
+</li>
+</ul>
+</li>
+<li><p>请求方法:</p>
+<p>Flask请求方法并不像Django一样全部支持的,需要自己配置请求方法:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p>url for:<br>就是Flask的url反向解析</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/hello/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;hello.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="comment"># 传入函数的名字作为url_for参数</span></span><br><span class="line">    url = url_for(<span class="string">&#x27;hello_world&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果反向解析带有参数,<strong>直接传入关键字参数即可</strong>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/hello/&lt;name1&gt;/&lt;name2&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;hello.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="comment"># 传入函数的名字作为url_for参数</span></span><br><span class="line">    url = url_for(<span class="string">&#x27;hello_world&#x27;</span>,name1=<span class="string">&#x27;hyl&#x27;</span>,name2=<span class="string">&#x27;liangbo&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(url)    <span class="comment"># /hello/hyl/liangbo/</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>模板里的url反向解析,和Django差不多,不过使用url_for函数:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 传入hello_world视图函数 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(&#x27;hello_world&#x27;) &#125;&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>总结:</p>
+<ul>
+<li><p>Django的反向解析:</p>
+<ol>
+<li><p>视图里:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">request</span>):</span></span><br><span class="line">    <span class="keyword">return</span> reverse(<span class="string">&quot;blog:article&quot;</span>, kwargs=&#123;<span class="string">&quot;articleid&quot;</span>: self.pk&#125;)</span><br></pre></td></tr></table></figure></li>
+<li><p>模板里:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=<span class="string">&quot;&#123;&#123; url blog:article self.pk &#125;&#125;&quot;</span>&gt;&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>Flask的反向解析:</p>
+<ol>
+<li><p>视图里:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="comment"># 传入函数的名字作为url_for参数</span></span><br><span class="line">    url = url_for(<span class="string">&#x27;hello_world&#x27;</span>,name1=<span class="string">&#x27;hyl&#x27;</span>,name2=<span class="string">&#x27;liangbo&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(url)    <span class="comment"># /hello/hyl/liangbo/</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>模板里:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 传入hello_world视图函数 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(&#x27;hello_world&#x27;) &#125;&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<hr>
+<p>request:</p>
+<p>在Django中,每个视图函数的第一个参数都是request,</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">request</span>):</span></span><br><span class="line">    <span class="string">&#x27;显示首页&#x27;</span></span><br><span class="line">    pageid = request.GET.get(<span class="string">&#x27;page&#x27;</span>,<span class="number">1</span>)</span><br><span class="line">    context = &#123;...&#125;</span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">&#x27;blog/index.html&#x27;</span>, context)</span><br></pre></td></tr></table></figure>
+
+<p>但是在Flask中,已经封装好了,需要的话直接使用即可:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;----------------------------&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(request)  <span class="comment"># &lt;Request &#x27;http://127.0.0.1:5000/get/123/&#x27; [GET]&gt;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>request的属性:</p>
+<ol>
+<li><p><code>request.method</code></p>
+</li>
+<li><p><code>request.data</code>:</p>
+</li>
+<li><p><code>request.args</code>:<br>get请求参数,不是只能用于get请求参数.</p>
+<p>例如,使用post提交<code>http://127.0.0.1/article?cate=python</code>一样可以获取</p>
+</li>
+<li><p><code>request.form</code>:<br>post传递的表单数据</p>
+</li>
+<li><p><code>request.files</code></p>
+</li>
+<li><p><code>request.cookies</code></p>
+</li>
+<li><p><code>request.session</code></p>
+</li>
+<li><p><code>request.json</code><br>如果提交的是json数据,可以这样直接转为json数据</p>
+</li>
+<li><p><code>request.remote_addr</code><br>远端的IP地址</p>
+</li>
+<li><p><code>request.user_agent</code></p>
+</li>
+<li><p><code>request.host</code></p>
+</li>
+<li><p><code>request.url</code></p>
+</li>
+</ol>
+<p>如果传递的get参数中,有两个相同的参数,eg:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 有两个kw参数</span></span><br><span class="line">http://<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>/?kw=h&amp;page&amp;kw=yl</span><br></pre></td></tr></table></figure>
+
+<p>这时可以使用<code>request.getlist(&#39;pw&#39;)</code>获取两个pw参数</p>
+<hr>
+<p>回头看一下这个视图函数:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;----------------------------&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(request)  <span class="comment"># &lt;Request &#x27;http://127.0.0.1:5000/get/123/&#x27; [GET]&gt;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;789&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>竟然可以返回string作为response,(而Django必须为HttpResponse)</p>
+<p>实际上,Flask支持返回两个类型</p>
+<ul>
+<li><p>字符串<br>(实际上Flask是后台帮我们包装成Response)</p>
+</li>
+<li><p>Response</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    result = render_template(<span class="string">&#x27;hello.html&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(result))</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+<p>返回:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&#x27;cn&#x27;&gt;</span><br><span class="line"></span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;hello world&lt;/title&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;/static/css/hello.css&quot;&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;hello world&lt;/h2&gt;</span><br><span class="line">    &lt;p&gt;123&lt;/p&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/html&gt;</span><br><span class="line">&lt;class &#x27;str&#x27;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>说明<code>result = render_template(&#39;hello.html&#39;)</code>实际上就是渲染hello.html,然后返回一个字符串而已</p>
+<p>所以我们可以直接返回一个string格式的html代码:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&lt;h3&gt;响应&lt;/h3&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>实际上,当返回字符串时,视图函数还可以返回第二的值(响应状态码)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&lt;path:name&gt;/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&lt;h3&gt;响应&lt;/h3&gt;&#x27;</span>,<span class="number">404</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意,这只会影响状态码,数据是不受影响的.<br>也就是说,就算上面返回了404错误,代码一样能跑,页面一样能显示</p>
+</blockquote>
+<p>按照这种特性,我们可以用来做反爬.<br>(因为一般的爬虫只有当状态码为200的时候才会执行数据处理工作,404直接舍弃)</p>
+<p>除了让Flask后台帮我们制作response,我们还可以使用make_response来制作response</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    response = make_response(<span class="string">&#x27;&lt;h2&gt;123&lt;/h2&gt;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(response) <span class="comment"># &lt;Response 12 bytes [200 OK]&gt;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(response)) <span class="comment"># &lt;class &#x27;flask.wrappers.Response&#x27;&gt;</span></span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<p>所以也可以这么做:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    response = make_response(render_template(<span class="string">&#x27;hello.html&#x27;</span>),<span class="number">404</span>)</span><br><span class="line">    <span class="built_in">print</span>(response) </span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(response))</span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<p>第二种手动制作Response的方法:使用<code>Response</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    response = Response(response=<span class="string">&#x27;&lt;h2&gt;456&lt;/h2&gt;&#x27;</span>,status=<span class="number">403</span>)</span><br><span class="line">    <span class="built_in">print</span>(response) <span class="comment"># &lt;Response 12 bytes [403 FORBIDDEN]&gt;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(response)) <span class="comment"># &lt;class &#x27;flask.wrappers.Response&#x27;&gt;</span></span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>重定向:<br>和Django差不多,一样使用redirect参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;index&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<p>遗弃request:<br>比如说在视图函数里判断是否为爬虫,如是则遗弃之:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    <span class="keyword">if</span> ...:</span><br><span class="line">        abort(<span class="number">403</span>)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">&#x27;index&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560416151545.png" alt="1560416151545"></p>
+<p>返回Json数据:<br>在Django里使用<code>return JsonResponse</code>来返回Json数据,Flask使用<code>jsonfy</code>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    result = json.jsonify(&#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">13</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">45</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">78</span>&#125;)</span><br><span class="line">    <span class="built_in">print</span>(result)  <span class="comment"># &lt;Response 38 bytes [200 OK]&gt;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(result)) <span class="comment"># &lt;class &#x27;flask.wrappers.Response&#x27;&gt;</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560416397738.png" alt="1560416397738"></p>
+<blockquote>
+<p>注意:jsonify可以传入字典,也可以使用关键字参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = json.jsonify(&#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">13</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">45</span>&#125;)</span><br><span class="line">result = json.jsonify(a=<span class="number">18</span>,b=<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>其实也可以使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意不是import json</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">result = json.dumps(&#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">13</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">45</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意<code>json.jsonify</code>和<code>json.dumps</code>的异同:</p>
+<p>两者都会将数据格式化为Json格式</p>
+<ul>
+<li>使用<code>json.jsonify</code>会自动将response的content-Type改为<code>application/json</code>.</li>
+<li>而<code>json.dumps</code>将保留原来的content-Type为<code>text/html</code>不变</li>
+</ul>
+</blockquote>
+<p>当然,这还是有解决方法的:使用Response:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span>():</span></span><br><span class="line">    result = json.dumps(&#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">18</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">20</span>&#125;)</span><br><span class="line">    <span class="keyword">return</span> Response(response=result,content_type=<span class="string">&#x27;application/json&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>实际上,Flask在真正开发的时候,文件结构和Django还是差不多的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">webproject</span><br><span class="line">	|-- app</span><br><span class="line">		|-- models.py</span><br><span class="line">		|-- views.py</span><br><span class="line">	|-- static</span><br><span class="line">        |-- css</span><br><span class="line">        |-- js</span><br><span class="line">    |-- templates</span><br><span class="line">    	|-- hello.html</span><br><span class="line">    |-- manage.py</span><br></pre></td></tr></table></figure>
+
+<p>可见,在Flask中,其实Views基本就是Django里Views和urls.py的合并</p>
+<p>但是如果我们像上面这样存放文件,app.views会和manage.py<code>循环引用</code>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"><span class="comment"># 因为manage.py是整个程序的入口,执行python manage.py,所以必须在这里导入views.py</span></span><br><span class="line"><span class="comment"># 这里使用一个a表示导入views</span></span><br><span class="line"><span class="keyword">from</span> app.views <span class="keyword">import</span> a</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">manager = Manager(app=app)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/views.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 要想使用@app.route(&#x27;/&#x27;)装饰器,必须导入manage.py里的app</span></span><br><span class="line"><span class="keyword">from</span> manage <span class="keyword">import</span> app</span><br><span class="line"></span><br><span class="line">a = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>问题就出在两个import中:<br>我们在运行manage.py的时候会执行<code>from app.views import a</code>,这句会让python去扫描<code>app/views.py</code>.但是在<code>app/views.py</code>中又有<code>from manage import app</code>这句又会让python去扫描<code>manage.py</code></p>
+<p><img src="/images/1560425361671.png" alt="1560425361671"></p>
+<p>也就是说出现了互相导入的问题:</p>
+<p><img src="/images/1560425600067.png" alt="1560425600067"></p>
+<p>这时可以使用插件解决:<br>蓝图:<strong>支持对程序的规划</strong></p>
+<p>简单来说就是使用蓝图来代替<code>@app.route()</code>,使得view.py不再依赖manage.py</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-blueprint</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.views <span class="keyword">import</span> blue</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"><span class="comment"># 注册蓝图</span></span><br><span class="line">app.register_blueprint(blueprint=blue)</span><br><span class="line"></span><br><span class="line">manager = Manager(app=app)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/views.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Blueprint</span><br><span class="line"></span><br><span class="line">blue = Blueprint(<span class="string">&#x27;first_blue&#x27;</span>,__name__)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从app.route改为blue.route</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560426367170.png" alt="1560426367170"></p>
+<p>所以我们就可以使用多个views.py文件了:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># view.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Blueprint</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">blue = Blueprint(<span class="string">&#x27;first_blue&#x27;</span>,__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># view2.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Blueprint</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">blue2 = Blueprint(<span class="string">&#x27;second_blue&#x27;</span>,__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@blue2.route(<span class="params"><span class="string">&#x27;/index2/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index2</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index2&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.views <span class="keyword">import</span> blue</span><br><span class="line"><span class="keyword">from</span> app.views2 <span class="keyword">import</span> blue2</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"><span class="comment"># 注册蓝图</span></span><br><span class="line">app.register_blueprint(blueprint=blue)</span><br><span class="line">app.register_blueprint(blueprint=blue2)</span><br><span class="line"></span><br><span class="line">manager = Manager(app=app)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560430361202.png" alt="1560430361202"></p>
+<p><img src="/images/1560430351185.png" alt="1560430351185"></p>
+<hr>
+<p>会话技术:<br>三种会话技术:</p>
+<ul>
+<li><p>cookies:</p>
+<ol>
+<li>客户端会话技术</li>
+<li>数据都是存储在浏览器中</li>
+<li>支持过期</li>
+<li>不能跨域名</li>
+<li>不能跨浏览</li>
+<li>cookie是通过 Response来进行操作</li>
+</ol>
+<blockquote>
+<p>flask中的cookie可以支持中文<br>因为flask对cookie中的内容作了编码</p>
+</blockquote>
+</li>
+<li><p>session</p>
+<ol>
+<li>服务端会话技术</li>
+<li>对数据进行数据安全操作</li>
+<li>默认在内存中<ul>
+<li>不容易管理</li>
+<li>容易丢失</li>
+<li>不能多台电脑协作</li>
+<li>flask-session默认的有效期是31天</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>token</p>
+</li>
+</ul>
+<p>简单cookie的登录注册功能:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># view.py</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/home/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span>():</span></span><br><span class="line">    username = request.cookies.get(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;home.html&#x27;</span>,username=username)</span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/login/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;GET&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;login.html&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        username = request.form.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">        resp = Response(response= <span class="string">f&#x27;登录成功 <span class="subst">&#123;username&#125;</span>&#x27;</span>)</span><br><span class="line">        resp.set_cookie(<span class="string">&#x27;user&#x27;</span>,username)</span><br><span class="line">        <span class="keyword">return</span> resp</span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/logout/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span>():</span></span><br><span class="line">    resp = redirect(url_for(<span class="string">&#x27;first_blue.home&#x27;</span>))</span><br><span class="line">    resp.delete_cookie(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- home.html --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&#x27;cn&#x27;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>home<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h2</span>&gt;</span>欢迎回来:&#123;&#123; username &#125;&#125;<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(&#x27;first_blue.login&#x27;) &#125;&#125;&quot;</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(&#x27;first_blue.logout&#x27;) &#125;&#125;&quot;</span>&gt;</span>登出<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- login.html --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&#x27;cn&#x27;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>login<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;&#123;&#123; url_for(&#x27;first_blue.login&#x27;) &#125;&#125;&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span>&gt;</span>用户名:<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;请输入用户名&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果要将cookie改为session:不能像Django一样直接改动request.cookies.get(‘user’)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/home/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span>():</span></span><br><span class="line">    <span class="comment"># username = request.cookies.get(&#x27;user&#x27;)</span></span><br><span class="line">    username = session.get(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;home.html&#x27;</span>,username=username)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/login/&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>,<span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;GET&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">&#x27;login.html&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> request.method == <span class="string">&#x27;POST&#x27;</span>:</span><br><span class="line">        username = request.form.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">        resp = Response(response= <span class="string">f&#x27;登录成功 <span class="subst">&#123;username&#125;</span>&#x27;</span>)</span><br><span class="line">        session[<span class="string">&#x27;user&#x27;</span>] = username</span><br><span class="line">        <span class="comment"># resp.set_cookie(&#x27;user&#x27;,username)</span></span><br><span class="line">        <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560436785333.png" alt="1560436785333"></p>
+<p>还需要在manage里配置SECRET_KEY:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">&#x27;SECRET_KEY&#x27;</span>] = <span class="string">&#x27;1234liangbo5679&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>flask-session插件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-session</span><br></pre></td></tr></table></figure>
+
+<p>使用,首先在manage.py里添加config设置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">&#x27;SESSION_TYPE&#x27;</span>] = <span class="string">&#x27;redis&#x27;</span></span><br><span class="line">Session(app=app)</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就将session储存到redis中了:<br><img src="/images/1560437968715.png" alt="1560437968715"></p>
+<p>flask-session默认的有效期是31天</p>
+<hr>
+<p>模板</p>
+<p>路由器装饰器的叠用:这样这个视图函数就可以由多个路由url来调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/home/&#x27;</span></span>)</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/index/&#x27;</span></span>)</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span>():</span></span><br><span class="line">    <span class="keyword">return</span> render_tempalte(<span class="string">&#x27;hello.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Fask中使用jinja2模板引擎</p>
+<p>jinja2模板语法和Django差不多<br>(因为是在DJango模板的基础上改的)</p>
+<p>jinja2可以使用</p>
+<ul>
+<li>变量 :<code>&#123;&#123; var &#125;&#125;</code></li>
+<li>标签 :<code>&#123;&#123; tag &#125;&#125;</code></li>
+</ul>
+<p>jinja2一样支持block和extends标签:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"># 父模板挖坑,子模板填坑</span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> &#x27;xxx&#x27; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"># 继承模板</span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">extend</span> &#x27;xxx&#x27; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"># 继承后保留块中的内容</span></span><br><span class="line"><span class="xml"></span><span class="template-variable">&#123;&#123; super() &#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>保留继承块中的内容:<code>&#123;&#123; super() &#125;&#125;</code><br>Django中用是<code>&#123;&#123; block.super &#125;&#125;</code></p>
+</blockquote>
+<p>eg:base.html中有</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> header %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>this is base html<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>index.html中有:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="name">extends</span></span> &#x27;base.html&#x27; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> header %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">h2</span>&gt;</span>this is index html<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时index.html中的h2会覆盖掉base.html中的h2,</p>
+<p><img src="/images/1560475321878.png" alt="1560475321878"></p>
+<p>现在想要双方都显示:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="name">extends</span></span> &#x27;base.html&#x27; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> header %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    </span><span class="template-variable">&#123;&#123; super() &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">h2</span>&gt;</span>this is index html<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560475338999.png" alt="1560475338999"></p>
+<p>Flask的Static静态文件的反向解析:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> extcss %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;</span></span></span><span class="template-variable">&#123;&#123; url_for(&#x27;static&#x27;,filename=&#x27;css/hello.css&#x27;) &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> extcss %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Flask中的<code>inclue</code>标签和Django的差不多,功能就是将其他的html包含进来</p>
+<hr>
+<p>marco:宏定义<br>可以<strong>在模板中</strong>定义函数,在其他的地方调用,调用函数来生成html.</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name">marco</span> hello(name) %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	</span><span class="template-variable">&#123;&#123; name &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">endmarco</span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>例如:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&#123;# 定义 #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">macro</span> hello() %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">h4</span>&gt;</span>该函数调用就能产生html代码<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">endmacro</span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="comment">&#123;# 调用 #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-variable">&#123;&#123; hello() &#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&#123;# 定义 #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">macro</span> say_hello(name,age) %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">h4</span>&gt;</span>很高兴见到你 </span><span class="template-variable">&#123;&#123; name &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">h4</span>&gt;</span>听说你今年 </span><span class="template-variable">&#123;&#123; age &#125;&#125;</span><span class="xml"> 岁了<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name">endmacro</span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="comment">&#123;# 调用 #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-variable">&#123;&#123; say_hello(&#x27;何应良&#x27;,21) &#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以导入其他页面的宏定义:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name">from</span> &#x27;xxx&#x27; import xxx %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name">from</span> &#x27;mac.html&#x27; import say_hello %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-variable">&#123;&#123; say_hello(&#x27;何应良&#x27;,21) &#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>jinja2也可以使用Django的控制语句(for if等等),过滤器<br>多个过滤器注意<code>safe</code>的顺序:</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">h3</span>&gt;</span></span><span class="template-variable">&#123;&#123; msg|<span class="name">safe</span>|reverse &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="comment">&#123;# 输出 #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">&gt;2h&lt;啊戏游啥玩们你&gt;2h&lt;</span></span><br></pre></td></tr></table></figure>
+
+<p>虽然safe放在前面,但是safe永远都是最后执行的,也就是说,会先执行reverse</p>
+<hr>
+<p>反向解析总结:</p>
+<ol>
+<li>url_for</li>
+<li>在app中使用:<ul>
+<li>url_for(‘endpoint)</li>
+<li>endpoint默认是函数的名字</li>
+</ul>
+</li>
+<li>在blueprint中使用:<ul>
+<li>url_for(‘bluename.endpoint’)</li>
+<li>蓝图名字.函数名</li>
+</ul>
+</li>
+<li>获取静态资源路径:<ul>
+<li>url_for(‘static’,filename=’path’)</li>
+<li>static:资源</li>
+<li>path:相对资源的相对路径</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>四个结构标签:</p>
+<ul>
+<li>block</li>
+<li>extends</li>
+<li>include</li>
+<li>marco</li>
+</ul>
+<hr>
+<p>使用flask-bootstrap插件:</p>
+<p>使用Bootstrap 来美化页面</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-bootstrap</span><br></pre></td></tr></table></figure>
+
+<p>在manage.py添加配置:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_bootstrap <span class="keyword">import</span> Bootstrap</span><br><span class="line">Bootstrap(app=app)</span><br></pre></td></tr></table></figure>
+
+<p>使用:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/test_bootstrap/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_bootstrap</span>():</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;test_bootstrap.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&#123;# test_bootstrap #&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">extends</span></span> &#x27;bootstrap/base.html&#x27; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">block</span></span> content %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">h3</span>&gt;</span>这是一个bootstrap<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endblock</span></span> content %&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560480529388.png" alt="1560480529388"></p>
+<hr>
+<p>会话技术总结:</p>
+<ol>
+<li><p>出现的场景:<br>后续的请求要前面请求返回的数据</p>
+</li>
+<li><p>原因:<br>web开发中,使用的http基本都是短连接.<br>生命周期非常短,从Request开始到Response结束</p>
+</li>
+<li><p>实现机制:<br>让客户端知道自己是谁</p>
+</li>
+<li><p>cookies:<br>客户端会话技术,数据都存储在客户端中,浏览器中.<br>特性:</p>
+<ul>
+<li>存储结构key-value,</li>
+<li>支持过期时间:<code>max-age</code>,<code>expires</code></li>
+<li>不能跨域名,不能跨浏览器,默认会携带本网站的所有cookies,</li>
+<li>默认明文传输,默认不支持中文(Flask可以支持中文)</li>
+</ul>
+</li>
+<li><p>session:<br>服务端会话技术,数据存储在服务端 .<br>特性:</p>
+<ul>
+<li>依赖于cookie</li>
+<li>支持过期</li>
+<li>key-value存储结构</li>
+<li>session在flask默认没有实现持久化</li>
+</ul>
+<p>实现持久化:flask-session</p>
+</li>
+<li><p>token:</p>
+<ul>
+<li>服务端会话技术</li>
+<li>手动实现的session</li>
+<li>如果用在web中和session基本一致</li>
+<li>在专用客户端中,不支持cookie</li>
+<li>需要客户端自己为何token</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>消息闪现<code>flash</code>:</p>
+<ul>
+<li>在视图中使用<code>flash(&#39;message&#39;)</code></li>
+<li>在template中使用<code>get_flash_messages()</code></li>
+</ul>
+<hr>
+<p>Flask模型</p>
+<p>Flask默认并没有提供任何数据库操作的API</p>
+<p>python有一个ORM:<code>SQLAlchemy</code>.</p>
+<p>针对Flask的支持插件<code>flask-sqlalchemy</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-sqlalchemy</span><br></pre></td></tr></table></figure>
+
+<p>数据库连接:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dialect+driver: //username:password@host:port/database</span><br></pre></td></tr></table></figure>
+
+<p><code>dialect</code>:数据库实现<br><code>driver</code>:数据库的驱动</p>
+<p>在manage.py里配置:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manage.py</span></span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> init_db</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_DATABASE_URI&#x27;</span>] = <span class="string">&#x27;sqlite:///sqlite3.db&#x27;</span></span><br><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_TRACK_MODIFICATIONS&#x27;</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">init_db(app)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># views.py</span></span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> db,Preson</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加数据库</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/createdb/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_db</span>():</span></span><br><span class="line">    db.create_all()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;DB Create Success&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/addperson/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_person</span>():</span></span><br><span class="line">    p = Person()</span><br><span class="line">    p.p_name = <span class="string">&#x27;liangbo&#x27;</span></span><br><span class="line">    db.session.add(p)</span><br><span class="line">    db.session.commit()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Person Add Success&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># models.py</span></span><br><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义成函数,使用懒加载,避免循环引用</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_db</span>(<span class="params">app</span>):</span></span><br><span class="line">    db.init_app(app)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Preson</span>(<span class="params">db.Model</span>):</span></span><br><span class="line">    p_id = db.Column(db.Integer,primary_key=<span class="literal">True</span>,autoincrement=<span class="literal">True</span>)</span><br><span class="line">    p_name= db.Column(db.String(<span class="number">16</span>))</span><br></pre></td></tr></table></figure>
+
+<p>定义的这么复杂就是为了避免循环引用的问题:<br><img src="/images/1560497120288.png" alt="1560497120288"></p>
+<p>当然上面把船创建数据库都制作成一个url,一般我们都是在shell里手动创建数据库的.<br>在shell里执行<code>db.create_all()</code>即可.</p>
+<p>数据库查询:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># views.py</span></span><br><span class="line"><span class="meta">@blue.route(<span class="params"><span class="string">&#x27;/getperson/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_person</span>():</span></span><br><span class="line">    persons = Person.query.<span class="built_in">all</span>()</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;personlist.html&#x27;</span>,person=persons)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&#x27;cn&#x27;</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>personlist<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">    </span><span class="template-tag">&#123;% <span class="name"><span class="name">for</span></span> person <span class="keyword">in</span> persons %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">li</span>&gt;</span></span><span class="template-variable">&#123;&#123; person.p_name &#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">    </span></span><br><span class="line"><span class="xml">    </span><span class="template-tag">&#123;% <span class="name"><span class="name">endfor</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>如果要使用mysql的话:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_DATABASE_URI&#x27;</span>] = <span class="string">&#x27;sqlite:///sqlite3.db&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>改为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_DATABASE_URI&#x27;</span>] = <span class="string">&#x27;mysql+pymysql:///用户名:密码@主机:端口/数据库名&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

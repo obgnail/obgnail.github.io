@@ -1,0 +1,244 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="移除暂存区的某个文件:"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Git应用详解 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Git/" rel="tag">Git</a></div><div class="post-time">2019-06-15</div></div></div><div class="container post-header"><h1>Git应用详解</h1></div><div class="container post-content"><p>移除暂存区的某个文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm --cached test.txt</span><br></pre></td></tr></table></figure>
+
+<p>移除当前版本库的某个文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rm test.txt</span><br><span class="line">git commit -m <span class="string">&quot;remove test.txt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是说,如果我们误把某个文件添加到版本库中,现在想要移除这个文件,就只能使用<code>git rm</code>删除,然后使用commit提交,形成一个新的版本才行.<strong>不可以直接在原来的版本库里删除该文件</strong></p>
+<p>总结:<br><code>git rm</code>和<code>git rm --cached</code>的区别:</p>
+<ol>
+<li><code>git rm --chached</code>是仅仅删除暂存区的文件,<br><code>git rm</code>是删除工作区和暂存区的文件</li>
+<li>这就能解释为什么执行<code>git rm --chached</code>后会出现:<br><img src="/images/1560565580042.png" alt="1560565580042"><br>执行<code>git rm</code>会出现:<br><img src="/images/1560565620067.png" alt="1560565620067"></li>
+<li>注意操作系统自带的<code>rm</code>命令就是只删除工作区的文件</li>
+</ol>
+<hr>
+<p>重命名:<br><code>git mv test.txt test2.txt</code>:将test.txt改为test2.txt</p>
+<blockquote>
+<p>注意:此操作会同时修改工作区和暂存区.<br>所以之后还是需要commit</p>
+</blockquote>
+<p>其实对于git来说,重命名本质就是删除原先的文件,之后再创建一个一模一样的文件.</p>
+<p>同理,如果我们直接使用系统的命令<code>mv</code>来重命名的话,就只会修改工作区的文件,并不能修改暂存区的文件.</p>
+<p>如果我们使用命令行修改:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv test.txt test2.txt</span><br></pre></td></tr></table></figure>
+
+<p>然后执行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add test.txt test2.txt</span><br></pre></td></tr></table></figure>
+
+<p>这是git立刻就能反映出这是一个rename的动作</p>
+<hr>
+<p>使用版本库的文件去覆盖掉暂存区的某个文件:<br>实际上就是–mixed参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD test.txt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><code>git add .</code>将当前文件夹全部纳入暂存区</p>
+<p>也可以使用<code>git add *</code></p>
+<hr>
+<p>修改commit消息:<br>虽然版本库的文件是不可以修改的,但是commit message确实可以修改的.</p>
+<p>使用<code>--amend</code>参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend -m <span class="string">&quot;这是修改后的commit message&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意:使用 –amend后,commit id值会改变</p>
+</blockquote>
+<p>使用–amend参数就需要定位到某个版本库,所以一般我们使用reset命令的时候都是用<code>--soft</code>参数.</p>
+<hr>
+<p>查看最新的三条log</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> -3</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>git会自动忽略空文件夹</p>
+<p>.gitignore支持正则表达式和通配符:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 忽略所有以pyc为后缀的文件</span></span><br><span class="line">*.pyc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略所有以pyc为后缀的文件,但是a.pyc除外</span></span><br><span class="line">*.pyc</span><br><span class="line">!a.pyc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略build目录下的所有文件</span></span><br><span class="line">build/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略根目录某个文件夹下的test.txt文件</span></span><br><span class="line">/*/test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略所有目录下的test.txt文件</span></span><br><span class="line">/**/test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略doc下的abc.txt文件,但是不忽略doc/note/abc.txt</span></span><br><span class="line">doc/*.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略doc下任何一层txt文件</span></span><br><span class="line">doc/**/*.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<p>分支:<br>使用<code>git branch</code>查看当前仓库的所有分支</p>
+<p>创建分支:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch new_branch </span><br></pre></td></tr></table></figure>
+
+<p>切换分支:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout new_branch</span><br></pre></td></tr></table></figure>
+
+<p>当前分支最新的版本:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -v</span><br></pre></td></tr></table></figure>
+
+<p>在最近的两个分支来回切:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -</span><br></pre></td></tr></table></figure>
+
+<p>删除分支:(<code>-d</code>为delete之意)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除已经合并的分支</span></span><br><span class="line">git branch -d new_branch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除做出修改但是未合并的分支</span></span><br><span class="line">git branch -D new_branch</span><br></pre></td></tr></table></figure>
+
+<p>合并分支:将new_branch合并到当前的分支上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge new_branch</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><code>HEAD</code>指向当前分支</li>
+<li><code>master</code>执行提交</li>
+</ul>
+<p>解决冲突后键入:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add test2.txt</span><br></pre></td></tr></table></figure>
+
+<p>标记已经解决冲突<br>然后执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit</span><br></pre></td></tr></table></figure>
+
+<p>退出merging状态</p>
+<blockquote>
+<p>注意:master分支的文件修改后,处于尚未提交的状态,此时不能使用merge,必须先commit后才能merge</p>
+</blockquote>
+<blockquote>
+<p>注意:当master执行<code>git merge new_branch</code>和new_branch产生冲突后,在解决完冲突.回到new_branch,执行<code>git merge master</code>并不会产生冲突</p>
+<p>原因:回忆一下产生冲突后,我们解决了冲突,然后执行add和commit操作,这使得解决冲突后的master其实版本又前进了一步,也就是说解决冲突后的master的版本其实比new_branch版本又多走了一步.<br><img src="/images/1560583890639.png" alt="1560583890639"></p>
+<p>此时在new_branch执行<code>merge</code>其实就类似于版本的回退了.自然没有冲突,直接<code>Fast-forward</code></p>
+</blockquote>
+<blockquote>
+<p>另一种情况就是,当我们在new_branch做出了修改并且已经commit,(此时master没有修改)这时执行<code>git merge master</code>会失败,出现<code>Already up-to-date.</code>错误</p>
+</blockquote>
+<p>使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --graph</span><br></pre></td></tr></table></figure>
+
+<p>可以以图像方式查看提交历史</p>
+<p>合并时加上<code>--no-ff</code>参数会禁用 fast-forward，这样会多出个 commit id</p>
+<blockquote>
+<p>这也是前面说的,当解决冲突后,对dev执行<code>git meger master</code>并不会发生冲突的原因</p>
+<p>因为产生冲突的时候,就不是使用fast-forwart提交,这时产生了一个新的提交.</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge --no-ff dev</span><br></pre></td></tr></table></figure>
+
+<p>不fast-forward使用:<br><img src="/images/1560584085094.png" alt="1560584085094"></p>
+<p>使用fast-forward:<br><img src="/images/1560584150810.png" alt="1560584150810"></p>
+<hr>
+<p>添加所有的修改的文件到暂存区并且提交</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -am <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><code>checkout</code>和<code>reset</code>的区别</p>
+<p><img src="/images/1560586902990.png" alt="1560586902990"></p>
+<p>1版本为最基础版本,现在处于5版本状态.如果我们想要回去2版本,可以使用<code>git reset --hard 2</code>.</p>
+<p>不过我们还可以使用<code>git checkout 2</code>,而且我们还可以对他进行修改和提交:</p>
+<p>此时新的提价就会连接到2上:<br><img src="/images/1560587480750.png" alt="1560587480750"></p>
+<p>此时再执行<code>git branch new_name 6</code>即可创建一个新的分支.</p>
+<p>这就是在<strong>历史版本里创建分支</strong>的操作.</p>
+<p>分支的重命名:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m old_branch_name new_branch_name</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>保存工作现场</p>
+<p>stash的使用:<br>考虑下面情况,现在你在feature1分支上开发,工作刚到一半,代码还不能跑.现在有紧急功能需要上线,这个紧急功能在feature2分支上.</p>
+<p>因为你修改的代码还没有提交,此时你是不能直接切换分支的.<br>当然这时你可以直接提交然后切换.但是一般来说,提交的版本应该都是正确的,能跑的,直接提交一半的代码不符合git的开发哲学.</p>
+<p>这时候就需要是使用stash来暂时保存当然分支的文件.</p>
+<p>直接执行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git stash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">git stash save <span class="string">&quot;描述性语句&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>无论在哪个分支,我们都可以使用下面的语句查看保存的list:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash list</span><br></pre></td></tr></table></figure>
+
+<p>恢复:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 弹出最新的stash(恢复的同时会从stash list中删除)</span></span><br><span class="line">git stash pop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取出最新的stash(恢复的同时不会删除stash list中的记录)</span></span><br><span class="line">git stash apply</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取出特定的stash</span></span><br><span class="line">git stash apply stash@&#123;1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>删除:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash drop stash@&#123;0&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>标签:</p>
+<p>实际功能就类似于<strong>书签功能</strong></p>
+<blockquote>
+<p>注意:标签是跨分支的,无论在哪里都可以通过<code>git tag</code>找到对应的标签</p>
+</blockquote>
+<p>标签有两种:</p>
+<ul>
+<li>轻量级标签:<code>lightweight</code><br>所有轻量级标签就是只有一个标签名,通过标签名来查找版本</li>
+<li>带有附注标签:<code>annotated</code>:<br>类似于commit message一样,起到说明作用</li>
+</ul>
+<p>创建标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 轻量级标签</span></span><br><span class="line">git tag v1.0.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 带有附注的标签</span></span><br><span class="line"><span class="comment">#(这里的-a就是标签名,-m和commit的功能一样)</span></span><br><span class="line">git tag -a v1.0.2 -m <span class="string">&#x27;release version&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>删除标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -d tag_name</span><br></pre></td></tr></table></figure>
+
+<p>查看标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag</span><br></pre></td></tr></table></figure>
+
+<p>查找标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找标签名为v1.0的标签</span></span><br><span class="line">git tag -l <span class="string">&#x27;v1.0&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找v开头的标签</span></span><br><span class="line">git tag -l <span class="string">&#x27;v*&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>删除标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -d v2.0</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>blame:<br>显示上一次文件修改的作者和修订的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git blame test.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560592025153.png" alt="1560592025153"></p>
+<hr>
+<p>diff</p>
+<p>先介绍一下linux的diff</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># a文件</span><br><span class="line">hello world</span><br><span class="line">hello java</span><br><span class="line">hello swift</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># b文件</span><br><span class="line">hello world</span><br><span class="line">hello clojure</span><br><span class="line">hello python</span><br></pre></td></tr></table></figure>
+
+<p>执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">diff -u a b</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560592335761.png" alt="1560592335761"></p>
+<ul>
+<li><code>---</code>表示原始文件,即第一个文件<br><code>+++</code>表示目标文件,即第二个文件</li>
+<li>第三行:<br><code>-1,3</code>的负号表示原文件,1表示第一行,3表示多少行,<br>所以整体就是<strong>原文件从第一行开始,连续三行</strong></li>
+<li>第四行:<br>hello world前面没有符号,表示两个文件都存在的行</li>
+<li>第五行至最后:<br>表示原文件a经过加加减减后就能形成b文件:<br>(也就是说,a文件减去hello java 减去hello swift,加上hello clojure ,加上hello python就可以变成b)</li>
+</ul>
+<p>git的diff有四种:</p>
+<ul>
+<li>工作区和暂存区的文件差别:</li>
+<li>工作区和提交的文件差别</li>
+<li>暂存区和提交的文件差别</li>
+<li>两个提交的差别</li>
+</ul>
+<p>工作区和暂存区的文件差别:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git diff test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">git diff</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/1560599336634.png" alt="1560599336634"></p>
+<blockquote>
+<p>注意:暂存区作为原始文件</p>
+</blockquote>
+<p>比较工作区和提交的文件差别:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git diff head</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">git diff commit_id</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意:提交文件作为原始文件</p>
+</blockquote>
+<p>比较暂存区和版本库的文件差别:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 比较暂存区和最新的版本库的区别</span></span><br><span class="line">git diff --cached</span><br><span class="line"></span><br><span class="line"><span class="comment"># 比较暂存区和特定版本库的区别</span></span><br><span class="line">git diff --cached commit_id</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意:提交文件作为原始文件</p>
+</blockquote>
+<p>比较两个版本库的区别:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git diff commit_id1 commit_id2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意:commit_id1作为原始文件</p>
+</blockquote>
+<hr>
+<p>pull == fetch + merge</p>
+<p>将本地仓库推送到远程仓库:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加远程地址</span></span><br><span class="line"><span class="comment"># 以后默认使用origin代替git@github.com:obgnail/test.git这个远程地址</span></span><br><span class="line">git remote add origin git@github.com:obgnail/test.git</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将本地的master分支推送到origin</span></span><br><span class="line">git push origin master</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将dev分支推送到origin</span></span><br><span class="line">git push origin dev</span><br></pre></td></tr></table></figure>
+
+
+
+<p>现在看完11集,之后的再说:<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av41610502/?p=12">bilibili</a></p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

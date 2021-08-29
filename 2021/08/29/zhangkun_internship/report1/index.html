@@ -1,0 +1,101 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Flask中Model的设计&quot;&gt;&lt;a href=&quot;#Flask中Model的设计&quot; class=&quot;headerlink&quot; title=&quot;Flask中Model的设计&quot;&gt;&lt;/a&gt;Flask中Model的设计&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;不能把Model的相关操作写在View里 , 全部写在Model里&lt;/li&gt;
+&lt;li&gt;通过编写CRUDMixin类 , 总领CRUD操作 , &lt;/li&gt;
+&lt;li&gt;注意要把CRUDMixin类相应的方法改成类方法 , 实现代码的复用&lt;/li&gt;
+&lt;li&gt;model的方法 , 尽量返回对象 , 不要返回数据&lt;/li&gt;
+&lt;li&gt;model的to_dict方法 , 通过添加filter默认参数 , 让to_dict()方法使得更具拓展性&lt;/li&gt;
+&lt;li&gt;session的add和commit通过严谨代码行实现 , 不用rollback , 尽早抛出错误&lt;/li&gt;
+&lt;li&gt; 异常压缩问题 : 因为session没有rollback , 可能add了错误的数据 , 导致在下一次commit的时候才抛出异常&lt;/li&gt;
+&lt;li&gt;将自定义的方法修改为property , 避免了在template调用model的方法&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Flask中DataBase的设计&quot;&gt;&lt;a href=&quot;#Flask中DataBase的设计&quot; class=&quot;headerlink&quot; title=&quot;Flask中DataBase的设计&quot;&gt;&lt;/a&gt;Flask中DataBase的设计&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;避免使用外键&lt;/li&gt;
+&lt;li&gt;postgresql 报错 column doesnot exist : postgrepsql不支持双引号 , 必须使用单引号&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Flask中Template的设计&quot;&gt;&lt;a href=&quot;#Flask中Template的设计&quot; class=&quot;headerlink&quot; title=&quot;Flask中Template的设计&quot;&gt;&lt;/a&gt;Flask中Template的设计&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;单独抽离出navi , 制作成一个macro&lt;/li&gt;
+&lt;li&gt;设置navi的参数为 items 和 search=False .使得template更加泛用&lt;/li&gt;
+&lt;li&gt;在template中复写父template的block , 提醒这个template中有这个block&lt;/li&gt;
+&lt;li&gt;封装&lt;code&gt;&amp;#123;% with errors = field.errors %&amp;#125;&lt;/code&gt; , 对于使用了flash和validate的字段 , 就能高效简单的使用field&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Flask中Form的设计&quot;&gt;&lt;a href=&quot;#Flask中Form的设计&quot; class=&quot;headerlink&quot; title=&quot;Flask中Form的设计&quot;&gt;&lt;/a&gt;Flask中Form的设计&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;和Model一样 , 使用FormMixin , 在里面编写通用方法 , 比如通过编写dump2dict()方法 , 直接传给model的create方法就能避免使用popular_obj方法&lt;/li&gt;
+&lt;li&gt;BaseForm设计的时候不要有primary key,以支持复用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Flask其他&quot;&gt;&lt;a href=&quot;#Flask其他&quot; class=&quot;headerlink&quot; title=&quot;Flask其他&quot;&gt;&lt;/a&gt;Flask其他&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;current_app只有在app启动的时候才存在 , celery项目不依赖flask,因此不能使用current_app&lt;/li&gt;
+&lt;li&gt;使用celery的项目 , 不能使用flask和内建的logging日志 , 要使用celery_task_logging , 否则无法写入(但是程序不报错)&lt;/li&gt;
+&lt;li&gt;Flask处理请求 , 本质就是网络的多路复用 . 类似于新建一条线程 , 这条线程拥有整个上下文环境 , 所以我们在测试的时候需要手动建立上下文环境 . 这也说明了为什么asyncio会获取不到event_loop , 必须新建&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Docker&quot;&gt;&lt;a href=&quot;#Docker&quot; class=&quot;headerlink&quot; title=&quot;Docker&quot;&gt;&lt;/a&gt;Docker&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;win和mac的docker其实是建立在虚拟Linux基础上 ,服务中使用的localhost指的是这个Linux环境的地址，而不是我们的宿主环境 , 因此volume和IP会受影响&lt;/li&gt;
+&lt;li&gt;docker-compose的links的本质就是将redis的内部IP写入flask的hosts文件中&lt;/li&gt;
+&lt;li&gt;docker-compose的command执行多条命令 , 可以设置前面命令后台最后一条前台&lt;/li&gt;
+&lt;li&gt;在bridge模式下 , Docker的容器都是通过veth-pair连接到docker的网关 , 并且docker网关使用NAT对网关进行IP翻译 , 最后NAT连接到Linux上的eth0网卡 , 进而连接到互联网&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;other&quot;&gt;&lt;a href=&quot;#other&quot; class=&quot;headerlink&quot; title=&quot;other&quot;&gt;&lt;/a&gt;other&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;使用pycharm编码,很有可能导致os.getenv拿不到数据 , 此时重启pycharm即可"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>report1 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/zhangkun-internship/" rel="tag">zhangkun_internship</a></div><div class="post-time">2021-08-29</div></div></div><div class="container post-header"><h1>report1</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask%E4%B8%ADModel%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">Flask中Model的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask%E4%B8%ADDataBase%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">Flask中DataBase的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask%E4%B8%ADTemplate%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text">Flask中Template的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask%E4%B8%ADForm%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.</span> <span class="toc-text">Flask中Form的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask%E5%85%B6%E4%BB%96"><span class="toc-number">5.</span> <span class="toc-text">Flask其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker"><span class="toc-number">6.</span> <span class="toc-text">Docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#other"><span class="toc-number">7.</span> <span class="toc-text">other</span></a></li></ol></details></div><div class="container post-content"><h2 id="Flask中Model的设计"><a href="#Flask中Model的设计" class="headerlink" title="Flask中Model的设计"></a>Flask中Model的设计</h2><ol>
+<li>不能把Model的相关操作写在View里 , 全部写在Model里</li>
+<li>通过编写CRUDMixin类 , 总领CRUD操作 , </li>
+<li>注意要把CRUDMixin类相应的方法改成类方法 , 实现代码的复用</li>
+<li>model的方法 , 尽量返回对象 , 不要返回数据</li>
+<li>model的to_dict方法 , 通过添加filter默认参数 , 让to_dict()方法使得更具拓展性</li>
+<li>session的add和commit通过严谨代码行实现 , 不用rollback , 尽早抛出错误</li>
+<li> 异常压缩问题 : 因为session没有rollback , 可能add了错误的数据 , 导致在下一次commit的时候才抛出异常</li>
+<li>将自定义的方法修改为property , 避免了在template调用model的方法</li>
+</ol>
+<h2 id="Flask中DataBase的设计"><a href="#Flask中DataBase的设计" class="headerlink" title="Flask中DataBase的设计"></a>Flask中DataBase的设计</h2><ol>
+<li>避免使用外键</li>
+<li>postgresql 报错 column doesnot exist : postgrepsql不支持双引号 , 必须使用单引号</li>
+</ol>
+<h2 id="Flask中Template的设计"><a href="#Flask中Template的设计" class="headerlink" title="Flask中Template的设计"></a>Flask中Template的设计</h2><ol>
+<li>单独抽离出navi , 制作成一个macro</li>
+<li>设置navi的参数为 items 和 search=False .使得template更加泛用</li>
+<li>在template中复写父template的block , 提醒这个template中有这个block</li>
+<li>封装<code>&#123;% with errors = field.errors %&#125;</code> , 对于使用了flash和validate的字段 , 就能高效简单的使用field</li>
+</ol>
+<h2 id="Flask中Form的设计"><a href="#Flask中Form的设计" class="headerlink" title="Flask中Form的设计"></a>Flask中Form的设计</h2><ol>
+<li>和Model一样 , 使用FormMixin , 在里面编写通用方法 , 比如通过编写dump2dict()方法 , 直接传给model的create方法就能避免使用popular_obj方法</li>
+<li>BaseForm设计的时候不要有primary key,以支持复用</li>
+</ol>
+<h2 id="Flask其他"><a href="#Flask其他" class="headerlink" title="Flask其他"></a>Flask其他</h2><ol>
+<li>current_app只有在app启动的时候才存在 , celery项目不依赖flask,因此不能使用current_app</li>
+<li>使用celery的项目 , 不能使用flask和内建的logging日志 , 要使用celery_task_logging , 否则无法写入(但是程序不报错)</li>
+<li>Flask处理请求 , 本质就是网络的多路复用 . 类似于新建一条线程 , 这条线程拥有整个上下文环境 , 所以我们在测试的时候需要手动建立上下文环境 . 这也说明了为什么asyncio会获取不到event_loop , 必须新建</li>
+</ol>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><ol>
+<li>win和mac的docker其实是建立在虚拟Linux基础上 ,服务中使用的localhost指的是这个Linux环境的地址，而不是我们的宿主环境 , 因此volume和IP会受影响</li>
+<li>docker-compose的links的本质就是将redis的内部IP写入flask的hosts文件中</li>
+<li>docker-compose的command执行多条命令 , 可以设置前面命令后台最后一条前台</li>
+<li>在bridge模式下 , Docker的容器都是通过veth-pair连接到docker的网关 , 并且docker网关使用NAT对网关进行IP翻译 , 最后NAT连接到Linux上的eth0网卡 , 进而连接到互联网</li>
+</ol>
+<h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><ol>
+<li><p>使用pycharm编码,很有可能导致os.getenv拿不到数据 , 此时重启pycharm即可</p>
+</li>
+<li><p>logging重复打印问题 : </p>
+<p>通过print(app.logger.handlers)，得知register_logging(app)这个初始化函数在执行app.logger.info()的时候依旧会被调用，会再次执行app.logger.addHandler(file_handler)。添加一个if len(app.logger.handlers) &lt; 2，限制添加handler即可</p>
+<p>还有就是 , 千万不要使记事本查看log文件 , 他就只是个视图 , 可能会延迟更新</p>
+</li>
+<li><p>gitlab迁移项目后 , 先删除本地仓库的全部远程连接 , 之后再添加新的远程连接 . 不能直接修改原先的origin.</p>
+</li>
+<li><p>requests.post中json参数和data参数的区别 :</p>
+<p>不管<code>json</code>是<code>str</code>还是<code>dict</code>，如果不指定<code>headers</code>中的<code>content-type</code>，默认为<code>application/json</code> </p>
+<p><code>data</code>为<code>dict</code>时，如果不指定<code>content-type</code>，默认为<code>application/x-www-form-urlencoded</code>，相当于普通form表单提交的形式，此时数据可以从<code>request.POST</code>里面获取，而<code>request.body</code>的内容则为<code>a=1&amp;b=2</code>的这种形式，注意，即使指定<code>content-type=application/json</code>，request.body的值也是类似于<code>a=1&amp;b=2</code>，所以并不能用<code>json.loads(request.body.decode())</code>得到想要的值</p>
+</li>
+<li><p>coverage测试pytest的覆盖率 :coverage run –source=celery_app  -m pytest</p>
+<p>其中 –source 选项和 -m 选项不能颠倒</p>
+</li>
+<li><p>模块设计 : 总共设计三层</p>
+<ol>
+<li>base层 : 此层必须高度抽象,规定必须要实现的方法</li>
+<li>中间层: 实现base层的所有方法</li>
+<li>实现层 : 部分实现中间层的方法</li>
+</ol>
+</li>
+<li><p>连接远程redis : 必须要把conf里的<code>bind</code> 取消注释 , 改为<code>bind 0.0.0.0</code></p>
+</li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

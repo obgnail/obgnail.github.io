@@ -1,0 +1,529 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;es：高扩展的&lt;strong&gt;分布式全文检索引擎&lt;/strong&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ElasticSearch7.6.x教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a></div><div class="post-time">2021-03-06</div></div></div><div class="container post-header"><h1>ElasticSearch7.6.x教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ES%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">3.</span> <span class="toc-text">ES的核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E8%AE%BE%E8%AE%A1%EF%BC%9A%E6%96%87%E6%A1%A3%E3%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%B4%A2%E5%BC%95"><span class="toc-number">3.1.</span> <span class="toc-text">逻辑设计：文档、类型和索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E6%A1%A3"><span class="toc-number">3.1.1.</span> <span class="toc-text">文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.1.2.</span> <span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">3.1.3.</span> <span class="toc-text">索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E8%AE%BE%E8%AE%A1%EF%BC%9A%E8%8A%82%E7%82%B9%E5%92%8C%E5%88%86%E7%89%87"><span class="toc-number">3.2.</span> <span class="toc-text">物理设计：节点和分片</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="toc-number">3.2.1.</span> <span class="toc-text">倒排索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%80%92%E5%BA%8F%E7%B4%A2%E5%BC%95"><span class="toc-number">3.3.</span> <span class="toc-text">什么是倒序索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="toc-number">3.4.</span> <span class="toc-text">倒排索引的内部结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Frame-Of-Reference"><span class="toc-number">3.5.</span> <span class="toc-text">Frame Of Reference</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Roaring-bitmaps"><span class="toc-number">3.6.</span> <span class="toc-text">Roaring bitmaps</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">4.1.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%86%E8%AF%8D"><span class="toc-number">4.2.</span> <span class="toc-text">添加自定义分词</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#es%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">es基础操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#restful-API"><span class="toc-number">5.1.</span> <span class="toc-text">restful API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-number">5.2.</span> <span class="toc-text">文档元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-number">5.3.</span> <span class="toc-text">文档的格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.4.</span> <span class="toc-text">核心数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CURD"><span class="toc-number">5.5.</span> <span class="toc-text">CURD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3"><span class="toc-number">5.5.1.</span> <span class="toc-text">查询文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B0%E5%A2%9E%E6%96%87%E6%A1%A3"><span class="toc-number">5.5.2.</span> <span class="toc-text">新增文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3"><span class="toc-number">5.5.3.</span> <span class="toc-text">更新文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3"><span class="toc-number">5.5.4.</span> <span class="toc-text">删除文档</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95-1"><span class="toc-number">5.6.</span> <span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="toc-number">5.6.1.</span> <span class="toc-text">创建索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="toc-number">5.6.2.</span> <span class="toc-text">删除索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E6%90%9C%E7%B4%A2"><span class="toc-number">5.7.</span> <span class="toc-text">复杂搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%8C%B9%E9%85%8D"><span class="toc-number">5.7.1.</span> <span class="toc-text">简单匹配</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8json%E6%9E%84%E5%BB%BA%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0%E4%BD%93"><span class="toc-number">5.7.2.</span> <span class="toc-text">使用json构建查询参数体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.7.3.</span> <span class="toc-text">多条件查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">5.7.4.</span> <span class="toc-text">过滤器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AB%98%E4%BA%AE"><span class="toc-number">5.7.5.</span> <span class="toc-text">高亮</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#text%E7%B1%BB%E5%9E%8B%E5%92%8Ckeyword%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.7.6.</span> <span class="toc-text">text类型和keyword类型</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>es：高扩展的<strong>分布式全文检索引擎</strong></p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[es@zzf elasticsearch-5.6.14]$ ll</span><br><span class="line">总用量 224</span><br><span class="line">drwxr-xr-x  2 es es   4096 12月  5 21:21 bin</span><br><span class="line">drwxr-xr-x  3 es es     90 1月   7 16:54 config</span><br><span class="line">drwxrwxr-x  3 es es     19 1月   7 16:54 data</span><br><span class="line">drwxr-xr-x  2 es es   4096 12月  5 21:21 lib</span><br><span class="line">-rw-r--r--  1 es es  11358 12月  5 21:17 LICENSE.txt</span><br><span class="line">drwxr-xr-x  2 es es    162 1月   7 17:18 logs</span><br><span class="line">drwxr-xr-x 13 es es    236 12月  5 21:21 modules</span><br><span class="line">-rw-rw-r--  1 es es 194187 12月  5 21:21 NOTICE.txt</span><br><span class="line">drwxr-xr-x  2 es es      6 12月  5 21:21 plugins</span><br><span class="line">-rw-r--r--  1 es es   9491 12月  5 21:17 README.textile</span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Default Location</th>
+<th>Setting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>home</td>
+<td>Elasticsearch的根目录或$ES_HOME</td>
+<td>在解压的时候创建</td>
+<td></td>
+</tr>
+<tr>
+<td>bin</td>
+<td>二进制脚本文件包括elasticsearch启动节点、elasticsearch-plugin安装插件</td>
+<td>$ES_HOME/bin</td>
+<td></td>
+</tr>
+<tr>
+<td>conf</td>
+<td>配置文件 包括elasticsearch.yml</td>
+<td>$ES_HOME/config</td>
+<td>path.conf</td>
+</tr>
+<tr>
+<td>data</td>
+<td>在节点上分配的每个index/shard的数据文件的位置，可以容纳多个位置</td>
+<td>$ES_HOME/data</td>
+<td>path.data</td>
+</tr>
+<tr>
+<td>logs</td>
+<td>日志文件的位置</td>
+<td>$ES_HOME/logs</td>
+<td>path.logs</td>
+</tr>
+<tr>
+<td>plugins</td>
+<td>插件文件的位置，每个插件将包含在其子目录中</td>
+<td>$ES_HOME/plugins</td>
+<td></td>
+</tr>
+<tr>
+<td>repo</td>
+<td>共享文件系统存储库位置。可容纳多个位置。文件系统存储库可以放在这里指定的任何目录的任何子目录中</td>
+<td></td>
+<td>path.repo</td>
+</tr>
+<tr>
+<td>script</td>
+<td>脚本文件的位置</td>
+<td>$ES_HOME/scripts</td>
+<td>path.scripts</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>es开启跨域访问：</p>
+<p>修改conf/elasticsearch.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">http.cors.enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">http.cors.allow-origin:</span> <span class="string">&quot;*&quot;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>启动es后，访问<code>localhost:9200</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot; : &quot;ddc9561d3fb2&quot;,</span><br><span class="line">  &quot;cluster_name&quot; : &quot;docker-cluster&quot;,</span><br><span class="line">  &quot;cluster_uuid&quot; : &quot;dINuppXrR7uosHIyaMtzqQ&quot;,</span><br><span class="line">  &quot;version&quot; : &#123;</span><br><span class="line">    &quot;number&quot; : &quot;7.2.0&quot;,</span><br><span class="line">    &quot;build_flavor&quot; : &quot;default&quot;,</span><br><span class="line">    &quot;build_type&quot; : &quot;docker&quot;,</span><br><span class="line">    &quot;build_hash&quot; : &quot;508c38a&quot;,</span><br><span class="line">    &quot;build_date&quot; : &quot;2019-06-20T15:54:18.811730Z&quot;,</span><br><span class="line">    &quot;build_snapshot&quot; : false,</span><br><span class="line">    &quot;lucene_version&quot; : &quot;8.0.0&quot;,</span><br><span class="line">    &quot;minimum_wire_compatibility_version&quot; : &quot;6.8.0&quot;,</span><br><span class="line">    &quot;minimum_index_compatibility_version&quot; : &quot;6.0.0-beta1&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;tagline&quot; : &quot;You Know, for Search&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ES的核心概念"><a href="#ES的核心概念" class="headerlink" title="ES的核心概念"></a>ES的核心概念</h2><p><strong>集群，节点，索引，类型，文档，分片，映射</strong></p>
+<p>与关系型数据库对比</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>Relational DB</strong></th>
+<th align="left"><strong>Elasticsearch</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">数据库(database)</td>
+<td align="left">索引 index</td>
+</tr>
+<tr>
+<td align="left">表(tables)</td>
+<td align="left">类型 types</td>
+</tr>
+<tr>
+<td align="left">行(rows)</td>
+<td align="left">文档 documents</td>
+</tr>
+<tr>
+<td align="left">字段(columns)</td>
+<td align="left">ﬁelds</td>
+</tr>
+</tbody></table>
+<ul>
+<li>elasticsearch(集群)中可以包含多个索引(数据库)，</li>
+<li>每个索引中可以包含多个类型(表)，</li>
+<li>每个类型下又包 含多个文档(行)，</li>
+<li>每个文档中又包含多个字段(列)。</li>
+</ul>
+<p>物理设计：</p>
+<p>elasticsearch 在后台把每个索引划分成多个<code>分片</code>，每分分片可以在集群中的不同服务器间迁移</p>
+<p>一个人就是一个集群！默认的集群名称就是 elaticsearh</p>
+<p>逻辑设计：</p>
+<p>一个索引类型中，包含多个文档，比如说文档1，文档2。 当我们索引一篇文档时，可以通过这样的一各顺序找到它:</p>
+<blockquote>
+<p>**索引 ▷ 类型 ▷ 文档ID **，</p>
+</blockquote>
+<p>通过这个组合我们就能索引到某个具体的文档。 </p>
+<p>注意:ID不必是整数，实际上它是个字符串。就是我们的一条条数据。</p>
+<h3 id="逻辑设计：文档、类型和索引"><a href="#逻辑设计：文档、类型和索引" class="headerlink" title="逻辑设计：文档、类型和索引"></a>逻辑设计：文档、类型和索引</h3><h4 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h4><p>es是面向文档的。就意味着<strong>索引和搜索数据的最小单位就是文档</strong>。文档简单来说就是一条记录。</p>
+<p>文档的重要属性：</p>
+<ul>
+<li>它是自我包含的：一篇文档同时包含字段和他们的取值。就是说同时包含<code>key:value</code></li>
+<li>它可以是层次型的：文档中还包含新的文档。就是说它就是一个json对象</li>
+<li>它拥有灵活的结构：文档不依赖于预先定义的模式。在关系型数据库中，要提前定义字段才能使用，在es中，对于字段是非常灵活的，我们可以忽略某个字段，活着动态添加一个新的字段。</li>
+</ul>
+<blockquote>
+<p>一篇文档通常是数据的JSON表示。和ES沟通最为广泛使用的方式是HTTP协议的JSON。文档的ID不必非要是个整数。实际上它是个字符串，并没有限制。可以放置任何对应用有意义的字符。ES中的文档是无模式的，也就是说并非所有的文档都需要拥有相同的字段，他们不是受限于同一模式的。</p>
+</blockquote>
+<h4 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h4><ul>
+<li><p>类型是文档的逻辑容器，类似于表格是行的容器。简单来说就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `activity_chart` (</span><br><span class="line">  `uuid` varchar(8) COLLATE latin1_bin NOT NULL COMMENT &#x27;视图 uuid&#x27;,</span><br><span class="line">  `team_uuid` varchar(8) COLLATE latin1_bin NOT NULL COMMENT &#x27;团队 uuid&#x27;,</span><br><span class="line">  `project_uuid` varchar(16) COLLATE latin1_bin NOT NULL COMMENT &#x27;项目 uuid&#x27;,</span><br><span class="line">  `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL COMMENT &#x27;活动视图名称&#x27;,</span><br><span class="line">  `name_pinyin` varchar(256) CHARACTER SET utf8mb4 NOT NULL COMMENT &#x27;活动视图名称&#x27;,</span><br><span class="line">  `owner` varchar(8) COLLATE latin1_bin NOT NULL COMMENT &#x27;创建者 uuid&#x27;,</span><br><span class="line">  `create_time` bigint(20) NOT NULL COMMENT &#x27;创建时间&#x27;,</span><br><span class="line">  `drafting` tinyint(4) NOT NULL COMMENT &#x27;1:是否创建草稿&#x27;,</span><br><span class="line">  `status` tinyint(4) NOT NULL COMMENT &#x27;1:正常 2:删除&#x27;,</span><br><span class="line">  PRIMARY KEY (`uuid`),</span><br><span class="line">  KEY `idx_team_project` (`team_uuid`,`project_uuid`)</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;</span><br></pre></td></tr></table></figure>
+
+<p>里的varchar(8) ，varchar(16)，tinyint(4)</p>
+</li>
+<li><p>类型中，对于字段的定义称为映射。比如name映射为字符串类型。</p>
+</li>
+<li><p>文档是无模式的，也就是说我们不需要为所有字段都做映射。比如添加一个新的字段，namees会自动将新字段加入映射，但是因为这个字段不确定是什么类型，es就会做出猜测。如果这个值是18，那么es就会猜测是整形，但是es也可能没有猜对（例如：如果值是7，ES会假设字段是长整型。在索引了值7之后，可能想再索引hello world，这时由于它是string而不是long，索引就会失败），所以最安全的方式就是提前定义号所需要的映射，这点就和关系型数据库殊途同归了。</p>
+</li>
+</ul>
+<h4 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h4><ul>
+<li>索引是映射类型的容器。一个ES索引非常像关系型世界的数据库，是独立的大量<code>文档集合</code>。</li>
+<li>索引存储了映射类型的字段和其他设置，然后他们被存储到了各个分片上了。</li>
+<li>设置：如，每个索引有一个称为refresh_interval的设置，定义了新近索引的文档对于搜索可见的时间间隔。从性能的角度来看，刷新操作的代价是非常昂贵的，这也是为什么更新只是偶尔进行。默认是每秒更新一次，而不是每来一篇新的文档就更新一次。ES是准实时的。</li>
+</ul>
+<h3 id="物理设计：节点和分片"><a href="#物理设计：节点和分片" class="headerlink" title="物理设计：节点和分片"></a>物理设计：节点和分片</h3><ul>
+<li>一个集群至少有一个节点，而<strong>一个节点就是一个es进程</strong>，节点可以有多个索引。</li>
+<li>默认情况下，如果你创建索引，那么索引将会有5个分片(primary shard,又称主分片)构成，每个主分片会有一个副本(replica shard,又称复制分片)，一共10份分片。</li>
+<li>副本分片对于可靠性和搜索性能很有益处。<strong>一份分片是一个目录中的文件</strong>，Lucene用这些文件存储索引数据。分片也是ES将数据从一个节点迁移到另一个节点的最小单位。</li>
+</ul>
+<p><img src="/images/image-20210303000131304.png" alt="image-20210303000131304"></p>
+<ul>
+<li>上图是一个有3个节点的集群，可以看到主分片和对应的复制分片都不会在同一个节点内（如P0是主要分片，存储在节点1中，但是P1，P2这两个复制切片分别分布在节点3和节点2。R0同理）。如果某个节点挂掉了，数据也不会丢失。</li>
+<li>实际上，一个分片就是一个Lucene索引，一个包含倒排索引的文件目录，倒排索引的结构是的es在不扫描全部文档的情况下，就能告诉你哪些文档包含特定的关键字。</li>
+</ul>
+<p>下图是一个分片，是一个Lucene索引、一个倒排索引。它默认存储原始文档的内容，再加上一些额外的信息，如词条字典和词频。</p>
+<p><img src="/images/1109757-20190602220431199-1393084421.png" alt="img"></p>
+<p>当索引一篇文档时发生了什么：</p>
+<ol>
+<li>首先根据文档ID的散列值选择一个主分片</li>
+<li>并将文档发送到该主分片，这份主分片可能位于另一个节点</li>
+<li>文档被发送到该主分片的所有副本分片进行索引。这使得副本分片和主分片之间保持数据同步。数据同步使得副本分片可以服务于搜索请求，并在原有主分片无法访问时自动升级为主分片。</li>
+</ol>
+<p>搜索索引时发生了什么：</p>
+<p>ES需要在该索引的完整分片集合中进行查找。这些分片可以使主分片，也可以是副本分片，原因是对应的主分片和副本分片通常包含一样的文档。ES在索引的主分片和副本分片中进行搜索请求的负载均衡，使得副本分片对于搜索性能和容错都有所帮助。</p>
+<h4 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h4><blockquote>
+<h3 id="什么是倒序索引"><a href="#什么是倒序索引" class="headerlink" title="什么是倒序索引"></a><strong>什么是倒序索引</strong></h3><p>在没有搜索引擎时，我们是直接输入一个网址，然后获取网站内容，这时我们的行为是：</p>
+<p>document -&gt; to -&gt; words</p>
+<p>通过文章，获取里面的单词，此谓「正向索引」，forward index.</p>
+<p>后来，我们希望能够输入一个单词，找到含有这个单词，或者和这个单词有关系的文章：</p>
+<p>word -&gt; to -&gt; documents</p>
+<p>于是我们把这种索引，成为inverted index，直译过来，应该叫「反向索引」，国内翻译成「倒排索引」，有点委婉了。</p>
+<h3 id="倒排索引的内部结构"><a href="#倒排索引的内部结构" class="headerlink" title="倒排索引的内部结构"></a><strong>倒排索引的内部结构</strong></h3><p>首先，在数据生成的时候，比如爬虫爬到一篇文章，这时我们需要对这篇文章进行分析，将文本拆解成一个个单词。这个过程很复杂，比如“生存还是死亡”，你要如何让分词器自动将它分解为“生存”、“还是”、“死亡”三个词语，然后把“还是”这个无意义的词语干掉。这里不展开，感兴趣的同学可以查看文末关于「分析器」的链接。</p>
+<p>接着，把这两个词语以及它对应的文档id存下来：</p>
+<p>word documentID</p>
+<p>生存 1</p>
+<p>死亡 1</p>
+<p>接着爬虫继续爬，又爬到一个含有“生存”的文档，于是索引变成：</p>
+<p>word documentId</p>
+<p>生存 1,2</p>
+<p>死亡 1</p>
+<p>下次搜索“生存”，就会返回文档ID是 1、2两份文档。</p>
+<p>然而上面这套索引的实现，给小孩子当玩具玩还行，要上生产环境，那还远着。想想看，这个世界上那么多单词，中文、英文、日文、韩文 … 你每次搜索一个单词，我都要全局遍历一遍，很明显不行。于是有了排序，我们需要对单词进行排序，像 B+ 树一样，可以在页里实现二分查找。光排序还不行，你单词都放在磁盘呢，磁盘 IO 慢的不得了，所以 Mysql 特意把索引缓存到了内存。你说好，我也学 Mysql 的，放内存，3，2，1，放，哐当，内存爆了。哪本字典，会把所有单词都贴在目录里的？</p>
+<p>所以，上图：</p>
+<p><img src="/images/v2-b601cbe28ef7c822b393451cf2347e9c_1440w.jpg" alt="img"></p>
+<p>Lucene 的倒排索，增加了最左边的一层「字典树」term index，它不存储所有的单词，只存储单词前缀，通过字典树找到单词所在的块，也就是单词的大概位置，再在块里二分查找，找到对应的单词，再找到单词对应的文档列表。</p>
+<p>当然，内存寸土寸金，能省则省，所以 Lucene 还用了 FST（Finite State Transducers）对它进一步压缩。</p>
+<p>下图是一个分片，是一个Lucene索引、一个倒排索引。它默认存储原始文档的内容，再加上一些额外的信息，如词条字典和词频。</p>
+<p><img src="/images/1109757-20190602220431199-1393084421-20210306163712693.png" alt="img"></p>
+<p>词条字典将每个词条和包含该词条的文档映射起来。搜索的时候，ES没有必要为了某个词条扫描所有的文档，而是根据这个字典快速地识别匹配的文档。<br>词频使得ES可以快速地获取某篇文档中某个词条出现的次数。这对于计算结果的相关性得分非常重要。<br>分片可以使主分片，也可以是副本分片，其中副本分片是主分片的完整副本。副本分片用于搜索，或者在原有主分片丢失后称为新的主分片。<br>ES索引由一个或多个主分片以及零个或多个副本分片构成。副本分片可以在运行的时候进行添加和移除，而主分片不可以。可以在任何时候改变每个分片的副本分片数量，因为副本分片总是可以被创建和移除。这并不适用于索引划分为主分片的数量，在创建索引之前，必须决定主分片的数量。过少的分片将限制可扩展性，但是过多的分片会影响性能。默认设置的5个分片是一个不错的选择。</p>
+<h3 id="Frame-Of-Reference"><a href="#Frame-Of-Reference" class="headerlink" title="Frame Of Reference"></a><strong>Frame Of Reference</strong></h3><p>原生的 Posting List 有两个痛点：</p>
+<ul>
+<li><strong>如何压缩以节省磁盘空间</strong></li>
+<li><strong>如何快速求交并集（intersections and unions）</strong></li>
+</ul>
+<p>先来聊聊压缩。</p>
+<p>我们来简化下 Lucene 要面对的问题，假设有这样一个数组：</p>
+<p>[73, 300, 302, 332, 343, 372]</p>
+<p>如何把它进行尽可能的压缩？</p>
+<p>Lucene 里，数据是按 Segment 存储的，每个 Segment 最多存 65536 个文档 ID， 所以文档 ID 的范围，从 0 到 2^16-1，所以如果不进行任何处理，那么每个元素都会占用 2 bytes ，对应上面的数组，就是 6 * 2 = 12 bytes.</p>
+<p>怎么压缩呢？</p>
+<p><strong>压缩，就是尽可能降低每个数据占用的空间，同时又能让信息不失真，能够还原回来。</strong></p>
+<p><strong>Step 1：Delta-encode —— 增量编码</strong></p>
+<p>我们只记录元素与元素之间的增量，于是数组变成了：</p>
+<p>[73, 227, 2, 30, 11, 29]</p>
+<p><strong>Step 2：Split into blocks —— 分割成块</strong></p>
+<p>Lucene里每个块是 256 个文档 ID，这样可以保证每个块，增量编码后，每个元素都不会超过 256（1 byte）.</p>
+<p>为了方便演示，我们假设每个块是 3 个文档 ID：</p>
+<p>[73, 227, 2], [30, 11, 29]</p>
+<p><strong>Step 3：Bit packing —— 按需分配空间</strong></p>
+<p>对于第一个块，[73, 227, 2]，最大元素是227，需要 8 bits，好，那我给你这个块的每个元素，都分配 8 bits的空间。</p>
+<p>但是对于第二个块，[30, 11, 29]，最大的元素才30，只需要 5 bits，那我就给你每个元素，只分配 5 bits 的空间，足矣。</p>
+<p>这一步，可以说是把吝啬发挥到极致，精打细算，按需分配。</p>
+<p>以上三个步骤，共同组成了一项编码技术，Frame Of Reference（FOR）：</p>
+<p><img src="/images/v2-a3ee78a1dbc82f9d660adcf940b26687_1440w.jpg" alt="img"></p>
+<h3 id="Roaring-bitmaps"><a href="#Roaring-bitmaps" class="headerlink" title="Roaring bitmaps"></a><strong>Roaring bitmaps</strong></h3><p>接着来聊聊 Posting List 的第二个痛点 —— 如何快速求交并集（intersections and unions）。</p>
+<p>在 Lucene 中查询，通常不只有一个查询条件，比如我们的搜索条件为：</p>
+<ul>
+<li>含有“生存”相关词语的文档</li>
+<li>文档发布时间在最近一个月</li>
+<li>文档发布者是平台的特约作者</li>
+</ul>
+<p>这样就需要根据三个字段，去三棵倒排索引里去查，当然，磁盘里的数据，上一节提到过，用了 FOR 进行压缩，所以我们要把数据进行反向处理，即解压，才能还原成原始的文档 ID，然后把这三个文档 ID 数组在内存中做一个交集。</p>
+<blockquote>
+<p>即使没有多条件查询， Lucene 也需要频繁求并集，因为 Lucene 是分片存储的。</p>
+</blockquote>
+<p>同样，我们把 Lucene 遇到的问题，简化成一道算法题。</p>
+<p>假设有下面三个数组：</p>
+<p>[64, 300, 303, 343]</p>
+<p>[73, 300, 302, 303, 343, 372]</p>
+<p>[303, 311, 333, 343]</p>
+<p>求它们的交集。</p>
+<p><strong>Option 1: Integer 数组</strong></p>
+<p>直接用原始的文档 ID ，可能你会说，那就逐个数组遍历一遍吧，遍历完就知道交集是什么了。</p>
+<p>其实对于有序的数组，用跳表（skip table）可以更高效，这里就不展开了，因为不管是从性能，还是空间上考虑，Integer 数组都不靠谱，假设有100M 个文档 ID，每个文档 ID 占 2 bytes，那已经是 200 MB，而这些数据是要放到内存中进行处理的，把这么大量的数据，从磁盘解压后丢到内存，内存肯定撑不住。</p>
+<p><strong>Option 2: Bitmap</strong></p>
+<p>假设有这样一个数组：</p>
+<p>[3,6,7,10]</p>
+<p>那么我们可以这样来表示：</p>
+<p>[0,0,1,0,0,1,1,0,0,1]</p>
+<p>看出来了么，对，<strong>我们用 0 表示角标对应的数字不存在，用 1 表示存在。</strong></p>
+<p>这样带来了两个好处：</p>
+<ul>
+<li>节省空间：既然我们只需要0和1，那每个文档 ID 就只需要 1 bit，还是假设有 100M 个文档，那只需要 100M bits = 100M * 1/8 bytes = 12.5 MB，比之前用 Integer 数组 的 200 MB，优秀太多</li>
+<li>运算更快：0 和 1，天然就适合进行位运算，求交集，「与」一下，求并集，「或」一下，一切都回归到计算机的起点</li>
+</ul>
+<p><strong>Option 3: Roaring Bitmaps</strong></p>
+<p>细心的你可能发现了，bitmap 有个硬伤，就是不管你有多少个文档，你占用的空间都是一样的，之前说过，Lucene Posting List 的每个 Segement 最多放 65536 个文档ID，举一个极端的例子，有一个数组，里面只有两个文档 ID：</p>
+<p>[0, 65535]</p>
+<p>用 Bitmap，要怎么表示？</p>
+<p>[1,0,0,0,….(超级多个0),…,0,0,1]</p>
+<p>你需要 65536 个 bit，也就是 65536/8 = 8192 bytes，而用 Integer 数组，你只需要 2 * 2 bytes = 4 bytes</p>
+<p>呵呵，死板的 bitmap。可见在文档数量不多的时候，使用 Integer 数组更加节省内存。</p>
+<p>我们来算一下临界值，很简单，无论文档数量多少，bitmap都需要 8192 bytes，而 Integer 数组则和文档数量成线性相关，每个文档 ID 占 2 bytes，所以：</p>
+<p>8192 / 2 = 4096</p>
+<p>当文档数量少于 4096 时，用 Integer 数组，否则，用 bitmap.</p>
+<p><img src="/images/v2-1c9f5518671ace1cae24f819cd8c049e_1440w.jpg" alt="img"></p>
+<blockquote>
+<p>这里补充一下 Roaring bitmaps 和 之前讲的 Frame Of Reference 的关系。<br>Frame Of Reference 是压缩数据，减少磁盘占用空间，所以当我们从磁盘取数据时，也需要一个反向的过程，即解压，解压后才有我们上面看到的这样子的文档ID数组：[73, 300, 302, 303, 343, 372] ，接着我们需要对数据进行处理，求交集或者并集，这时候数据是需要放到内存进行处理的，我们有三个这样的数组，这些数组可能很大，而内存空间比磁盘还宝贵，于是需要更强有力的压缩算法，同时还要有利于快速的求交并集，于是有了Roaring Bitmaps 算法。<br>另外，Lucene 还会把从磁盘取出来的数据，通过 Roaring bitmaps 处理后，缓存到内存中，Lucene 称之为 filter cache.</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>es使用的是一个称为倒排索引的结构，采用Lucene倒排索引作为底层。这种结构适用于快速的全文搜索，</li>
+<li>一个索引由文档中所有不重复的列表构成，对于每一个词，都有一个包含他的文档列表。</li>
+</ul>
+<p>例如，现在有两个文档，每个文档包含如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">study every day, good good up to forever    # 文档1包含的内容</span><br><span class="line">To forever, study every day, good good up   # 文档2包含的内容</span><br></pre></td></tr></table></figure>
+
+<p>为了创建倒序索引，我们首先要将每个文档拆分成独立的词（或者称为词条或者tokens），然后创建一个包含<strong>所有不重复</strong>的词条的排序列表，然后列出每个词条出现在哪个文档</p>
+<table>
+<thead>
+<tr>
+<th>term</th>
+<th>doc_1</th>
+<th>doc_2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Study</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>To</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>every</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>Forever</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>Day</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>Study</td>
+<td>n</td>
+<td>y</td>
+</tr>
+<tr>
+<td>Good</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>Every</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>To</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>Up</td>
+<td>y</td>
+<td>y</td>
+</tr>
+</tbody></table>
+<p>现在，我们试图搜索to forever，只需要查看包含每个词条的文档</p>
+<table>
+<thead>
+<tr>
+<th>term</th>
+<th>doc_1</th>
+<th>Doc_2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>To</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>forver</td>
+<td>y</td>
+<td>y</td>
+</tr>
+<tr>
+<td>total</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>两个文档都匹配，但是第一个文档比第二个匹配程度更高，如果没有别的条件，这两个包含关键字的文档都将返回。</p>
+<h2 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h2><p>中文的话使用IK分词器。</p>
+<p>IK提供两个分词器算法：ik_smart和ik_max_word，其中ik_smart为最少切分，ik_max_word为最细粒度划分。</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET _analyze</span><br><span class="line">&#123;</span><br><span class="line">	&quot;analyzer&quot;: &quot;ik_smart&quot;,</span><br><span class="line">	&quot;text&quot;: &quot;中国共产党&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET _analyze</span><br><span class="line">&#123;</span><br><span class="line">	&quot;analyzer&quot;: &quot;ik_max_word&quot;,</span><br><span class="line">	&quot;text&quot;: &quot;中国共产党&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="添加自定义分词"><a href="#添加自定义分词" class="headerlink" title="添加自定义分词"></a>添加自定义分词</h3><ol>
+<li><p>在ik插件的目录下，添加一个<code>user.dic</code>(名字自定)</p>
+</li>
+<li><p>修改<code>ik_analyzer.cfg.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;ext_dict&quot;</span>&gt;</span>user.dic<span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>重启</p>
+</li>
+</ol>
+<h2 id="es基础操作"><a href="#es基础操作" class="headerlink" title="es基础操作"></a>es基础操作</h2><h3 id="restful-API"><a href="#restful-API" class="headerlink" title="restful API"></a>restful API</h3><table>
+<thead>
+<tr>
+<th>method</th>
+<th>url</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PUT</td>
+<td>Localhost:9002/索引名称/类型名称/文档ID</td>
+<td>创建文档（指定文档ID）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>Localhost:9002/索引名称/类型名称</td>
+<td>创建文档（随机文档ID）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>Localhost:9002/索引名称/类型名称/文档ID/_update</td>
+<td>修改文档</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>Localhost:9002/索引名称/类型名称/文档ID</td>
+<td>删除文档</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>Localhost:9002/索引名称/类型名称/文档ID</td>
+<td>查询文档通过文档ID</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>Localhost:9002/索引名称/类型名称/_search</td>
+<td>查询所有数据</td>
+</tr>
+</tbody></table>
+<h3 id="文档元数据"><a href="#文档元数据" class="headerlink" title="文档元数据"></a>文档元数据</h3><ul>
+<li><code>_index</code>：索引类似于关系型数据里面的数据库,它是我们存储和索引关联数据的地方。名字必须是全部小写，不能以下划线开头，不能包含逗号。</li>
+<li><code>_type</code>：在Elasticsearch中，我们使用相同类型(type)的文档表示表，因为他们的数据结构也是相同的。</li>
+<li><code>_id</code>：id仅仅是一个字符串，它与_index和_type组合时，就可以在Elasticsearch中唯一标识一个文档。当创建一个文档，你可以自定义_id，也可以让Elasticsearch帮你自动生成。</li>
+</ul>
+<h3 id="文档的格式"><a href="#文档的格式" class="headerlink" title="文档的格式"></a>文档的格式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">PUT /&#123;index&#125;/&#123;type&#125;/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;field&quot;: &quot;value&quot;,</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">例子:</span><br><span class="line">PUT /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20210306165038014.png" alt="image-20210306165038014"></p>
+<p><img src="/images/image-20210306165254156.png" alt="image-20210306165254156"></p>
+<h3 id="核心数据类型"><a href="#核心数据类型" class="headerlink" title="核心数据类型"></a>核心数据类型</h3><ol>
+<li>字符串类型： text, keyword</li>
+<li>数字类型：<code>long</code>, <code>integer</code>, <code>short</code>, <code>byte</code>, <code>double</code>, <code>float</code>, <code>half_float</code>, <code>scaled_float</code></li>
+<li>日期：date</li>
+<li>日期 纳秒：date_nanos</li>
+<li>布尔型：boolean</li>
+<li>Binary：binary</li>
+<li>Range: <code>integer_range</code>, <code>float_range</code>, <code>long_range</code>, <code>double_range</code>, <code>date_range</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>删除代码的意义为：添加索引website，并且创建数据</p>
+<p>为什么title，text，date不用指定数据类型呢？</p>
+<blockquote>
+<p>因为添加了默认数据类型<code>keyword</code></p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">GET /website/</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">&#123;</span><br><span class="line">  &quot;website&quot; : &#123;</span><br><span class="line">    &quot;aliases&quot; : &#123; &#125;,</span><br><span class="line">    &quot;mappings&quot; : &#123;</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;date&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;date&quot;,</span><br><span class="line">          &quot;format&quot; : &quot;yyyy/MM/dd HH:mm:ss||yyyy/MM/dd||epoch_millis&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;text&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;fields&quot; : &#123;</span><br><span class="line">            &quot;keyword&quot; : &#123;</span><br><span class="line">              &quot;type&quot; : &quot;keyword&quot;,</span><br><span class="line">              &quot;ignore_above&quot; : 256</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;title&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;fields&quot; : &#123;</span><br><span class="line">            &quot;keyword&quot; : &#123;</span><br><span class="line">              &quot;type&quot; : &quot;keyword&quot;,</span><br><span class="line">              &quot;ignore_above&quot; : 256</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;settings&quot; : &#123;</span><br><span class="line">      &quot;index&quot; : &#123;</span><br><span class="line">        &quot;creation_date&quot; : &quot;1615020597956&quot;,</span><br><span class="line">        &quot;number_of_shards&quot; : &quot;1&quot;,</span><br><span class="line">        &quot;number_of_replicas&quot; : &quot;1&quot;,</span><br><span class="line">        &quot;uuid&quot; : &quot;Fk68MxjJSD28VWYmPgRAmw&quot;,</span><br><span class="line">        &quot;version&quot; : &#123;</span><br><span class="line">          &quot;created&quot; : &quot;7020099&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;provided_name&quot; : &quot;website&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="CURD"><a href="#CURD" class="headerlink" title="CURD"></a>CURD</h3><h4 id="查询文档"><a href="#查询文档" class="headerlink" title="查询文档"></a>查询文档</h4><p>想要从Elasticsearch中获取文档，我们使用同样的<code>_index</code>、<code>_type</code>、<code>_id</code>，但是HTTP方法改为GET：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/123?pretty</span><br><span class="line"># 在任意的查询字符串中增加pretty参数，可以美化输出结果.</span><br><span class="line"></span><br><span class="line">返回：</span><br><span class="line">#! Deprecation: [types removal] Specifying types in document get requests is deprecated, use the /&#123;index&#125;/_doc/&#123;id&#125; endpoint instead.</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;123&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;_seq_no&quot; : 0,</span><br><span class="line">  &quot;_primary_term&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;title&quot; : &quot;My first blog entry&quot;,</span><br><span class="line">    &quot;text&quot; : &quot;Just trying this out...&quot;,</span><br><span class="line">    &quot;date&quot; : &quot;2014/01/01&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者使用curl</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GET请求将返回文档的全部，存储在_source参数中。但是可能你感兴趣的字段只是title。请求个别字段可以使用_source参数。多个字段可以使用逗号分隔</span></span><br><span class="line">GET /website/blog/123?_source=title,text</span><br></pre></td></tr></table></figure>
+
+
+
+<p>只得到 <code>_source</code> 字段而不要其他的元数据，你可以这样请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/123/_source</span><br><span class="line"></span><br><span class="line">它仅仅返回:</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">   &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">   &quot;text&quot;:  &quot;Just trying this out...&quot;,</span><br><span class="line">   &quot;date&quot;:  &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="新增文档"><a href="#新增文档" class="headerlink" title="新增文档"></a>新增文档</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="更新文档"><a href="#更新文档" class="headerlink" title="更新文档"></a>更新文档</h4><p>全量替换：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;I am starting to get the hang of this...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/02&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">进行put后_version增加了</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; :  &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot; :    &quot;blog&quot;,</span><br><span class="line">  &quot;_id&quot; :      &quot;123&quot;,</span><br><span class="line">  &quot;_version&quot; : 2,</span><br><span class="line">  &quot;created&quot;:  false &lt;1&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>替换部分属性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/123/_update</span><br><span class="line">&#123;</span><br><span class="line">	&quot;doc&quot;: &#123;</span><br><span class="line">		  &quot;title&quot;: &quot;My second blog entry&quot;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="删除文档"><a href="#删除文档" class="headerlink" title="删除文档"></a>删除文档</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE /website/blog/123</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="索引-1"><a href="#索引-1" class="headerlink" title="索引"></a>索引</h3><h4 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index</span><br><span class="line"></span><br><span class="line">举例：</span><br><span class="line">PUT /my_temp_index</span><br><span class="line">&#123;</span><br><span class="line">  &quot;settings&quot;: &#123;</span><br><span class="line">  &quot;number_of_shards&quot; : 1,</span><br><span class="line">  &quot;number_of_replicas&quot; : 0</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>就像mysql的create table一样可以创建一个scheme，es也可以给索引添加数据类型的映射</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">PUT this_is_my_index</span><br><span class="line">&#123;</span><br><span class="line">	&quot;mappings&quot;: &#123;</span><br><span class="line">		&quot;properties&quot;: &#123;</span><br><span class="line">			&quot;name&quot;: &#123;</span><br><span class="line">				&quot;type&quot;: &quot;text&quot;</span><br><span class="line">			&#125;,</span><br><span class="line">			&quot;age&quot;: &#123;</span><br><span class="line">				&quot;type&quot;: &quot;long&quot;</span><br><span class="line">			&#125;,</span><br><span class="line">			&quot;birthday&quot;: &#123;</span><br><span class="line">				&quot;type&quot;: &quot;date&quot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，this_is_my_index就有三个字段name，age，birthday。数据类型分别为text,long,date</p>
+<h4 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DELETE /my_index</span><br><span class="line"></span><br><span class="line">删除多个索引</span><br><span class="line">DELETE /index_one,index_two</span><br><span class="line">DELETE /index_*</span><br><span class="line"></span><br><span class="line">删除多个索引</span><br><span class="line">DELETE /_all</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="复杂搜索"><a href="#复杂搜索" class="headerlink" title="复杂搜索"></a>复杂搜索</h3><p>对于数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;I am starting to get the hang of this...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/02&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="简单匹配"><a href="#简单匹配" class="headerlink" title="简单匹配"></a>简单匹配</h4><p>我们可以使用如下复杂搜索：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_search?q=title=&quot;first&quot;</span><br><span class="line"></span><br><span class="line">或者：</span><br><span class="line">GET /website/blog/_search?q=title=&quot;first&quot;,text=&quot;am&quot;</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">#! Deprecation: [types removal] Specifying types in search requests is deprecated.</span><br><span class="line">&#123;</span><br><span class="line">  &quot;took&quot; : 5,</span><br><span class="line">  &quot;timed_out&quot; : false,</span><br><span class="line">  &quot;_shards&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : 1,</span><br><span class="line">    &quot;successful&quot; : 1,</span><br><span class="line">    &quot;skipped&quot; : 0,</span><br><span class="line">    &quot;failed&quot; : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;hits&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : &#123;</span><br><span class="line">      &quot;value&quot; : 1,</span><br><span class="line">      &quot;relation&quot; : &quot;eq&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;max_score&quot; : 0.2876821,</span><br><span class="line">    &quot;hits&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;123&quot;,</span><br><span class="line">        &quot;_score&quot; : 0.2876821,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;title&quot; : &quot;My first blog entry&quot;,</span><br><span class="line">          &quot;text&quot; : &quot;Just trying this out...&quot;,</span><br><span class="line">          &quot;date&quot; : &quot;2014/01/01&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="使用json构建查询参数体"><a href="#使用json构建查询参数体" class="headerlink" title="使用json构建查询参数体"></a>使用json构建查询参数体</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_search</span><br><span class="line">&#123;</span><br><span class="line">	&quot;query&quot;: &#123;</span><br><span class="line">		&quot;match&quot;: &#123;</span><br><span class="line">			&quot;title&quot;: &quot;fitst&quot;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	&quot;sort&quot;: [</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;age&quot;: &#123;</span><br><span class="line">				&quot;order&quot;: &quot;asc&quot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	&quot;_source&quot;: [&quot;title&quot;,&quot;date&quot;],</span><br><span class="line">	&quot;from&quot;: 0,</span><br><span class="line">	&quot;size&quot;: 100,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Query：查询参数条件</li>
+<li>sort：排序</li>
+<li>_source：结果过滤</li>
+<li>from，size：分页</li>
+</ul>
+<h4 id="多条件查询"><a href="#多条件查询" class="headerlink" title="多条件查询"></a>多条件查询</h4><p>查询条件：</p>
+<ul>
+<li>必须有两个匹配，</li>
+<li>第一个匹配是：属性name必须匹配到thisismyname</li>
+<li>第二个匹配是：属性age必须匹配到3</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;must&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;thisismyname&quot;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;age&quot;</span>: <span class="number">3</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键字说明：</p>
+<ul>
+<li>must：类似于and</li>
+<li>should：类似于or</li>
+<li>Must_not：类似于not</li>
+</ul>
+<blockquote>
+<p>Mutch：使用分词器进行解析，所以并不是精确匹配</p>
+<p>term：使用倒排索引进行解析，是精确匹配</p>
+</blockquote>
+<h4 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;match&quot;: &#123;</span><br><span class="line">            &quot;name&quot;: &quot;thisismyname&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      &quot;filter&quot;: &#123;</span><br><span class="line">      	&quot;range&quot;: &#123;</span><br><span class="line">      		&quot;age&quot;: &#123;</span><br><span class="line">      			&quot;gte&quot;: 10;</span><br><span class="line">      			&quot;lte&quot;: 20</span><br><span class="line">      		&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="高亮"><a href="#高亮" class="headerlink" title="高亮"></a>高亮</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;match&quot;: &#123;</span><br><span class="line">            &quot;name&quot;: &quot;thisismyname&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      “hightlight”: &#123;</span><br><span class="line">      	&quot;pre_tags&quot;: &quot;&lt;p class=&#x27;key&#x27; style=&#x27;red&#x27;&gt;&quot;,</span><br><span class="line">      	&quot;post_tags&quot;: &quot;&lt;/p&gt;&quot;,</span><br><span class="line">      	&quot;fields&quot;: &#123;</span><br><span class="line">      		&quot;name&quot;: &#123;&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="text类型和keyword类型"><a href="#text类型和keyword类型" class="headerlink" title="text类型和keyword类型"></a>text类型和keyword类型</h4><ul>
+<li>text类型会被分词器解析</li>
+<li>keyword类型不会被分词器解析</li>
+</ul>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

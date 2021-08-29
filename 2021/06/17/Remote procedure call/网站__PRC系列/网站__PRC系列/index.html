@@ -1,0 +1,274 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;内容组织约定&quot;&gt;&lt;a href=&quot;#内容组织约定&quot; class=&quot;headerlink&quot; title=&quot;内容组织约定&quot;&gt;&lt;/a&gt;内容组织约定&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/images/db31a4b5-v2-028ce32b515adab9815ce2d32778b156_1440w.jpg&quot; alt=&quot;img&quot;&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>PRC系列 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Remote-procedure-call/" rel="tag">Remote procedure call</a></div><div class="post-time">2021-06-17</div></div></div><div class="container post-header"><h1>PRC系列</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E7%BB%84%E7%BB%87%E7%BA%A6%E5%AE%9A"><span class="toc-number">1.</span> <span class="toc-text">内容组织约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3rabbitmq%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0rpc"><span class="toc-number">2.</span> <span class="toc-text">理解rabbitmq如何实现rpc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8D%8F%E5%95%86%E8%B0%83%E7%94%A8%E8%AF%AD%E4%B9%89"><span class="toc-number">2.1.</span> <span class="toc-text">如何协商调用语义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E7%BB%93%E6%9E%9C%E4%BC%A0%E9%80%92%E5%9B%9E%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">2.2.</span> <span class="toc-text">如何将结果传递回客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC%E6%A1%86%E6%9E%B6%E7%9A%84%E6%A0%B8%E5%BF%83%E8%81%8C%E8%B4%A3"><span class="toc-number">3.</span> <span class="toc-text">RPC框架的核心职责</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC%E4%BD%BF%E7%94%A8protobuf%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">4.</span> <span class="toc-text">RPC使用protobuf的好处</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#protobuf%E7%BC%96%E8%A7%A3%E7%A0%81%E8%AF%A6%E8%A7%A3"><span class="toc-number">4.1.</span> <span class="toc-text">protobuf编解码详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#T-V"><span class="toc-number">4.1.1.</span> <span class="toc-text">T - V</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T-L-V"><span class="toc-number">4.1.2.</span> <span class="toc-text">T - L - V</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#protobuf%E5%92%8Cjson%E4%BC%98%E7%BC%BA%E7%82%B9%E5%AF%B9%E6%AF%94"><span class="toc-number">4.2.</span> <span class="toc-text">protobuf和json优缺点对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gPRC%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%B5%8B%E8%83%BD%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F"><span class="toc-number">5.</span> <span class="toc-text">gPRC框架如何赋能分布式系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E7%9A%84%E9%80%9A%E4%BF%A1%E9%9C%80%E6%B1%82"><span class="toc-number">5.1.</span> <span class="toc-text">业务系统的通信需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E5%BA%94%E8%83%BD%E5%8A%9B"><span class="toc-number">5.2.</span> <span class="toc-text">适应能力</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="toc-number">5.2.1.</span> <span class="toc-text">服务发现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">5.2.2.</span> <span class="toc-text">负载均衡</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98"><span class="toc-number">5.3.</span> <span class="toc-text">关键问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E8%83%BD%E5%8A%9B"><span class="toc-number">5.4.</span> <span class="toc-text">扩展能力</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6"><span class="toc-number">5.4.1.</span> <span class="toc-text">1. 自定义插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE-%E8%B0%83%E7%94%A8%E6%97%B6%E9%80%9A%E8%BF%87-option%E6%B3%A8%E5%85%A5"><span class="toc-number">5.4.2.</span> <span class="toc-text">2. 配置 - 调用时通过 option注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%8B%A6%E6%88%AA%E5%99%A8-Interceptor-%EF%BC%8C%E6%9C%89%E4%BA%9B%E4%B9%9F%E7%A7%B0middleware"><span class="toc-number">5.4.3.</span> <span class="toc-text">3. 拦截器(Interceptor)，有些也称middleware</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%8F%E8%94%BD%E7%BB%86%E8%8A%82"><span class="toc-number">5.5.</span> <span class="toc-text">屏蔽细节</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="内容组织约定"><a href="#内容组织约定" class="headerlink" title="内容组织约定"></a>内容组织约定</h2><p><img src="/images/db31a4b5-v2-028ce32b515adab9815ce2d32778b156_1440w.jpg" alt="img"></p>
+<ul>
+<li>Stub会负责封装命令和参数，并以特定的数据格式进行打包。</li>
+<li>其中命令、参数和返回值的需要客户端和服务端的Stub事先进行协商，双方都需要维护一份完全一样的方法及参数列表。更进一步需要知道对方如何进行压缩打包，如何压缩结构体，如何压缩Class等等，并严格按照标准进行解压缩，中途有任何一丝的差错都会的导致调用失败。所以一般情况下可能会对数据进行一定的校验，同时要协商方法、参数等错误时如何返回。 </li>
+<li>这是一个比较繁杂的过程，混合了<code>调用语法</code>和 <code>内容解压缩</code>两部分内容，可被理解为<code>如何组织内容</code>的问题。</li>
+</ul>
+<h2 id="理解rabbitmq如何实现rpc"><a href="#理解rabbitmq如何实现rpc" class="headerlink" title="理解rabbitmq如何实现rpc"></a>理解rabbitmq如何实现rpc</h2><p>rabbitmq为rpc调用提供了很好的支持。</p>
+<p>一般和rabbitmq的交互场景是发布或消费消息，是一个单向的过程，而rpc却是一种同步的双向交互过程，在使用上有些差异。</p>
+<h3 id="如何协商调用语义"><a href="#如何协商调用语义" class="headerlink" title="如何协商调用语义"></a>如何协商调用语义</h3><p>mq中的消息是从exchange分发到queue中，消费端在特定的queue中获取消息，rpc的请求依然要走这条路径: <code>方法调用-&gt;exchange-&gt;queue-&gt;方法执行</code>。</p>
+<p>创建一个direct类型的exchange，<strong>让每个rpc方法对应一个queue</strong>，这个exchange通过routing_key分发到对应的queue中， 让特定的消费者来实际执行rpc方法。这样rpc方法的语义就通过queue来约定，而方法的参数，可以放入消息中。</p>
+<h3 id="如何将结果传递回客户端"><a href="#如何将结果传递回客户端" class="headerlink" title="如何将结果传递回客户端"></a>如何将结果传递回客户端</h3><p><code>方法调用-&gt;exchange-&gt;queue-&gt;方法执行</code>, 这条路是单行道，方法执行端执行完rpc方法后不能按照原路将结果返回给客户端。要实现结果回传，就得再开辟一条<code>结果回传端-&gt;exchange-&gt;queue-&gt;结果等待端</code>路径，一条用来发送rpc请求，另一条用来回传rpc结果，方法调用者和方法执行者都会扮演生产者和消费者。</p>
+<p><img src="/images/5e12e056-v2-7226efbfd0657f4f23a922bc4ac26c32_1440w.jpg" alt="img"></p>
+<p>rabbitmq中有<code>回调队列(Callback queue)</code>来实现<code>调用结果</code>回传，同时有<code>关联ID(Correlation Id)</code>来唯一标识每一份<code>调用结果</code>。</p>
+<p>rpc调用方在发送请求时，会在数据中带上回调队列信息(routing_key)和关联ID，rpc执行方在执行完方法后，就将关联ID掺入执行结果中，并将结果通过exchange发往回调队列(通过routing_key)。 rpc调用方在发送请求后，紧接着在设置的回调队列中等结果就行。 整个过程(两条路径)共用同一个exchange。</p>
+<p>调用参数和调用结果的打包可以用JSON，protobuf等等，协商一致即可。</p>
+<ul>
+<li>使用mq实现rpc，有其独有的优势，rpc执行端可以轻松地横向扩展，rpc调用方也不用考虑负载均衡，沿袭了mq解耦的优点。</li>
+<li>不过对于调用超时，执行端崩溃等等情况得做额外处理。调用方在等待结果时需要设置超时间，高性能的rpc调用还需要调用方能异步高效地通过关联ID将请求结果储存起来，等待调用者获取。</li>
+</ul>
+<h2 id="RPC框架的核心职责"><a href="#RPC框架的核心职责" class="headerlink" title="RPC框架的核心职责"></a>RPC框架的核心职责</h2><p>RPC从抽象的角度来看:</p>
+<ul>
+<li>具有需要约定调用语法</li>
+<li>需要约定内容编码方式</li>
+<li>需要网络传输</li>
+</ul>
+<p>RPC作为分布式系统的桥梁，得需要进行工程落地，这就是<code>RPC框架</code>的核心职责。其要解决的问题有：</p>
+<ul>
+<li>集成服务发现的能力</li>
+<li>负载均衡、限流、熔断等常规操作</li>
+<li>服务方并发能力、稳定性</li>
+<li>请求方资源利用、池化、容错等</li>
+</ul>
+<h2 id="RPC使用protobuf的好处"><a href="#RPC使用protobuf的好处" class="headerlink" title="RPC使用protobuf的好处"></a>RPC使用protobuf的好处</h2><p>RPC有三大特点：</p>
+<ul>
+<li>具有需要约定调用语法</li>
+<li>需要约定内容编码方式</li>
+<li>需要网络传输</li>
+</ul>
+<p>在这方面，RPC框架都有以下几个目标：</p>
+<ul>
+<li>尽可能快地序列化、反序列化</li>
+<li>序列化后的体积越小越好</li>
+<li>跨语言，和语言无关</li>
+<li>简单、类型明确</li>
+<li>易扩展，可以简单的迭代，向后兼容</li>
+</ul>
+<p>所有RPC框架都是在围绕这几个点不断优化，以更优的方案，达到更低的成本，更快的速度。要想达到这个目的，<code>内容编码方式</code>就是一个非常重要的点，RPC调用的request和response内容在调用过程中有着不小的消耗：</p>
+<ul>
+<li>内容的序列化、反序列化，如果效率更高，则对CPU消耗会更小</li>
+<li>内容会在网络中传输，协议栈拷贝成本、带宽成本、GC等。体积越小，效率越高</li>
+</ul>
+<p>作为一个以跨语言为目标的序列化方案，protobuf能做到一份.proto文件走天下，不管什么语言，都能以同一份proto文件作为约定，不用A语言写一份，B语言写一份，各个依赖的服务将proto文件原样拷贝一份即可。</p>
+<blockquote>
+<p>为什么选择protobuf，而不是普及最广的json作为编码方案？ 可以做一个直观对比，以上文proto中的Response为例，一次输出json的结果是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&#123;\&quot;ids\&quot;:[123,456],\&quot;info\&quot;:&#123;\&quot;is_man\&quot;:true,\&quot;age\&quot;:20&#125;,\&quot;values\&quot;:&#123;\&quot;110\&quot;:&#123;\&quot;is_man\&quot;:false,\&quot;age\&quot;:18&#125;&#125;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>所有内容被打包成了一个字符串，里面包含字段名、value，当Reponse很大时，体积消耗很大，浪费主要在三个方面：</p>
+<ul>
+<li>字段名，例如上面的“ids”、“info”等，如果json体大，则重复会更多</li>
+<li>数字用字符串表达了，例如123数字变成了“123”，这在编码后体积由一个字节变成三字节</li>
+<li>类型字符，如[ 、 ]、{ 、}</li>
+</ul>
+<p>但如果是protobuf呢？ 输出是一段人眼无法理解的二进制串，里面：</p>
+<ul>
+<li>去掉了字段名，转而以字段标号替代，通过标号可以在proto中找到字段名</li>
+<li>没有类型字符等</li>
+<li>用二进制表达内容，不会将数字转成字符串</li>
+<li>字段值按顺序依次排列</li>
+</ul>
+<p>这使得protobuf的编码结果体积，通常是<strong>json编码后的十分之一以下</strong>。同时由于排列简单，其解析算法的时空复杂度远小于json，对cpu消耗也小很多。这使得protobuf在大数据量、高频率的数据交互场景下，远胜于json，被大规模分布式RPC场景广泛使用。</p>
+</blockquote>
+<h3 id="protobuf编解码详解"><a href="#protobuf编解码详解" class="headerlink" title="protobuf编解码详解"></a>protobuf编解码详解</h3><p>为什么它能有这个好的压缩效果？ 我们先从编码的角度来思考，如何对一个对象进行编解码。以json编码为例，当遇到下一个字段用<code>,</code>隔开就行，遇到下一层级用<code>&#123;</code>表示，这样可以将内容依次铺开成一个完整的字符串。解析时按照<code>&#123; , &#125;</code>等字符也能原样还原字段和层次结构。</p>
+<p>但protobuf为了减小体积不能使用这些分隔符，抛几个问题：</p>
+<ul>
+<li>它该怎么<code>分隔字段</code>、<code>表达层次结构</code>呢？</li>
+<li>字段value一般分为两种，一种是定长的，例如一个int，它最多4个字节；第二种是变长的，如字符串，你不知道它在哪儿结束。该如何表示？</li>
+<li>对于定长的int，如果对应值是1，那用4个字节表达是不是有些浪费，该如何节省？</li>
+</ul>
+<p>对于此，protobuf将数据类型做了**分类(Wire Type)**，并提供不同的编解码方式：</p>
+<p><img src="/images/b0bfbd88-v2-f6a2de235faaf1e58b365bce15dd4b70_1440w.jpg" alt="img"></p>
+<p>值得关注的有两种：</p>
+<ul>
+<li>Varint，解决定长类型的空间浪费，例如值为1的int32只用1字节，避免用四字节，达到压缩的效果。存储方式为 T - V</li>
+<li>Length-delimi，用来表达长度不定的内容，如string、嵌套数据、数组。 存储方式为T - L - V</li>
+</ul>
+<h4 id="T-V"><a href="#T-V" class="headerlink" title="T - V"></a>T - V</h4><p>T - V 的含义是：</p>
+<ul>
+<li>T： tag，包含两部分数据： 对应字段的Wire Type(这可以知道是那种分类)， 字段的<strong>数字标号</strong>(tagNum)(可以在proto中找到是哪个字段，<strong>这样就避开了传字段名</strong>)。其打包方式是： <strong>(tagNum&lt;&lt;3) | WireType</strong></li>
+<li>如果在proto中没有找到对应的tagNum则会跳过，这样提供了兼容能力</li>
+<li>V： value, 对应字段的值，解析了T，就知道value表达的是哪个字段、什么类型、如何解析了</li>
+</ul>
+<p>protobuf编码的结果就是一组组 <code>T-V</code>对依次紧凑排列，message有几个字段，就有几对。对于特定的RPC请求，proto中是有明确的请求、回复 message定义的，将T-V对去套对应的message，即可解析出对象。</p>
+<p><img src="/images/2374eda5-v2-9307979d5562679889895d6d4f614298_1440w.jpg" alt="img"></p>
+<p>紧接着上文预留的一个问题不可跳过，紧凑排列的T-V对，是如何进行分隔的？：</p>
+<ul>
+<li>如何分隔 T 和 V，该从哪个解析V ？</li>
+<li>如何分隔 T-V对，该从哪儿开始解析下一对？</li>
+</ul>
+<p>T - V 对是一堆紧凑排列二进制串，里面没有分隔符，其解决方案是：</p>
+<ul>
+<li>征用了每个字节的最高位，如果最高位是1，说明数据没解析完，下个字节还要继续解析，如果字节高位是0，说明当前T或V解析完了，下一个字节开始是其他的T或V</li>
+<li>类小端排列，高位在右，低位左</li>
+<li>小于 128 的数字 都可以用 1个字节 表示（用8个bit表达7个bit，一bit当作标志位）</li>
+<li>大于 128 的数字，比如 300(00000001 00101100)，会用两个字节来表示：10101100 00000010 (类小端)</li>
+</ul>
+<p>T - V 编码举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">message request &#123;</span><br><span class="line">    int63 user_id = 1; // tagNum = 1, wireType = 0, </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">假设 value为 2, 则编码出的T-V为： </span><br><span class="line">+-----+---+-----------------+</span><br><span class="line">|00001|000|00000010         |</span><br><span class="line">+-----+---+-----------------+</span><br><span class="line">tagNum type   data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">假设 value为 300, 则编码出的T-V为： </span><br><span class="line"> 第一个字节    第二       第三</span><br><span class="line">+-----+---+-----------------------+</span><br><span class="line">|00001|000| 10101100  00000010    | 下个T-V</span><br><span class="line">+-----+---+-----------------------+</span><br><span class="line">tagNum type     data</span><br><span class="line"></span><br><span class="line">Tag高位=0： 一个byte</span><br><span class="line">data的第一个字节最高位为1，说明下一个字节还要继续读</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/194f3043-v2-7db01764d706afc9207c2fdf16f379c2_1440w.jpg" alt="img"></p>
+<h4 id="T-L-V"><a href="#T-L-V" class="headerlink" title="T - L - V"></a>T - L - V</h4><p>T - L - V 就是在上面的基础上增加了length，用来表达变长的内容：</p>
+<p><img src="/images/66d9166f-v2-c0be84d5b666b24c48ef4096c67a2336_1440w.jpg" alt="img"></p>
+<p>由于是变长，例如数组、嵌套对象，有多个value，此时就无法通过最高位是否是1，来表示该字段是否解析完毕，必须要在value前增加一个length，其他都和T-V一样。</p>
+<p>接下来我们学习两个点：</p>
+<ul>
+<li>数组如何表达</li>
+<li>嵌套对象如何表达</li>
+</ul>
+<p>数组的表达其实比较简单，就是同一个T不断的重复(tagNum和wireType不变)，解析对应的V就行，然后组成一个数组：</p>
+<p><img src="/images/457432d5-v2-1653c988a92942d94c67d46b0b29852f_1440w.jpg" alt="img"></p>
+<p>嵌套对象稍微复杂点，每个value都能找到一个message去套，逐层解就行了：</p>
+<p><img src="/images/b68cec2a-v2-ae2ac0d6550dddf6d3c5e7ddae038b06_1440w.jpg" alt="img"></p>
+<p>嵌套对象编码举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">message request &#123;</span><br><span class="line">    User user = 1; // tagNum = 1, wireType = 2, </span><br><span class="line">&#125;</span><br><span class="line">message User &#123;</span><br><span class="line">    int64 user_id = 1; // tagNum = 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">假设 request = &#123; user_id: 2&#125;, 则编码出的T-L-V为： </span><br><span class="line">    Tag     length        value</span><br><span class="line">                       Tag      value</span><br><span class="line">+---------+--------+---------+---------</span><br><span class="line">|00001010 |00000010|000010000|00000010|</span><br><span class="line"> 1&lt;&lt;3 | 2   2 byte   1&lt;&lt;3 | 0    2</span><br><span class="line"></span><br><span class="line">通过解request 知道第一个字段是User，再拿到第一个字段的value去解User，</span><br><span class="line">知道User第一个字段是int64，解析出data为2。 一个嵌套对象即解析完毕</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="protobuf和json优缺点对比"><a href="#protobuf和json优缺点对比" class="headerlink" title="protobuf和json优缺点对比"></a>protobuf和json优缺点对比</h3><p>可以看出protobuf优点有：</p>
+<ul>
+<li>没有打包无用的数据，排列紧凑，体积小，利于传输</li>
+<li>解析策略简单，序列化/反序列化 速度快</li>
+<li>能较好的兼容字段(不能解析到的会跳过)</li>
+</ul>
+<p>但缺点也非常明显：</p>
+<ul>
+<li>肉眼看不出来value是什么，无法自描述， 难以debug</li>
+<li>需要proto文件才能知道如何解析，否则是天书，这在灵活性上不如json</li>
+</ul>
+<p>其实在本质上其差别在于：<strong>json的设计是给人看的，protobuf则是利于机器</strong>。</p>
+<h2 id="gPRC框架如何赋能分布式系统"><a href="#gPRC框架如何赋能分布式系统" class="headerlink" title="gPRC框架如何赋能分布式系统"></a>gPRC框架如何赋能分布式系统</h2><p>分布式场景下，系统中的子系统或模块间需要相互通信，或传递信号，或传输数据。这就自然导致了RPC的诞生。</p>
+<p>这种通信场景可以简单分为三类：</p>
+<ol>
+<li>集群间的通信。如Redis集群基于gossip的数据交换，一般直接基于TCP，一般会收敛于子系统内部。</li>
+<li>数据传输。应用读写MySQL、Redis等数据系统，一般直接基于TCP，场景定制性高。</li>
+<li>消息传递。<strong>微服务之间相互接口调用</strong>。这种偏上层业务，需要适应复杂繁多的场景，并提供高度的可复用性、适应性、扩展性。所以一般会基于TCP再做一层封装，如HTTP2。</li>
+</ol>
+<p>到此，我们可以从分布式系统的角度发现： <strong>RPC是分布式系统通信的一种工具。</strong></p>
+<p>而gRPC则是这种分布式系统通信场景中，偏上层应用的一种通信工具，也就是上面的第3类，我们且称为<code>业务型分布式系统</code>。</p>
+<p>实际上，<strong>gRPC就是微服务类系统间通信的核心工具</strong>。接下来着眼于微服务系统的通信需求，看gRPC是如何为其赋能的。</p>
+<p>所谓赋能，用人话来讲，就是<strong>能低成本大规模使用</strong>，一般就几个需求：</p>
+<ul>
+<li>有良好的适应能力。对于部分核心能力可以通过插件实现定制化能力，适应不同的环境。</li>
+<li>提供关键性问题解决方案。例如高效率的并发模型、加密、压缩等等。</li>
+<li>有足够的扩展能力。能通过配置、注入等方式灵活实现扩展功能或开启部分功能。</li>
+<li>足够简单。屏蔽底层细节，能无脑上手使用，不需要懂http2、protobuf、IO模型等等是什么</li>
+</ul>
+<h3 id="业务系统的通信需求"><a href="#业务系统的通信需求" class="headerlink" title="业务系统的通信需求"></a>业务系统的通信需求</h3><p>分布式系统中服务的相互调用看似复杂，其实<strong>本质就是两个点间的点对点通信</strong>，点与点相互连接串起一张网。</p>
+<p>点与点通信进一步拆解后，在微观可以分为<code>调用方</code>和<code>服务方</code>的关系，大部分情况下就是单向调用，在stream模式下可升级为相互调用，但每一次调用都不会逃离<code>调用方</code>和<code>服务方</code>两个角色。</p>
+<p>当A要调用B时，问题就来了。</p>
+<h3 id="适应能力"><a href="#适应能力" class="headerlink" title="适应能力"></a>适应能力</h3><h4 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h4><ul>
+<li>A要能得知B的可调用地址</li>
+<li>B的部署方式可能多种多样</li>
+</ul>
+<p>B可能是以微服务的形式注册，通过注册中心可以拉到其节点列表，不同的公司注册中心实现也千差万别。但也可能是只暴露出了一个代理的地址(如Nginx/lvs)，甚至实现了传统的DNS模式。</p>
+<p>业务发展过程中什么情况都可能有，大概率是一个大杂烩。gRPC作为一个落地的框架就必须要有足够的适应能力，覆盖繁杂的情形，通过提供自定义接入能力(插件)，以适应复杂的环境。</p>
+<p>为此gRPC仿造RFC的标准设计了一套名称发现协议，一个服务的标示可以表示如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scheme://authority/endpoint_name</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>scheme 表示要使用的名称系统，例如DNS，或一套自己的服务发现系统，例如ectd、Eureka、consul，或任意自研服务发现系统的名字。</li>
+<li>authority 表示一些特定于方案的引导信息，例如对于DNS，authority可以提供一个解析endpoint_name的地址，相当于DNS服务器。(一般在DNS模式下才有用)</li>
+<li>endpoint_name 表示一个服务的具体名字。例如 login-service</li>
+</ul>
+<blockquote>
+<p>例如使用DNS时，B服务的地址可以设计为：<code>dns://somedns.com/addrOfServerB</code>，其内涵为B服务通过dns这种名称系统来发现，<strong>B具体的地址可以定时轮询somedns.com得知</strong>(带上参数addrOfServerB)，</p>
+<p>实际请求发往解析得到的具体IP:port，这套机制即可满足上面我们说的暴露代理地址的模式。</p>
+</blockquote>
+<p>而常规的微服务模式则是有一个<code>服务注册中心</code>，<strong>B服务的实例启动后将自己注册到服务中心</strong>，调用方通过服务中心拉取到可调用地址。</p>
+<p>目前的技术现状是，每个公司都恨不得自己搞一套服务注册系统。<strong>通过插件接入对接自己的服务发现系统是不可绕过的刚需</strong>。</p>
+<p>假设我们这套服务注册中名字为discovery，那B服务的地址也可以表示为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">discovery://someauthority/appID_B</span><br></pre></td></tr></table></figure>
+
+<p>B服务的可用地址通过discovery来获取。 具体怎么获取呢？gRPC其实将这种能力完全外放了。提供了名称系统注册能力，实际上就是一个interface:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Builder <span class="keyword">interface</span> &#123;</span><br><span class="line">    Build(target Target, cc ClientConn, opts BuildOptions) (Resolver, error)</span><br><span class="line">    Scheme() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册一个名称系统</span></span><br><span class="line">resolver.Register(&amp;Builder&#123;scheme: <span class="string">&quot;discovery&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>向B服务发送请求前，会解析出<code>discovery://someauthority/appID_B</code>中的scheme，并用使用对应注册的名称系统来获取可调用的节点。相当于gRPC将这部分能力外放出去了。</p>
+<p>具体如何通过appID_B去获取可调用的地址列表，gRPC不管，由使用方自己实现。当部署节点发生变化时，调用gRPC的接口(NewAddress/UpdateState)通知其即可。</p>
+<p>简单理解为以下过程：</p>
+<ol>
+<li>注册一个名称系统的实例到gRPC （一般启动时注册, 可以注册任意数量）</li>
+<li>A 通过gRPC调用B时，gRPC会解析出B的scheme，从注册的名称系统获得可用的服务地址列表，一般是一批 IP:port （IP:port如何得到gRPC不关心，使用方根据自身情况实现即可）</li>
+<li>gRPC针对IP:port建立网络连接</li>
+<li>gRPC将请求发出去，接收回复</li>
+</ol>
+<p>通过上面的方式，使用方按照<code>scheme://authority/endpoint_name</code>定好服务名字，并实现相应的接口(可调用地址的获取、变更等)，注册到gRPC，便可以适应复杂的分布式调用场景。</p>
+<p>假设某个公司由于山头过多，实现了多个服务发现系统，短时间内还难以统一，服务分散注册到这几个系统。在用gRPC时，也能轻松应对。</p>
+<p>服务注册现状：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">discovery://someauthority/appID_B    appID_B 通过自研discovery系统注册</span><br><span class="line">etcd123://someauthority/appID_C      appID_C 通过自研etcd123系统注册</span><br><span class="line">consul456://someauthority/appID_D    appID_D 通过自研consul456系统注册</span><br></pre></td></tr></table></figure>
+
+<p>启动时向gRPC注册名称系统：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import &quot;google.golang.org/grpc/resolver&quot;</span><br><span class="line">resolver.Register(&amp;Builder&#123;scheme: &quot;discovery&quot;&#125;)</span><br><span class="line">resolver.Register(&amp;BuilderEtcd&#123;scheme: &quot;etcd123&quot;&#125;)</span><br><span class="line">resolver.Register(&amp;BuilderConsul&#123;scheme: &quot;consul456&quot;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>当A通过gRPC调用B、C、D时，会解析出schema，从注册的名称系统来获取实际调用地址。</p>
+<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p>上面解决了获取可调用地址的问题，那么如何做负载均衡？一批可调用的地址中，到底选哪个，怎么选？</p>
+<p>常规的负载均衡算法非常多，如轮询、随机、耗时最短、加权随机等等，由于技术系统的异构性，很多时候难以简单随机轮询。gRPC为了提供出足够强的适应性，把负载均衡的策略也外放了。使用者可以在启动时设置负载均衡的对象，通过插件可只定义策略。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PickerBuilder <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// gRPC将建立好的所有连接传给负载均衡器，创建一个picker</span></span><br><span class="line">    Build(readySCs <span class="keyword">map</span>[resolver.Address]balancer.SubConn) balancer.Picker</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Picker <span class="keyword">interface</span> &#123; </span><br><span class="line">    <span class="comment">// 从gRPC给的连接中选一个可调用的节点返回给gRPC</span></span><br><span class="line">    Pick(ctx context.Context, info PickInfo) (conn SubConn, done <span class="function"><span class="keyword">func</span><span class="params">(DoneInfo)</span>, <span class="title">err</span> <span class="title">error</span>)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体的实现相对简单:</p>
+<ol>
+<li>gRPC会将封装好的网络连接丢给负载均衡对象，当连接变化时，由 PickerBuilder 新Build一个picker。</li>
+<li>每次调用前调用picker Pick一个节点出来供使用</li>
+<li>Pick接口会返回一个 done 函数，rpc调用完毕后会回调，支持回传一些 balancer.DoneInfo</li>
+<li>balancer.DoneInfo 里面支持一些metadata，也就是服务方可以通过HTTP2的header回传的一些key:value</li>
+<li>服务方可以在返回请求时，将自己的CPU、负载等反映压力的数据写到metadata中，这些数据可以通过done函数回写到picker，供决策使用。</li>
+</ol>
+<p>根据上面开放的能力，例如你可以实现一种叫p2c的策略，先随机选择两个节点，然后根据记录的对端CPU负载等多种参数，最后选择一个最佳节点。这种相比轮询或随机具有更强的适应能力，可以避开部分出问题的节点。</p>
+<p>总结下，gRPC对于负载均衡提供了以下能力：</p>
+<ul>
+<li>负载均衡策略外放</li>
+<li>支持done回调，透传服务方的一些数据(需要在服务方支持，通过grpc.SetTrailer写入流即可)</li>
+<li>支持透传自定义命名系统回传的metadata，这个里面可以携带众多信息，如权重等等。(resolver 包 struct Address)</li>
+</ul>
+<p>基于这些特性，便可以自由实现花样百出的负载均衡策略。</p>
+<p>整体结果简单示意图如下：</p>
+<p><img src="/images/7753dec9-v2-924549fe54900a382d1f05c7f085d8d0_1440w.jpg" alt="img"></p>
+<h3 id="关键问题"><a href="#关键问题" class="headerlink" title="关键问题"></a>关键问题</h3><p>框架在整合编解码、网络传输等feature同时，也需要提供部分核心功能，这些功能往往是系统刚需，存在重复劳动的地方。最常见的就是并发模型。</p>
+<p>并发模型一般是针对服务方而言的，服务方需要有高效率的IO，在资源有限的情况下一方面快速处理请求，另一方面提供足够高的并发能力，实现高吞吐低延迟。</p>
+<p>这些都可以认为是C10k问题的延伸。传统的服务方基于阻塞IO实现请求读写，这样一个线程/进程只能同时处理一个请求。当用户量暴增后，不能来一个请求就fork一个子进程或创建一个线程来处理，这样资源扛不住。</p>
+<p>所以得有更有效率的策略，得让一个线程/进程能同时处理多个请求。这便诞生了多路复用的需求。让一个线程同时监听多个socket的状态，谁就绪才处理谁，而不是依赖操作系统的接口直接hang住，白白浪费CPU时间。(select/epoll)</p>
+<p>为了能实现高吞吐的目标，一方面要尽量减少在IO上的无效等待，另一方面要利用好多核。</p>
+<ul>
+<li>要减少无效等待，最好的策略之一就是基于事件驱动。</li>
+<li>要利用多核，就需要和CPU数量相匹配的线程数量来并发处理请求。同时尽量减少上下文切换</li>
+</ul>
+<p>于是便诞生了大名鼎鼎的Reactor模型，linux环境下大量号称高并发server都是实现了Reactor模型，例如java系的netty。</p>
+<p>每一个好的RPC框架势必要提供高吞吐的并发模型，也就相当于实现Reactor，屏蔽网络IO处理这堆复杂的细节，解决服务方高吞吐的刚需，让小白上手就能高并发。</p>
+<p>在golang出现之前，大量的语言例如Java、python、ruby等的rpc框架都要自己实现Reactor模型实现高吞吐，这其实是应用层的重复劳动。golang从语言层面下沉了类似的实现，通过实现netpoller，让golang程序的网络IO读写规避掉无意义的等待，和上下文切换。简单讲就是几点：</p>
+<ol>
+<li>golang runtime封装了非阻塞IO，给应用程序暴露成阻塞IO</li>
+<li>当goutouting操作一个未就绪的socket时，操作系统会返回error，runtime会拦截这个error，将该socket加入状态监听队列(可以简单认为是一个epoll)，并将该gourouting挂起</li>
+<li>当监听到对应socket可读/可写时，会将对应的gourouting找到并让其立即等待执行</li>
+<li>第2，3步周而复始，从gourouting角度自己在操作阻塞IO，然而并没有CPU时间浪费在等待上，也没有线程上下文切换</li>
+</ol>
+<p>这样的结果就是golang的相关应用程序不再需要实现Reactor模型，来一个请求则创建一个gourouting去处理就行，这极大简化了并发模型。</p>
+<h3 id="扩展能力"><a href="#扩展能力" class="headerlink" title="扩展能力"></a>扩展能力</h3><p>了解一般框架的人都知道，有不少标配能力，以提供高度自由的扩展功能，一般通过几种方式提供：</p>
+<h4 id="1-自定义插件"><a href="#1-自定义插件" class="headerlink" title="1. 自定义插件"></a>1. 自定义插件</h4><p>例如上面的服务发现、负载均衡。因为gRPC天然和protobuf绑定，谈到扩展插件，就不得不提及gRPC在编码层的解耦。</p>
+<p>因为使用protobuf的前提是你得有对应的.proto文件，这样才能进行编解码。但有些场景下，类似代理的角色没法持有所有的proto，这便限制了下面的场景：</p>
+<p><img src="/images/cd22d90b-v2-60584a7459d4ce60ad4ef0f14ed0f852_1440w.jpg" alt="img"></p>
+<p>假设有一个http的场景需要调用gRPC的接口实现功能，这需要有一个近似透传的代理来实现，但都通过protobuf包装数据，代理则要持有所有下游的proto文件，这不现实。</p>
+<p>但如果将编解码的方式解耦出来，例如通过JSON进行编解码，便能轻松解决问题，这带来了极大的灵活性。在http和gRPC的混用融合上价值不菲，而且gRPC请求的调用调试也可以像http那样简单。</p>
+<p>gRPC提供了codec的插件注入能力，以实现自定义编解码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Codec <span class="keyword">interface</span> &#123;</span><br><span class="line">    Marshal(v <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">byte</span>, error)</span><br><span class="line">    Unmarshal(data []<span class="keyword">byte</span>, v <span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">    Name() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 注册一个编解码插件</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google.golang.org/grpc/encoding&quot;</span></span><br><span class="line">encoding.RegisterCodec(JSON&#123;&#125;) <span class="comment">// JSON实现了上面的interface</span></span><br><span class="line">grpc.CallContentSubtype(JSON&#123;&#125;.Name()) <span class="comment">// 通过option指定使用JSON</span></span><br></pre></td></tr></table></figure>
+
+<p>只要服务方也注册了，且下游参数能通过 json 反序列化成struct对象，则调用便顺利进行。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Req <span class="keyword">struct</span> &#123;</span><br><span class="line">    Platform <span class="keyword">string</span> <span class="string">`protobuf:&quot;bytes,1,opt,name=platform,proto3&quot; json:&quot;platform&quot; form:&quot;platform&quot; validate:&quot;required&quot;`</span></span><br><span class="line">    Build <span class="keyword">int64</span> <span class="string">`protobuf:&quot;varint,2,opt,name=build,proto3&quot; json:&quot;build&quot; form:&quot;build&quot;`</span></span><br><span class="line">    XXX_NoUnkeyedLiteral <span class="keyword">struct</span>&#123;&#125; <span class="string">`json:&quot;-&quot;`</span></span><br><span class="line">    XXX_unrecognized     []<span class="keyword">byte</span>   <span class="string">`json:&quot;-&quot;`</span></span><br><span class="line">    XXX_sizecache        <span class="keyword">int32</span>    <span class="string">`json:&quot;-&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-配置-调用时通过-option注入"><a href="#2-配置-调用时通过-option注入" class="headerlink" title="2. 配置 - 调用时通过 option注入"></a>2. 配置 - 调用时通过 option注入</h4><p>gRPC可以通过option配置提供多种能力，例如：</p>
+<ul>
+<li>自动重试。(RetryableStatusCodes)</li>
+<li>加密</li>
+<li>压缩</li>
+<li>超时定制</li>
+</ul>
+<h4 id="3-拦截器-Interceptor-，有些也称middleware"><a href="#3-拦截器-Interceptor-，有些也称middleware" class="headerlink" title="3. 拦截器(Interceptor)，有些也称middleware"></a>3. 拦截器(Interceptor)，有些也称middleware</h4><p>拦截器可以在调用方和服务方同时存在。 一般用来实现熔断、限流、日志收集、open-tracing、异常捕获、数据统计、鉴权、数据注入等等多种功能。可以一层包一层，支持任意数量。</p>
+<p>插句题外话，上面大部分扩展能力一般是以SDK的方式独立于业务代码，但都是运行在同一个进程中。如果把上面分布式治理部分功能剥离出来集中治理优化，并和业务进程隔离部署，就是一个ServiceMesh落地雏型。</p>
+<h3 id="屏蔽细节"><a href="#屏蔽细节" class="headerlink" title="屏蔽细节"></a>屏蔽细节</h3><p>作为落地的最后一厘米，框架要尽最大能力屏蔽底层细节，特别是HTTP2相关细节：如何建立网络连接，如何发送数据，如何保持连接状态等等。gRPC在这方面做得很好，使用方只需要注册实现几个接口，便可能无脑run起来。</p>
+<p>以下是一个简单的gRPC核心对象关系图：</p>
+<p><img src="/images/f8d46132-v2-14f19fd7be01b531463ce2de21183ad5_1440w.jpg" alt="img"></p>
+<p>对于使用方而言，只需要实现Resolver插件提供可调用的列表，以及Picker如何选择节点的逻辑。其余复杂的状态管理、网络处理等等都被完全屏蔽。</p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

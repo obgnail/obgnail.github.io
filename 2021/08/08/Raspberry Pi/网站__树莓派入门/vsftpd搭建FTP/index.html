@@ -1,0 +1,87 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="gure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;docker pull fauria/vsftpd&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;docker run -d -v /var/ftp:/home/vsftpd \&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-p 20:20 -p 21:21 -p  21100-21110:21100-21110 \&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-e FTP_USER=test -e FTP_PASS=test \&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-e PASV_ADDRESS=192.168.60.128 \&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-e PASV_MIN_PORT=21100 -e PASV_MAX_PORT=21110 \&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;--name vsftpd --restart=always fauria/vsftpd&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;/var/ftp:/home/vsftpd&lt;/strong&gt;：映射 &lt;strong&gt;docker&lt;/strong&gt; 容器 &lt;strong&gt;ftp&lt;/strong&gt; 文件根目录（冒号前面是宿主机的目录，建议宿主机使用 &lt;strong&gt;/var&lt;/strong&gt; 这样公共权限文件夹，如果使用类似 &lt;strong&gt;/home&lt;/strong&gt; 这样的目录可能会造成客户端无法连接上服务器问题）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;-p&lt;/strong&gt;：映射 &lt;strong&gt;docker&lt;/strong&gt; 端口（冒号前面是宿主机的端口）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;-e FTP_USER=test -e FTP_PASS=test&lt;/strong&gt; ：设置默认的用户名密码（都为 &lt;strong&gt;test&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PASV_ADDRESS&lt;/strong&gt;：宿主机 &lt;strong&gt;ip&lt;/strong&gt;，当需要使用被动模式时必须设置。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PASV_MIN_PORT~ PASV_MAX_PORT&lt;/strong&gt;：给客服端提供下载服务随机端口号范围，默认 &lt;strong&gt;21100-21110&lt;/strong&gt;，与前面的 &lt;strong&gt;docker&lt;/strong&gt; 端口映射设置成一样。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;docker run -d -v /var/ftp:/home/vsftpd -p 20:20 -p 21:21 -p  21100-21110:21100-21110 -e FTP_USER=liangbo -e FTP_PASS=liangbo4869 -e PASV_ADDRESS=192.168.1.103 -e PASV_MIN_PORT=21100 -e PASV_MAX_PORT=21110 --name vsftpd fauria/vsftpd&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;h2 id=&quot;Centos6新建用户并且限制用户的访问权限在某个指定目录中&quot;&gt;&lt;a href=&quot;#Centos6新建用户并且限制用户的访问权限在某个指定目录中&quot; class=&quot;headerlink&quot; title=&quot;Centos6新建用户并且限制用户的访问权限在某个指定目录中&quot;&gt;&lt;/a&gt;Centos6新建用户并且限制用户的访问权限在某个指定目录中&lt;/h2&gt;&lt;p&gt;新建一个新的用户，并且为了保证系统的安全性，指定该用户在指定的目录内进行访问"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>vsftpd搭建FTP | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-08</div></div></div><div class="container post-header"><h1>vsftpd搭建FTP</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Centos6%E6%96%B0%E5%BB%BA%E7%94%A8%E6%88%B7%E5%B9%B6%E4%B8%94%E9%99%90%E5%88%B6%E7%94%A8%E6%88%B7%E7%9A%84%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E5%9C%A8%E6%9F%90%E4%B8%AA%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E4%B8%AD"><span class="toc-number">1.</span> <span class="toc-text">Centos6新建用户并且限制用户的访问权限在某个指定目录中</span></a></li></ol></details></div><div class="container post-content"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker pull fauria/vsftpd</span><br><span class="line"></span><br><span class="line">docker run -d -v /var/ftp:/home/vsftpd \</span><br><span class="line">-p 20:20 -p 21:21 -p  21100-21110:21100-21110 \</span><br><span class="line">-e FTP_USER=test -e FTP_PASS=test \</span><br><span class="line">-e PASV_ADDRESS=192.168.60.128 \</span><br><span class="line">-e PASV_MIN_PORT=21100 -e PASV_MAX_PORT=21110 \</span><br><span class="line">--name vsftpd --restart=always fauria/vsftpd</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>/var/ftp:/home/vsftpd</strong>：映射 <strong>docker</strong> 容器 <strong>ftp</strong> 文件根目录（冒号前面是宿主机的目录，建议宿主机使用 <strong>/var</strong> 这样公共权限文件夹，如果使用类似 <strong>/home</strong> 这样的目录可能会造成客户端无法连接上服务器问题）</li>
+<li><strong>-p</strong>：映射 <strong>docker</strong> 端口（冒号前面是宿主机的端口）</li>
+<li><strong>-e FTP_USER=test -e FTP_PASS=test</strong> ：设置默认的用户名密码（都为 <strong>test</strong>）</li>
+<li><strong>PASV_ADDRESS</strong>：宿主机 <strong>ip</strong>，当需要使用被动模式时必须设置。</li>
+<li><strong>PASV_MIN_PORT~ PASV_MAX_PORT</strong>：给客服端提供下载服务随机端口号范围，默认 <strong>21100-21110</strong>，与前面的 <strong>docker</strong> 端口映射设置成一样。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v /var/ftp:/home/vsftpd -p 20:20 -p 21:21 -p  21100-21110:21100-21110 -e FTP_USER=liangbo -e FTP_PASS=liangbo4869 -e PASV_ADDRESS=192.168.1.103 -e PASV_MIN_PORT=21100 -e PASV_MAX_PORT=21110 --name vsftpd fauria/vsftpd</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Centos6新建用户并且限制用户的访问权限在某个指定目录中"><a href="#Centos6新建用户并且限制用户的访问权限在某个指定目录中" class="headerlink" title="Centos6新建用户并且限制用户的访问权限在某个指定目录中"></a>Centos6新建用户并且限制用户的访问权限在某个指定目录中</h2><p>新建一个新的用户，并且为了保证系统的安全性，指定该用户在指定的目录内进行访问</p>
+<ol>
+<li><p>新建用户组:groupadd sftpusers</p>
+</li>
+<li><p>新建用户并将用户添加到分组中</p>
+<ol>
+<li><p>使用root权限建立新用户的主目录，注意这里必须是root权限，否则后续的sftp不能连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adduser sftpuser1 -d /sftp/sftpuser1 --shell /bin/false -g sftpusers</span><br></pre></td></tr></table></figure>
+
+<p>如果上面已经用root建立了一个主目录。所以会有一个warning，不用管他。</p>
+</li>
+<li><p>设置密码:<code> passwd sftpuser1</code> </p>
+</li>
+<li><p>查看group情况:<code> groups sftpuser1</code></p>
+</li>
+</ol>
+</li>
+<li><p>修改sshd_config,使用 chroot 监狱限制 SSH 用户访问指定目录<code>vim /etc/ssh/sshd_config</code></p>
+<ol>
+<li><p>注释掉<code>Subsystem sftp   /usr/libexec/openssh/sftp-server</code></p>
+</li>
+<li><p>下一行添加<code>Subsystem sftp internal-sftp</code></p>
+</li>
+<li><p>在文件最后添加;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Match User sftpuser1           #也可设置为用户组  Match group sftpusers</span><br><span class="line">ChrootDirectory /sftp/sftpuser1    </span><br><span class="line">X11Forwarding no</span><br><span class="line">AllowTcpForwarding no</span><br><span class="line">ForceCommand internal-sftp</span><br></pre></td></tr></table></figure>
+
+<p>这一段的意思是对visitors分组里的所有用户，我们只给他们通过sftp访问/home/fangke的权限，不能直接通过ssh登录服务器</p>
+</li>
+<li><p>重启sshd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># service sshd restart</span><br><span class="line">Stopping sshd:                                             [  OK  ]</span><br><span class="line">Starting sshd:                                             [  OK  ]</span><br><span class="line"></span><br><span class="line">OR</span><br><span class="line">systemctl restart sshd</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>目录和权限设置</p>
+</li>
+</ol>
+<p>1）/sftp/sftpuser1<br>ChrootDirectory设置的目录/sftp/sftpuser1的所有者必须是root,并且该目录的上级目录/sftp的所有者也必须是root.<br>而且只有所有者拥有写权限,/sftp/sftpuser1和/sftp的权限最大设置只能是755.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown root:root /sftp/sftpuser1</span><br><span class="line">chmod -R 755 /sftp</span><br></pre></td></tr></table></figure>
+
+<p>2）/sftp/sftpuser1/download<br>由于上一层目录的权限是755,<br>因此所有非root用户都无法在目录中写入文件.<br>我们需要在ChrootDirectory指定的目录下建立子目录比如download,重新设置属主和权限.</p>
+<p>这样就可以在读写download目录了.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /sftp/sftpuser1/download</span><br><span class="line">chown sftpuser1:sftpusers /sftp/sftpuser1/download</span><br><span class="line">chmod 755 /sftp/sftpuser1/download</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li>测试</li>
+</ol>
+<p>sftp -oPort=22 <a href="mailto:&#x73;&#102;&#116;&#x70;&#117;&#115;&#101;&#x72;&#x31;&#x40;&#x31;&#x32;&#x37;&#x2e;&#48;&#x2e;&#48;&#x2e;&#49;">&#x73;&#102;&#116;&#x70;&#117;&#115;&#101;&#x72;&#x31;&#x40;&#x31;&#x32;&#x37;&#x2e;&#48;&#x2e;&#48;&#x2e;&#49;</a><br>输入密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># sftp -oPort=22 sftpuser1@127.0.0.1</span><br><span class="line">Connecting to 127.0.0.1...</span><br><span class="line">sftpuser1@127.0.0.1&#x27;s password:</span><br><span class="line">sftp&gt; ls</span><br><span class="line">download</span><br><span class="line">sftp&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/20200617162048452.png" alt="在这里插入图片描述"><br>\6. 问题和经验教训<br>按照网上的教程设置后，出现过几种情况<br>1）Write failed: Broken pipe<br>错误: Received unexpected end-of-file from SFTP server<br>错误: 无法连接到服务器</p>
+<p>解决：<br>这个问题是由于ChrootDirectory指定的目录的权限问题。<br>注意归属和权限</p>
+<p>drwxr-xr-x 3 root root 4096 Jun 17 16:12 sftp</p>
+<p>drwxr-xr-x 3 root root 4096 Jun 17 15:21 sftpuser1</p>
+<p>drwxr-xr-x 2 sftpuser1 sftpusers 4096 Jun 17 15:24 download</p>
+<p>我最后的解决方案是： 单独建/sftp/sftpuser1 文件夹， 不要放在/home底下。</p>
+<p><a target="_blank" rel="noopener" href="https://www.codenong.com/cs106809592/">https://www.codenong.com/cs106809592/</a></p>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

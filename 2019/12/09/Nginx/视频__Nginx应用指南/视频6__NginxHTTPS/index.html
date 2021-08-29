@@ -1,0 +1,65 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;NginxHttps&quot;&gt;&lt;a href=&quot;#NginxHttps&quot; class=&quot;headerlink&quot; title=&quot;NginxHttps&quot;&gt;&lt;/a&gt;NginxHttps&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;HTTPS基本概述&lt;/li&gt;
+&lt;li&gt;HTTPS配置语法&lt;/li&gt;
+&lt;li&gt;HTTPS配置场景&lt;/li&gt;
+&lt;li&gt;Https公有云实践&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;HTTPS配置语法&quot;&gt;&lt;a href=&quot;#HTTPS配置语法&quot; class=&quot;headerlink&quot; title=&quot;HTTPS配置语法&quot;&gt;&lt;/a&gt;HTTPS配置语法&lt;/h2&gt;&lt;p&gt;开启ssl需要输入&lt;code&gt;ssl_certificate&lt;/code&gt;和&lt;code&gt;ssl_certificate_key&lt;/code&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>NginxHTTPS | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/Nginx/" rel="tag">Nginx</a></div><div class="post-time">2019-12-09</div></div></div><div class="container post-header"><h1>NginxHTTPS</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NginxHttps"><span class="toc-number">1.</span> <span class="toc-text">NginxHttps</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTPS%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">HTTPS配置语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%98%E9%92%A5%E2%BD%A3%E6%88%90%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.2.</span> <span class="toc-text">秘钥⽣成操作步骤</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="NginxHttps"><a href="#NginxHttps" class="headerlink" title="NginxHttps"></a>NginxHttps</h1><ol>
+<li>HTTPS基本概述</li>
+<li>HTTPS配置语法</li>
+<li>HTTPS配置场景</li>
+<li>Https公有云实践</li>
+</ol>
+<h2 id="HTTPS配置语法"><a href="#HTTPS配置语法" class="headerlink" title="HTTPS配置语法"></a>HTTPS配置语法</h2><p>开启ssl需要输入<code>ssl_certificate</code>和<code>ssl_certificate_key</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Syntax: ssl on | off;</span><br><span class="line">Default: ssl off;</span><br><span class="line">Context: http, server</span><br><span class="line"></span><br><span class="line">Syntax: ssl_certificate file;</span><br><span class="line">Default: —</span><br><span class="line">Context: http, server</span><br><span class="line"></span><br><span class="line">Syntax: ssl_certificate_key file;</span><br><span class="line">Default: —</span><br><span class="line">Context: http, server</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="秘钥⽣成操作步骤"><a href="#秘钥⽣成操作步骤" class="headerlink" title="秘钥⽣成操作步骤"></a>秘钥⽣成操作步骤</h2><ol>
+<li>⽣成key密钥</li>
+<li>⽣成证书签名请求⽂件(csr⽂件)</li>
+<li>⽣成证书签名⽂件(CA⽂件)</li>
+</ol>
+<ol>
+<li>检查当前环境</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># openssl必须是1.0.2</span></span><br><span class="line">openssl	version</span><br><span class="line"></span><br><span class="line"><span class="comment"># nginx必须有ssl模块</span></span><br><span class="line">nginx -V</span><br><span class="line"></span><br><span class="line">mkdir /etc/nginx/ssl_key -p</span><br><span class="line"><span class="built_in">cd</span> /etc/nginx/ssl_key</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="2">
+<li>创建私钥</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -idea -out server.key 2048</span><br><span class="line"><span class="comment"># 输入账号密码</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="3">
+<li>⽣成使⽤签名请求证书和私钥⽣成⾃签证书</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -days 36500 -x509 -sha256 -nodes -newkey rsa:2048 -keyout server.key -out server.crt</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="4">
+<li>配置 Nginx</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/nginx/conf.d/ssl.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 443;</span><br><span class="line">	server_name localhost;</span><br><span class="line">	ssl on;</span><br><span class="line">	index index.html index.htm;</span><br><span class="line">	<span class="comment">#ssl_session_cache share:SSL:10m;</span></span><br><span class="line">	<span class="comment"># 保持10min的长连接</span></span><br><span class="line">	ssl_session_timeout 10m;</span><br><span class="line">	<span class="comment"># crt文件</span></span><br><span class="line">	ssl_certificate ssl_key/server.crt;</span><br><span class="line">	<span class="comment"># key文件</span></span><br><span class="line">	ssl_certificate_key ssl_key/server.key;</span><br><span class="line">	ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!</span><br><span class="line">ADH:!RC4;</span><br><span class="line">	<span class="comment"># 支持的ssl协议版本</span></span><br><span class="line">	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">	ssl_prefer_server_ciphers on;</span><br><span class="line">	location / &#123;</span><br><span class="line">		root /soft/code;</span><br><span class="line">		access_log /logs/ssl.log main;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="5">
+<li><p>测试访问,</p>
+<p>由于该证书⾮第三⽅权威机构颁发，⽽是我们⾃⼰签发的，所以浏览器会警告</p>
+</li>
+</ol>
+<ol start="6">
+<li><p>强制http跳转到https</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name localhost;</span><br><span class="line">	rewrite ^(.*) https://$server_name<span class="variable">$1</span> redirect;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
