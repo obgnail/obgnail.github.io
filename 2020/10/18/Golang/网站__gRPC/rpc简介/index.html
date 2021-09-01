@@ -1,0 +1,90 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://www.oschina.net/p/grpc-framework&quot;&gt;gRPC&lt;/a&gt;  是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2 设计。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>rpc简介 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2020-10-18</div></div></div><div class="container post-header"><h1>rpc简介</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">RPC 是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li></ol></details></div><div class="container post-content"><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a target="_blank" rel="noopener" href="http://www.oschina.net/p/grpc-framework">gRPC</a>  是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2 设计。</p>
+<p>gRPC 基于 HTTP/2 标准设计，带来诸如双向流、流控、头部压缩、单 TCP 连接上的多复用请求等特。这些特性使得其在移动设备上表现更好，更省电和节省空间占用。</p>
+<blockquote>
+<p>微服务接口一般选择原则：向系统外部暴露采用REST，向系统内部暴露采用RPC。</p>
+</blockquote>
+<h2 id="RPC-是什么？"><a href="#RPC-是什么？" class="headerlink" title="RPC 是什么？"></a>RPC 是什么？</h2><p>在 gRPC 里<em>客户端</em>应用<strong>可以像调用本地对象一样直接调用另一台不同的机器上<em>服务端</em>应用</strong>的方法，使得您能够更容易地创建分布式应用和服务。与许多 RPC 系统类似，gRPC 也是基于以下理念：</p>
+<ul>
+<li>定义一个<em>服务</em>，指定其能够被远程调用的方法（包含参数和返回类型）。</li>
+<li>在服务端实现这个接口，并运行一个 gRPC 服务器来处理客户端调用。在客户端拥有一个<em>存根</em>能够像服务端一样的方法。</li>
+</ul>
+<blockquote>
+<p>RPC是指远程过程调用，也就是说两台服务器A，B，一个应用部署在A服务器上，想要调用B服务器上应用提供的函数/方法，由于不在一个内存空间，不能直接调用，需要通过网络来表达调用的语义和传达调用的数据。</p>
+<p>说人话：<strong>RPC就是像调用本地的函数一样去调远程函数。</strong></p>
+</blockquote>
+<p>比如说，一个方法可能是这样定义的：<code>Employee getEmployeeByName(String fullName)</code>，那么：</p>
+<ul>
+<li><p>首先，要解决通讯的问题，主要是通过在客户端和服务器之间建立<strong>TCP连接</strong>，远程过程调用的所有交换的数据都在这个连接里传输。连接可以是按需连接，调用结束后就断掉，也可以是长连接，多个远程过程调用共享同一个连接。</p>
+</li>
+<li><p>第二，要解决寻址的问题，也就是说，A服务器上的应用怎么告诉底层的RPC框架，如何连接到B服务器（如主机或IP地址）以及特定的端口，方法的名称名称是什么，这样才能完成调用。</p>
+<p>比如基于Web服务协议栈的RPC，就要提供一个endpoint URI，或者是从UDDI服务上查找。如果是RMI调用的话，还需要一个RMI Registry来注册服务的地址。</p>
+</li>
+<li><p>第三，当A服务器上的应用发起远程过程调用时，方法的参数需要通过底层的网络协议如TCP传递到B服务器，由于网络协议是基于二进制的，内存中的参数的值要序列化成二进制的形式，也就是序列化（Serialize）或编组（marshal），通过寻址和传输将序列化的二进制发送给B服务器。</p>
+</li>
+<li><p>第四，B服务器收到请求后，需要对参数进行反序列化（序列化的逆操作），恢复为内存中的表达方式，然后找到对应的方法（寻址的一部分）进行本地调用，然后得到返回值。</p>
+</li>
+<li><p>第五，返回值还要发送回服务器A上的应用，也要经过序列化的方式发送，服务器A接到后，再反序列化，恢复为内存中的表达方式，交给A服务器上的应用</p>
+</li>
+</ul>
+<p><img src="/images/45366c44f775abfd0ac3b43bccc1abc3_1440w.jpg" alt="img"></p>
+<blockquote>
+<ol>
+<li>客户端（client）以本地调用方式（即以接口的方式）调用服务；</li>
+<li>客户端存根（client stub）接收到调用后，<strong>负责将方法、参数等组装成能够进行网络传输的消息体</strong>（将消息体对象序列化为二进制）；</li>
+<li>客户端通过sockets将消息发送到服务端；</li>
+<li>服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）；</li>
+<li>服务端存根( server stub）根据解码结果调用本地的服务；</li>
+<li>本地服务执行并将结果返回给服务端存根( server stub）；</li>
+<li>服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）；</li>
+<li>服务端（server）通过sockets将消息发送到客户端；</li>
+<li>客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）；</li>
+<li> 客户端（client）得到最终结果。</li>
+</ol>
+<p><strong>RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。</strong><br>注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。</p>
+</blockquote>
+<p>为什么RPC呢？就是无法在一个进程内，甚至一个计算机内通过本地调用的方式完成的需求，比如比如不同的系统间的通讯，甚至不同的组织间的通讯。由于计算能力需要横向扩展，需要在多台机器组成的集群上部署应用，</p>
+<p>RPC的协议有很多，比如最早的CORBA，Java RMI，Web Service的RPC风格，Hessian，Thrift，甚至Rest API。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Multiply</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> y = l * r;</span><br><span class="line">  <span class="keyword">return</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> lvalue = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> rvalue = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">int</span> l_times_r = Multiply(lvalue, rvalue);</span><br></pre></td></tr></table></figure>
+
+<p>那么在第8行时，我们实际上执行了以下操作：</p>
+<ol>
+<li>将 lvalue 和 rvalue 的值压栈</li>
+<li>进入Multiply函数，取出栈中的值10 和 20，将其赋予 l 和 r</li>
+<li>执行第2行代码，计算 l * r ，并将结果存在 y</li>
+<li>将 y 的值压栈，然后从Multiply返回</li>
+<li>第8行，从栈中取出返回值 200 ，并赋值给 l_times_r</li>
+</ol>
+<p>以上5步就是<strong>执行本地调用的过程</strong>。</p>
+<p><strong>远程过程调用带来的新问题</strong></p>
+<p>在远程调用时，我们需要执行的函数体是在远程的机器上的，也就是说，Multiply是在另一个进程中执行的。这就带来了几个新问题：</p>
+<ol>
+<li><strong>Call ID映射</strong>。我们怎么告诉远程机器我们要调用Multiply，而不是Add或者FooBar呢？<ul>
+<li>在本地调用中，函数体是直接通过函数指针来指定的，我们调用Multiply，编译器就自动帮我们调用它相应的函数指针。</li>
+<li>但是在远程调用中，函数指针是不行的，因为两个进程的地址空间是完全不一样的。所以，在RPC中，<strong>所有的函数都必须有自己的一个ID。</strong>这个ID在所有进程中都是唯一确定的。客户端在做远程过程调用时，必须附上这个ID。然后我们还需要在客户端和服务端分别维护一个 {函数 &lt;–&gt; Call ID} 的对应表。两者的表不一定需要完全相同，但相同的函数对应的Call ID必须相同。当客户端需要进行远程调用时，它就查一下这个表，找出相应的Call ID，然后把它传给服务端，服务端也通过查表，来确定客户端需要调用的函数，然后执行相应函数的代码。</li>
+</ul>
+</li>
+<li><strong>序列化和反序列化</strong>。客户端怎么把参数值传给远程的函数呢？<ul>
+<li>在本地调用中，我们只需要把参数压到栈里，然后让函数自己去栈里读就行。</li>
+<li>但是在远程过程调用时，客户端跟服务端是不同的进程，不能通过内存来传递参数。甚至有时候客户端和服务端使用的都不是同一种语言（比如服务端用C++，客户端用Java或者Python）。这时候就需要客户端<strong>把参数先转成一个字节流</strong>，传给服务端后，再把字节流转成自己能读取的格式。这个过程叫序列化和反序列化。同理，从服务端返回的值也需要序列化反序列化的过程。</li>
+</ul>
+</li>
+<li><strong>网络传输</strong>。远程调用往往用在网络上，客户端和服务端是通过网络连接的。所有的数据都需要通过网络传输，因此就需要有一个网络传输层。<strong>网络传输层需要把Call ID和序列化后的参数字节流传给服务端，然后再把序列化后的调用结果传回客户端</strong>。只要能完成这两者的，都可以作为传输层使用。因此，它所使用的协议其实是不限的，能完成传输就行。尽管大部分RPC框架都使用TCP协议，但其实UDP也可以，而gRPC干脆就用了HTTP2。Java的Netty也属于这层的东西。</li>
+</ol>
+<p>有了这三个机制，就能实现RPC了，具体过程如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Client端 </span></span><br><span class="line"><span class="comment">//    int l_times_r = Call(ServerAddr, Multiply, lvalue, rvalue)</span></span><br><span class="line"><span class="number">1.</span> 将这个调用映射为Call ID。这里假设用最简单的字符串当Call ID的方法</span><br><span class="line"><span class="number">2.</span> 将Call ID，lvalue和rvalue序列化。可以直接将它们的值以二进制形式打包</span><br><span class="line"><span class="number">3.</span> 把<span class="number">2</span>中得到的数据包发送给ServerAddr，这需要使用网络传输层</span><br><span class="line"><span class="number">4.</span> 等待服务器返回结果</span><br><span class="line"><span class="number">5.</span> 如果服务器调用成功，那么就将结果反序列化，并赋给l_times_r</span><br><span class="line"></span><br><span class="line"><span class="comment">// Server端</span></span><br><span class="line"><span class="number">1.</span> 在本地维护一个Call ID到函数指针的映射call_id_map，可以用std::map&lt;std::string, std::function&lt;&gt;&gt;</span><br><span class="line"><span class="number">2.</span> 等待请求</span><br><span class="line"><span class="number">3.</span> 得到一个请求后，将其数据包反序列化，得到Call ID</span><br><span class="line"><span class="number">4.</span> 通过在call_id_map中查找，得到相应的函数指针</span><br><span class="line"><span class="number">5.</span> 将lvalue和rvalue反序列化后，在本地调用Multiply函数，得到结果</span><br><span class="line"><span class="number">6.</span> 将结果序列化后通过网络返回给Client</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li>Call ID映射可以直接使用函数字符串，也可以使用整数ID。映射表一般就是一个哈希表。</li>
+<li>序列化反序列化可以自己写，也可以使用Protobuf或者FlatBuffers之类的。</li>
+<li>网络传输库可以自己写socket，或者用asio，ZeroMQ，Netty之类。</li>
+</ul>
+<p>设计框架视图</p>
+<p><img src="/images/v2-ef8a1147a7d57b287d07c56c77fda53f_r.jpg" alt="preview"></p>
+<p>Go语言的gRPC技术栈</p>
+<p><img src="/images/ch4-1-grpc-go-stack.png" alt="img"></p>
+<p>最底层为TCP或Unix Socket协议，在此之上是HTTP/2协议的实现，然后在HTTP/2协议之上又构建了针对Go语言的gRPC核心库。应用程序通过gRPC插件生产的Stub代码和gRPC核心库通信，也可以直接和gRPC核心库通信。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

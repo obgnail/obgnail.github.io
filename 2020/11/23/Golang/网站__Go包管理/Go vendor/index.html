@@ -1,0 +1,233 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Go-Vendor-使用指南&quot;&gt;&lt;a href=&quot;#Go-Vendor-使用指南&quot; class=&quot;headerlink&quot; title=&quot;Go Vendor 使用指南&quot;&gt;&lt;/a&gt;Go Vendor 使用指南&lt;/h1&gt;&lt;h1 id=&quot;Go-Vendor简介&quot;&gt;&lt;a href=&quot;#Go-Vendor简介&quot; class=&quot;headerlink&quot; title=&quot;Go Vendor简介&quot;&gt;&lt;/a&gt;Go Vendor简介&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/kardianos/govendor&quot;&gt;govendor&lt;/a&gt; 是一个基于 &lt;code&gt;vendor&lt;/code&gt; 目录机制的包管理工具。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Go vendor | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2020-11-23</div></div></div><div class="container post-header"><h1>Go vendor</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-Vendor-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="toc-number">1.</span> <span class="toc-text">Go Vendor 使用指南</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-Vendor%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">Go Vendor简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#govendor-%E5%8A%9F%E8%83%BD"><span class="toc-number">2.1.</span> <span class="toc-text">govendor 功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#govendor-%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE"><span class="toc-number">2.2.</span> <span class="toc-text">govendor 使用建议</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#govendor-%E5%91%BD%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">govendor 命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#govendor-%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">govendor 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">4.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">4.2.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">4.3.</span> <span class="toc-text">常用命令</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="Go-Vendor-使用指南"><a href="#Go-Vendor-使用指南" class="headerlink" title="Go Vendor 使用指南"></a>Go Vendor 使用指南</h1><h1 id="Go-Vendor简介"><a href="#Go-Vendor简介" class="headerlink" title="Go Vendor简介"></a>Go Vendor简介</h1><p><a target="_blank" rel="noopener" href="https://github.com/kardianos/govendor">govendor</a> 是一个基于 <code>vendor</code> 目录机制的包管理工具。</p>
+<p>最开始的时候，Go 并没有提供较为妥当的包管理工具。从 1.5 版本开始提供了 vendor 特性，但需要手动设置环境变量 <code>GO15VENDOREXPERIMENT=1</code>。在执行 <code>go build</code> 或 <code>go run</code> 命令时，会按照以下顺序去查找包：</p>
+<ol>
+<li>在当前vendor目录（如果当前目录存在vendor目录的话）查找依赖包；</li>
+<li>如果当前目录不存在vendor目录，则到上一级目录继续查找；</li>
+<li>重复步骤2，直到到达<code>$GOPATH/src</code>目录，查找vendor目录中是否存在依赖包；</li>
+<li>如何没有查找到依赖包，则继续在<code>$GOROOT</code>目录查找；</li>
+<li>如果没有查找到，则继续在<code>$GOPATH/src</code>目录查找。</li>
+</ol>
+<p>在发布 1.6 版本时，该环境变量的值已经默认设置为 1 了，该值可以使用 <code>go env</code> 命令查看。在发布 1.7 版本时，已去掉该环境变量，默认开启 <code>vendor</code> 特性。</p>
+<h2 id="govendor-功能"><a href="#govendor-功能" class="headerlink" title="govendor 功能"></a><strong>govendor 功能</strong></h2><ul>
+<li>支持从项目源码中分析出依赖的包，并从 <code>$GOPATH</code> 复制到项目的 <code>vendor</code> 目录下；</li>
+<li>支持包的指定版本，并用 <code>vendor/vendor.json</code> 进行包和版本管理；</li>
+<li>支持用 <code>govendor add/update</code> 命令从 <code>$GOPATH</code> 中复制依赖包；</li>
+<li>如果忽略了 <code>vendor/*/</code> 文件，可用 <code>govendor sync</code> 恢复依赖包；</li>
+<li>可直接用 <code>govendor fetch</code> 添加或更新依赖包；</li>
+<li>可用 <code>govendor migrate</code> 从其他 <code>vendor</code> 包管理工具中一键迁移到 <code>govendor</code>；</li>
+<li>支持 Linux，macOS，Windows，甚至现有所有操作系统；</li>
+<li>支持 Git、Hg、SVN，BZR（必须指定一个路径）；</li>
+</ul>
+<h2 id="govendor-使用建议"><a href="#govendor-使用建议" class="headerlink" title="govendor 使用建议"></a>govendor 使用建议</h2><ul>
+<li>一个库工程（不包含 <code>main</code> 的 <code>package</code>）不应该在自己的版本控制中存储外部的包在 <code>vendor</code> 目录中，除非有特殊原因并且知道为什么要这么做。</li>
+<li>在一个应用中，（包含 <code>main</code> 的 <code>package</code>），建议只有一个 <code>vendor</code> 目录，且在代码库一级目录。</li>
+</ul>
+<h1 id="govendor-命令"><a href="#govendor-命令" class="headerlink" title="govendor 命令"></a>govendor 命令</h1><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>init</td>
+<td>创建 vendor 目录和 vendor.json 文件</td>
+</tr>
+<tr>
+<td>list</td>
+<td>列出过滤依赖包及其状态</td>
+</tr>
+<tr>
+<td>add</td>
+<td>从 $GOPATH 复制包到项目 vendor 目录</td>
+</tr>
+<tr>
+<td>update</td>
+<td>从 $GOPATH 更新依赖包到项目 vendor 目录</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>从 vendor 目录移除依赖的包</td>
+</tr>
+<tr>
+<td>status</td>
+<td>列出所有缺失、过期和修改过的包</td>
+</tr>
+<tr>
+<td>fetch</td>
+<td>从远程仓库添加或更新包到项目 vendor 目录(不会存储到 $GOPATH)</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>根据 vendor.json 拉取相匹配的包到 vendor 目录</td>
+</tr>
+<tr>
+<td>migrate</td>
+<td>从其他基于 vendor 实现的包管理工具中一键迁移</td>
+</tr>
+<tr>
+<td>get</td>
+<td>与 go get 类似，将包下载到 $GOPATH，再将依赖包复制到 vendor 目录</td>
+</tr>
+<tr>
+<td>license</td>
+<td>列出所有依赖包的 LICENSE</td>
+</tr>
+<tr>
+<td>shell</td>
+<td>可一次性运行多个 govendor 命令</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>状态参数</strong></li>
+<li>支持状态参数的子命令有：<code>list</code>、<code>add</code>、<code>update</code>、<code>remove</code>、<code>fetch</code></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>缩写</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+local</td>
+<td>I</td>
+<td>本地包，即项目内部编写的包</td>
+</tr>
+<tr>
+<td>+external</td>
+<td>e</td>
+<td>外部包，即在 GOPATH 中、却不在项目 vendor 目录</td>
+</tr>
+<tr>
+<td>+vendor</td>
+<td>v</td>
+<td>已在 vendor 目录下的包</td>
+</tr>
+<tr>
+<td>+std</td>
+<td>s</td>
+<td>标准库里的包</td>
+</tr>
+<tr>
+<td>+excluded</td>
+<td>x</td>
+<td>明确被排除的外部包</td>
+</tr>
+<tr>
+<td>+unused</td>
+<td>u</td>
+<td>未使用的包，即在 vendor 目录下，但项目中并未引用到</td>
+</tr>
+<tr>
+<td>+missing</td>
+<td>m</td>
+<td>被引用了但却找不到的包</td>
+</tr>
+<tr>
+<td>+program</td>
+<td>p</td>
+<td>主程序包，即可被编译为执行文件的包</td>
+</tr>
+<tr>
+<td>+outside</td>
+<td></td>
+<td>相当于状态为 +external +missing</td>
+</tr>
+<tr>
+<td>+all</td>
+<td></td>
+<td>所有包</td>
+</tr>
+</tbody></table>
+<h1 id="govendor-使用"><a href="#govendor-使用" class="headerlink" title="govendor 使用"></a>govendor 使用</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/kardianos/govendor</span><br></pre></td></tr></table></figure>
+
+<p>为了方便快捷使用 <code>govendor</code>，建议将 <code>$GOPATH/bin</code> 添加到 PATH 中。Linux/macOS 如下设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=&quot;$GOPATH/bin:$PATH&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>在项目根目录下执行以下命令进行 <code>vendor</code> 初始化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor init</span><br></pre></td></tr></table></figure>
+
+<p>项目根目录下即会自动生成 <code>vendor</code> 目录和 <code>vendor.json</code> 文件。此时 <code>vendor.json</code> 文件内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;comment&quot;: &quot;&quot;,</span><br><span class="line">	&quot;ignore&quot;: &quot;test&quot;,</span><br><span class="line">	&quot;package&quot;: [],</span><br><span class="line">	&quot;rootPath&quot;: &quot;govendor-example&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>将已被引用且在 <code>$GOPATH</code> 下的所有包复制到 <code>vendor</code> 目录</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor add +external</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>仅从 <code>$GOPATH</code> 中复制指定包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor add gopkg.in/yaml.v2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>列出代码中所有被引用到的包及其状态</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor list</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>列出一个包被哪些包引用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor list -v fmt</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从远程仓库添加或更新某个包(<strong>不会</strong>在 <code>$GOPATH</code> 也存一份)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch golang.org/x/net/context</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装指定版本的包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch golang.org/x/net/context@a4bbce9fcae005b22ae5443f6af064d80a6f5a55</span><br><span class="line">govendor fetch golang.org/x/net/context@v1   # Get latest v1.*.* tag or branch.</span><br><span class="line">govendor fetch golang.org/x/net/context@=v1  # Get the tag or branch named &quot;v1&quot;.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>只格式化项目自身代码(<code>vendor</code> 目录下的不变动)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor fmt +local</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>只构建编译项目内部的包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor install +local</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>只测试项目内部的测试案例</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor test +local</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>构建所有 <code>vendor</code> 包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor install +vendor,^program</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>拉取所有依赖的包到 <code>vendor</code> 目录(包括 <code>$GOPATH</code> 存在或不存在的包)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch +out</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>包已在 <code>vendor</code> 目录，但想从 <code>$GOPATH</code> 更新</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor update +vendor</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>已修改了 <code>$GOPATH</code> 里的某个包，现在想将已修改且未提交的包更新到 <code>vendor</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor update -uncommitted &lt;updated-package-import-path&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Fork 了某个包，但尚未合并，该如何引用到最新的代码包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor fetch github.com/normal/pkg::github.com/myfork/pkg</span><br></pre></td></tr></table></figure>
+
+<p>此时将从 <code>myfork</code> 拉取代码，而不是 <code>normal</code>。</p>
+<ul>
+<li><code>vendor.json</code> 中记录了依赖包信息，该如何拉取更新</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">govendor sync</span><br></pre></td></tr></table></figure>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

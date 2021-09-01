@@ -1,0 +1,104 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;一、什么是ZooKeeper？&quot;&gt;&lt;a href=&quot;#一、什么是ZooKeeper？&quot; class=&quot;headerlink&quot; title=&quot;一、什么是ZooKeeper？&quot;&gt;&lt;/a&gt;一、什么是ZooKeeper？&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;ZooKeeper主要&lt;strong&gt;服务于分布式系统&lt;/strong&gt;，可以用ZooKeeper来做：&lt;ul&gt;
+&lt;li&gt;统一配置管理、&lt;/li&gt;
+&lt;li&gt;统一命名服务、&lt;/li&gt;
+&lt;li&gt;分布式锁、&lt;/li&gt;
+&lt;li&gt;集群管理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;使用分布式系统就无法避免对节点管理的问题(需要&lt;strong&gt;实时感知节点的状态、对节点进行统一管理&lt;/strong&gt;等等)，而由于这些问题处理起来可能相对麻烦和提高了系统的复杂性，ZooKeeper作为一个能够通用解决这些问题的中间件就应运而生了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;二、为什么ZooKeeper能干这么多？&quot;&gt;&lt;a href=&quot;#二、为什么ZooKeeper能干这么多？&quot; class=&quot;headerlink&quot; title=&quot;二、为什么ZooKeeper能干这么多？&quot;&gt;&lt;/a&gt;二、为什么ZooKeeper能干这么多？&lt;/h2&gt;&lt;p&gt;可以用ZooKeeper来做：统一配置管理、统一命名服务、分布式锁、集群管理。为什么ZooKeeper可以干那么多事？来看看ZooKeeper究竟是何方神物，在Wiki中其实也有提到："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ZooKeeper入门 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></div><div class="post-time">2021-08-06</div></div></div><div class="container post-header"><h1>ZooKeeper入门</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFZooKeeper%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">一、什么是ZooKeeper？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88ZooKeeper%E8%83%BD%E5%B9%B2%E8%BF%99%E4%B9%88%E5%A4%9A%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">二、为什么ZooKeeper能干这么多？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 监听器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81ZooKeeper%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E5%88%B0%E7%9A%84%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">三、ZooKeeper是怎么做到的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%BB%9F%E4%B8%80%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 统一配置管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%BB%9F%E4%B8%80%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 统一命名服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 分布式锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81"><span class="toc-number">3.4.</span> <span class="toc-text">3.4集群状态</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="一、什么是ZooKeeper？"><a href="#一、什么是ZooKeeper？" class="headerlink" title="一、什么是ZooKeeper？"></a>一、什么是ZooKeeper？</h2><ul>
+<li>ZooKeeper主要<strong>服务于分布式系统</strong>，可以用ZooKeeper来做：<ul>
+<li>统一配置管理、</li>
+<li>统一命名服务、</li>
+<li>分布式锁、</li>
+<li>集群管理。</li>
+</ul>
+</li>
+<li>使用分布式系统就无法避免对节点管理的问题(需要<strong>实时感知节点的状态、对节点进行统一管理</strong>等等)，而由于这些问题处理起来可能相对麻烦和提高了系统的复杂性，ZooKeeper作为一个能够通用解决这些问题的中间件就应运而生了。</li>
+</ul>
+<h2 id="二、为什么ZooKeeper能干这么多？"><a href="#二、为什么ZooKeeper能干这么多？" class="headerlink" title="二、为什么ZooKeeper能干这么多？"></a>二、为什么ZooKeeper能干这么多？</h2><p>可以用ZooKeeper来做：统一配置管理、统一命名服务、分布式锁、集群管理。为什么ZooKeeper可以干那么多事？来看看ZooKeeper究竟是何方神物，在Wiki中其实也有提到：</p>
+<blockquote>
+<p>ZooKeeper nodes store their data in a hierarchical name space, much like a file system or a tree data structure</p>
+</blockquote>
+<p>ZooKeeper的数据结构，跟Unix文件系统非常类似，可以看做是一颗<strong>树</strong>，每个节点叫做<strong>ZNode</strong>。每一个节点可以通过<strong>路径</strong>来标识，结构图如下：（其实就是字典树）</p>
+<p><img src="/images/image-20210806155612764.png" alt="image-20210806155612764"></p>
+<p>那ZooKeeper这颗”树”有什么特点呢？？ZooKeeper的节点我们称之为<strong>Znode</strong>，Znode分为<strong>两种</strong>类型：</p>
+<ul>
+<li>**短暂/临时(Ephemeral)**：当客户端和服务端断开连接后，所创建的Znode(节点)<strong>会自动删除</strong></li>
+<li>**持久(Persistent)**：当客户端和服务端断开连接后，所创建的Znode(节点)<strong>不会删除</strong></li>
+</ul>
+<p>ZooKeeper和Redis一样，也是C/S结构</p>
+<p><img src="/images/image-20210806155651887.png" alt="image-20210806155651887"></p>
+<h3 id="2-1-监听器"><a href="#2-1-监听器" class="headerlink" title="2.1 监听器"></a>2.1 监听器</h3><p>在上面我们已经简单知道了ZooKeeper的数据结构了，ZooKeeper还配合了<strong>监听器</strong>才能够做那么多事的。</p>
+<p><strong>常见</strong>的监听场景有以下两项：</p>
+<ul>
+<li>监听Znode节点的<strong>数据变化</strong></li>
+<li>监听子节点的<strong>增减变化</strong></li>
+</ul>
+<p>监听Znode节点的数据有无变化：</p>
+<p><img src="/images/image-20210806155717439.png" alt="image-20210806155717439"></p>
+<p>监听Znode节点的数据有无变化：</p>
+<p><img src="/images/image-20210806155756062.png" alt="image-20210806155756062"></p>
+<p>没错，通过**监听+Znode节点(持久/短暂[临时])**，ZooKeeper就可以玩出这么多花样了。</p>
+<h2 id="三、ZooKeeper是怎么做到的？"><a href="#三、ZooKeeper是怎么做到的？" class="headerlink" title="三、ZooKeeper是怎么做到的？"></a>三、ZooKeeper是怎么做到的？</h2><p>下面我们来看看用ZooKeeper怎么来做：统一配置管理、统一命名服务、分布式锁、集群管理。</p>
+<h3 id="3-1-统一配置管理"><a href="#3-1-统一配置管理" class="headerlink" title="3.1 统一配置管理"></a>3.1 统一配置管理</h3><p>比如我们现在有三个系统A、B、C，他们有三份配置，分别是<code>ASystem.yml、BSystem.yml、CSystem.yml</code>，然后，这三份配置又非常类似，很多的配置项几乎都一样。</p>
+<ul>
+<li>此时，如果我们要改变其中一份配置项的信息，很可能其他两份都要改。并且，改变了配置项的信息<strong>很可能就要重启系统</strong></li>
+</ul>
+<p>于是，我们希望把<code>ASystem.yml、BSystem.yml、CSystem.yml</code>相同的配置项抽取出来成一份<strong>公用</strong>的配置<code>common.yml</code>，并且即便<code>common.yml</code>改了，也不需要系统A、B、C重启。</p>
+<p><img src="/images/image-20210806155829568.png" alt="image-20210806155829568"></p>
+<p>系统A、B、C都使用着这份配置</p>
+<p>做法：我们可以将<code>common.yml</code>这份配置放在ZooKeeper的Znode节点中，<strong>系统A、B、C监听着这个Znode节点有无变更</strong>，如果变更了，<strong>及时</strong>响应。</p>
+<p><img src="/images/image-20210806155850468.png" alt="image-20210806155850468"></p>
+<p>系统A、B、C监听着ZooKeeper的节点，一旦common.yml内容有变化，及时响应</p>
+<h3 id="3-2-统一命名服务"><a href="#3-2-统一命名服务" class="headerlink" title="3.2 统一命名服务"></a>3.2 统一命名服务</h3><p>统一命名服务的理解其实跟<strong>域名</strong>一样，是我们为这某一部分的资源给它<strong>取一个名字</strong>，别人通过这个名字就可以拿到对应的资源。</p>
+<p>比如说，现在我有一个域名<code>www.java3y.com</code>，但我这个域名下有多台机器：</p>
+<ul>
+<li>192.168.1.1</li>
+<li>192.168.1.2</li>
+<li>192.168.1.3</li>
+<li>192.168.1.4</li>
+</ul>
+<p>别人访问<code>www.java3y.com</code>即可访问到我的机器，而不是通过IP去访问。</p>
+<p><img src="/images/image-20210806155921357.png" alt="image-20210806155921357"></p>
+<p>通过名称去访问旗下的IP</p>
+<h3 id="3-3-分布式锁"><a href="#3-3-分布式锁" class="headerlink" title="3.3 分布式锁"></a>3.3 分布式锁</h3><p>系统A、B、C都去访问<code>/locks</code>节点</p>
+<p><img src="/images/image-20210806155950757.png" alt="image-20210806155950757"></p>
+<p>访问的时候会创建<strong>带顺序号的临时/短暂</strong>(<code>EPHEMERAL_SEQUENTIAL</code>)节点，比如，系统A创建了<code>id_000000</code>节点，系统B创建了<code>id_000002</code>节点，系统C创建了<code>id_000001</code>节点。</p>
+<p><img src="/images/image-20210806160017084.png" alt="image-20210806160017084"></p>
+<p>创建出临时带顺序号的节点</p>
+<p>接着，拿到<code>/locks</code>节点下的所有子节点(id_000000,id_000001,id_000002)，<strong>判断自己创建的是不是最小的那个节点</strong></p>
+<ul>
+<li><p>如果是，则拿到锁。</p>
+</li>
+<li><ul>
+<li>释放锁：执行完操作后，把创建的节点给删掉</li>
+</ul>
+</li>
+<li><p>如果不是，则监听比自己要小1的节点变化</p>
+</li>
+</ul>
+<p>举个例子：</p>
+<ul>
+<li>系统A拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000000</code>)，是所有子节点最小的。所以得到锁</li>
+<li>系统B拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000002</code>)，不是所有子节点最小的。所以监听比自己小1的节点<code>id_000001</code>的状态</li>
+<li>系统C拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000001</code>)，不是所有子节点最小的。所以监听比自己小1的节点<code>id_000000</code>的状态</li>
+<li>……</li>
+<li>等到系统A执行完操作以后，将自己创建的节点删除(<code>id_000000</code>)。通过监听，系统C发现<code>id_000000</code>节点已经删除了，发现自己已经是最小的节点了，于是顺利拿到锁</li>
+<li>….系统B如上</li>
+</ul>
+<h3 id="3-4集群状态"><a href="#3-4集群状态" class="headerlink" title="3.4集群状态"></a>3.4集群状态</h3><p>经过上面几个例子，我相信大家也很容易想到ZooKeeper是怎么”<strong>感知</strong>“节点的动态新增或者删除的了。</p>
+<p>还是以我们三个系统A、B、C为例，在ZooKeeper中各维护一个临时节点：</p>
+<p><img src="/images/image-20210806160041372.png" alt="image-20210806160041372"></p>
+<p>只要系统A挂了，那<code>/groupMember/A</code>这个节点就会删除，通过<strong>监听</strong><code>groupMember</code>下的子节点，系统B和C就能够感知到系统A已经挂了。(新增也是同理)</p>
+<p>除了能够感知节点的上下线变化，ZooKeeper还可以实现<strong>动态选举Master</strong>的功能。(如果集群是主从架构模式下)</p>
+<p>原理也很简单，如果想要实现动态选举Master的功能，Znode节点的类型是带<strong>顺序号的临时节点</strong>(<code>EPHEMERAL_SEQUENTIAL</code>)就好了。</p>
+<ul>
+<li>Zookeeper会每次选举最小编号的作为Master，如果Master挂了，自然对应的Znode节点就会删除。然后让<strong>新的最小编号作为Master</strong>，这样就可以实现动态选举的功能了。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

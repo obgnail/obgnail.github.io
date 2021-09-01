@@ -1,0 +1,93 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://www.jianshu.com/p/9a54e9f3e059&quot;&gt;如何将自己的Python程序打包–setuptools详解&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>setuptools | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Python/" rel="tag">Python</a></div><div class="post-time">2019-11-20</div></div></div><div class="container post-header"><h1>setuptools</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PyPI"><span class="toc-number">1.1.</span> <span class="toc-text">PyPI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#setuptools"><span class="toc-number">1.2.</span> <span class="toc-text">setuptools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#setup%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.</span> <span class="toc-text">setup函数</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/9a54e9f3e059">如何将自己的Python程序打包–setuptools详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://lingxiankong.github.io/2013-12-23-python-setup.html">关于python中的setup.py</a></p>
+<h2 id="PyPI"><a href="#PyPI" class="headerlink" title="PyPI"></a>PyPI</h2><ul>
+<li><p><strong>PyPI</strong>：Python Package Index</p>
+</li>
+<li><p>PyPI首页网址：pypi.python.org，基本上能在这上面找到所有的扩展包。</p>
+</li>
+<li><p>PyPI主要有两大类安装方法：</p>
+<ol>
+<li><p>自行安装</p>
+<blockquote>
+<ul>
+<li>从PyPI上下载的包解压后，都可以通过<code>python setup.py install</code>来安装。</li>
+<li>这将把程序安装到site-package目录中，把脚本安装到Scripts目录中(Linux是bin目录)。</li>
+<li><strong>这种方式无法自动解决依赖关系</strong>。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>通过工具安装</p>
+<blockquote>
+<p>通过工具安装：常用的工具有两个:</p>
+<ul>
+<li>easy_install</li>
+<li>pip</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><p>easy_install 和 pip命令 : </p>
+<ol>
+<li>安装：<code>easy_install packageName</code></li>
+<li>安装：<code>easy_install package.egg</code></li>
+<li>安装：<code>pip install packageName</code></li>
+<li>更新：<code>pip install -U packageName</code></li>
+<li>移除：<code>pip uninstall packageName</code></li>
+<li>搜索：<code>pip search packageName</code></li>
+<li>帮助：<code>pip help</code></li>
+</ol>
+</li>
+<li><p>easy_install和pip这两个工具安装的软件，都涉及到一个叫egg的东西。<strong>egg包是目前最流行的python应用打包部署方式。</strong></p>
+</li>
+</ul>
+<h2 id="setuptools"><a href="#setuptools" class="headerlink" title="setuptools"></a>setuptools</h2><ul>
+<li>setuptools 实际上提供了发布你自己的python package的功能</li>
+<li>它可以帮助我们更简单的创建和分发Python包，尤其是拥有依赖关系的。</li>
+<li>功能亮点：<ul>
+<li>利用<a target="_blank" rel="noopener" href="http://peak.telecommunity.com/DevCenter/EasyInstall">EasyInstall</a>自动查找、下载、安装、升级依赖包</li>
+<li>创建<a target="_blank" rel="noopener" href="http://peak.telecommunity.com/DevCenter/PythonEggs">Python Eggs</a></li>
+<li>包含包目录内的数据文件</li>
+<li>自动包含包目录内的所有的包，而不用在setup.py中列举</li>
+<li>自动包含包内和发布有关的所有相关文件，而不是创建一个MANIFEST.in文件</li>
+<li>自动生成经过包装的脚本或Windows执行文件</li>
+<li>支持Pyrex，即在可以setup.py中列出.pyx文件，而最终用户无需安装Pyrex</li>
+<li>支持上传到PyPI</li>
+<li>可以部署开发模式，使项目在sys.path中</li>
+<li>用新命令或setup()参数扩展distutils，为多个项目发布/重用扩展</li>
+<li>在项目setup()中简单声明entry points，创建可以自动发现扩展的应用和框架</li>
+</ul>
+</li>
+</ul>
+<h2 id="setup函数"><a href="#setup函数" class="headerlink" title="setup函数"></a>setup函数</h2><ul>
+<li>setup函数中大部分是描述性东西。</li>
+<li>最主要的是package参数，可以手动列出所有的package，也可以用用自带的find_packages来动态获取package。</li>
+<li>setup函数包含的参数解释<br>–name 包名称————生成的egg名称<br>–version (-V) 包版本—-生成egg包的版本号<br>–author 程序的作者——包的制作者名字<br>–author_email 程序的作者的邮箱地址<br>–maintainer 维护者<br>–maintainer_email 维护者的邮箱地址<br>–url 程序的官网地址<br>–license 程序的授权信息<br>–description 程序的简单描述——-程序的概要介绍<br>–long_description 程序的详细描述—程序的详细描述<br>–platforms 程序适用的软件平台列表<br>–classifiers 程序的所属分类列表<br>–keywords 程序的关键字列表<br>–packages 需要处理的包目录（包含<code>__init__.py</code>的文件夹）——-和setup.py同一目录下搜索各个含有 <strong>init</strong>.py的包<br>–py_modules 需要打包的python文件列表<br>–download_url 程序的下载地址<br>–cmdclass<br>–data_files 打包时需要打包的数据文件，如图片，配置文件等<br>–scripts 安装时需要执行的脚步列表<br>–package_dir 告诉setuptools哪些目录下的文件被映射到哪个源码包。一个例子：package_dir = {‘’: ‘lib’}，表示“root package”中的模块都在lib 目录中。<br>–requires 定义依赖哪些模块<br>–provides定义可以为哪些模块提供依赖<br>–find_packages() 对于简单工程来说，手动增加packages参数很容易，刚刚我们用到了这个函数，它默认在和setup.py同一目录下搜索各个含有 <strong>init</strong>.py的包。<br>其实我们可以将包统一放在一个src目录中，另外，这个包内可能还有aaa.txt文件和data数据文件夹。另外，也可以排除一些特定的包<br>find_packages(exclude=[“<em>.tests”, “</em>.tests.<em>“, “tests.</em>“, “tests”])<br>–install_requires = [“requests”] 需要安装的依赖包<br>–entry_points 动态发现服务和插件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> setuptools <span class="keyword">import</span> setup,find_packages</span><br><span class="line"></span><br><span class="line">setup(</span><br><span class="line">    name = <span class="string">&#x27;hyldemo&#x27;</span>,</span><br><span class="line">    version = <span class="string">&#x27;0.1&#x27;</span>,</span><br><span class="line">    packages = find_packages(),</span><br><span class="line">    description=<span class="string">&#x27;this is my demo test&#x27;</span>,</span><br><span class="line">    author = <span class="string">&#x27;hyl&#x27;</span>,</span><br><span class="line">    author_email = <span class="string">&#x27;None&#x27;</span>,</span><br><span class="line">    url = <span class="string">&#x27;None&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="2">
+<li><p>写好函数之后需要检查setup.py是否有错误或警告</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python setup.py check</span><br></pre></td></tr></table></figure></li>
+<li><p>执行<code>python setup.py bdist_egg</code>即可打包一个test的包了。</p>
+</li>
+<li><p>在当前目录下，会创建<code>dist</code>目录，里面有个文件名为<code>demo-0.1-py3.7.egg</code>，这个就是可以分发的包。</p>
+</li>
+<li><p>使用者拿到这个包后，解压，到demo-0.1目录下执行：<code>python setup.py install</code>，那么，foo.py就会被拷贝到python类路径下，可以被导入使用（如果安装是egg文件，会把egg文件拷贝到dist-packages目录下）。</p>
+</li>
+</ol>
+<p>执行sdist命令时，默认会打包哪些东西呢？</p>
+<ul>
+<li>所有由<code>py_modules</code>或<code>packages</code>指定的源码文件</li>
+<li>所有由<code>ext_modules</code>或<code>libraries</code>指定的C源码文件</li>
+<li>由<code>scripts</code>指定的脚本文件</li>
+<li>类似于test/test*.py的文件</li>
+<li>README.txt或README，setup.py，setup.cfg</li>
+<li>所有<code>package_data</code>或<code>data_files</code>指定的文件</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

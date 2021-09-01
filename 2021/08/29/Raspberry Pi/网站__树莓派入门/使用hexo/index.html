@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;下载node&quot;&gt;&lt;a href=&quot;#下载node&quot; class=&quot;headerlink&quot; title=&quot;下载node&quot;&gt;&lt;/a&gt;下载node&lt;/h2&gt;&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sudo wget http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-arm-pi.tar.gz&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;sudo tar zxvf node-v0.10.26-linux-arm-pi.tar.gz&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;sudo mv node-v0.10.26-linux-arm-pi/ node&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;sudo mv node /usr/local/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;sudo chown -R pi.pi /usr/local/node&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;p&gt;1）首先：查看当前node版本："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>使用hexo | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-29</div></div></div><div class="container post-header"><h1>使用hexo</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BDnode"><span class="toc-number">1.</span> <span class="toc-text">下载node</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85HEXO"><span class="toc-number">2.</span> <span class="toc-text">安装HEXO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hexo-new%E6%9C%AC%E8%B4%A8"><span class="toc-number">3.</span> <span class="toc-text">hexo new本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8theme"><span class="toc-number">4.</span> <span class="toc-text">使用theme</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">5.</span> <span class="toc-text">注意</span></a></li></ol></details></div><div class="container post-content"><h2 id="下载node"><a href="#下载node" class="headerlink" title="下载node"></a>下载node</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo wget http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-arm-pi.tar.gz</span><br><span class="line">sudo tar zxvf node-v0.10.26-linux-arm-pi.tar.gz</span><br><span class="line">sudo mv node-v0.10.26-linux-arm-pi/ node</span><br><span class="line">sudo mv node /usr/local/</span><br><span class="line">sudo chown -R pi.pi /usr/local/node</span><br></pre></td></tr></table></figure>
+
+
+
+<p>1）首先：查看当前node版本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node –v</span><br></pre></td></tr></table></figure>
+
+<p>2）安装n模块：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g n</span><br></pre></td></tr></table></figure>
+
+<p>3）升级到指定版本/最新版本（该步骤可能需要花费一些时间）升级之前，可以执行n ls （查看可升级的版本）<br>如：<code>n v6.9.1</code></p>
+<p>或者你也可以告诉管理器，安装最新的稳定版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n stable</span><br></pre></td></tr></table></figure>
+
+<p>或者升级到最新版</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n latest</span><br></pre></td></tr></table></figure>
+
+<p>4）安装完成后，查看Node的版本，检查升级是否成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+
+<p>注：如果得到的版本信息不正确，你可能需要重启机器</p>
+<p>最后，扩展说明：</p>
+<p>有很多同学会发现，安装完成之后，用node –v查看，还是老版本，安装未生效。</p>
+<p>原因：<br>n 切换之后的 node 默认装在 /usr/local/bin/node，先用 which node 检查一下当前使用的 node 是否是这个路径下的。如上缘由，一般都是因为当前版本指定到了其他路径，更新下/etc/profile文件指定即可。轻松解决。</p>
+<p>删除node_modules的缓存，然后重新下载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /usr/local/node/lib/node_modules/hexo-cli/node_modules</span><br><span class="line">cd /usr/local/node/lib/node_modules/hexo-cli/</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+
+
+<p>查看hexo版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br><span class="line"></span><br><span class="line">hexo-cli: 4.3.0</span><br><span class="line">os: linux 5.10.52-v7l+ Raspbian GNU/Linux 10 (buster) 10 (buster)</span><br><span class="line">node: 14.17.5</span><br><span class="line">v8: 8.4.371.23-node.76</span><br><span class="line">uv: 1.41.0</span><br><span class="line">zlib: 1.2.11</span><br><span class="line">brotli: 1.0.9</span><br><span class="line">ares: 1.17.2</span><br><span class="line">modules: 83</span><br><span class="line">nghttp2: 1.42.0</span><br><span class="line">napi: 8</span><br><span class="line">llhttp: 2.1.3</span><br><span class="line">openssl: 1.1.1k</span><br><span class="line">cldr: 39.0</span><br><span class="line">icu: 69.1</span><br><span class="line">tz: 2021a</span><br><span class="line">unicode: 13.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装HEXO"><a href="#安装HEXO" class="headerlink" title="安装HEXO"></a>安装HEXO</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog</span><br><span class="line">cd blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="hexo-new本质"><a href="#hexo-new本质" class="headerlink" title="hexo new本质"></a>hexo new本质</h2><p>hexo new的本质其实就是在_post目录下生成md文件罢了.所以我们可以直接在相应目录下创建文件,不需要使用hexo new</p>
+<h2 id="使用theme"><a href="#使用theme" class="headerlink" title="使用theme"></a>使用theme</h2><p>示例</p>
+<ol>
+<li>安装解析器<code>npm install hexo-renderer-less --save</code>;<code>pm install hexo-renderer-pug --save</code></li>
+<li>在theme目录下执行git clone <a href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;">&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;</a>:lotabout/hexo-theme-noise.git</li>
+<li>mv hexo-theme-noise noise</li>
+<li>Edit <code>_config.yml</code> in hexo root, change <code>theme</code> to <code>noise</code>.</li>
+</ol>
+<p>其他的hexo-config和theme-config直接看官方文档即可.</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>因为hexo有自己的类似于<code>&#123;&#123;&#125;&#125;</code>,<code>&#123;%%&#125;</code>等特殊字符.因此,在md文件中,如果要使用到这些字符,必须放在反引号,代码块中.否则使用<code>hexo s</code>和<code>hexo g</code>都编译不了.</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

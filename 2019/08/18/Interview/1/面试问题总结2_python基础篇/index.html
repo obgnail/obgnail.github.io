@@ -1,0 +1,119 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;简述编译型与解释型编程语言&quot;&gt;&lt;a href=&quot;#简述编译型与解释型编程语言&quot; class=&quot;headerlink&quot; title=&quot;简述编译型与解释型编程语言&quot;&gt;&lt;/a&gt;简述编译型与解释型编程语言&lt;/h3&gt;&lt;p&gt;两种方式只是&lt;strong&gt;翻译的时间不同&lt;/strong&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>面试问题总结2_python基础篇 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Interview/" rel="tag">Interview</a></div><div class="post-time">2019-08-18</div></div></div><div class="container post-header"><h1>面试问题总结2_python基础篇</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%BF%B0%E7%BC%96%E8%AF%91%E5%9E%8B%E4%B8%8E%E8%A7%A3%E9%87%8A%E5%9E%8B%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">简述编译型与解释型编程语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%EF%BC%8CJava%EF%BC%8CPython%EF%BC%8CC%EF%BC%8CC-%E8%BF%99%E5%87%A0%E7%A7%8D%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E5%AF%B9%E6%AF%94"><span class="toc-number">2.</span> <span class="toc-text">PHP，Java，Python，C，C++这几种编程语言特性对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%83%B6%E6%B0%B4%E8%AF%AD%E8%A8%80"><span class="toc-number">3.</span> <span class="toc-text">什么是胶水语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E8%A7%A3%E9%87%8A%E5%99%A8%E7%A7%8D%E7%B1%BB%E4%BB%A5%E5%8F%8A%E7%89%B9%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">Python解释器种类以及特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PEP8%E8%A7%84%E8%8C%83"><span class="toc-number">5.</span> <span class="toc-text">PEP8规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E9%80%92%E5%BD%92%E7%9A%84%E6%9C%80%E5%A4%A7%E5%B1%82%E6%95%B0"><span class="toc-number">6.</span> <span class="toc-text">python递归的最大层数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ascii%E3%80%81unicode%E3%80%81utf-8%E3%80%81gbk-%E5%8C%BA%E5%88%AB"><span class="toc-number">7.</span> <span class="toc-text">ascii、unicode、utf-8、gbk 区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E5%92%8C%E6%9C%BA%E5%99%A8%E7%A0%81%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">8.</span> <span class="toc-text">字节码和机器码的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python2%E4%B8%8Epython3%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">9.</span> <span class="toc-text">python2与python3的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python3%E5%92%8CPython2%E4%B8%AD-int-%E5%92%8C-long%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">10.</span> <span class="toc-text">Python3和Python2中 int 和 long的区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%BF%B0Python%E7%9A%84%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">11.</span> <span class="toc-text">简述Python的深浅拷贝以及应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A8%A1%E5%9D%97%EF%BC%9F%E4%BB%A5%E5%8F%8A%E7%94%A8%E8%BF%87%E5%93%AA%E4%BA%9B%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A8%A1%E5%9D%97%EF%BC%9F"><span class="toc-number">12.</span> <span class="toc-text">如何安装第三方模块？以及用过哪些第三方模块？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%87%8Aprint-1-lt-2-2-True"><span class="toc-number">13.</span> <span class="toc-text">解释print(1 &lt; 2 &#x3D;&#x3D; 2) : True</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#logging%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">14.</span> <span class="toc-text">logging模块的作用？以及应用场景？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#os%E5%92%8Csys%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-number">15.</span> <span class="toc-text">os和sys模块的作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%88%E8%B0%88%E4%BD%A0%E5%AF%B9%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="toc-number">16.</span> <span class="toc-text">谈谈你对面向对象的理解？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%B8%AD%E7%9A%84%E7%BB%A7%E6%89%BF%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E7%82%B9%EF%BC%9F"><span class="toc-number">17.</span> <span class="toc-text">Python面向对象中的继承有什么特点？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%AF%E5%90%A6%E4%BD%BF%E7%94%A8%E8%BF%87functools%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%9F%E5%85%B6%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">18.</span> <span class="toc-text">是否使用过functools中的函数？其作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%92%8C%E7%B1%BB%E6%96%B9%E6%B3%95%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">19.</span> <span class="toc-text">静态方法和类方法区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%EF%BC%9F%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">20.</span> <span class="toc-text">什么是反射？以及应用场景？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#metaclass%E4%BD%9C%E7%94%A8%EF%BC%9F%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">21.</span> <span class="toc-text">metaclass作用？以及应用场景？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json%E5%BA%8F%E5%88%97%E5%8C%96%E6%97%B6%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%A4%84%E7%90%86%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F%E5%A6%82%E4%BD%95%E5%AE%9A%E5%88%B6%E6%94%AF%E6%8C%81datetime%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="toc-number">22.</span> <span class="toc-text">json序列化时，可以处理的数据类型有哪些？如何定制支持datetime类型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json%E5%BA%8F%E5%88%97%E5%8C%96%E6%97%B6%EF%BC%8C%E9%BB%98%E8%AE%A4%E9%81%87%E5%88%B0%E4%B8%AD%E6%96%87%E4%BC%9A%E8%BD%AC%E6%8D%A2%E6%88%90unicode%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%83%B3%E8%A6%81%E4%BF%9D%E7%95%99%E4%B8%AD%E6%96%87%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-number">23.</span> <span class="toc-text">json序列化时，默认遇到中文会转换成unicode，如果想要保留中文怎么办？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">24.</span> <span class="toc-text">常用的设计模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%BF%B0%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B"><span class="toc-number">25.</span> <span class="toc-text">简述函数式编程</span></a></li></ol></details></div><div class="container post-content"><h3 id="简述编译型与解释型编程语言"><a href="#简述编译型与解释型编程语言" class="headerlink" title="简述编译型与解释型编程语言"></a>简述编译型与解释型编程语言</h3><p>两种方式只是<strong>翻译的时间不同</strong></p>
+<p>概念：</p>
+<ul>
+<li>编译型语言：把做好的源程序全部编译成二进制代码的可运行程序。然后，可直接运行这个程序。</li>
+<li>解释型语言：把做好的源程序翻译一句，然后执行一句，直至结束！</li>
+</ul>
+<p>区别：</p>
+<ul>
+<li>编译型语言，执行速度快、效率高；依赖编译器、跨平台性差些。如C、C++、Delphi、Pascal，Fortran。</li>
+<li>解释型语言，执行速度慢、效率低；依赖解释器、跨平台性好。如Java、Basic.</li>
+</ul>
+<blockquote>
+<p>Python 的采用了类似Java的编译模式，先将Python程序编译成Python字节码，然后由一个专门的Python字节码解释器负责解释执行字节码。</p>
+</blockquote>
+<h3 id="PHP，Java，Python，C，C-这几种编程语言特性对比"><a href="#PHP，Java，Python，C，C-这几种编程语言特性对比" class="headerlink" title="PHP，Java，Python，C，C++这几种编程语言特性对比"></a>PHP，Java，Python，C，C++这几种编程语言特性对比</h3><p>JAVA：</p>
+<ol>
+<li>简单性</li>
+<li>面向对象性（面向对象的程度可以达到95%） </li>
+<li>健壮性</li>
+<li>跨平台性</li>
+<li>高性能（自动垃圾回收机制）</li>
+<li>多线程</li>
+<li>动态性</li>
+<li>安全性</li>
+</ol>
+<h3 id="什么是胶水语言"><a href="#什么是胶水语言" class="headerlink" title="什么是胶水语言"></a>什么是胶水语言</h3><p>能够把用其他语言制作的各种模块(尤其是C/C++)很轻松地联结在一起。</p>
+<h3 id="Python解释器种类以及特点"><a href="#Python解释器种类以及特点" class="headerlink" title="Python解释器种类以及特点"></a>Python解释器种类以及特点</h3><ul>
+<li>CPython :<br>用C语言开发的，使用最为广泛，CPython实现会将源文件（py文件）转换成字节码文件（pyc文件），然后运行在Python虚拟机上。</li>
+<li>IPython :<br>基于CPython的一个交互式解释器，相比于CPython ,只是在交互方式上有所增强</li>
+<li>PyPy :<br>采用JIT技术，对Python代码进行动态编译，所以可以显著提高Python代码的执行速度。</li>
+<li>Jython :<br> Python的Java实现，Jython会将Python代码动态编译成Java字节码，然后在JVM上运行。</li>
+<li>IronPython :<br>Python的C#实现，IronPython将Python代码编译成C#字节码，然后在CLR上运行。（与Jython类似）</li>
+</ul>
+<h3 id="PEP8规范"><a href="#PEP8规范" class="headerlink" title="PEP8规范"></a>PEP8规范</h3><ol>
+<li>每个缩进级别使用4个空格。</li>
+<li>导入库的顺序 :<br>标准库 – 第三方库 –本地库</li>
+<li>操作符左右各加一个空格,函数默认参数使用的赋值符左右省略空格</li>
+<li>类的命名采用驼峰命名法</li>
+<li>所有行限制为最多79个字符</li>
+<li>始终使用UTF-8</li>
+<li>三引号作文档字符串，</li>
+<li>顶级定义之间空2行, 方法定义之间空1行</li>
+<li>不要使用反斜杠连接行。Python会将圆括号, 中括号和花括号中的行隐式的连接起来</li>
+<li></li>
+</ol>
+<h3 id="python递归的最大层数"><a href="#python递归的最大层数" class="headerlink" title="python递归的最大层数"></a>python递归的最大层数</h3><p>998 次</p>
+<p>可以通过sys.setrecursionlimit(1000)来设置</p>
+<h3 id="ascii、unicode、utf-8、gbk-区别"><a href="#ascii、unicode、utf-8、gbk-区别" class="headerlink" title="ascii、unicode、utf-8、gbk 区别"></a>ascii、unicode、utf-8、gbk 区别</h3><ul>
+<li>ASCII码使用一个字节编码，所以它的范围基本是只有英文字母、数字和一些特殊符号 ，只有256个字符。 </li>
+<li>Unicode : 一组十六进制的数字来表示字符</li>
+<li>UTF-8是一种针对Unicode的<strong>可变长度字符编码</strong>，又称万国码</li>
+<li>GBK是只用来编码汉字的，使用双字节编码。</li>
+</ul>
+<h3 id="字节码和机器码的区别"><a href="#字节码和机器码的区别" class="headerlink" title="字节码和机器码的区别"></a>字节码和机器码的区别</h3><ul>
+<li><strong>机器码就是计算机可以直接执行</strong>，并且执行速度最快的代码。 </li>
+<li>字节码是一种<strong>中间状态</strong>（中间码）的二进制代码（文件）。<strong>需要直译器转译后才能成为机器码</strong>。</li>
+</ul>
+<h3 id="python2与python3的区别"><a href="#python2与python3的区别" class="headerlink" title="python2与python3的区别"></a>python2与python3的区别</h3><ol>
+<li>Print 从一个语句标签一个函数</li>
+<li>整数的除法 : 从地板除变成真除法</li>
+<li>支持 Unicode : Python 2 默认使用 ASCII 字母表,Python 3 默认使用 Unicode</li>
+<li>Python2 中存在老式类和新式类的区别，Python3 统一采用新式类。</li>
+</ol>
+<h3 id="Python3和Python2中-int-和-long的区别？"><a href="#Python3和Python2中-int-和-long的区别？" class="headerlink" title="Python3和Python2中 int 和 long的区别？"></a>Python3和Python2中 int 和 long的区别？</h3><p>int(符号整数):通常被称为是整数或整数,没有小数点的正或负整数</p>
+<p>long(长整数):无限大小的整数,这样写整数和一个大写或小写的L。</p>
+<h3 id="简述Python的深浅拷贝以及应用场景"><a href="#简述Python的深浅拷贝以及应用场景" class="headerlink" title="简述Python的深浅拷贝以及应用场景"></a>简述Python的深浅拷贝以及应用场景</h3><ul>
+<li>浅拷贝指仅仅拷贝数据集合的第一层数据，深拷贝指拷贝数据集合的所有层。</li>
+<li>所以对于只有一层的数据集合来说深浅拷贝的意义是一样的，比如字符串，数字，还有仅仅一层的字典、列表、元祖等.</li>
+</ul>
+<h3 id="如何安装第三方模块？以及用过哪些第三方模块？"><a href="#如何安装第三方模块？以及用过哪些第三方模块？" class="headerlink" title="如何安装第三方模块？以及用过哪些第三方模块？"></a>如何安装第三方模块？以及用过哪些第三方模块？</h3><ul>
+<li>在Python中，安装第三方模块，是通过setuptools这个工具完成的。</li>
+<li>Python有两个封装了setuptools的包管理工具：easy_install和pip。目前官方推荐使用pip </li>
+</ul>
+<h3 id="解释print-1-lt-2-2-True"><a href="#解释print-1-lt-2-2-True" class="headerlink" title="解释print(1 &lt; 2 == 2) : True"></a>解释print(1 &lt; 2 == 2) : True</h3><p><code>print(1 &lt; 2 == 2)</code>等价于<code>print(1&lt;2 and 2==2)</code></p>
+<h3 id="logging模块的作用？以及应用场景？"><a href="#logging模块的作用？以及应用场景？" class="headerlink" title="logging模块的作用？以及应用场景？"></a>logging模块的作用？以及应用场景？</h3><ul>
+<li>可以通过设置不同的日志等级，在release版本中只输出重要信息，而不必显示大量的调试信息； </li>
+<li>print将所有信息都输出到标准输出中，严重影响开发者从标准输出中查看其它数据；logging则可以由开发者决定将信息输出到什么地方，以及怎么输出；</li>
+</ul>
+<h3 id="os和sys模块的作用？"><a href="#os和sys模块的作用？" class="headerlink" title="os和sys模块的作用？"></a>os和sys模块的作用？</h3><ul>
+<li>sys模块主要是用于提供对<strong>python解释器相关</strong>的操作 </li>
+<li>os模块是Python标准库中的一个用于<strong>访问操作系统功能</strong>的模块，使用OS模块中提供的接口，可以实现跨平台访问</li>
+</ul>
+<h3 id="谈谈你对面向对象的理解？"><a href="#谈谈你对面向对象的理解？" class="headerlink" title="谈谈你对面向对象的理解？"></a>谈谈你对面向对象的理解？</h3><p>面向对象就是将一些零散的具有相同功能的属性方法通过类封装起来，实现模块化 </p>
+<h3 id="Python面向对象中的继承有什么特点？"><a href="#Python面向对象中的继承有什么特点？" class="headerlink" title="Python面向对象中的继承有什么特点？"></a>Python面向对象中的继承有什么特点？</h3><ul>
+<li>init()方法不会被自动调用，它需要在其派生类的构造中亲自专门调用。</li>
+<li>在调用基类的方法时，需要加上基类的类名前缀，且需要带上self参数变量。区别于在类中调用普通函数时并不需要带上self参数。</li>
+<li>先在本类中查找调用的方法，找不到才去基类中找。</li>
+</ul>
+<h3 id="是否使用过functools中的函数？其作用是什么？"><a href="#是否使用过functools中的函数？其作用是什么？" class="headerlink" title="是否使用过functools中的函数？其作用是什么？"></a>是否使用过functools中的函数？其作用是什么？</h3><p>functools用于高阶函数。通常情况下，只要是可以被当做函数调用的对象就是这个模块的目标。</p>
+<h3 id="静态方法和类方法区别？"><a href="#静态方法和类方法区别？" class="headerlink" title="静态方法和类方法区别？"></a>静态方法和类方法区别？</h3><ul>
+<li><p><strong>实例方法，类方法，静态方法都可以通过实例或者类调用</strong>，只不过实例方法通过类调用时需要传递实例的引用。</p>
+</li>
+<li><p>三种方法从不同层次上来对方法进行了描述：实例方法针对的是实例，类方法针对的是类，他们都可以继承和重新定义。</p>
+</li>
+</ul>
+<h3 id="什么是反射？以及应用场景？"><a href="#什么是反射？以及应用场景？" class="headerlink" title="什么是反射？以及应用场景？"></a>什么是反射？以及应用场景？</h3><p>本质其实就是利用<strong>字符串的形式</strong>去对象（模块）中操作（查找/获取/删除/添加）成员，一种基于字符串的事件驱动！ </p>
+<h3 id="metaclass作用？以及应用场景？"><a href="#metaclass作用？以及应用场景？" class="headerlink" title="metaclass作用？以及应用场景？"></a>metaclass作用？以及应用场景？</h3><p>要控制类的创建行为，可以使用metaclass。</p>
+<h3 id="json序列化时，可以处理的数据类型有哪些？如何定制支持datetime类型？"><a href="#json序列化时，可以处理的数据类型有哪些？如何定制支持datetime类型？" class="headerlink" title="json序列化时，可以处理的数据类型有哪些？如何定制支持datetime类型？"></a>json序列化时，可以处理的数据类型有哪些？如何定制支持datetime类型？</h3><p>可以处理数组、对象 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ComplexEncoder</span>(<span class="params">json.JSONEncoder</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">default</span>(<span class="params">self, obj</span>):</span></span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">isinstance</span>(obj, datetime):</span><br><span class="line">			<span class="keyword">return</span> obj.strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>)</span><br><span class="line">		<span class="keyword">elif</span> <span class="built_in">isinstance</span>(obj, date):</span><br><span class="line">			<span class="keyword">return</span> obj.strftime(<span class="string">&#x27;%Y-%m-%d&#x27;</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">return</span> json.JSONEncoder.default(self, obj)</span><br><span class="line"></span><br><span class="line">x = json.dumps(&#123;<span class="string">&#x27;now&#x27;</span>:datetime.now()&#125;,cls=ComplexEncoder)</span><br><span class="line"><span class="built_in">print</span>(x)  <span class="comment"># &#123;&quot;now&quot;: &quot;2019-08-14 15:29:52&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="json序列化时，默认遇到中文会转换成unicode，如果想要保留中文怎么办？"><a href="#json序列化时，默认遇到中文会转换成unicode，如果想要保留中文怎么办？" class="headerlink" title="json序列化时，默认遇到中文会转换成unicode，如果想要保留中文怎么办？"></a>json序列化时，默认遇到中文会转换成unicode，如果想要保留中文怎么办？</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">json.dumps(jsonData,ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="常用的设计模式"><a href="#常用的设计模式" class="headerlink" title="常用的设计模式"></a>常用的设计模式</h3><ul>
+<li>简单工厂模式</li>
+<li>工厂方法模式</li>
+<li>抽象工厂模式</li>
+<li>创建者模式</li>
+<li>原型模式</li>
+<li>单例模式</li>
+</ul>
+<h3 id="简述函数式编程"><a href="#简述函数式编程" class="headerlink" title="简述函数式编程"></a>简述函数式编程</h3><p>在函数式编程中，<strong>函数是基本单位，变量只是一个名称，而不是一个存储单元</strong>。除了匿名函数外，Python还使用fliter(),map(),reduce(),apply()函数来支持函数式编程。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

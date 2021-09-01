@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="地址 : &lt;a href=&quot;https://www.bilibili.com/video/BV1cW411r7c5&quot;&gt;https://www.bilibili.com/video/BV1cW411r7c5&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>hadoop框架精讲 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Hadoop/" rel="tag">Hadoop</a></div><div class="post-time">2020-07-07</div></div></div><div class="container post-header"><h1>hadoop框架精讲</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8EHadoop%E6%A1%86%E6%9E%B6%E8%AE%A8%E8%AE%BA%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%94%9F%E6%80%81"><span class="toc-number">2.</span> <span class="toc-text">从Hadoop框架讨论大数据生态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hadoop%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.</span> <span class="toc-text">Hadoop是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hadoop-%E4%BC%98%E5%8A%BF"><span class="toc-number">2.2.</span> <span class="toc-text">Hadoop 优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hadoop%E7%BB%84%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">Hadoop组成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HDFS%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">2.3.1.</span> <span class="toc-text">HDFS架构概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#YARN%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">2.3.2.</span> <span class="toc-text">YARN架构概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MaReduce%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">2.3.3.</span> <span class="toc-text">MaReduce架构概述</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E7%94%9F%E6%80%81%E4%BD%93%E7%B3%BB"><span class="toc-number">2.4.</span> <span class="toc-text">大数据技术生态体系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E5%9B%BE"><span class="toc-number">2.5.</span> <span class="toc-text">推荐系统框架图</span></a></li></ol></li></ol></details></div><div class="container post-content"><p>地址 : <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1cW411r7c5">https://www.bilibili.com/video/BV1cW411r7c5</a></p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>大数据 : 主要解决海量数据的<strong>存储</strong>和<strong>分析计算</strong>问题</p>
+<p>大数据四个特点:</p>
+<ul>
+<li>大量</li>
+<li>高速</li>
+<li>多样</li>
+<li>低价值密度</li>
+</ul>
+<h2 id="从Hadoop框架讨论大数据生态"><a href="#从Hadoop框架讨论大数据生态" class="headerlink" title="从Hadoop框架讨论大数据生态"></a>从Hadoop框架讨论大数据生态</h2><h3 id="Hadoop是什么"><a href="#Hadoop是什么" class="headerlink" title="Hadoop是什么"></a>Hadoop是什么</h3><p>Hadoop是—个由 Apache基金会所开发的<strong>分布式系统基础架构</strong>。</p>
+<h3 id="Hadoop-优势"><a href="#Hadoop-优势" class="headerlink" title="Hadoop 优势"></a>Hadoop 优势</h3><ol>
+<li>高可靠性：Hadoop底层维护多个数据副本，所以即使 Hadoop某个计算元素或存储出现战障，也不会导致数的丢失。</li>
+<li>高扩展性：在集群间分配任务数据，可方便的扩展数以千计的节点</li>
+<li>高效性：在 MapReduce的思想下，Hadoop是并行工作的，以加快任务处理</li>
+<li>高容错性：能够自动将失败的任务重新分配。</li>
+</ol>
+<h3 id="Hadoop组成"><a href="#Hadoop组成" class="headerlink" title="Hadoop组成"></a>Hadoop组成</h3><p><img src="/images/1594106123809.png" alt="1594106123809"></p>
+<h4 id="HDFS架构概述"><a href="#HDFS架构概述" class="headerlink" title="HDFS架构概述"></a>HDFS架构概述</h4><ol>
+<li>NameNode（nn）：存储文件的元数据，如文件名，文件目录结构，文件属性（生成时间、副本数、文件权限），以及每个文件的块列表和块所在的 DataNode等。</li>
+<li>DataNode（dn）：在本地文件系统存储文件块数据，以及块数据的校验和。</li>
+<li>Secondary  NameNode（2nn）：用来监控HDFS状态的辅助后台程序，每隔一段时间获取HDFS元数据的快照。</li>
+</ol>
+<h4 id="YARN架构概述"><a href="#YARN架构概述" class="headerlink" title="YARN架构概述"></a>YARN架构概述</h4><h4 id="MaReduce架构概述"><a href="#MaReduce架构概述" class="headerlink" title="MaReduce架构概述"></a>MaReduce架构概述</h4><h3 id="大数据技术生态体系"><a href="#大数据技术生态体系" class="headerlink" title="大数据技术生态体系"></a>大数据技术生态体系</h3><h3 id="推荐系统框架图"><a href="#推荐系统框架图" class="headerlink" title="推荐系统框架图"></a>推荐系统框架图</h3><p>后端开发</p>
+<p>前端开发 -</p>
+<p>10k</p>
+<p>1-3绩效</p>
+<p>5%</p>
+<p>shenzs</p>
+<p>1档</p>
+<p>9:30-6:30</p>
+<p>10:00-</p>
+<p>5天</p>
+<p>递增+1</p>
+<p>80%</p>
+<p>考核</p>
+<p>3阶段 </p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

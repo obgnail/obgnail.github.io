@@ -1,0 +1,85 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="三种模式:"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>千锋 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Vim/" rel="tag">Vim</a></div><div class="post-time">2019-07-25</div></div></div><div class="container post-header"><h1>千锋</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">命令模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AB%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">末行模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">编辑模式</span></a></li></ol></details></div><div class="container post-content"><p>三种模式:</p>
+<ol>
+<li><p>命令模式</p>
+<blockquote>
+<p>在该模式下是不能对文件直接编辑，可以输入快捷键进行一些操作（删除行，复制行，移动光标，粘贴等等</p>
+</blockquote>
+</li>
+<li><p>编辑模式(输入模式)</p>
+<blockquote>
+<p>在该模式下可以对文件的内容进行编辑</p>
+</blockquote>
+</li>
+<li><p>末行模式</p>
+<blockquote>
+<p>可以在末行输入命令来对文件进行操作（搜索、替换、保存、退出、撤销、高亮</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><ol>
+<li><p>打开traingfile1.py,并且定位到第9行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim +9 training1.py</span><br></pre></td></tr></table></figure></li>
+<li><p>打开traingfile1.py,并且对redis单词高亮显示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim +/redis training1.py</span><br></pre></td></tr></table></figure></li>
+<li><p>切换到行首<code>shift + 6</code>(也就是输入^)</p>
+</li>
+<li><p>切换到行尾<code>shift + 4</code>(也就是输入$)</p>
+<blockquote>
+<p>这两个其实就是正则表达式里行首(^)和行尾($)</p>
+</blockquote>
+</li>
+<li><p><code>dd</code>和<code>D</code>的区别:</p>
+<blockquote>
+<ol>
+<li>dd是删除后下面行会上移</li>
+<li>D是删除后下面喊不会上移(当前行就变成空白行)</li>
+</ol>
+</blockquote>
+</li>
+<li><p>恢复 : <code>ctrl + r </code>(取消之前的撤销操作)</p>
+</li>
+<li><p>定位到第16行 : <code>16G</code></p>
+</li>
+<li><p>同理还有<code>16l</code>:右移16个单词</p>
+</li>
+</ol>
+<h2 id="末行模式"><a href="#末行模式" class="headerlink" title="末行模式"></a>末行模式</h2><ol>
+<li><p><code>:8</code>跳转到第8行</p>
+</li>
+<li><p><code>:w</code>保存</p>
+</li>
+<li><p><code>:w 路径</code>另存为</p>
+</li>
+<li><p><code>:!ls</code> 调用vim外部的命令(这里是ls,也可以使用rm,cd等等)</p>
+</li>
+<li><p><code>:nohl</code>取消高亮(no high light)</p>
+</li>
+<li><p><code>:s/old_str/new_str</code> : 替换光标所在行的第一处符合条件的内容<br>(光标所在行没有old_str则替换失败)</p>
+</li>
+<li><p><code>:s/old_str/new_str/g</code> : 替换光标所在行的全部符合条件的内容 (g表示global)</p>
+</li>
+<li><p><code>:%s/old_str/new_str</code> : 整个文档中每行第一个符合条件的内容</p>
+</li>
+<li><p><code>:%s/old_str/new_str/g</code> : 整个文档的全部替换</p>
+<blockquote>
+<p>简单来讲: </p>
+<ul>
+<li><code>%</code>表示整个文档</li>
+<li><code>g</code>表示global</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h2 id="编辑模式"><a href="#编辑模式" class="headerlink" title="编辑模式"></a>编辑模式</h2><ol>
+<li><code>i</code> : 在光标所在字符之前插入</li>
+<li><code>a</code> : 在光标所在字符之后插入</li>
+<li><code>o</code> : 新建一行插入</li>
+<li><code>I</code> : 跳转到行首插入</li>
+<li><code>A</code> : 跳转到行尾插入</li>
+<li><code>S</code> : 删除光标所在行后插入</li>
+</ol>
+<p>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhllllllllllllllll</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.cnblogs.com/yingsmirk/p/5248506.html&quot;&gt;HTTP/2协议–特性扫盲篇&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;二进制分帧-Binary-Framing&quot;&gt;&lt;a href=&quot;#二进制分帧-Binary-Framing&quot; class=&quot;headerlink&quot; title=&quot;二进制分帧(Binary Framing)&quot;&gt;&lt;/a&gt;二进制分帧(Binary Framing)&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;HTTP1.x以换行符作为纯文本的分隔符。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>HTTP2新特性 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-06-17</div></div></div><div class="container post-header"><h1>HTTP2新特性</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E5%B8%A7-Binary-Framing"><span class="toc-number">1.</span> <span class="toc-text">二进制分帧(Binary Framing)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%EF%BC%88Request-and-Response-Multiplexing%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">多路复用（Request and Response Multiplexing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%88-Stream-priority%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">流优先级（ Stream priority）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81-Server-push"><span class="toc-number">4.</span> <span class="toc-text">服务器推送(Server push)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%B4%E9%83%A8%E5%8E%8B%E7%BC%A9%EF%BC%88Header-Compression%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">头部压缩（Header Compression）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E5%95%86%E5%8D%8F%E8%AE%AE%EF%BC%88APLN-Aplication-Layer-Protocol-Negotiation%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">应用层协商协议（APLN:Aplication Layer Protocol Negotiation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%85%A5HTTP2"><span class="toc-number">7.</span> <span class="toc-text">深入HTTP2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol></details></div><div class="container post-content"><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yingsmirk/p/5248506.html">HTTP/2协议–特性扫盲篇</a></li>
+</ul>
+<h2 id="二进制分帧-Binary-Framing"><a href="#二进制分帧-Binary-Framing" class="headerlink" title="二进制分帧(Binary Framing)"></a>二进制分帧(Binary Framing)</h2><blockquote>
+<p>HTTP1.x以换行符作为纯文本的分隔符。</p>
+</blockquote>
+<p>HTTP/2将<strong>所有传输的信息分割为更小的消息和帧</strong>，并对它们采用二进制格式的编码，我们先了解几个概念：</p>
+<ul>
+<li>帧（Frame）：HTTP/2通信的最小单位，每个帧包含帧首部，至少也会标识出当前帧所属的流。</li>
+<li>消息（Message）：由一个或多个帧组合而成，例如请求和响应。</li>
+<li>连接（Connection）：与 HTTP/1 相同，都是指对应的 TCP 连接；</li>
+<li>流（Stream）：已建立的连接上的双向字节流。</li>
+</ul>
+<p>在HTTP/2中，<strong>数据流以消息的形式发送，而消息由一个或多个帧组成，帧可以在数据流上乱序发送，然后再根据每个帧首部的流标识符重新组装</strong>。二进制分帧是HTTP/2的基石，其他优化都是在这一基础上来实现的。</p>
+<h2 id="多路复用（Request-and-Response-Multiplexing）"><a href="#多路复用（Request-and-Response-Multiplexing）" class="headerlink" title="多路复用（Request and Response Multiplexing）"></a>多路复用（Request and Response Multiplexing）</h2><p>HTTP1.x中，如果想<strong>并发多个请求，必须使用多个TCP链接</strong>，且浏览器为了控制资源，还会对单个域名有6-8的个数限制，如下图，红色圈出来的请求就因域名链接数已超过限制，而被挂起等待了一段时间：</p>
+<p><img src="/images/image-20210616113308906.png" alt="image-20210616113308906"></p>
+<blockquote>
+<p>针对这一问题，我们做了很多优化，例如合并请求、图片精灵、散列域名等</p>
+</blockquote>
+<p>在 HTTP/2 中，有了二进制分帧之后，HTTP 2.0不再依赖TCP链接去实现多流并行了，在HTTP/2：</p>
+<ul>
+<li><strong>同域名下所有通信都在单个连接上完成。</strong></li>
+<li>单个连接可以承载任意数量的双向数据流。</li>
+<li>数据流以消息的形式发送，而消息又由一个或多个帧组成，多个帧之间可以乱序发送，因为根据帧首部的流标识可以重新组装。</li>
+</ul>
+<p>这一特性，性能会有极大的提升，因为：</p>
+<ul>
+<li>同个域名只需要占用一个TCP连接，消除了因多个TCP连接而带来的延时和内存消耗。</li>
+<li><strong>单个连接上可以并行交错的请求和响应，之间互不干扰。</strong></li>
+</ul>
+<h2 id="流优先级（-Stream-priority）"><a href="#流优先级（-Stream-priority）" class="headerlink" title="流优先级（ Stream priority）"></a>流优先级（ Stream priority）</h2><p>在HTTP/2中，每个请求都可以带一个31bit的优先值，0表示最高优先级， 数值越大优先级越低。</p>
+<p>有了这个优先值，客户端和服务器就可以在处理不同的流时采取不同的策略，以最优的方式发送流、消息和帧。</p>
+<h2 id="服务器推送-Server-push"><a href="#服务器推送-Server-push" class="headerlink" title="服务器推送(Server push)"></a>服务器推送(Server push)</h2><p>Server push是HTTP/2中一个很强大的功能：</p>
+<ul>
+<li>服务器除了响应客户端的请求外，还可以向客户端额外推送资源。</li>
+<li>服务器推送的资源有自己独立的URL， 可以被浏览器缓存，可以达到多页面共享。</li>
+<li>资源推送遵守同源策略，服务器不可随便推送第三方资源给客户端。</li>
+<li>客户端可以拒绝推送过来的资源。</li>
+</ul>
+<p><strong>有了这一特性，我们可以做什么？</strong></p>
+<ul>
+<li>应用可以通过额外的http头部，列出需要服务器推送哪些资源。</li>
+<li>服务器可以解析请求的html，推测出客户端接下来需要请求的资源，然后提前向客户端推送。</li>
+</ul>
+<h2 id="头部压缩（Header-Compression）"><a href="#头部压缩（Header-Compression）" class="headerlink" title="头部压缩（Header Compression）"></a>头部压缩（Header Compression）</h2><p>HTTP每一次通信都会携带一组头部，用于描述这次通信的的资源、浏览器属性、cookie等，例如</p>
+<p><img src="/images/image-20210616113339638.png" alt="image-20210616113339638"></p>
+<blockquote>
+<p>在HTTP 1.x中，这些信息都是以纯文本协议发送的，给每个请求增加了不小的负荷。</p>
+</blockquote>
+<p>为了减少这块的开销并提升性能， HTTP/2会压缩这些首部：</p>
+<ul>
+<li>HTTP/2在客户端和服务器端使用<code>首部表</code>来跟踪和存储之前发送的键值对，对于相同的数据，不再通过每次请求和响应发送；</li>
+<li>首部表在HTTP/2的<strong>连接存续期内始终存在</strong>，由客户端和服务器共同渐进地更新;</li>
+<li>每个新的首部键值对要么被追加到当前表的末尾，要么替换表中之前的值。</li>
+</ul>
+<p>例如：下图中的两个请求， 请求一发送了所有的头部字段，第二个请求则只需要发送差异数据，这样可以减少冗余数据，降低开销。</p>
+<p><img src="/images/image-20210616113411640.png" alt="image-20210616113411640"></p>
+<p>我们来看一个实际的例子，下面是用WireShark抓取的访问google首页的包：</p>
+<p><img src="/images/image-20210616113449239.png" alt="image-20210616113449239"></p>
+<p>上图是是访问<a target="_blank" rel="noopener" href="https://www.google.com/%E6%8A%93%E5%88%B0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%B4%E9%83%A8%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E5%A4%B4%E9%83%A8%E7%9A%84%E5%86%85%E5%AE%B9%EF%BC%8C%E6%80%BB%E5%85%B1%E5%8D%A0%E7%94%A8%E4%BA%86437">https://www.google.com/抓到的第一个请求的头部，可以看到头部的内容，总共占用了437</a> bytes，我们选中头部的cookie，可以看到cookie总共占用了118 bytes。</p>
+<p>接下来我们看看第二个请求的头部：</p>
+<p><img src="/images/image-20210616113519731.png" alt="image-20210616113519731"></p>
+<p>从上图可以看到，得益于头部压缩，第二个请求中cookie只占用了1个字节，我们来看看变化了的Accept字段：</p>
+<p><img src="/images/image-20210616113549265.png" alt="image-20210616113549265"></p>
+<p>由于Accept字段与请求一中的内容不同，需要发送给服务器，所以占用了29 bytes。</p>
+<h2 id="应用层协商协议（APLN-Aplication-Layer-Protocol-Negotiation）"><a href="#应用层协商协议（APLN-Aplication-Layer-Protocol-Negotiation）" class="headerlink" title="应用层协商协议（APLN:Aplication Layer Protocol Negotiation）"></a>应用层协商协议（APLN:Aplication Layer Protocol Negotiation）</h2><p>客户端、服务器都需要升级才能支持HTTP 2.0，升级过程中就存在HTTP1.1、HTTP 2.0并存的情况，然而他们都使用的80端口，那么如何来选择使用什么协议通信呢？</p>
+<p>APLN就是为了解决这个问题的，通过协商来选择通信的协议：</p>
+<ol>
+<li>客户端发起请求，如果支持HTTP/2，则带upgrade头部:<br><code>GET /page HTTP/1.1Host: server.example.comConnection: Upgrade, HTTP2-SettingsUpgrade: HTTP/2.0HTTP2-Settings: (SETTINGS payload)</code></li>
+<li>服务器不支持，则拒绝升级，通过HTTP1.1返回响应<br><code>HTTP/1.1 200 OKContent-length: 243Content-type: text/html(... HTTP 1.1 response ...)</code></li>
+<li>服务器支持，则接受升级，切换到新分帧，使用HTTP/2通信。<br><code>HTTP/1.1 101 Switching ProtocolsConnection: UpgradeUpgrade: HTTP/2.0(... HTTP 2.0 response ...)</code></li>
+</ol>
+<p>使用协议协商，无论是哪一种情况，都不需要额外的往返，如果客户端通过记录或者其他方式，知道服务器支持HTTP/2，则直接使用HTTP/2通信，无需再协议协商。</p>
+<h2 id="深入HTTP2"><a href="#深入HTTP2" class="headerlink" title="深入HTTP2"></a>深入HTTP2</h2><p>前文简单介绍了，头部压缩和多路复用的具体思路和解决问题的方法，接下来我们深入HTTP2，看看这两个特性是如何落地的，在数据上形成直观地把握，也借此了解何为<code>二进制编码</code>。</p>
+<p>任何一个应用层的传输协议，都需要解决一个问题，那就是如何表示数据结尾，如何分割数据。在H1.1中，我们知道，它粗暴地先发Header，再发body，每个header通过<code>\r\n</code>文本内容来分割，header和body通过<code>\r\n\r\n</code>来分割，通过content-length的值读取body，一个请求的内容就成功结束。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 一次请求的返回</span><br><span class="line">200 OK\r\nHeader1:Value1\r\nHeader2:Value2\r\nHeader3:Value3\r\n\r\nI am body</span><br><span class="line">// 网络中实际传输的是上面文本的ascii编码</span><br></pre></td></tr></table></figure>
+
+<p>HTTP2 为了降低协议占用，不会使用文本分割，也不会使用文本来表示header。它是如何表示一帧开始、一帧结束、header传完了、body传完了呢？</p>
+<p>下面是帧格式，所有帧都是一个固定的 9 字节头部 (payload 之前) 跟一个指定长度的数据(payload):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------------------------+</span><br><span class="line">|                 Length (24)                   |</span><br><span class="line">+---------------+---------------+---------------+</span><br><span class="line">|   Type (8)    |   Flags (8)   |</span><br><span class="line">+-+-------------+---------------+-------------------------------+</span><br><span class="line">|R|                 Stream Identifier (31)                      |</span><br><span class="line">+=+=============================================================+</span><br><span class="line">|                   Frame Payload (0...)                      ...</span><br><span class="line">+---------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Length 代表整个帧的长度，用一个 24 位无符号整数表示。头部的 9 字节不算在这个长度里。从payload开始读Length这么多字节，一帧数据也就读完结束。</li>
+<li>Type 定义 帧 的类型，用 8 bits 表示。帧类型决定了帧的格式和语义，不同类型有差异</li>
+<li>Flags 是为帧类型相关而预留的布尔标识。标识对于不同的帧类型赋予了不同的语义，例如下面会提到的Padding</li>
+<li>R 是一个保留的比特位。这个比特的语义没有定义，发送时它必须被设置为 (0x0), 接收时需要忽略。</li>
+<li>Stream Identifier 唯一标示一个流，用 31 位无符号整数表示。客户端建立的 sid 必须为奇数，服务端建立的 sid 必须为偶数，值 (0x0) 保留给与整个连接相关联的帧 (连接控制消息)，而不是单个流</li>
+<li>Frame Payload 是主体内容，由帧类型决定（上面的9个字节都是协议本身的消耗，payload才是请求本身的主要内容）</li>
+</ul>
+<p>不同的帧类型，有不同的Payload格式，我们分别介绍DATA帧和HEADDERS帧：</p>
+<p>DATA帧的Payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+---------------+</span><br><span class="line">|Pad Length? (8)|</span><br><span class="line">+---------------+-----------------------------------------------+</span><br><span class="line">|                            Data (*)                         ...</span><br><span class="line">+---------------------------------------------------------------+</span><br><span class="line">|                           Padding (*)                       ...</span><br><span class="line">+---------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Pad Length: ? 表示此字段的出现时有条件的，当帧的Flags(8)的第三位为1时，才有效，否则会被忽略</li>
+<li>Data: 传递的数据，其长度上限等于帧的 payload 长度减去其他出现的字段长度(如果有pad的话)。在gRPC中，Data这部分内容就是用Protobuf将数据编码的结果</li>
+<li>Padding: 填充字节，没有具体语义，发送时必须设为 0，作用是混淆报文长度，为安全目的服务</li>
+</ul>
+<p>Data帧的Flags(8)目前有两个位有意义：</p>
+<ul>
+<li>END_STREAM: bit 0 设为 1 代表当前流的最后一帧，告诉接收方<strong>请求数据发送完毕</strong>，否则还要继续等下一帧(接收方)</li>
+<li>PADDED: bit 3 设为 1 代表存在 Padding</li>
+</ul>
+<p>HEADER帧Payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+---------------+</span><br><span class="line">|Pad Length? (8)|</span><br><span class="line">+-+-------------+-----------------------------------------------+</span><br><span class="line">|E|                 Stream Dependency? (31)                     |</span><br><span class="line">+-+-------------+-----------------------------------------------+</span><br><span class="line">|  Weight? (8)  |</span><br><span class="line">+-+-------------+-----------------------------------------------+</span><br><span class="line">|                   Header Block Fragment (*)                 ...</span><br><span class="line">+---------------------------------------------------------------+</span><br><span class="line">|                           Padding (*)                       ...</span><br><span class="line">+---------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Pad Length: 同DATA帧</li>
+<li>E: 一个比特位声明流的依赖性是否是排他的，存在则代表 PRIORITY flag 被设置</li>
+<li>Stream Dependency: 指定一个 stream identifier，代表当前流所依赖的流的 id，存在则代表 PRIORITY flag 被设置</li>
+<li>Weight: 一个无符号 8 为整数，代表当前流的优先级权重值 (1~256)，存在则代表 PRIORITY flag 被设置</li>
+<li>Header Block Fragment: header 块片段，header依次打包排列在里面</li>
+<li>Padding: 同DATA帧</li>
+</ul>
+<p>HEADERS 帧有以下标识 (flags):</p>
+<ul>
+<li>END_STREAM: bit 0 设为 1 代表当前请求 header 发送完了(可能有CONTINUATION帧，可以认为是HEADERS的一部分)</li>
+<li>END_HEADERS: bit 2 设为 1 代表 header 块结束</li>
+<li>PADDED: bit 3 设为 1 代表 Pad 被设置，存在 Pad Length 和 Padding</li>
+<li>PRIORITY: bit 5 设为 1 表示存在 Exclusive Flag (E), Stream Dependency, 和 Weight</li>
+</ul>
+<p>请求的header打包在Header Block Fragment ，我们重点关注一下，以便理解header是如何被传输的。</p>
+<p>由于上面头部压缩的内容，我们知道header可以存在于静态表、动态表中。此时只需要传一个index即可表达对应的header，减少传输内容。 请求传递的header情况有以下几种：</p>
+<ul>
+<li>header 的key、value 在静态表/动态表中，<strong>此时只需要传递一个index即可</strong></li>
+<li>header 的key 在静态、动态表中，而value由于多种多样，不在表中(如Host)，此时key可以由index表示，但value需要传递原内容</li>
+<li>header 的key、value完全不在静态、动态表中，key、value都需要传递原内容(字符串)</li>
+<li>希望将本次传递的header写入动态表中，下次只需要传index 即可</li>
+<li>不希望本次传递的header写入动态表中</li>
+</ul>
+<p>Header Block Fragment 中打包header的方式也就是按照上面几种情况展开，具体篇幅较多，本文找一个复杂点的例子： <strong>key、value都不在表中，且需要添加进表中</strong>的情况进行举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+---+---+---+---+---+---+---+---+</span><br><span class="line">| 0 | 1 |           0           |           // 通过头8个bit表示是哪种case</span><br><span class="line">+---+---+-----------------------+</span><br><span class="line">| H |     Key Length (7+)       |</span><br><span class="line">+---+---------------------------+</span><br><span class="line">|  Key String (Length octets)   |</span><br><span class="line">+---+---------------------------+</span><br><span class="line">| H |     Value Length (7+)     |</span><br><span class="line">+---+---------------------------+</span><br><span class="line">| Value String (Length octets)  |</span><br><span class="line">+-------------------------------+</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>头8个bit中<code>01``000000</code> 表达了两点</li>
+</ul>
+<ol>
+<li>header的key不在表中(<code>000000</code>)、value也不在(需要传文本内容)</li>
+<li>希望将此header追加到动态表中，供下次使用(<code>01</code>开头表示需要追加到表中)</li>
+</ol>
+<ul>
+<li>Value Length 代表对应value的长度，借此可读取完整的Value String</li>
+<li>其余的情况都可以用头8个bit表示[7]</li>
+<li>多个上面的结构前后拼接在一起，就可以在一个HEADERS帧中表示多个header了</li>
+<li>第二行H为1表示value用了霍夫曼编码[9]，可以理解为一种文本压缩策略</li>
+</ul>
+<p>上面的场景下，header的内容包含key的Index，value的长度、value的文本内容，其实可分为两种：</p>
+<ul>
+<li>数字的表达。 key的Index、key/value文本内容的长度</li>
+<li>字符串的表达。key的内容(如custom-key)、value的内容(custom-value)</li>
+</ul>
+<p>对于 <code>custom-key: custom-header</code>表达示例：(来源[10])</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">编码数据的十六进制表示：</span><br><span class="line">400a 6375 7374 6f6d 2d6b 6579 0d63 7573 | @.custom-key.cus</span><br><span class="line">746f 6d2d 6865 6164 6572                | tom-header</span><br><span class="line"></span><br><span class="line">解码过程：</span><br><span class="line"></span><br><span class="line">40                               | == Literal indexed ==   （01000000表示要追加到表中）</span><br><span class="line">0a                               |   Literal name (len = 10) （得到key长度）</span><br><span class="line">6375 7374 6f6d 2d6b 6579         | custom-key         </span><br><span class="line">0d                               |   Literal value (len = 13) （得到value长度）</span><br><span class="line">6375 7374 6f6d 2d68 6561 6465 72 | custom-header           （一个key:value 读取完毕）</span><br><span class="line">                                                                      </span><br><span class="line"></span><br><span class="line">解码结果可得header：     custom-key:custom-header  </span><br><span class="line">并将其加入动态表，下次直接只传index     </span><br></pre></td></tr></table></figure>
+
+<p>上图中有<code>Key Length (7+)</code> 和 <code>Value Length (7+)</code>，这是上面提到的<code>数字的表达</code>，可以看到有<code>7+</code>这个表示。这里面有一个扩展问题，如果Value的长度比较大，7个bit表示不了咋办。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0   1   2   3   4   5   6   7</span><br><span class="line">+---+---+---+---+---+---+---+---+</span><br><span class="line">| ? | ? | ? | 1   1   1   1   1 |       第一个字节  N = 5</span><br><span class="line">+---+---+---+-------------------+</span><br><span class="line">| 1 |    Value-(2^N-1) LSB      |</span><br><span class="line">+---+---------------------------+</span><br><span class="line">               ...</span><br><span class="line">+---+---------------------------+</span><br><span class="line">| 0 |    Value-(2^N-1) MSB      |</span><br><span class="line">+---+---------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>当长度len比较小，len &lt; 2^N - 1, 则直接用第一个字节即可表达。（N &lt;= 7）。 如果len &gt;= 2^N - 1，则需要用后续的字节继续表达。规则是：</p>
+<ul>
+<li>选择一个N，如上面N=5，将第一个字节的后N位全部设为1，则第一个字节表达了 2^N - 1， 剩下的len - (2^N - 1) 用后面的字节表示。</li>
+<li>将len - (2^N - 1) 用二进制表示出来，将二进制位分别分给下面的字节</li>
+<li>只占用后面字节的后7位</li>
+<li>如果第一位为0，则表示表达完毕，为1 则表示下一个字节还在继续表示len</li>
+</ul>
+<p>示例：</p>
+<ul>
+<li>表达长度为： 1337，设N = 5</li>
+<li>1337 大于 31（2^5-1），并使用 5 位前缀表示。5 位前缀使用其最大值（31）填充</li>
+<li>除第一个字节外，后面字节表达 1337 - 31 = 1306</li>
+<li>1036 二进制串为： 010100011010，用多个字节表达</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0   1   2   3   4   5   6   7</span><br><span class="line">   +---+---+---+---+---+---+---+---+</span><br><span class="line">   | X | X | X | 1 | 1 | 1 | 1 | 1 |  第一个字节表达了 2^N - 1 = 31, 下面的字节表达 1337 - 31 = 1306</span><br><span class="line">   | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 0 |   后面一截： 0011010   （低位）</span><br><span class="line">   | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 0 |   前面一截： 01010      （高位）</span><br><span class="line">   +---+---+---+---+---+---+---+---+</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>简而概之，HTTP/2：</p>
+<ul>
+<li>通过支持请求与响应的多路复用来减少延迟</li>
+<li>通过压缩HTTP首部字段将协议开销降至最低</li>
+<li>同时增加对请求优先级和服务器端推送的支持。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

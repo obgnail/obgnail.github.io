@@ -1,0 +1,312 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Nginx常⻅问题&quot;&gt;&lt;a href=&quot;#Nginx常⻅问题&quot; class=&quot;headerlink&quot; title=&quot;Nginx常⻅问题&quot;&gt;&lt;/a&gt;Nginx常⻅问题&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Server优先级&lt;/li&gt;
+&lt;li&gt;location优先级&lt;/li&gt;
+&lt;li&gt;try_files的使用&lt;/li&gt;
+&lt;li&gt;alias与root区别&lt;/li&gt;
+&lt;li&gt;获取用户真实IP&lt;/li&gt;
+&lt;li&gt;常见HTTP状态码&lt;/li&gt;
+&lt;li&gt;网站相关术语&lt;/li&gt;
+&lt;li&gt;网站访问原理&lt;/li&gt;
+&lt;li&gt;Nginx优化⽅案&lt;/li&gt;
+&lt;li&gt;Nginx架构总结&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;参考地址:"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Nginx常见问题 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Nginx/" rel="tag">Nginx</a></div><div class="post-time">2019-12-09</div></div></div><div class="container post-header"><h1>Nginx常见问题</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx%E5%B8%B8%E2%BB%85%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">Nginx常⻅问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Server%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.1.</span> <span class="toc-text">Server优先级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%BC%98%E5%85%88%E7%BA%A7%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8nginx-t%E6%A3%80%E6%B5%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">执行优先级可以使用nginx -t检测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E4%B8%8Edefault%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">正则与default的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%85%A8%E9%83%A8%E5%8C%B9%E9%85%8D%E5%A4%B1%E8%B4%A5%E6%97%B6-%E4%BD%BF%E7%94%A8default"><span class="toc-number">1.1.3.</span> <span class="toc-text">在全部匹配失败时,使用default</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E9%83%A8%E5%8C%B9%E9%85%8D%E5%A4%B1%E8%B4%A5-%E4%B8%94%E6%B2%A1%E6%9C%89default-%E9%9D%A0%E5%89%8D%E4%B8%BA%E8%B5%A2"><span class="toc-number">1.1.4.</span> <span class="toc-text">全部匹配失败,且没有default,靠前为赢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#location%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.2.</span> <span class="toc-text">location优先级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%AE%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">简记</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#try-files%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">try_files的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alias%E4%B8%8Eroot%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.</span> <span class="toc-text">alias与root区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E7%9C%9F%E5%AE%9EIP"><span class="toc-number">1.5.</span> <span class="toc-text">获取用户真实IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E2%BB%85HTTP%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">1.6.</span> <span class="toc-text">常⻅HTTP状态码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD"><span class="toc-number">1.7.</span> <span class="toc-text">网站相关术语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E8%AE%BF%E9%97%AE%E7%BD%91%E7%AB%99%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.</span> <span class="toc-text">用户访问网站的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%97%E7%95%A5%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.1.</span> <span class="toc-text">粗略流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.2.</span> <span class="toc-text">详细流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E4%BC%98%E5%8C%96%E2%BD%85%E6%A1%88"><span class="toc-number">1.9.</span> <span class="toc-text">Nginx优化⽅案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E6%9E%B6%E6%9E%84%E6%80%BB%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text">Nginx架构总结</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="Nginx常⻅问题"><a href="#Nginx常⻅问题" class="headerlink" title="Nginx常⻅问题"></a>Nginx常⻅问题</h1><ol>
+<li>Server优先级</li>
+<li>location优先级</li>
+<li>try_files的使用</li>
+<li>alias与root区别</li>
+<li>获取用户真实IP</li>
+<li>常见HTTP状态码</li>
+<li>网站相关术语</li>
+<li>网站访问原理</li>
+<li>Nginx优化⽅案</li>
+<li>Nginx架构总结</li>
+</ol>
+<p>参考地址:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av55251610/?p=86">Nginx常见问题,多sevrer优先级</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangzhisdu/p/7839109.html">nginx中server的匹配顺序</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/750cd0d0657a">Nginx location配置类别和匹配优先级</a></li>
+<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/497180">nginx 获取真实ip</a></li>
+</ol>
+<h2 id="Server优先级"><a href="#Server优先级" class="headerlink" title="Server优先级"></a>Server优先级</h2><p>在开始处理一个http请求时，nginx会取出header头中的host，与nginx.conf中每个server的server_name进行匹配，以此决定到底由哪一个server块来处理这个请求。</p>
+<p>server_name与host匹配优先级如下：</p>
+<ol>
+<li>完全匹配</li>
+<li>通配符在前的，如<code>*.test.com</code></li>
+<li>通配符在后的，如<code>www.test.*</code></li>
+<li>正则匹配，如<code>~^\.www\.test\.com$</code></li>
+</ol>
+<p>如果都不匹配</p>
+<ol>
+<li>如果有default或者default_server , 优先选择listen配置项后有default或default_server的</li>
+<li>如果没有default或者default_server ,找到匹配listen端口的第一个server块</li>
+</ol>
+<h3 id="执行优先级可以使用nginx-t检测"><a href="#执行优先级可以使用nginx-t检测" class="headerlink" title="执行优先级可以使用nginx -t检测"></a>执行优先级可以使用<code>nginx -t</code>检测</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name testserver1 192.168.69.113;</span><br><span class="line">	location /  &#123;</span><br><span class="line">		root /soft/code1;</span><br><span class="line">		index index.html;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name testserver2 192.168.69.113;</span><br><span class="line">	location / &#123;</span><br><span class="line">		root /soft/code2;</span><br><span class="line">		index index.html;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name testserver3 192.168.69.113;</span><br><span class="line">	location / &#123;</span><br><span class="line">		root /soft/code3;</span><br><span class="line">		index index.html;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx -t</span><br><span class="line"><span class="comment"># nginx: [warn] conflicting server name &quot;192.168.69.113&quot; on 0.0.0.0:80, ignored</span></span><br><span class="line"><span class="comment"># nginx: [warn] conflicting server name &quot;192.168.69.113&quot; on 0.0.0.0:80, ignored</span></span><br><span class="line"><span class="comment"># nginx: the configuration file /etc/nginx/nginx.conf syntax is ok</span></span><br><span class="line"><span class="comment"># nginx: configuration file /etc/nginx/nginx.conf test is successful</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="正则与default的优先级"><a href="#正则与default的优先级" class="headerlink" title="正则与default的优先级"></a>正则与default的优先级</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"> listen  80;</span><br><span class="line"> server_name ~^\w+\.1$;</span><br><span class="line"> </span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type  text/html;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">&quot;正则匹配&quot;</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"> listen  80;</span><br><span class="line"> server_name  xi.xi;</span><br><span class="line"> </span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type    text/html;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">&quot;不匹配&quot;</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"> listen   80  default;</span><br><span class="line"> server_name ha.ha;</span><br><span class="line"> </span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type    text/html;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">&quot;不匹配dafault&quot;</span></span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl http://server.1/<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 正则匹配</span></span><br><span class="line">curl http://sevrer.2/<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 不匹配default</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>正则匹配虽然优先级较低，但是仍然高于default；在都匹配不到的情况下，default开始起作用。</strong></p>
+<h3 id="在全部匹配失败时-使用default"><a href="#在全部匹配失败时-使用default" class="headerlink" title="在全部匹配失败时,使用default"></a>在全部匹配失败时,使用default</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"> listen   80  default;</span><br><span class="line"> sever_name  *.1;</span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type   text/html;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">&quot;通配符在前&quot;</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line"> listen  80;</span><br><span class="line"> server_name   server.1;</span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type   text/html;</span><br><span class="line">     <span class="built_in">echo</span>  <span class="string">&quot;完全匹配&quot;</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://server.1/<span class="built_in">test</span></span><br><span class="line"><span class="comment">#  完全匹配</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>default只能作用于匹配不到的情况下，而且nginx.conf不可以配多个default，否则nginx重启时候会提示错误</strong></p>
+<h3 id="全部匹配失败-且没有default-靠前为赢"><a href="#全部匹配失败-且没有default-靠前为赢" class="headerlink" title="全部匹配失败,且没有default,靠前为赢"></a>全部匹配失败,且没有default,靠前为赢</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"> listen   80;</span><br><span class="line"> sever_name  xi.xi;</span><br><span class="line"> location / &#123;</span><br><span class="line">     default_type   text/html;</span><br><span class="line">     <span class="built_in">echo</span>  <span class="string">&quot;不匹配.位置靠前&quot;</span></span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line"> listen  80;</span><br><span class="line"> sevrer_name   ha.ha;</span><br><span class="line"> <span class="built_in">echo</span>  <span class="string">&quot;不匹配,位置靠后&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://sever.1/<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 不匹配.位置靠前</span></span><br></pre></td></tr></table></figure>
+
+<p>在server_name<strong>都匹配失败</strong>的前提下，并且listen没有default属性，那么端口号和server的顺序将发挥作用，它会去找端口匹配的位置最靠前的server。</p>
+<h2 id="location优先级"><a href="#location优先级" class="headerlink" title="location优先级"></a>location优先级</h2><p>⼀个 server 出现多个 location</p>
+<table>
+<thead>
+<tr>
+<th>匹配</th>
+<th>优先级由高到低</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>=</td>
+<td>进⾏普通字符精确匹配, 完全匹配</td>
+<td>location = /static/img/file.jpg</td>
+</tr>
+<tr>
+<td>^~</td>
+<td>表示普通字符匹配, 使⽤前缀匹配</td>
+<td>location ^~/static/img/</td>
+</tr>
+<tr>
+<td>~</td>
+<td>执行一个正则匹配，区分大小写</td>
+<td>location ~ /static/img/.*.jpg$</td>
+</tr>
+<tr>
+<td>~*</td>
+<td>执行一个正则匹配，不区分大小写</td>
+<td>location ~* /static/img/.*.jpg$</td>
+</tr>
+</tbody></table>
+<ul>
+<li>字符匹配成功(<code>=</code>,<code>^~</code>) , 则不再查找其他匹配项。</li>
+<li>正则匹配成功(<code>~</code> , <code>~*</code>) , 则使用正则表达式最长的那个。</li>
+</ul>
+<p>以下是按优先级排列说明：</p>
+<ol>
+<li>先匹配精确模式，命中精确模式，直接返回。否则，继续匹配前缀模式。</li>
+<li>前缀模式中使用最大前缀原则，选出匹配普通匹配(空格)或非正则匹配(^~)的最长location。</li>
+<li>若最长前缀location是非正则匹配(^~)，则返回该最长前缀location。否则，还需要继续匹配正则模式。</li>
+<li>正则模式的原则是按照正则location定义顺序匹配，第一个匹配的location为正则模式结果。</li>
+<li>若正则模式匹配成功，返回正则模式结果。否则，返回前缀模式中的最长前缀location。</li>
+</ol>
+<p>注意 :如果命中多个前缀匹配,则记住最长的前缀匹配</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /static/img/ &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>记住最长的前缀匹配，即上例中的 /static/img/</p>
+<h3 id="简记"><a href="#简记" class="headerlink" title="简记"></a>简记</h3><ol>
+<li><code>=</code> , 精确匹配 , 优先级为1</li>
+<li><code>^~</code> , 前缀匹配 , 优先级为2</li>
+<li><code>~</code> , 正则匹配(不区分大小写) , 优先级为3</li>
+<li><code>~*</code>, 正则匹配(区分大小写) , 优先级为3</li>
+</ol>
+<h2 id="try-files的使用"><a href="#try-files的使用" class="headerlink" title="try_files的使用"></a>try_files的使用</h2><p>nginx 的 try_files 按顺序检查⽂件是否存在</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	try_files    <span class="variable">$uri</span> <span class="variable">$uri</span>/   /index.php;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#1.检查用户请求的uri内容是否存在本地,存在则解析</span></span><br><span class="line"><span class="comment">#2.将请求加/, 类似于重定向处理(看看这个目录下有没有这个文件)</span></span><br><span class="line"><span class="comment">#3.最后交给index.php处理</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="alias与root区别"><a href="#alias与root区别" class="headerlink" title="alias与root区别"></a>alias与root区别</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	index index.html;</span><br><span class="line">	location /request_path/code/ &#123;</span><br><span class="line">		root /local_path/code/;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>curl http://192.168.69.113/request_path/code/index.html</code>的实际请求本地⽂件路径为 : <code>/local_path/code/request_path/code/index.html</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server	&#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	index index.html;</span><br><span class="line">	location /request_path/code/ &#123;</span><br><span class="line">		<span class="built_in">alias</span> /local_path/code/;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>curl http://192.168.69.113/request_path/code/index.html</code>的实际访问本地路径为 : <code>/local_path/code/index.html</code></p>
+<h2 id="获取用户真实IP"><a href="#获取用户真实IP" class="headerlink" title="获取用户真实IP"></a>获取用户真实IP</h2><p>Nginx 传递用户的真实IP地址</p>
+<p><img src="/images/1575874685617.png" alt="1575874685617"></p>
+<ul>
+<li>经过反向代理后，由于在客户端和web服务器之间增加了中间层，因此web服务器无法直接拿到客户端的ip，通过<code>$remote_addr</code>变量拿到的将是反向代理服务器的ip地址。</li>
+<li>这句话的意思是说，当你使用了nginx反向服务器后，在web端使用request.getRemoteAddr()（本质上就是获取<code>$remote_addr</code>），取得的是nginx的地址，即<code>$remote_addr</code>变量中封装的是nginx的地址，当然是没法获得用户的真实ip的</li>
+</ul>
+<ul>
+<li><code>$remote_addr</code> 只能获取到最近⼀台服务器访问IP</li>
+<li><code>x_forwarded_for </code>头部信息容易被篡改</li>
+</ul>
+<p>最佳实践:</p>
+<ol>
+<li>在代理1里执行<code>set x_real_ip=$remote_addr</code></li>
+<li>在后端服务你直接获取<code>$x_real_ip</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">proxy_set_header  Host <span class="variable">$http_host</span>;</span><br><span class="line">proxy_set_header  X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">proxy_set_header X-Forwarded_For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后，在web端可以这样获取：<code>request.getAttribute(&quot;X-Real-ip&quot;)</code></p>
+<p>示例 : </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">       listen 88;</span><br><span class="line">       server_name  localhost;</span><br><span class="line"></span><br><span class="line">       location / &#123;</span><br><span class="line">           root   html;</span><br><span class="line">           index  index.html index.htm;</span><br><span class="line">           proxy_pass   http://backend; </span><br><span class="line">          proxy_redirect              off;</span><br><span class="line">          proxy_set_header            Host<span class="variable">$host</span>;</span><br><span class="line">          proxy_set_header           X-real-ip <span class="variable">$remote_addr</span>;</span><br><span class="line">          proxy_set_header            X-Forwarded-For<span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">	<span class="comment"># proxy_set_header            X-Forwarded-For $http_x_forwarded_for;</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="常⻅HTTP状态码"><a href="#常⻅HTTP状态码" class="headerlink" title="常⻅HTTP状态码"></a>常⻅HTTP状态码</h2><ol>
+<li>200 正常请求</li>
+<li>301 永久跳转</li>
+<li>302 临时跳转</li>
+<li>400 请求参数错误</li>
+<li>401 账户密码错误(authorization required)</li>
+<li>403 权限被拒绝(forbidden)</li>
+<li>404 ⽂件没找到(Not Found)</li>
+<li>413 用户上传⽂件⼤⼩限制(Request Entity Too Large)</li>
+<li>502 后端服务⽆响应(bad gateway)</li>
+<li>504 后端服务执行超时(Gateway Time-out)</li>
+</ol>
+<h2 id="网站相关术语"><a href="#网站相关术语" class="headerlink" title="网站相关术语"></a>网站相关术语</h2><p><strong>PV</strong>（page view，页面浏览量）</p>
+<blockquote>
+<ul>
+<li>用户每打开1个网站页面，记录1个PV。用户多次打开同一页面，PV值累计多次。即<strong>访问量</strong>。</li>
+<li>主要用来衡量网站用户访问的网页数量。是评价网站流量最常用的指标之一。</li>
+</ul>
+</blockquote>
+<p><strong>UV</strong>（ unique visitor，网站独立访客）</p>
+<blockquote>
+<ul>
+<li>通过互联网访问、流量网站的<strong>自然人</strong>。1天内相同访客多次访问网站，只计算为1个独立访客。</li>
+<li>该概念的引入，是从用户个体的角度对访问数据进行划分。</li>
+<li>以<code>cookie</code> 为依据。</li>
+</ul>
+</blockquote>
+<p><strong>IP</strong>（独立IP）</p>
+<blockquote>
+<ul>
+<li>1天之内（00:00~24:00），访问网站的不重复的<strong>IP数</strong>。</li>
+<li>拥有特定唯一IP的计算机访问网站的次数，因为这种统计方式比较容易实现，具有较高的真实性。</li>
+</ul>
+</blockquote>
+<p>如果⼀栋⼤厦里所有⼯作⼈员通过1个IP公网接⼝上网, 总共100个设备, 当所有⼈同时请求⼀个网站, 并且刷新了5次, 那么请求pv、ip、uv分别是多少</p>
+<ul>
+<li>pv : 500</li>
+<li>uv : 100</li>
+<li>ip : 1</li>
+</ul>
+<h2 id="用户访问网站的流程"><a href="#用户访问网站的流程" class="headerlink" title="用户访问网站的流程"></a>用户访问网站的流程</h2><h3 id="粗略流程"><a href="#粗略流程" class="headerlink" title="粗略流程"></a>粗略流程</h3><ol>
+<li>DNS解析</li>
+<li>CDN</li>
+<li>HTTP三次握手</li>
+<li>负载均衡</li>
+<li>web应用</li>
+<li>程序框架 Opcache</li>
+<li>Redis/Memcached/RabbitMq</li>
+<li>MySQL</li>
+</ol>
+<blockquote>
+<p>每一层都会有响应的缓存</p>
+</blockquote>
+<h3 id="详细流程"><a href="#详细流程" class="headerlink" title="详细流程"></a>详细流程</h3><ol>
+<li>DNS流程<ol>
+<li>查询本地Hosts</li>
+<li>请求本地localDNS</li>
+<li>返回对应的IP</li>
+</ol>
+</li>
+<li>HTTP连接<ol>
+<li>建立TCP三次握手，发送请求内容, 请求头、请求的行、请求的主体</li>
+<li>将请求传递给负载均衡, 负载均衡做对应的调度<ul>
+<li>如果请求的是静态页面, 那么调度至对应的<code>静态集群组</code>即可</li>
+<li>如果请求的是动态页面, 将请求调度至<code>动态集群组</code><ul>
+<li>如果仅仅是请求页面, 可能会经过Opcache缓存返回</li>
+<li>如果请求页面需要查询数据库, 或者是往数据库插入内容 , 检查对应的操作是查询还是写入, <ul>
+<li>如果是写入数据库 , 写入 , 并且使用Redis缓存对应的查询结果</li>
+<li>如果是查询数据库 , 检查查询的内容是否有被缓存, <ul>
+<li>如果有缓存 , 则返回 , 并且使用Redis缓存对应的查询结果</li>
+<li>如果没有缓存 , 则执行查询操作, 并且使用Redis缓存对应的查询结果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回对应客户端请求的内容至于WEB节点</li>
+<li>WEB节点收到请求后返回内容至负载均衡</li>
+<li>负载均衡返回客户端内容, TCP四次挥手断开</li>
+</ol>
+</li>
+<li>HTTP断开连接</li>
+</ol>
+<h2 id="Nginx优化⽅案"><a href="#Nginx优化⽅案" class="headerlink" title="Nginx优化⽅案"></a>Nginx优化⽅案</h2><ol>
+<li>gzip压缩</li>
+<li>expires静态⽂件缓存</li>
+<li>调整⽹络IO模型,调整Nginx worker进程的最⼤连接数</li>
+<li>隐藏Nginx名称和版本号</li>
+<li>配置防盗链，防⽌资源被盗用</li>
+<li>禁⽌通过IP地址访问,禁⽌恶意域名解析,只允许域名访问</li>
+<li>防DDOS、cc攻击,    限制单IP并发请求连接</li>
+<li>配置错误⻚⾯，根据错误代码指定⽹⻚反馈用户</li>
+<li>限制上传资源⽬录被程序访问,防⽌⽊⻢⼊侵系统</li>
+<li>Nginx加密传输优化</li>
+</ol>
+<h2 id="Nginx架构总结"><a href="#Nginx架构总结" class="headerlink" title="Nginx架构总结"></a>Nginx架构总结</h2><p><strong>基于Nginx中间件的架构</strong></p>
+<ol>
+<li>了解需求(定义Nginx在服务体系中的⻆⾊)<ul>
+<li>静态资源服务的功能设计<ul>
+<li>类型分类(视频、图⽚、html)</li>
+<li>浏览器缓存</li>
+<li>防盗链</li>
+<li>流量限制</li>
+<li>防资源盗用</li>
+<li>压缩(压缩模式, 压缩⽐例, 压缩类型)</li>
+</ul>
+</li>
+<li>代理服务<ul>
+<li>协议类型</li>
+<li>正向代理</li>
+<li>反向代理</li>
+<li>负载均衡</li>
+<li>代理缓存</li>
+<li>头信息处理</li>
+<li>Proxy_Pass</li>
+<li>LNMP</li>
+<li>动静分离</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>设计评估<ul>
+<li>硬件 CPU、内存、磁盘</li>
+<li>系统(用户权限、日志⽬录存放)</li>
+<li>代理服务/负载均衡 (CPU、内存)</li>
+<li>静态资源服务(硬盘容量、硬盘转速)</li>
+<li>动态资源服务(硬盘转速、读写效率)</li>
+<li>缓存资源服务(SSD固态)</li>
+</ul>
+</li>
+<li>配置注意事项<ul>
+<li>合理配置<ul>
+<li>定义http块</li>
+<li>定义优化参数</li>
+<li>定义server , location , log</li>
+</ul>
+</li>
+<li>了解原理<ul>
+<li>http协议原理</li>
+<li>http状态原理</li>
+<li>操作系统原理</li>
+</ul>
+</li>
+<li>关注日志<ul>
+<li>日志是否有打开</li>
+<li>是否有对应请求</li>
+<li>请求状态码信息符合</li>
+<li>错误日志信息吐出来</li>
+<li>错误日志内容和含义</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

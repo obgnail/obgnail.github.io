@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;回文序列&quot;&gt;&lt;a href=&quot;#回文序列&quot; class=&quot;headerlink&quot; title=&quot;回文序列&quot;&gt;&lt;/a&gt;回文序列&lt;/h2&gt;&lt;p&gt;如果一个数字序列逆置之后跟原序列是一样的就称这样的数字序列为回文序列。例如：&lt;br&gt;{1, 2, 1}, {15, 78, 78, 15} , {112} 是回文序列,&lt;br&gt;{1, 2, 2}, {15, 78, 87, 51} ,{112, 2, 11} 不是回文序列。&lt;br&gt;现在给出一个数字序列，允许使用一种转换操作：&lt;br&gt;选择任意两个相邻的数，然后从序列移除这两个数，并用这两个数字的和插入到这两个数之前的位置(只插入一个和)。&lt;br&gt;现在对于所给序列要求出最少需要多少次操作可以将其变成回文序列。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>training | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Data-Structures-And-Algorithms/" rel="tag">Data Structures And Algorithms</a></div><div class="post-time">2019-08-03</div></div></div><div class="container post-header"><h1>training</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E6%96%87%E5%BA%8F%E5%88%97"><span class="toc-number">1.</span> <span class="toc-text">回文序列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E9%9B%85%E7%9A%84%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">优雅的点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E7%9F%B3%E6%9D%BF"><span class="toc-number">3.</span> <span class="toc-text">跳石板</span></a></li></ol></details></div><div class="container post-content"><h2 id="回文序列"><a href="#回文序列" class="headerlink" title="回文序列"></a>回文序列</h2><p>如果一个数字序列逆置之后跟原序列是一样的就称这样的数字序列为回文序列。例如：<br>{1, 2, 1}, {15, 78, 78, 15} , {112} 是回文序列,<br>{1, 2, 2}, {15, 78, 87, 51} ,{112, 2, 11} 不是回文序列。<br>现在给出一个数字序列，允许使用一种转换操作：<br>选择任意两个相邻的数，然后从序列移除这两个数，并用这两个数字的和插入到这两个数之前的位置(只插入一个和)。<br>现在对于所给序列要求出最少需要多少次操作可以将其变成回文序列。</p>
+<p>输入描述</p>
+<blockquote>
+<p>输入为两行，第一行为序列长度n ( 1 ≤ n ≤ 50)<br>第二行为序列中的n个整数item[i] (1 ≤ iteam[i] ≤ 1000)，以空格分隔。</p>
+</blockquote>
+<p>输出描述</p>
+<blockquote>
+<p>输出一个数，表示最少需要的转换次数</p>
+</blockquote>
+<p>输入例子:</p>
+<blockquote>
+<p>4<br>1 1 1 3</p>
+</blockquote>
+<p>输出例子:</p>
+<blockquote>
+<p>2</p>
+</blockquote>
+<blockquote>
+<p>本题思路为：判断队首和队尾元素。若二者相等，则将这两个元素都弹出队列，将队列规模缩小2个，再对该问题进行判断；若二者不相等，则选择其中较小的一个，将该元素和与其相邻的元素都弹出队列，再将其和插入队列，从而将队列规模缩小1个，再对该问题进行判断。  </p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">least_count</span>(<span class="params">*item</span>):</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    deque = <span class="built_in">list</span>(item)</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(deque) &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">if</span> deque[<span class="number">0</span>] &gt; deque[-<span class="number">1</span>]:</span><br><span class="line">            deque.append(deque.pop() + deque.pop())</span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">elif</span> deque[<span class="number">0</span>] &lt; deque[-<span class="number">1</span>]:</span><br><span class="line">            deque.insert(<span class="number">0</span>,deque.pop(<span class="number">0</span>) + deque.pop(<span class="number">0</span>))</span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            deque.pop()</span><br><span class="line">            deque.pop(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> count</span><br><span class="line"></span><br><span class="line">l = least_count(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(l)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="优雅的点"><a href="#优雅的点" class="headerlink" title="优雅的点"></a>优雅的点</h2><p>小易有一个圆心在坐标原点的圆，小易知道圆的半径的平方。小易认为在圆上的点而且横纵坐标都是整数的点是优雅的，小易现在想寻找一个算法计算出优雅的点的个数，请你来帮帮他。</p>
+<p>例如：半径的平方如果为25<br>优雅的点就有：(+/-3, +/-4), (+/-4, +/-3), (0, +/-5) (+/-5, 0)，一共12个点。 </p>
+<p>输入描述:</p>
+<blockquote>
+<p>输入为一个整数，即为圆半径的平方,范围在32位int范围内。</p>
+</blockquote>
+<p>输出描述:</p>
+<blockquote>
+<p>输出为一个整数，即为优雅的点的个数</p>
+</blockquote>
+<p>输入例子:</p>
+<blockquote>
+<p>25</p>
+</blockquote>
+<p>输出例子:</p>
+<blockquote>
+<p>12</p>
+</blockquote>
+<p>空间换时间 , 首先获取所有可能的候选值,然后使用左右双指针</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grace_point</span>(<span class="params">lenght</span>):</span></span><br><span class="line">    candidate = [num** <span class="number">2</span> <span class="keyword">for</span> num <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">int</span>(lenght**<span class="number">.5</span>)+<span class="number">1</span>)]</span><br><span class="line">    </span><br><span class="line">    left = <span class="number">0</span></span><br><span class="line">    right = <span class="built_in">len</span>(candidate) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    res = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> left &lt; right:</span><br><span class="line">        temp = candidate[left] + candidate[right]</span><br><span class="line">        <span class="keyword">if</span> temp &lt; lenght:</span><br><span class="line">            left += <span class="number">1</span></span><br><span class="line">        <span class="keyword">elif</span> temp &gt; lenght:</span><br><span class="line">            right -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            res += <span class="number">1</span></span><br><span class="line">            left += <span class="number">1</span></span><br><span class="line">            right -= <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">int</span>(lenght**<span class="number">.5</span>) == lenght**<span class="number">.5</span>:</span><br><span class="line">        <span class="keyword">return</span> res * <span class="number">8</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> res * <span class="number">8</span> - <span class="number">4</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x =grace_point(<span class="number">26</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="跳石板"><a href="#跳石板" class="headerlink" title="跳石板"></a>跳石板</h2><p>小易来到了一条石板路前，每块石板上从1挨着编号为：1、2、3…….<br>这条石板路要根据特殊的规则才能前进：对于小易当前所在的编号为K的 石板，小易单次只能往前跳K的一个约数(不含1和K)步，即跳到K+X(X为K的一个非1和本身的约数)的位置。 小易当前处在编号为N的石板，他想跳到编号恰好为M的石板去，小易想知道最少需要跳跃几次可以到达。<br>例如：<br>N = 4，M = 24：<br>4-&gt;6-&gt;8-&gt;12-&gt;18-&gt;24<br>于是小易最少需要跳跃5次，就可以从4号石板跳到24号石板<br>输入描述:<br>输入为一行，有两个整数N，M，以空格隔开。<br>(4 ≤ N ≤ 100000)<br>(N ≤ M ≤ 100000)</p>
+<p>输出描述:<br>输出小易最少需要跳跃的步数,如果不能到达输出-1</p>
+<p>输入例子:<br>4 24</p>
+<p>输出例子:<br>5</p>
+<blockquote>
+<p>这是一道考察动态规划的题目（<strong>因为下一个子阶段的求解是建立在上一个子阶段的解的基础上，且子问题之间非相互独立</strong>），关于动态规划算法：</p>
+</blockquote>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

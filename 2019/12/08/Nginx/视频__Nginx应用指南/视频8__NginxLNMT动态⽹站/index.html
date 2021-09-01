@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;NginxLNMT动态网站&quot;&gt;&lt;a href=&quot;#NginxLNMT动态网站&quot; class=&quot;headerlink&quot; title=&quot;NginxLNMT动态网站&quot;&gt;&lt;/a&gt;NginxLNMT动态网站&lt;/h1&gt;&lt;p&gt;Nginx + Tomcat"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>NginxLNMT动态⽹站 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Nginx/" rel="tag">Nginx</a></div><div class="post-time">2019-12-08</div></div></div><div class="container post-header"><h1>NginxLNMT动态⽹站</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NginxLNMT%E5%8A%A8%E6%80%81%E7%BD%91%E7%AB%99"><span class="toc-number">1.</span> <span class="toc-text">NginxLNMT动态网站</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Nginx-proxy-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">1.1.</span> <span class="toc-text">配置 Nginx proxy 负载均衡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.</span> <span class="toc-text">JVM故障排查思路</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="NginxLNMT动态网站"><a href="#NginxLNMT动态网站" class="headerlink" title="NginxLNMT动态网站"></a>NginxLNMT动态网站</h1><p>Nginx + Tomcat</p>
+<h2 id="配置-Nginx-proxy-负载均衡"><a href="#配置-Nginx-proxy-负载均衡" class="headerlink" title="配置 Nginx proxy 负载均衡"></a>配置 Nginx proxy 负载均衡</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">upstream java_prod &#123;</span><br><span class="line">	server 192.168.56.20:8080;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name localhost;</span><br><span class="line">	location / &#123;</span><br><span class="line">		proxy_pass http://java_prod;</span><br><span class="line">		include proxy_params;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="JVM故障排查思路"><a href="#JVM故障排查思路" class="headerlink" title="JVM故障排查思路"></a>JVM故障排查思路</h2><ol>
+<li><p>jps获取java进程的PID。</p>
+</li>
+<li><p>jstack pid &gt;&gt; java.txt 导出CPU占⽤⾼进程的线程栈。</p>
+</li>
+<li><p>top -H -p PID 查看对应进程的哪个线程占⽤CPU过⾼。</p>
+</li>
+<li><p>echo “obase=16;989”|bc 将线程的PID转换为16进制。</p>
+</li>
+<li><p>在第⼆步导出的java.txt中查找转换成为16进制的线程PID。找到对应的线程栈。</p>
+</li>
+<li><p>分析负载⾼的线程栈都是什么业务操作。优化程序并处理问题。</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#最⼤线程数</span></span><br><span class="line">maxThreads=<span class="string">&quot;600&quot;</span></span><br><span class="line"><span class="comment">#初始化时创建的线程数</span></span><br><span class="line">minSpareThreads=<span class="string">&quot;100&quot;</span></span><br><span class="line"><span class="comment">#⼀旦创建的线程超过这个值，Tomcat就会关闭，不再需要的socket线程。</span></span><br><span class="line">maxSpareHtreads=<span class="string">&quot;500&quot;</span></span><br><span class="line"><span class="comment">#指定当所有可以使⽤的处理请求的线程数量都被使⽤时，可以放到处理队列中的请求数，超过这个数的请求将不予处理。</span></span><br><span class="line">acceptCount=<span class="string">&quot;700&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

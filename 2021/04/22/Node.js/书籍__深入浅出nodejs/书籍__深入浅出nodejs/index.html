@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;chrome浏览器和Node的组件构成："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>深入浅出nodejs | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Node-js/" rel="tag">Node.js</a></div><div class="post-time">2021-04-22</div></div></div><div class="container post-header"><h1>深入浅出nodejs</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#node%E7%89%B9%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">node特点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5IO"><span class="toc-number">1.1.1.</span> <span class="toc-text">异步IO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E5%92%8C%E5%9B%9E%E8%B0%83"><span class="toc-number">1.1.2.</span> <span class="toc-text">事件和回调</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.1.3.</span> <span class="toc-text">单线程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">模块机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#commonJS"><span class="toc-number">2.1.</span> <span class="toc-text">commonJS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#commonJS%E7%9A%84%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83"><span class="toc-number">2.1.1.</span> <span class="toc-text">commonJS的模块规范</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node%E6%A8%A1%E5%9D%97%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.2.</span> <span class="toc-text">Node模块实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E4%BB%8E%E7%BC%93%E5%AD%98%E5%8A%A0%E8%BD%BD"><span class="toc-number">2.2.1.</span> <span class="toc-text">优先从缓存加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E5%BE%84%E5%88%86%E6%9E%90%E5%92%8C%E6%96%87%E4%BB%B6%E5%AE%9A%E4%BD%8D"><span class="toc-number">2.2.2.</span> <span class="toc-text">路径分析和文件定位</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E6%A0%87%E8%AF%86%E7%AC%A6"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">模块标识符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E8%B7%AF%E5%BE%84"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">模块路径</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#require-%E7%BB%86%E8%8A%82%E5%92%8C%E4%BC%98%E5%8C%96"><span class="toc-number">2.2.2.3.</span> <span class="toc-text">require()细节和优化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E7%BC%96%E8%AF%91"><span class="toc-number">2.2.3.</span> <span class="toc-text">模块编译</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97"><span class="toc-number">2.3.</span> <span class="toc-text">核心模块</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>chrome浏览器和Node的组件构成：</p>
+<p><img src="/images/image-20210421145803885.png" alt="image-20210421145803885"></p>
+<p>Node的结构和Chrome十分相似，他们都是基于时间驱动的异步架构。</p>
+<ul>
+<li>浏览器通过事件驱动来服务界面上的交互</li>
+<li>Node通过事件驱动来服务IO</li>
+</ul>
+<h3 id="node特点"><a href="#node特点" class="headerlink" title="node特点"></a>node特点</h3><h4 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h4><p>Node利用事件循环的处理能力，而不是启动每一个线程为每一个请求服务，资源占用极少。因此node是一个IO密集型语言。</p>
+<p>前端JS加载Ajax:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$.post(<span class="string">&#x27;/url&#x27;</span>,&#123;<span class="string">&#x27;title&#x27;</span>:<span class="string">&#x27;my book&#x27;</span>&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;suceess&#x27;</span>);</span><br><span class="line">&#125;,<span class="built_in">console</span>.log(<span class="string">&#x27;failed&#x27;</span>);</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20210421152818791.png" alt="image-20210421152818791"></p>
+<p>后端node加载文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line">fs.readFile(<span class="string">&#x27;/path&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err,file</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;读取文件成功&#x27;</span>);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;发起文件读取&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这里的“发起读取文件”是在“读取文件完成”之前输出的。</p>
+<p><img src="/images/image-20210421153427379.png" alt="image-20210421153427379"></p>
+<p>因为Node底层构建了很多异步的API，所以我们可以在语言层面很自然的使用并行IO操作。<strong>每个调用之间无须等待之前的IO调用结束</strong>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 两个读取任务的耗时，取决与最慢的那个文件读取耗时</span></span><br><span class="line">fs.readFile(<span class="string">&#x27;/path1&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err,file</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;读取文件成功&#x27;</span>);</span><br><span class="line">&#125;)</span><br><span class="line">fs.readFile(<span class="string">&#x27;/path2&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err,file</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;读取文件成功&#x27;</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="事件和回调"><a href="#事件和回调" class="headerlink" title="事件和回调"></a>事件和回调</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> querystring = <span class="built_in">require</span>(<span class="string">&#x27;querystring&#x27;</span>);</span><br><span class="line"></span><br><span class="line">http/createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> postData = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  req.setEncoding(<span class="string">&#x27;utf-8&#x27;</span>);</span><br><span class="line">  <span class="comment">// 监听请求的data事件</span></span><br><span class="line">  req.on(<span class="string">&#x27;data&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">trunk</span>) </span>&#123;</span><br><span class="line">    postData += trunk;</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="comment">// 监听请求的end事件</span></span><br><span class="line">  req.on(<span class="string">&#x27;end&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    res.end(postData);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;).listen(<span class="number">8080</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;服务器启动完成&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>node这种代码的编写顺序与执行顺序无关，这可能造成阅读上的障碍。在流程控制方面，因为穿插了异步方法和回调函数，者与常规的同步方式相比，变得不那么一目了然。</p>
+<h4 id="单线程"><a href="#单线程" class="headerlink" title="单线程"></a>单线程</h4><ul>
+<li>线程之间无法共享状态</li>
+<li>没有死锁问题</li>
+</ul>
+<p>单线程缺点：</p>
+<ul>
+<li>无法利用多核CPU</li>
+<li>错误会引起整个应用退出</li>
+<li>大量计算占用CPU，导致无法继续调用异步IO，已完成的异步IO无法及时回调。</li>
+</ul>
+<h2 id="模块机制"><a href="#模块机制" class="headerlink" title="模块机制"></a>模块机制</h2><h3 id="commonJS"><a href="#commonJS" class="headerlink" title="commonJS"></a>commonJS</h3><p>commonJS的目的：让JS能在任何地方运行。为了弥补JS没有标准的缺陷，以达到具备开发大型应用分基础能力。</p>
+<p>早期JS缺乏标准：</p>
+<ul>
+<li>没有模块系统</li>
+<li>标准库较少</li>
+<li>没有标准接口</li>
+<li>缺乏包管理系统</li>
+</ul>
+<p>Node与W3C与commonJS的关系：</p>
+<p><img src="/images/image-20210421161932985.png" alt="image-20210421161932985"></p>
+<h4 id="commonJS的模块规范"><a href="#commonJS的模块规范" class="headerlink" title="commonJS的模块规范"></a>commonJS的模块规范</h4><p>主要分为：</p>
+<ul>
+<li><p>模块引用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">&#x27;math&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>模块定义</p>
+<p>在Node中，一个文件就是一个模块，将方法挂载搭到exports对象上作为属性，就可以定义导出的方式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// math.js</span></span><br><span class="line"><span class="built_in">exports</span>.add = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> sum = <span class="number">0</span>;</span><br><span class="line">  i = <span class="number">0</span>;</span><br><span class="line">  args = <span class="built_in">arguments</span>;</span><br><span class="line">  l = args.length;</span><br><span class="line">  <span class="keyword">while</span> (i&lt; l) &#123;</span><br><span class="line">    sum += args[i++]</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在另一个文件中，通过require方法引入模块后，就能调用定义的属性方法了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// program.js</span></span><br><span class="line"><span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">&#x27;math&#x27;</span>);</span><br><span class="line"><span class="built_in">exports</span>.increment = <span class="function"><span class="keyword">function</span>(<span class="params">val</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 调用math的add方法</span></span><br><span class="line">  <span class="keyword">return</span> math.add(val,<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><p>模块标识</p>
+<p>模块标识其实就是传递给require方法的参数。他必须符合小驼峰的字符串，或者是以<code>.</code>,<code>..</code>开头的相对路径或绝对路径</p>
+<p><img src="/images/image-20210421164426807.png" alt="image-20210421164426807"></p>
+</li>
+</ul>
+<h3 id="Node模块实现"><a href="#Node模块实现" class="headerlink" title="Node模块实现"></a>Node模块实现</h3><p>在node中引入模块，有三个步骤</p>
+<ul>
+<li>路径分析</li>
+<li>文件定位</li>
+<li>编译执行</li>
+</ul>
+<p>在node中，模块分成两类</p>
+<ul>
+<li><p>核心模块：node提供的模块</p>
+<blockquote>
+<p>核心模块在node源代码的编译过程中，编译进了二进制执行文件。在node进程启动时，部分的核心模块就被直接加载进内存中，所以这部分核心模块引入时，</p>
+<ul>
+<li>文件定位和编译执行两个步骤可以省略掉。</li>
+<li>并且在路径分析中优先判断，</li>
+<li>所以她的加载速度时最快的</li>
+</ul>
+</blockquote>
+</li>
+<li><p>文件模块：用户编写的模块</p>
+<blockquote>
+<ul>
+<li>运行时动态加载</li>
+<li>需要完整额路径分析，文件定位，编译执行过程。</li>
+<li>速度慢</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h4 id="优先从缓存加载"><a href="#优先从缓存加载" class="headerlink" title="优先从缓存加载"></a>优先从缓存加载</h4><p>node对引入过的模块都会进行缓存。不用与前端浏览器缓存静态脚本文件，node缓存的是编译和执行之后的对象。</p>
+<h4 id="路径分析和文件定位"><a href="#路径分析和文件定位" class="headerlink" title="路径分析和文件定位"></a>路径分析和文件定位</h4><h5 id="模块标识符"><a href="#模块标识符" class="headerlink" title="模块标识符"></a>模块标识符</h5><p>模块标识符主要分成：</p>
+<ul>
+<li><p>核心模块</p>
+<blockquote>
+<p>如果试图加载一个和核心模块标识符相同的自定义模块，那是不会成功的。必须选择一个不同的标识符或者换用路径的方式</p>
+</blockquote>
+</li>
+<li><p>以<code>.</code>或者<code>..</code>开头的相对路径文件模块</p>
+<blockquote>
+<p>在分析路径模块是，require方法会将路径转为真实路径，并<strong>以真实路径作为索引，将编译执行后的结果存放到缓存中</strong>。</p>
+</blockquote>
+</li>
+<li><p>以<code>/</code>开头的绝对路径文件模块</p>
+</li>
+<li><p>非路径形式的文件模块，如自定义的connect模块。</p>
+<blockquote>
+<p>自定义模块可能是一个文件，可能是一个包。这类模块的查找是最费时的，最慢的。</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="模块路径"><a href="#模块路径" class="headerlink" title="模块路径"></a>模块路径</h5><p>模块路径是node在定位文件模块的具体文件时制定的查找策略，具体表现为一个路径组成的数组。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  <span class="string">&#x27;/home/liangbo/research/node_modules&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/home/liangbo/node_modules&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/home/node_modules&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/node_modules&#x27;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>生成规则：<strong>沿路径向上逐级递归，直到根目录下的node_modules目录</strong></p>
+<ul>
+<li>当前文件目录下的node_modules目录</li>
+<li>父目录下的node_modules目录</li>
+<li>父目录的父目录下的node_modules目录</li>
+</ul>
+<blockquote>
+<p>可以看出文件路径越深，查找速度越慢。这是自定义模块加载最慢的原因。</p>
+</blockquote>
+<h5 id="require-细节和优化"><a href="#require-细节和优化" class="headerlink" title="require()细节和优化"></a>require()细节和优化</h5><ul>
+<li>require可以不添加文件名后缀。这种情况下，node会按照<code>.js</code>,<code>.json</code>,<code>.node</code>顺序补足，依次尝试。</li>
+<li>在尝试过程中，会调用fs模块同步阻塞的判断文件是否存在，因为node是单线程的，所以会有性能问题。</li>
+<li>所以可以给json文件和node文件传递给require()的是否带上后缀名。</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导入math.js</span></span><br><span class="line"><span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">&#x27;math&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>require()如果找到的不是文件，而是目录，这么就会当成一个包来解析</p>
+<ul>
+<li>首先查找该目录下的package.json文件，使用JSON.parse()解析出包描述对象。从中取出main属性指定的文件名进行定位</li>
+<li>如果main属性指定的文件名错误，或者压根没有package.json文件，node就会将index当作默认文件名，然后依次查找<code>index.js</code>,<code>index.json</code>,<code>index.node</code></li>
+<li>如果没有找到任何目标文件，抛出异常错误。</li>
+</ul>
+<h4 id="模块编译"><a href="#模块编译" class="headerlink" title="模块编译"></a>模块编译</h4><p>Module对象</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Module</span>(<span class="params">id, parent</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.id = id;</span><br><span class="line">  <span class="built_in">this</span>.exports = &#123;&#125;;</span><br><span class="line">  <span class="built_in">this</span>.parent = parent;</span><br><span class="line">  <span class="keyword">if</span> (parent &amp;&amp; parent.children) &#123;</span><br><span class="line">    parent.children.push(<span class="built_in">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">this</span>.filename = <span class="literal">null</span>;</span><br><span class="line">  <span class="built_in">this</span>.loaded = <span class="literal">false</span>;</span><br><span class="line">  <span class="built_in">this</span>.children = [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译和执行是引入文件模块的最后一个阶段。定位到具体的文件后，Node会新建一个模块对象，然后根据路径载入并编译。</p>
+<p>对于不同分文件扩展名，其载入方法也有所不同：</p>
+<ul>
+<li>js文件：通过fs模块同步读取文件后编译执行。</li>
+<li>node文件：这是用C/C++编写的扩展文件，通过dlopen方法加载最后编译生成的文件。</li>
+<li>json文件：通过fs模块同步读取文件后，使用JSON.parse()解析，返回结果。</li>
+<li>其他：都被当成js文件加载。</li>
+</ul>
+<p>每个编译成功的模块都会将其文件路径作为索引缓存再<code>Module._cache</code>对象上，以提高二次引入的性能。</p>
+<h3 id="核心模块"><a href="#核心模块" class="headerlink" title="核心模块"></a>核心模块</h3></div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

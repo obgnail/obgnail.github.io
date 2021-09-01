@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;缓存过期-amp-amp-缓存淘汰&quot;&gt;&lt;a href=&quot;#缓存过期-amp-amp-缓存淘汰&quot; class=&quot;headerlink&quot; title=&quot;缓存过期 &amp;amp;&amp;amp; 缓存淘汰&quot;&gt;&lt;/a&gt;缓存过期 &amp;amp;&amp;amp; 缓存淘汰&lt;/h2&gt;&lt;p&gt;Redis缓存的数据都是在内存中，可是就算是在服务器上，内存的空间资源还是很有限的，不能无节制的这么存下去。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>网站_redis与缓存 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Redis/" rel="tag">Redis</a></div><div class="post-time">2021-04-19</div></div></div><div class="container post-header"><h1>网站_redis与缓存</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E8%BF%87%E6%9C%9F-amp-amp-%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0"><span class="toc-number">1.</span> <span class="toc-text">缓存过期 &amp;&amp; 缓存淘汰</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%86%85%E5%AE%B9%E8%AE%BE%E7%BD%AE%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4"><span class="toc-number">1.1.</span> <span class="toc-text">缓存内容设置超时时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E9%80%89%E6%8B%A9%E8%BF%87%E6%9C%9F%E9%94%AE%E5%80%BC%E6%B8%85%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">随机选择过期键值清理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%A0%E9%99%A4"><span class="toc-number">1.3.</span> <span class="toc-text">惰性删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.4.</span> <span class="toc-text">内存淘汰策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F-amp-amp-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">缓存穿透 &amp;&amp; 布隆过滤器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF-amp-amp-%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9"><span class="toc-number">3.</span> <span class="toc-text">缓存击穿 &amp;&amp; 缓存雪崩</span></a></li></ol></details></div><div class="container post-content"><h2 id="缓存过期-amp-amp-缓存淘汰"><a href="#缓存过期-amp-amp-缓存淘汰" class="headerlink" title="缓存过期 &amp;&amp; 缓存淘汰"></a>缓存过期 &amp;&amp; 缓存淘汰</h2><p>Redis缓存的数据都是在内存中，可是就算是在服务器上，内存的空间资源还是很有限的，不能无节制的这么存下去。</p>
+<h3 id="缓存内容设置超时时间"><a href="#缓存内容设置超时时间" class="headerlink" title="缓存内容设置超时时间"></a>缓存内容设置超时时间</h3><p>给<strong>缓存内容设置一个超时时间</strong>，具体设置多长交给应用程序们去设置，redis要做的就是把过期了的内容删除掉，及时腾出空间就行了。</p>
+<p><img src="/images/v2-7f57747f177f960c091e4f5f61a4ef85_1440w.jpg" alt="img"></p>
+<p>超时时间有了，该在什么时候去干这个清理的活呢？</p>
+<p>清理的时候也不能一口气把所有过期的都给删除掉，redis这里面存了大量的数据，要全面扫一遍的话那不知道要花多久时间，会严重影响接待新的客户请求的</p>
+<h3 id="随机选择过期键值清理"><a href="#随机选择过期键值清理" class="headerlink" title="随机选择过期键值清理"></a>随机选择过期键值清理</h3><p>时间紧任务重，只好随机选择一部分来清理，能缓解内存压力就行了。</p>
+<p>就这样过了一段日子，发现有些个键值运气比较好，每次都没有被我的随机算法选中，每次都能幸免于难，这可不行，这些长时间过期的数据一直霸占着不少的内存空间</p>
+<h3 id="惰性删除"><a href="#惰性删除" class="headerlink" title="惰性删除"></a>惰性删除</h3><p>在原来定期删除的基础上，又加了一招：</p>
+<p>那些原来逃脱我随机选择算法的键值，一旦遇到查询请求，被redis发现已经超期了，立即删除。</p>
+<p>这种方式因为是被动式触发的，不查询就不会发生，所以也叫惰性删除！</p>
+<h3 id="内存淘汰策略"><a href="#内存淘汰策略" class="headerlink" title="内存淘汰策略"></a>内存淘汰策略</h3><p>还是有部分键值，既逃脱了我的随机选择算法，又一直没有被查询，导致它们一直逍遥法外！而于此同时，可以使用的内存空间却越来越少。</p>
+<p>8种策略供应用程序选择，用于redis遇到内存不足时该如何决策：</p>
+<ul>
+<li>noeviction：返回错误，不会删除任何键值</li>
+<li>allkeys-lru：使用LRU算法删除最近最少使用的键值</li>
+<li>volatile-lru：使用LRU算法从设置了过期时间的键集合中删除最近最少使用的键值</li>
+<li>allkeys-random：从所有key随机删除</li>
+<li>volatile-random：从设置了过期时间的键的集合中随机删除</li>
+<li>volatile-ttl：从设置了过期时间的键中删除剩余时间最短的键</li>
+<li>volatile-lfu：从配置了过期时间的键中删除使用频率最少的键</li>
+<li>allkeys-lfu：从所有键中删除使用频率最少的键</li>
+</ul>
+<h2 id="缓存穿透-amp-amp-布隆过滤器"><a href="#缓存穿透-amp-amp-布隆过滤器" class="headerlink" title="缓存穿透 &amp;&amp; 布隆过滤器"></a>缓存穿透 &amp;&amp; 布隆过滤器</h2><p>Redis的日子过的还挺舒坦，不过MySQL就这么舒坦了，有时候遇到些烦人的请求，查询的数据不存在，MySQL就要白忙活一场！</p>
+<p>不仅如此，因为不存在，redis也没法缓存啊，导致同样的请求来了每次都要去让MySQL白忙活一场。redis作为缓存的价值就没得到体现啦！这就是人们常说的缓存穿透。</p>
+<p><img src="/images/v2-1bea0f94076e238d1d12562bcd231d72_1440w.jpg" alt="img"></p>
+<p>使用布隆过滤器，把那些明知道不会有结果的查询请求挡一下</p>
+<p><img src="/images/v2-5abb907d54ae293fed845a9179fcb240_1440w.jpg" alt="img"></p>
+<blockquote>
+<p>布隆过滤器：擅长从超大的数据集中快速告诉你查找的数据存不存在</p>
+<p>注意：布隆过滤器告诉你存在的话不能全信，其实有可能是不存在的，不过它他要是告诉你不存在的话，那就一定不存在。</p>
+</blockquote>
+<p><img src="/images/v2-329d9cdb0dde464e75fab3e39e2f1721_1440w.jpg" alt="img"></p>
+<h2 id="缓存击穿-amp-amp-缓存雪崩"><a href="#缓存击穿-amp-amp-缓存雪崩" class="headerlink" title="缓存击穿 &amp;&amp; 缓存雪崩"></a>缓存击穿 &amp;&amp; 缓存雪崩</h2><p>redis一大批数据几乎同时过了有效期，被redis删掉了，不巧的是随后就有对这个数据的大量查询请求来了，redis这里已经删了，所以请求都发到Mysql那里来了，突然一大堆请求给他怼了过去，给Mysql打了一个措手不及。</p>
+<p><img src="/images/v2-a2a253d074fa82868d46e6860067134a_1440w.jpg" alt="img"></p>
+<p>小部分热点数据过期，随后对这个数据的大量查询请求导致的MySQL压力增大，称为：<code>缓存击穿</code>。</p>
+<p><img src="/images/v2-a4e920e472395dc56acc693ed6539005_1440w.jpg" alt="img"></p>
+<p>大量的热点数据过期，随后对这个数据的大量查询请求导致的MySQL压力增大，称为：<code>缓存雪崩</code>。</p>
+<p>出现这个的原因是：过期时间也不是redis设置的，而是应用程序设置的。解决方案就是让应用程序把缓存过期时间设置的均匀一些，至少别让大量数据集体失效</p>
+<p>具体的解决方案就是：<strong>把键值的过期时间随机了一下，还设置了热点数据永不过期</strong></p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

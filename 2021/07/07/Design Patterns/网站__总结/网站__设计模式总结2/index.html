@@ -1,0 +1,80 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&lt;h2 id=&quot;Golang设计模式思想&quot;&gt;&lt;a href=&quot;#Golang设计模式思想&quot; class=&quot;headerlink&quot; title=&quot;Golang设计模式思想&quot;&gt;&lt;/a&gt;Golang设计模式思想&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;一切设计模式都是灵活应用struct的组合模式，以及go隐形继承接口的特性&lt;/li&gt;
+&lt;li&gt;go中的interface就是一些方法装饰, 而struct并不依赖于接口&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;创建模式&quot;&gt;&lt;a href=&quot;#创建模式&quot; class=&quot;headerlink&quot; title=&quot;创建模式&quot;&gt;&lt;/a&gt;创建模式&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;建造者模式(Builder Pattern)&lt;/code&gt;：将一个复杂对象的构建与它的表示分离, 使得同样的构建过程可以创建不同的表示&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;工厂方法模式(Factory Method)&lt;/code&gt;：使一个类的实例化延迟到其子类, 定义一个用于创建对象的接口, 让子类决定将哪一个类实例化&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;对象池模式(Object Pool)&lt;/code&gt;：根据需求将预测的对象保存到channel中， 用于对象的生成成本大于维持成本&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;单例模式(singleton)&lt;/code&gt;：单例模式是最简单的设计模式之一, 保证一个类仅有一个实例, 并提供一个全局的访问接口&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;生成器模式(Generator)&lt;/code&gt;：生成器模式可以允许使用者在生成要使用的下一个值时与生成器并行运行&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;抽象工厂模式(Abstract Factory)&lt;/code&gt;：提供一个创建一系列相关或相互依赖对象的接口, 而无需指定它们具体的类&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;原型模式(Prototype Pattern)&lt;/code&gt;：复制一个已存在的实例&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;结构模式&quot;&gt;&lt;a href=&quot;#结构模式&quot; class=&quot;headerlink&quot; title=&quot;结构模式&quot;&gt;&lt;/a&gt;结构模式&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;装饰模式(Decorator Pattern)&lt;/code&gt;：装饰模式使用对象组合的方式动态改变或增加对象行为， 在原对象的基础上增加功能&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;代理模式(Proxy Pattern)&lt;/code&gt;：为其他对象提供一种代理以&lt;strong&gt;控制对这个对象的访问&lt;/strong&gt;。代理模式用于延迟处理操作或者在进行实际操作前后对真实对象进行其它处理。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;适配器模式(Adapter Pattern)&lt;/code&gt;：将一个类的接口转换成客户希望的另外一个接口。适配器模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;组合模式(Composite)&lt;/code&gt;：组合模式有助于表达数据结构, 将对象组合成树形结构以表示”部分-整体”的层次结构, 常用于树状的结构&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;享元模式(Flyweight Pattern)&lt;/code&gt;：把多个实例对象共同需要的数据，独立出一个享元，从而减少对象数量和节省内存&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;外观模式(Facade Pattern)&lt;/code&gt;：外观模式在客户端和现有系统之间加入一个外观对象, 为子系统提供一个统一的接入接口, 类似与委托&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;桥接模式(Bridge Pattern)&lt;/code&gt;：桥接模式分离抽象部分和实现部分，使得两部分可以独立扩展&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;行为模式&quot;&gt;&lt;a href=&quot;#行为模式&quot; class=&quot;headerlink&quot; title=&quot;行为模式&quot;&gt;&lt;/a&gt;行为模式&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;观察者模式(Observer)&lt;/code&gt;：定义对象间的一种一对多的依赖关系,以便当一个对象的状态发生改变时,所有依赖于它的对象都得到通知并自动刷新&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;策略模式(Strategy)&lt;/code&gt;：定义一系列算法，让这些算法在运行时可以互换，使得分离算法，符合开闭原则&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;状态模式(State Pattern)&lt;/code&gt;：用于系统中复杂对象的状态转换以及不同状态下行为的封装问题&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;访问者模式(Visitor Pattern)&lt;/code&gt;：访问者模式是将对象的数据和操作分离&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;模板方法模式(Template Method Pattern)&lt;/code&gt;：模版方法使用匿名组合的继承机制, 将通用的方法和属性放在父类中, 具体的实现放在子类中延迟执行&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;备忘录模式(Memento Pattern)&lt;/code&gt;：备忘录模式捕获一个对象的内部状态，并在对象之外保存这个状态&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;中介模式(Mediator Pattern)&lt;/code&gt;：中介者模式用一个中介对象来封装一系列对象交互，将多对多关联转换成一对多，构成星状结构&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;迭代器模式(Iterator Pattern)&lt;/code&gt;：可以配合访问者模式，将不同的数据结构，使用迭代器遍历&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;解释器模式(Interpreter Pattern)&lt;/code&gt;：解释器模式实现一个表达式接口，该接口解释一个特定的上下文。通常用于SQL解析和符号处理引擎&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;命令模式(Command Pattern)&lt;/code&gt;：命令模式是一种数据驱动模式，将请求封装成一个对象，从而可以用不同的请求对客户进行参数化，实现调用者和接收者的解藕&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;责任链模式(Chain of Responsibility)&lt;/code&gt;：责任链模式是将处理请求的多个对象连成一条链(类似队列)，每个对象都包含下一个对象的引用，请求沿着链传递，直到被处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;同步模式-synchronization-patterns&quot;&gt;&lt;a href=&quot;#同步模式-synchronization-patterns&quot; class=&quot;headerlink&quot; title=&quot;同步模式(synchronization patterns)&quot;&gt;&lt;/a&gt;同步模式(synchronization patterns)&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;信号量模式(Semaphore)&lt;/code&gt;：信号量是一种同步模式，对有限数量的资源同步互斥&lt;/li&gt;
+&lt;/ul&gt;
+"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>设计模式总结2 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Design-Patterns/" rel="tag">Design Patterns</a></div><div class="post-time">2021-07-07</div></div></div><div class="container post-header"><h1>设计模式总结2</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%9D%E6%83%B3"><span class="toc-number">1.</span> <span class="toc-text">Golang设计模式思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">创建模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">结构模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%8C%E4%B8%BA%E6%A8%A1%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">行为模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%BC%8F-synchronization-patterns"><span class="toc-number">5.</span> <span class="toc-text">同步模式(synchronization patterns)</span></a></li></ol></details></div><div class="container post-content"><h2 id="Golang设计模式思想"><a href="#Golang设计模式思想" class="headerlink" title="Golang设计模式思想"></a>Golang设计模式思想</h2><ul>
+<li>一切设计模式都是灵活应用struct的组合模式，以及go隐形继承接口的特性</li>
+<li>go中的interface就是一些方法装饰, 而struct并不依赖于接口</li>
+</ul>
+<h2 id="创建模式"><a href="#创建模式" class="headerlink" title="创建模式"></a>创建模式</h2><ul>
+<li><code>建造者模式(Builder Pattern)</code>：将一个复杂对象的构建与它的表示分离, 使得同样的构建过程可以创建不同的表示</li>
+<li><code>工厂方法模式(Factory Method)</code>：使一个类的实例化延迟到其子类, 定义一个用于创建对象的接口, 让子类决定将哪一个类实例化</li>
+<li><code>对象池模式(Object Pool)</code>：根据需求将预测的对象保存到channel中， 用于对象的生成成本大于维持成本</li>
+<li><code>单例模式(singleton)</code>：单例模式是最简单的设计模式之一, 保证一个类仅有一个实例, 并提供一个全局的访问接口</li>
+<li><code>生成器模式(Generator)</code>：生成器模式可以允许使用者在生成要使用的下一个值时与生成器并行运行</li>
+<li><code>抽象工厂模式(Abstract Factory)</code>：提供一个创建一系列相关或相互依赖对象的接口, 而无需指定它们具体的类</li>
+<li><code>原型模式(Prototype Pattern)</code>：复制一个已存在的实例</li>
+</ul>
+<h2 id="结构模式"><a href="#结构模式" class="headerlink" title="结构模式"></a>结构模式</h2><ul>
+<li><code>装饰模式(Decorator Pattern)</code>：装饰模式使用对象组合的方式动态改变或增加对象行为， 在原对象的基础上增加功能</li>
+<li><code>代理模式(Proxy Pattern)</code>：为其他对象提供一种代理以<strong>控制对这个对象的访问</strong>。代理模式用于延迟处理操作或者在进行实际操作前后对真实对象进行其它处理。</li>
+<li><code>适配器模式(Adapter Pattern)</code>：将一个类的接口转换成客户希望的另外一个接口。适配器模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作</li>
+<li><code>组合模式(Composite)</code>：组合模式有助于表达数据结构, 将对象组合成树形结构以表示”部分-整体”的层次结构, 常用于树状的结构</li>
+<li><code>享元模式(Flyweight Pattern)</code>：把多个实例对象共同需要的数据，独立出一个享元，从而减少对象数量和节省内存</li>
+<li><code>外观模式(Facade Pattern)</code>：外观模式在客户端和现有系统之间加入一个外观对象, 为子系统提供一个统一的接入接口, 类似与委托</li>
+<li><code>桥接模式(Bridge Pattern)</code>：桥接模式分离抽象部分和实现部分，使得两部分可以独立扩展</li>
+</ul>
+<h2 id="行为模式"><a href="#行为模式" class="headerlink" title="行为模式"></a>行为模式</h2><ul>
+<li><code>观察者模式(Observer)</code>：定义对象间的一种一对多的依赖关系,以便当一个对象的状态发生改变时,所有依赖于它的对象都得到通知并自动刷新</li>
+<li><code>策略模式(Strategy)</code>：定义一系列算法，让这些算法在运行时可以互换，使得分离算法，符合开闭原则</li>
+<li><code>状态模式(State Pattern)</code>：用于系统中复杂对象的状态转换以及不同状态下行为的封装问题</li>
+<li><code>访问者模式(Visitor Pattern)</code>：访问者模式是将对象的数据和操作分离</li>
+<li><code>模板方法模式(Template Method Pattern)</code>：模版方法使用匿名组合的继承机制, 将通用的方法和属性放在父类中, 具体的实现放在子类中延迟执行</li>
+<li><code>备忘录模式(Memento Pattern)</code>：备忘录模式捕获一个对象的内部状态，并在对象之外保存这个状态</li>
+<li><code>中介模式(Mediator Pattern)</code>：中介者模式用一个中介对象来封装一系列对象交互，将多对多关联转换成一对多，构成星状结构</li>
+<li><code>迭代器模式(Iterator Pattern)</code>：可以配合访问者模式，将不同的数据结构，使用迭代器遍历</li>
+<li><code>解释器模式(Interpreter Pattern)</code>：解释器模式实现一个表达式接口，该接口解释一个特定的上下文。通常用于SQL解析和符号处理引擎</li>
+<li><code>命令模式(Command Pattern)</code>：命令模式是一种数据驱动模式，将请求封装成一个对象，从而可以用不同的请求对客户进行参数化，实现调用者和接收者的解藕</li>
+<li><code>责任链模式(Chain of Responsibility)</code>：责任链模式是将处理请求的多个对象连成一条链(类似队列)，每个对象都包含下一个对象的引用，请求沿着链传递，直到被处理</li>
+</ul>
+<h2 id="同步模式-synchronization-patterns"><a href="#同步模式-synchronization-patterns" class="headerlink" title="同步模式(synchronization patterns)"></a>同步模式(synchronization patterns)</h2><ul>
+<li><code>信号量模式(Semaphore)</code>：信号量是一种同步模式，对有限数量的资源同步互斥</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

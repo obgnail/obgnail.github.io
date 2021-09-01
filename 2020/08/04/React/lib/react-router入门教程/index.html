@@ -1,0 +1,85 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;基本使用&quot;&gt;&lt;a href=&quot;#基本使用&quot; class=&quot;headerlink&quot; title=&quot;基本使用&quot;&gt;&lt;/a&gt;基本使用&lt;/h2&gt;&lt;p&gt;使用时，路由器&lt;code&gt;Router&lt;/code&gt;就是React的一个组件。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>react-router入门教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/React/" rel="tag">React</a></div><div class="post-time">2020-08-04</div></div></div><div class="container post-header"><h1>react-router入门教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E8%B7%AF%E7%94%B1"><span class="toc-number">2.</span> <span class="toc-text">嵌套路由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#path-%E5%B1%9E%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">path 属性</span></a></li></ol></details></div><div class="container post-content"><h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><p>使用时，路由器<code>Router</code>就是React的一个组件。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Router &#125; <span class="keyword">from</span> <span class="string">&#x27;react-router&#x27;</span>;</span><br><span class="line">render(<span class="xml"><span class="tag">&lt;<span class="name">Router</span>/&gt;</span></span>, <span class="built_in">document</span>.getElementById(<span class="string">&#x27;app&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>Router</code>组件本身只是一个容器，真正的路由要通过<code>Route</code>组件定义。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Router, Route, hashHistory &#125; <span class="keyword">from</span> <span class="string">&#x27;react-router&#x27;</span>;</span><br><span class="line"></span><br><span class="line">render((</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Router</span> <span class="attr">history</span>=<span class="string">&#123;hashHistory&#125;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/&quot;</span> <span class="attr">component</span>=<span class="string">&#123;App&#125;/</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">Router</span>&gt;</span></span></span><br><span class="line">), <span class="built_in">document</span>.getElementById(<span class="string">&#x27;app&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，用户访问根路由<code>/</code>（比如<code>http://www.example.com/</code>），组件<code>APP</code>就会加载到<code>document.getElementById(&#39;app&#39;)</code>。</p>
+<p>你可能还注意到，<code>Router</code>组件有一个参数<code>history</code>，它的值<code>hashHistory</code>表示，路由的切换由URL的hash变化决定，即URL的<code>#</code>部分发生变化。举例来说，用户访问<code>http://www.example.com/</code>，实际会看到的是<code>http://www.example.com/#/</code>。</p>
+<p><code>Route</code>组件定义了URL路径与组件的对应关系。你可以同时使用多个<code>Route</code>组件。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;Router history=&#123;hashHistory&#125;&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/&quot;</span> <span class="attr">component</span>=<span class="string">&#123;App&#125;/</span>&gt;</span></span></span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/repos&quot;</span> <span class="attr">component</span>=<span class="string">&#123;Repos&#125;/</span>&gt;</span></span></span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/about&quot;</span> <span class="attr">component</span>=<span class="string">&#123;About&#125;/</span>&gt;</span></span></span><br><span class="line">&lt;/Router&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，用户访问<code>/repos</code>（比如<code>http://localhost:8080/#/repos</code>）时，加载<code>Repos</code>组件；访问<code>/about</code>（<code>http://localhost:8080/#/about</code>）时，加载<code>About</code>组件。</p>
+<h2 id="嵌套路由"><a href="#嵌套路由" class="headerlink" title="嵌套路由"></a>嵌套路由</h2><p><code>Route</code>组件还可以嵌套。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;Router history=&#123;hashHistory&#125;&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/&quot;</span> <span class="attr">component</span>=<span class="string">&#123;App&#125;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/repos&quot;</span> <span class="attr">component</span>=<span class="string">&#123;Repos&#125;/</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/about&quot;</span> <span class="attr">component</span>=<span class="string">&#123;About&#125;/</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">Route</span>&gt;</span></span></span><br><span class="line">&lt;/Router&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面代码中，用户访问<code>/repos</code>时，会先加载<code>App</code>组件，然后在它的内部再加载<code>Repos</code>组件。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;App&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Repos</span>/&gt;</span></span></span><br><span class="line">&lt;/App&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>App</code>组件要写成下面的样子。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> React.createClass(&#123;</span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      &#123;this.props.children&#125;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，<code>App</code>组件的<code>this.props.children</code>属性就是子组件。</p>
+<p>子路由也可以不写在<code>Router</code>组件里面，单独传入<code>Router</code>组件的<code>routes</code>属性。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> routes = <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/&quot;</span> <span class="attr">component</span>=<span class="string">&#123;App&#125;</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/repos&quot;</span> <span class="attr">component</span>=<span class="string">&#123;Repos&#125;/</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;/about&quot;</span> <span class="attr">component</span>=<span class="string">&#123;About&#125;/</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">Route</span>&gt;</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">Router</span> <span class="attr">routes</span>=<span class="string">&#123;routes&#125;</span> <span class="attr">history</span>=<span class="string">&#123;browserHistory&#125;/</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="path-属性"><a href="#path-属性" class="headerlink" title="path 属性"></a>path 属性</h2><p><code>Route</code>组件的<code>path</code>属性指定路由的匹配规则。这个属性是可以省略的，这样的话，不管路径是否匹配，总是会加载指定组件。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Route path=<span class="string">&quot;inbox&quot;</span> component=&#123;Inbox&#125;&gt;</span><br><span class="line">   <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;messages/:id&quot;</span> <span class="attr">component</span>=<span class="string">&#123;Message&#125;</span> /&gt;</span></span></span><br><span class="line">&lt;/Route&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，当用户访问<code>/inbox/messages/:id</code>时，会加载下面的组件</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Inbox&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Message</span>/&gt;</span></span></span><br><span class="line">&lt;/Inbox&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果省略外层<code>Route</code>的<code>path</code>参数，写成下面的样子。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Route component=&#123;Inbox&#125;&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">&quot;inbox/messages/:id&quot;</span> <span class="attr">component</span>=<span class="string">&#123;Message&#125;</span> /&gt;</span></span></span><br><span class="line">&lt;/Route&gt;</span><br></pre></td></tr></table></figure>
+
+<p>现在用户访问<code>/inbox/messages/:id</code>时，组件加载还是原来的样子。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Inbox&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Message</span>/&gt;</span></span></span><br><span class="line">&lt;/Inbox&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;拍照功能&quot;&gt;&lt;a href=&quot;#拍照功能&quot; class=&quot;headerlink&quot; title=&quot;拍照功能&quot;&gt;&lt;/a&gt;拍照功能&lt;/h2&gt;&lt;p&gt;树莓派系统中的raspistill命令："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>摄像头及其使用 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-08-18</div></div></div><div class="container post-header"><h1>摄像头及其使用</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%8D%E7%85%A7%E5%8A%9F%E8%83%BD"><span class="toc-number">1.</span> <span class="toc-text">拍照功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%95%E5%83%8F%E5%8A%9F%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">录像功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E6%8E%A7%E5%8A%9F%E8%83%BD"><span class="toc-number">3.</span> <span class="toc-text">监控功能</span></a></li></ol></details></div><div class="container post-content"><h2 id="拍照功能"><a href="#拍照功能" class="headerlink" title="拍照功能"></a>拍照功能</h2><p>树莓派系统中的raspistill命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">raspistill -o /home/pi/shared/image/raspi_camera/a.jpg -t 1000</span><br></pre></td></tr></table></figure>
+
+<p>这行命令的作用是在一秒钟的延迟之后，拍下一张名为a.jpg的照片，保存在树莓派的目录pi/camera下。-t的延迟选项后的参数是以毫秒为单位，1000便表示1秒。延时选项在输入命令时可以不加，但-o后的名称是一定要有的。</p>
+<h2 id="录像功能"><a href="#录像功能" class="headerlink" title="录像功能"></a>录像功能</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">raspivid -o b.h264 -t 10000 -w 1280 -h 720</span><br></pre></td></tr></table></figure>
+
+<p>该命令的意思是录制一段十秒钟的名为b.h264的视频，且分辨率为1280x720。同样，如果不带名称后的参数的话，系统会默认录制时间为5秒，分辨率为1920x1080。<br>此时录制的视频虽然能够在树莓派上播放，但并非是能够在一般播放器上运行的常规视频文件，且录制的视频是没有声音的。要想将.h264格式的视频转换为mp4格式的视频，需要使用一个叫做gpac的工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -y gpac</span><br></pre></td></tr></table></figure>
+
+<p>安装后输入以下命令对刚才的视频进行格式转换，转换后的视频为每秒30帧。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MP4Box -fps 30 -add b.h264 b.mp4</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="监控功能"><a href="#监控功能" class="headerlink" title="监控功能"></a>监控功能</h2><p>输入命令进行安装：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install motion</span><br></pre></td></tr></table></figure>
+
+<p>首先将motion软件的后台进程改为开启，让它能够一直在后台运行。输入以下命令，将文件中 “start_motion_daemon=no” 的no改为yes。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/<span class="keyword">default</span>/motion</span><br></pre></td></tr></table></figure>
+
+<p>之后输入命令打开motion的配置文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/motion/motion.conf</span><br></pre></td></tr></table></figure>
+
+<p>这个文件中保存了许多motion的基本设置，文件内容很多，感兴趣的话可以慢慢研究。因为选项比较多，下面只写出一些比较重要的选项的值，其他可以用默认值，或者参考motion官网上的documents，那里面写得很详尽，每个参数的解释都有。motion.conf里自带的注释也很完整。</p>
+<p>需要更改的参数有以下几行，在nano编辑器环境下可以使用快捷键ctrl+w对关键字进行查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">daemon on  #off改成on</span><br><span class="line">width 640  </span><br><span class="line">height 480 #根据摄像头像素自行更改</span><br><span class="line">framerate 50 #帧率</span><br><span class="line">stream_maxrate 200</span><br><span class="line">stream_localhost off    #设为off</span><br></pre></td></tr></table></figure>
+
+<p>当然要想获得最佳的效果，文档中的参数需要多次根据自己的设备进行相应的调整。<br>修改完成后保存并退出。</p>
+<p>若你之前打开过motion，那么在每次更改完配置后，需要先关闭motion进程，并再次打开，相当于对motion进行一次重启。关闭motion服务的命令如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo killall -TERM motion</span><br></pre></td></tr></table></figure>
+
+<p>接着输入命令重新打开motion：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo motion</span><br></pre></td></tr></table></figure>
+
+<p>打开后便可以通过在浏览器内访问地址<code>http://树莓派IP:8080</code>(有可能是8081,具体看配置),看到相应的监控画面了。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

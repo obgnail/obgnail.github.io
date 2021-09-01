@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://www.iteye.com/blog/jackyrong-2354925&quot;&gt;理解 I/O 多路复用 select/poll/epoll&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>select_poll_epoll | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Linux/" rel="tag">Linux</a></div><div class="post-time">2019-12-03</div></div></div><div class="container post-header"><h1>select_poll_epoll</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6-FD"><span class="toc-number">1.1.</span> <span class="toc-text">文件描述符(FD)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E4%B8%8E%E6%89%93%E5%BC%80%E7%9A%84%E6%96%87%E4%BB%B6%E5%AF%B9%E5%BA%94%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">文件描述与打开的文件对应模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%90%88%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text">文件描述符合打开文件之间的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E3%80%81%E6%89%93%E5%BC%80%E7%9A%84%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84%E4%BB%A5%E5%8F%8Ai-node%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.3.</span> <span class="toc-text">文件描述符、打开的文件句柄以及i-node之间的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select-poll-epoll"><span class="toc-number">1.2.</span> <span class="toc-text">select poll epoll</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%88%E5%A4%9A%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">第一个解决方案（多线程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%88select%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">第二个解决方案（select）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%88poll%EF%BC%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">第三个解决方案（poll）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%88epoll%EF%BC%89"><span class="toc-number">1.2.4.</span> <span class="toc-text">最终解决方案（epoll）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h1 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h1><p><a target="_blank" rel="noopener" href="https://www.iteye.com/blog/jackyrong-2354925">理解 I/O 多路复用 select/poll/epoll</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sybnfkn040601/article/details/73718332">Linux中的文件描述符(fd)与打开文件之间的关系</a></p>
+<h2 id="文件描述符-FD"><a href="#文件描述符-FD" class="headerlink" title="文件描述符(FD)"></a>文件描述符(FD)</h2><ul>
+<li>在Linux系统中一切皆可以看成是文件，文件又可分为：<code>普通文件</code>、<code>目录文件</code>、<code>链接文件</code>和<code>设备文件</code>。</li>
+<li>文件描述符（file descriptor）是内核为了高效管理已被打开的文件所创建的索引，其是一个非负整数（通常是小整数），用于<strong>指代被打开的文件</strong>，</li>
+<li>所有执行I/O操作的系统调用都通过文件描述符。</li>
+<li>程序刚刚启动的时候，0是标准输入，1是标准输出，2是标准错误。如果此时去打开一个新的文件，它的文件描述符会是3。<strong>POSIX标准要求每次打开文件时（含socket）必须使用当前进程中最小可用的文件描述符号码，因此，在网络通信过程中稍不注意就有可能造成串话</strong>。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>文件描述符</th>
+<th>用途</th>
+<th>POSIX名称</th>
+<th>stdio流</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>标准输入</td>
+<td>STDIN_FILENO</td>
+<td>stdin</td>
+</tr>
+<tr>
+<td>1</td>
+<td>标准输出</td>
+<td>STDONT_FILENO</td>
+<td>stdout</td>
+</tr>
+<tr>
+<td>2</td>
+<td>标准错误</td>
+<td>STDERR_FILENO</td>
+<td>stderr</td>
+</tr>
+</tbody></table>
+<h3 id="文件描述与打开的文件对应模型"><a href="#文件描述与打开的文件对应模型" class="headerlink" title="文件描述与打开的文件对应模型"></a>文件描述与打开的文件对应模型</h3><p><img src="/images/20140831225117905.png" alt="img"></p>
+<h3 id="文件描述符合打开文件之间的关系"><a href="#文件描述符合打开文件之间的关系" class="headerlink" title="文件描述符合打开文件之间的关系"></a>文件描述符合打开文件之间的关系</h3><ul>
+<li><strong>每一个文件描述符会与一个打开文件相对应，同时，不同的文件描述符也会指向同一个文件</strong>。相同的文件可以被不同的进程打开也可以在同一个进程中被多次打开。</li>
+<li><strong>系统</strong>为每一个进程维护了一个文件描述符表，该表的值都是从0开始的，所以在不同的进程中你会看到相同的文件描述符，这种情况下相同文件描述符有可能指向同一个文件，也有可能指向不同的文件。具体情况要具体分析，要理解具体其概况如何，需要查看由内核维护的3个数据结构。<ol>
+<li>进程级的文件描述符表</li>
+<li>系统级的打开文件描述符表</li>
+<li>文件系统的i-node表</li>
+</ol>
+</li>
+</ul>
+<p>进程级的描述符表的每一条目记录了单个文件描述符的相关信息。</p>
+<ol>
+<li>控制文件描述符操作的一组标志。（目前，此类标志仅定义了一个，即close-on-exec标志）</li>
+<li>对打开文件句柄的引用</li>
+</ol>
+<p>内核对所有打开的文件的文件维护有一个系统级的<code>描述符表格</code>（open file description table）。有时，也称之为打开文件表（open file table），并将表格中各条目称为打开文件句柄（open file handle）。</p>
+<p>一个打开文件句柄存储了与一个打开文件相关的全部信息，如下所示：</p>
+<ol>
+<li><p>当前文件偏移量（调用read()和write()时更新，或使用lseek()直接修改）</p>
+</li>
+<li><p>打开文件时所使用的状态标识（即，open()的flags参数）</p>
+</li>
+<li><p>文件访问模式（如调用open()时所设置的只读模式、只写模式或读写模式）</p>
+</li>
+<li><p>与信号驱动相关的设置</p>
+</li>
+<li><p>对该文件i-node对象的引用</p>
+</li>
+<li><p>文件类型（例如：常规文件、套接字或FIFO）和访问权限</p>
+</li>
+<li><p>一个指针，指向该文件所持有的锁列表</p>
+</li>
+<li><p>文件的各种属性，包括文件大小以及与不同类型操作相关的时间戳</p>
+</li>
+</ol>
+<h3 id="文件描述符、打开的文件句柄以及i-node之间的关系"><a href="#文件描述符、打开的文件句柄以及i-node之间的关系" class="headerlink" title="文件描述符、打开的文件句柄以及i-node之间的关系"></a>文件描述符、打开的文件句柄以及i-node之间的关系</h3><p><img src="/images/20140831224917875.png" alt="img"></p>
+<ul>
+<li>图中，两个进程拥有诸多打开的文件描述符。</li>
+<li>在进程A中，文件描述符1和30都指向了同一个打开的文件句柄（标号23）。这可能是通过调用dup()、dup2()、fcntl()或者对<strong>同一个文件多次调用了open()函数</strong>而形成的。</li>
+<li>进程A的文件描述符2和进程B的文件描述符2都指向了同一个打开的文件句柄（标号73）。这种情形可能是在调用fork()后出现的（即，进程A、B是父子进程关系），或者当某进程通过UNIX域套接字将一个打开的文件描述符传递给另一个进程时，也会发生。再者是<strong>不同的进程独自去调用open函数打开了同一个文件</strong>，此时进程内部的描述符正好分配到与其他进程打开该文件的描述符一样。</li>
+<li>此外，进程A的描述符0和进程B的描述符3分别指向不同的打开文件句柄，但这些句柄均指向i-node表的相同条目（1976），换言之，指向同一个文件。发生这种情况是因为<strong>每个进程各自对同一个文件发起了open()调用</strong>。同一个进程两次打开同一个文件，也会发生类似情况。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ol>
+<li>由于进程级文件描述符表的存在，不同的进程中会出现相同的文件描述符，它们可能指向同一个文件，也可能指向不同的文件</li>
+<li>两个不同的文件描述符，若指向同一个打开文件句柄，将共享同一文件偏移量。因此，如果通过其中一个文件描述符来修改文件偏移量（由调用read()、write()或lseek()所致），那么从另一个描述符中也会观察到变化，无论这两个文件描述符是否属于不同进程，还是同一个进程，情况都是如此。</li>
+<li>要获取和修改打开的文件标志（例如：O_APPEND、O_NONBLOCK和O_ASYNC），可执行fcntl()的F_GETFL和F_SETFL操作，其对作用域的约束与上一条颇为类似。</li>
+<li>文件描述符标志（即，close-on-exec）为进程和文件描述符所私有。对这一标志的修改将不会影响同一进程或不同进程中的其他文件描述符</li>
+</ol>
+<h2 id="select-poll-epoll"><a href="#select-poll-epoll" class="headerlink" title="select poll epoll"></a>select poll epoll</h2><p>开一个餐厅，客栈运营了几天，我发现我们的客栈存在着一个问题</p>
+<ol>
+<li>厨师只负责炒菜，炒好了放在一边继续炒其他菜，</li>
+<li>所以店小二必须经常进出厨房，一方面看看菜到底炒好了没有，如果炒好的话，就要把菜端出来，另一方面他必须得站在外面等候客人的其他需求。</li>
+<li>并且重要的是只有一个小二，他同时只能服务一个客人，其他客人必须等待在客栈客人少的时候问题还不明显，有时候突然来个十几个客人，看到没人招待他，掉头就走了。</li>
+</ol>
+<h3 id="第一个解决方案（多线程）"><a href="#第一个解决方案（多线程）" class="headerlink" title="第一个解决方案（多线程）"></a>第一个解决方案（多线程）</h3><ol>
+<li>给每一位顾客配备一名店小二。</li>
+<li>这样一来，每一个顾客都有专门的小二负责，厨师一炒好菜，小二就将菜第一时间送到客人桌上，这样一来，客人的体验提升了很多，大家都非常满意，我客栈的名声也越来越好。</li>
+<li>随着名声越来越好，客人也越来越多，渐渐地我发现，好像有什么地方不对。</li>
+<li>随着客人越来越多，我必须招更多的店小二，支付更多的费用在小二身上，我发现，有时候付给员工的费用都比我赚的还多</li>
+</ol>
+<h3 id="第二个解决方案（select）"><a href="#第二个解决方案（select）" class="headerlink" title="第二个解决方案（select）"></a>第二个解决方案（select）</h3><ol>
+<li>将客栈进行改造，按照桌数区分，分为 1 2 3 4 四个区，每个区招一名店小二，来服务所在区的客人，并且对厨师进行了简单的培训，让他<strong>再炒好菜后大喊一声，有菜炒好了</strong></li>
+<li>这次简单升级后，我的客栈现在只有 4 个小二了，每个小二负责自己的区域，并且厨师炒好菜后，他大喊一声，菜炒好了，然后<code>小二 1 号</code>进入厨房，把菜端到他对应的区域挨个问，<strong>这菜是谁点的。</strong></li>
+<li>随着我的客栈越来越大越来越大，为了节省成本，我并没有再招更多的小二，依然是那四个小二。直到有一天，1 区的客人爆满，达到了 1024 个了，那一天，我看着 1 区的小二每一次上菜几乎都是跑的，并且他告诉我，如果再多来一个客人，他就要挂了。</li>
+</ol>
+<h3 id="第三个解决方案（poll）"><a href="#第三个解决方案（poll）" class="headerlink" title="第三个解决方案（poll）"></a>第三个解决方案（poll）</h3><ol>
+<li>小二体力上好像跟不上节奏，所以我派人连夜赶工做了传说中的木牛流马来当店小二，这样一来，即使是 10240 个客人，一个木牛流马就 hold 住了 , 解决了人数上限问题</li>
+<li>但是现在依然存在问题。由于人数太多，每次要将做好的菜送到对应的客人桌上，必须挨个询问过去，这个步骤太慢了，很多次客人都不愿意等待而走掉了。</li>
+</ol>
+<h3 id="最终解决方案（epoll）"><a href="#最终解决方案（epoll）" class="headerlink" title="最终解决方案（epoll）"></a>最终解决方案（epoll）</h3><ol>
+<li>对木牛流马进行加工，使其可以<strong>记录每一个客人点的菜</strong>，然后厨师炒好菜后，只要报上菜名，木牛流马根据记录的订单，自动就将对应的菜端到客人桌中</li>
+<li>有了这个解决方案，那么当一盘菜炒好后，就不必挨个确认是谁的菜了，如果新来了客人，同样只要记录下客人的菜单，提交给厨师，然后木牛流马又可以去招待其他客人了，当菜炒好后，直接就将菜送到客人那里了。</li>
+</ol>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><ol>
+<li>select : 只能监听 1024 个链接并且没有返回具体可使用的 socket ,得挨个遍历 ,线程不安全</li>
+<li>poll : 没有链接数限制 , 依然线程不安全</li>
+<li>epoll : 解决了 select poll 的问题，并且指定了 socket 回调  </li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

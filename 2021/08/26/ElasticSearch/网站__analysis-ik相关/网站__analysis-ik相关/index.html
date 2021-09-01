@@ -1,0 +1,66 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;原理&quot;&gt;&lt;a href=&quot;#原理&quot; class=&quot;headerlink&quot; title=&quot;原理&quot;&gt;&lt;/a&gt;原理&lt;/h2&gt;&lt;p&gt;ik_max_word 和 ik_smart 什么区别?"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>analysis-ik相关 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a></div><div class="post-time">2021-08-26</div></div></div><div class="container post-header"><h1>analysis-ik相关</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C%E4%B8%8D%E7%AC%A6%E5%90%88%E9%A2%84%E6%9C%9F-Q-amp-A"><span class="toc-number">2.</span> <span class="toc-text">搜索结果不符合预期 Q&amp;A</span></a></li></ol></details></div><div class="container post-content"><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>ik_max_word 和 ik_smart 什么区别?</p>
+<blockquote>
+<p>ik_max_word: 会将文本做<code>最细粒度</code>的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,中华人民,中华,华人,人民共和国,人民,人,民,共和国,共和,和,国国,国歌”，会穷尽各种可能的组合，适合 Term Query；</p>
+<p>ik_smart: 会做<code>最粗粒度</code>的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,国歌”，适合 Phrase 查询。</p>
+</blockquote>
+<ul>
+<li>我们现在解析的时候用的是 ik_max_word，也就是说，“测试计划”会解析成“测试”、“计划”、“测”、“试”、“计”、“划”；</li>
+<li>然后搜索时输入的关键词用的是 ik_smart，也就是说，搜“测试”的时候，只会命中含有“测试”这个词的结果，搜“测”或者“试”的时候，会命中所有含有“测”或者“试”这个词的结果。</li>
+</ul>
+<blockquote>
+<p>解析是指搜索对象的解析，输入是指用户自己键入的内容</p>
+<p>空格，其它标点符号，或者“的”、“得”、“the” 这类的都是 stop word，解析的时候会直接忽略，当成是隔离前后两个词的符号</p>
+</blockquote>
+<p>关于词典： </p>
+<p>如果搜索的词不再我们的词典里，<strong>在这种情况下就算使用ik_smart，也会被拆成单字进行搜索</strong>。</p>
+<p>我们的词库目前是使用某个时期的搜狗，然后加上所有的单字。</p>
+<p>这个词库是静态的，并不会学习而增长。</p>
+<h2 id="搜索结果不符合预期-Q-amp-A"><a href="#搜索结果不符合预期-Q-amp-A" class="headerlink" title="搜索结果不符合预期 Q&amp;A"></a>搜索结果不符合预期 Q&amp;A</h2><p><strong>Q：为什么「目」的搜索结果比「项目」少？</strong></p>
+<p>A：</p>
+<ul>
+<li><p>先说结论，这不是 bug，也不是搜索算法有问题，是符合预期的策略。</p>
+</li>
+<li><p>搜索的「查准率」、「查全率」和「响应时间」是 3 个互相影响的指标，满足其中 2 个，剩下的 1 个必然会有折损。</p>
+</li>
+<li><p>ONES 使用的搜索策略，最开始倾向于「查准率」和「响应时间」，后来通过引入单字词典，以降低「查准率」和「响应时间」的代价补上部分「查全率」。</p>
+</li>
+<li><p>针对提到的问题，可以去 Google、百度、知乎或者其它搜索引擎搜索「目」，会发现它们一样不会把「项目」相关的内容列出来。因为搜索引擎更重视「查准率」，当一个用户搜「目」时，搜索引擎认为用户更想要了解跟「目」这个单字相关的信息，比如眼睛，而不是「项目」或者「目标」。</p>
+</li>
+<li><p> 如果这还不能说服你，这里有个更明显的例子。在知乎上搜索「械」，会发现搜索结果很少，可以直接拉到底，里面完全没有任何跟「机械」相关的结果，而「机械」的搜索结果要比「械」多得多。</p>
+</li>
+<li><p>在 ONES 里搜索「械」还是能搜到部分「机械」信息的，就是因为刚才提到的，通过引入单字词典，以降低「查准率」和「响应时间」的代价补上了部分「查全率」。但这也无法保证分词算法拆句的时候一定会把「目」这样的单字拆出来，所以一样会出现「目」的搜索结果比「项目」少这种情况。</p>
+</li>
+</ul>
+<p>关于搜索跟分词，可以参考一下<a target="_blank" rel="noopener" href="https://oomabc.com/articledetail?atclid=9500e8e3135b42709439f98780427f8a">这篇文章</a>，下面是部分节选：</p>
+<blockquote>
+<p>对于百度、谷歌这类全文搜索引擎来说，查准率的优先级会高于查全率；因为目标数据集过于庞大，用户反而最关心的是查准率和排序。</p>
+<p>而对于垂直类搜索引擎来说，查全率和查准率都很重要，或者说查全率会稍微重要一点，比如小电商、小招聘。</p>
+<p>总的来说，随之数据集的增加，查全率的重要性会降低，而查准率的重要性会提升，对应的排序效果也会变得越来越重要。</p>
+</blockquote>
+<p><strong>Q：整这么多分词什么的乱七八糟的干嘛，做成跟操作系统搜索文件那样不就好了，完全匹配，搜什么就给我什么。</strong></p>
+<p>A：</p>
+<ul>
+<li><p>确实可以变成这样，但需要以「响应时间」作为代价。</p>
+</li>
+<li><p>假设有两段文本「…收集项目材料…」和「…收集项目相关材料…」，搜索「项目材料」，那么：</p>
+<ul>
+<li>以操作系统搜索文件的方式搜索，只能匹配到「…收集项目材料…」。</li>
+<li>以分词的方式搜索，可以同时匹配到「…收集项目材料…」和「…收集项目相关材料…」。</li>
+</ul>
+</li>
+<li><p>跟直觉相反，第一种方法反而是效率更低、响应时间更长的，因为难以有效建立索引。数据越多，差距就越明显，可以尝试在 Windows 的某个文档很多的文件夹下进行全文搜索（不是文件名搜索），往往需要几秒甚至几十秒才返回结果。</p>
+</li>
+<li><p>如果能够接受在大团队下每次搜索都等待十几秒，并且搜「项目材料」时搜不到「项目相关材料」，那确实可以改成这种方式。</p>
+</li>
+</ul>
+<p><strong>Q：客户/我搜某个词的时候就是没出想要的结果，不管你具体怎么实现，能满足这个场景就是对的。</strong></p>
+<p>A：</p>
+<ul>
+<li>我们已经知道，在保证「响应时间」的前提下，搜索的「查准率」和「查全率」是有平衡的，也就是说，无法找到一个满足所有场景的搜索算法，需要做出取舍。</li>
+<li>假设一些用户在场景 A 下搜索不到想要的结果，另一些用户在场景 B 下可以搜索到想要的结果。如果现在为了满足场景 A 下的用户反馈，修改算法，导致场景 B 无法满足，那原本场景 B 的用户一样会提出反馈。有可能场景 B 的用户才是「沉默的大多数」。所以，除非有数据表明场景 A 下的用户远多于场景 B 下的用户，否则修改算法是不明智的。</li>
+<li>其次，搜索引擎和搜索算法是有一定技术门槛的。搜索不是 ONES 的主要功能，不可能花太多精力去自研或者调优算法，只会选择使用经过检验的成熟算法。实际上目前用的算法，除了词库以外，我们这边能够调整的参数几乎没有，无法轻易做到满足某个特定场景。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

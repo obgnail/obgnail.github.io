@@ -1,0 +1,265 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&lt;a href=&quot;https://blog.csdn.net/weixin_39408343/article/details/95984062&quot;&gt;https://blog.csdn.net/weixin_39408343/article/details/95984062&lt;/a&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ast简介 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Data-Structures-And-Algorithms/" rel="tag">Data Structures And Algorithms</a></div><div class="post-time">2021-07-13</div></div></div><div class="container post-header"><h1>ast简介</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A5%E9%97%A8-AST"><span class="toc-number">1.</span> <span class="toc-text">入门 AST</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AST-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.0.1.</span> <span class="toc-text">AST 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AST-%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8"><span class="toc-number">1.0.2.</span> <span class="toc-text">AST 有什么用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AST-%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90"><span class="toc-number">1.0.3.</span> <span class="toc-text">AST 如何生成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.0.3.1.</span> <span class="toc-text">词法分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.0.3.2.</span> <span class="toc-text">语法分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%85%E8%B0%88-AST"><span class="toc-number">2.</span> <span class="toc-text">浅谈 AST</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9AAST%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">第一部分：AST的作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E7%AE%80%E4%BB%8B"><span class="toc-number">2.1.1.</span> <span class="toc-text">(一)简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91%E5%AE%9E%E4%BE%8B"><span class="toc-number">2.1.2.</span> <span class="toc-text">(二)抽象语法树实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-number">2.1.3.</span> <span class="toc-text">(三)为什么需要抽象语法树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9AAST%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">第二部分：AST的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E4%B9%9F%E5%8F%AB%E6%89%AB%E6%8F%8Fscanner"><span class="toc-number">2.2.1.</span> <span class="toc-text">第一步：词法分析，也叫扫描scanner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E4%B9%9F%E7%A7%B0%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">2.2.2.</span> <span class="toc-text">第二步：语法分析，也称解析器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3-AST"><span class="toc-number">3.</span> <span class="toc-text">详解 AST</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%BA%E7%94%9F%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%86%E8%A7%A3Javascript"><span class="toc-number">3.0.1.</span> <span class="toc-text">人生第一次拆解Javascript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%81%E7%BB%99%E4%BD%A0%E7%9A%84AST%E8%9E%BA%E4%B8%9D%E5%88%80%EF%BC%9Arecast"><span class="toc-number">3.0.2.</span> <span class="toc-text">送给你的AST螺丝刀：recast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#recast-types-builders-%E5%88%B6%E4%BD%9C%E6%A8%A1%E5%85%B7"><span class="toc-number">3.0.3.</span> <span class="toc-text">recast.types.builders 制作模具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E8%BF%9B%E9%98%B6%EF%BC%9A%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BF%AE%E6%94%B9js%E6%96%87%E4%BB%B6"><span class="toc-number">3.0.4.</span> <span class="toc-text">实战进阶：命令行修改js文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#recast-run-%E2%80%94%E2%80%94-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="toc-number">3.0.4.1.</span> <span class="toc-text">recast.run —— 命令行文件读取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#recast-visit-%E2%80%94%E2%80%94-AST%E8%8A%82%E7%82%B9%E9%81%8D%E5%8E%86"><span class="toc-number">3.0.4.2.</span> <span class="toc-text">recast.visit —— AST节点遍历</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TNT-%E2%80%94%E2%80%94-%E5%88%A4%E6%96%ADAST%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.0.4.3.</span> <span class="toc-text">TNT —— 判断AST对象类型</span></a></li></ol></li></ol></li></ol></li></ol></details></div><div class="container post-content"><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39408343/article/details/95984062">https://blog.csdn.net/weixin_39408343/article/details/95984062</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/huangpb123/article/details/84799198">https://blog.csdn.net/huangpb123/article/details/84799198</a></p>
+<h1 id="入门-AST"><a href="#入门-AST" class="headerlink" title="入门 AST"></a>入门 AST</h1><h3 id="AST-是什么"><a href="#AST-是什么" class="headerlink" title="AST 是什么"></a>AST 是什么</h3><p>抽象语法树 (Abstract Syntax Tree)，简称 AST，它是源代码语法结构的一种抽象表示。它以树状的形式表现编程语言的语法结构，树上的每个节点都表示源代码中的一种结构。</p>
+<h3 id="AST-有什么用"><a href="#AST-有什么用" class="headerlink" title="AST 有什么用"></a>AST 有什么用</h3><p>AST 运用广泛，比如：</p>
+<ul>
+<li>编辑器的错误提示、代码格式化、代码高亮、代码自动补全；</li>
+<li><code>elint</code>、<code>pretiier</code> 对代码错误或风格的检查；</li>
+<li><code>webpack</code> 通过 <code>babel</code> 转译 <code>javascript</code> 语法；</li>
+</ul>
+<p>并且如果你想了解 js 编译执行的原理，那么你就得了解 AST。</p>
+<h3 id="AST-如何生成"><a href="#AST-如何生成" class="headerlink" title="AST 如何生成"></a>AST 如何生成</h3><p>js 执行的第一步是读取 js 文件中的字符流，然后通过词法分析生成 <code>token</code>，之后再通过语法分析( Parser )生成 AST，最后生成机器码执行。</p>
+<p>整个解析过程主要分为以下两个步骤：</p>
+<ul>
+<li>分词：将整个代码字符串分割成最小语法单元数组</li>
+<li>语法分析：在分词基础上建立分析语法单元之间的关系</li>
+</ul>
+<p>JS Parser 是 js 语法解析器，它可以将 js 源码转成 AST，常见的 Parser 有 esprima、traceur、acorn、shift 等。</p>
+<h4 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h4><p>词法分析，也称之为扫描（scanner），简单来说就是调用 next() 方法，一个一个字母的来读取字符，然后与定义好的 JavaScript 关键字符做比较，生成对应的Token。<strong>Token 是一个不可分割的最小单元</strong>:</p>
+<blockquote>
+<p>例如 var 这三个字符，它只能作为一个整体，语义上不能再被分解，因此它是一个 Token。</p>
+</blockquote>
+<p>词法分析器里，每个关键字是一个 Token ，每个标识符是一个 Token，每个操作符是一个 Token，每个标点符号也都是一个 Token。除此之外，还会过滤掉源程序中的注释和空白字符（换行符、空格、制表符等。</p>
+<p>最终，整个代码将被分割进一个tokens列表（或者说一维数组）。</p>
+<h4 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h4><p>语法分析会将词法分析出来的 Token 转化成有语法含义的抽象语法树结构。同时，验证语法，语法如果有错的话，抛出语法错误。</p>
+<p>说了这么多我们来看下 javaScript 代码片段转成 AST 之后是什么样的我们拿一行简单的代码来展示</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fn = <span class="function"><span class="params">a</span> =&gt;</span> a;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20201012170026413.png" alt="image-20201012170026413"></p>
+<p>如图从这个 AST 语法树我们就能够很清楚的看出一个代码他的具体含义，并且使用的是什么语法，方法等。</p>
+<p>用人话翻译这个图就是：</p>
+<blockquote>
+<p>用类型 const 声明变量 fn 指向一个箭头函数表达式，它的参数是 a 函数体也是 a。</p>
+</blockquote>
+<h1 id="浅谈-AST"><a href="#浅谈-AST" class="headerlink" title="浅谈 AST"></a>浅谈 AST</h1><h2 id="第一部分：AST的作用"><a href="#第一部分：AST的作用" class="headerlink" title="第一部分：AST的作用"></a><strong>第一部分：AST的作用</strong></h2><p>首先来一个比较形象的，转载自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/cmdssd1/article/details/45716679">AST-抽象语法树</a>，讲述了为什么需要讲源代码转化为AST，总结就是：AST不依赖于具体的文法，不依赖于语言的细节，我们将源代码转化为AST后，可以对AST做很多的操作，包括一些你想不到的操作，这些操作实现了各种各样形形色色的功能，给你带进一个不一样的世界。</p>
+<p>原文为：</p>
+<p><strong>抽象语法树简介</strong></p>
+<h3 id="一-简介"><a href="#一-简介" class="headerlink" title="(一)简介"></a><strong>(一)简介</strong></h3><p>抽象语法树（abstract syntax code，AST）是源代码的抽象语法结构的树状表示，树上的每个节点都表示源代码中的一种结构，这所以说是抽象的，是因为抽象语法树并不会表示出真实语法出现的每一个细节，比如说，嵌套括号被隐含在树的结构中，并没有以节点的形式呈现。抽象语法树并不依赖于源语言的语法，也就是说语法分析阶段所采用的上下文无文文法，因为在写文法时，经常会对文法进行等价的转换（消除左递归，回溯，二义性等），这样会给文法分析引入一些多余的成分，对后续阶段造成不利影响，甚至会使合个阶段变得混乱。因些，很多编译器经常要独立地构造语法分析树，为前端，后端建立一个清晰的接口。</p>
+<p>抽象语法树在很多领域有广泛的应用，比如浏览器，智能编辑器，编译器。</p>
+<h3 id="二-抽象语法树实例"><a href="#二-抽象语法树实例" class="headerlink" title="(二)抽象语法树实例"></a><strong>(二)抽象语法树实例</strong></h3><p><strong>(1)四则运算表达式</strong></p>
+<p>表达式: 1+3*(4-1)+2</p>
+<p><em><strong>抽象语法树为：</strong></em></p>
+<p><img src="/images/26750235_1332131475E5KN.png" alt="img"></p>
+<p><strong>(2)xml</strong></p>
+<p><em><strong>代码2.1：</strong></em></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">letter</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">address</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">city</span>&gt;</span>ShiChuang<span class="tag">&lt;/<span class="name">city</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">address</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">people</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>12478<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>Nosic<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">people</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">letter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><em><strong>抽象语法树</strong></em>如下 </p>
+<p><img src="/images/26750235_1332131464N87Q.png" alt="img"></p>
+<p><strong>(3)程序1</strong></p>
+<p><em><strong>代码2.2</strong></em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> b != <span class="number">0</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> a &gt; b</span><br><span class="line">    a = a-b</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    b = b-a</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>抽象语法树</strong></em></p>
+<p><img src="/images/26750235_1332133743gQH0.png" alt="img"></p>
+<p><strong>(4)程序2</strong></p>
+<p><em><strong>代码2.3</strong></em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sum</span>=<span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">100</span>):</span><br><span class="line">	<span class="built_in">sum</span>=<span class="built_in">sum</span>+i</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>抽象语法树</strong></em></p>
+<p><img src="/images/26750235_1332133574qqK6.png" alt="img"></p>
+<h3 id="三-为什么需要抽象语法树"><a href="#三-为什么需要抽象语法树" class="headerlink" title="(三)为什么需要抽象语法树"></a><strong>(三)为什么需要抽象语法树</strong></h3><p>当在源程序语法分析工作时，是在相应程序设计语言的语法规则指导下进行的。语法规则描述了该语言的各种语法成分的组成结构，通常可以用所谓的前后文无关文法或与之等价的Backus-Naur范式(BNF)将一个程序设计语言的语法规则确切的描述出来。前后文无关文法有分为这么几类：LL(1)，LR(0)，LR(1)， LR(k) ,LALR(1)等。每一种文法都有不同的要求，如LL(1)要求文法无二义性和不存在左递归。当把一个文法改为LL(1)文法时，需要引入一些隔外的文法符号与产生式。</p>
+<p>例如，四则运算表达式的文法为：</p>
+<p><em><strong>文法1.1</strong></em></p>
+<blockquote>
+<ol>
+<li>E-&gt;T|EAT</li>
+<li>T-&gt;F|TMF</li>
+<li>F-&gt;(E)|i</li>
+<li>A-&gt;+|-</li>
+<li>M-&gt;*|/</li>
+</ol>
+</blockquote>
+<p>改为LL(1)后为：</p>
+<p><em><strong>文法1.2</strong></em></p>
+<blockquote>
+<ol>
+<li>E-&gt;TE’</li>
+<li>E’-&gt;ATE’|e_symbol</li>
+<li>T-&gt;FT’</li>
+<li>T’-&gt;MFT’|e_symbol</li>
+<li>F-&gt;(E)|i</li>
+<li>A-&gt;+|-</li>
+<li>M-&gt;*|/</li>
+</ol>
+</blockquote>
+<p>例如，当在开发语言时，可能在开始的时候，选择LL(1)文法来描述语言的语法规则，编译器前端生成LL(1)语法树，编译器后端对LL(1)语法树进行处理，生成字节码或者是汇编代码。但是随着工程的开发，在语言中加入了更多的特性，用LL(1)文法描述时，感觉限制很大，并且编写文法时很吃力，所以这个时候决定采用LR(1)文法来描述语言的语法规则，把编译器前端改生成LR(1)语法树，但在这个时候，你会发现很糟糕，因为以前编译器后端是对LL(1)语树进行处理，不得不同时也修改后端的代码。</p>
+<p>抽象语法树的第一个特点为:<strong>不依赖于具体的文法</strong>。无论是LL(1)文法，还是LR(1)，或者还是其它的方法，都要求在语法分析时候，构造出相同的语法树，这样可以给编译器后端提供了清晰，统一的接口。即使是前端采用了不同的文法，都只需要改变前端代码，而不用连累到后端。即减少了工作量，也提高的编译器的可维护性。</p>
+<p>抽象语法树的第二个特点为:<strong>不依赖于语言的细节</strong>。在编译器家族中，大名鼎鼎的gcc算得上是一个老大哥了，它可以编译多种语言，例如c，c＋＋，java，ADA，Object C， FORTRAN， PASCAL， COBOL等等。在前端gcc对不同的语言进行词法，语法分析和语义分析后，产生抽象语法树形成中间代码作为输出，供后端处理。要做到这一点，就必须在构造语法树时，不依赖于语言的细节，例如在不同的语言中，类似于if－condition－then这样的语句有不同的表示方法</p>
+<p>在c中为：</p>
+<blockquote>
+<ol>
+<li>if(condition)</li>
+<li>{</li>
+<li>  do_something();</li>
+<li>}</li>
+</ol>
+</blockquote>
+<p>   在fortran中为：</p>
+<blockquote>
+<ol>
+<li>If condition then</li>
+<li>  do_somthing()</li>
+<li>end if</li>
+</ol>
+</blockquote>
+<p>在构造if－condition－then语句的抽象语法树时，只需要用两个分支节点来表于，一个为condition，一个为if_body。如下图：</p>
+<p><img src="/images/26750235_13321327122d3p.png" alt="img"></p>
+<p><img src="/images/fba8af3a-26750235_13321327122d3p.png" alt="img"></p>
+<p>在源程序中出现的括号，或者是关键字，都会被丢掉。</p>
+<h2 id="第二部分：AST的流程"><a href="#第二部分：AST的流程" class="headerlink" title="第二部分：AST的流程"></a><strong>第二部分：AST的流程</strong></h2><p>此部分让你了解到从源代码到词法分析生成tokens到语法分析生成AST的整个结构，让你对整个流程有一个了解，此部分转载自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/huangpb123/article/details/84799198">详解AST抽象语法树</a></p>
+<p>来看一下把一个简单的函数转换成AST之后的样子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 简单函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">square</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n * n;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 转换后的AST</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="attr">type</span>: <span class="string">&quot;FunctionDeclaration&quot;</span>,</span><br><span class="line">   <span class="attr">id</span>: &#123;</span><br><span class="line">       <span class="attr">type</span>: <span class="string">&quot;Identifier&quot;</span>,</span><br><span class="line">       <span class="attr">name</span>: <span class="string">&quot;square&quot;</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="attr">params</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">           <span class="attr">type</span>: <span class="string">&quot;Identifier&quot;</span>,</span><br><span class="line">           <span class="attr">name</span>: <span class="string">&quot;n&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">   ],</span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从纯文本转换成树形结构的数据，每个条目和树中的节点一一对应。</p>
+<p><strong>纯文本转AST的实现</strong></p>
+<p>当下的编译器都做了纯文本转AST的事情。</p>
+<p>一款编译器的编译流程是很复杂的，但我们只需要关注词法分析和语法分析，这两步是从代码生成AST的关键所在。</p>
+<h3 id="第一步：词法分析，也叫扫描scanner"><a href="#第一步：词法分析，也叫扫描scanner" class="headerlink" title="第一步：词法分析，也叫扫描scanner"></a><strong>第一步：词法分析，也叫扫描scanner</strong></h3><p>它读取我们的代码，然后把它们按照预定的规则合并成一个个的标识 tokens。同时，它会移除空白符、注释等。最后，整个代码将被分割进一个 tokens 列表（或者说一维数组）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = <span class="number">5</span>;</span><br><span class="line"><span class="comment">// 转换成</span></span><br><span class="line">[&#123;<span class="attr">value</span>: <span class="string">&#x27;const&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;keyword&#x27;</span>&#125;, &#123;<span class="attr">value</span>: <span class="string">&#x27;a&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;identifier&#x27;</span>&#125;, ...]</span><br></pre></td></tr></table></figure>
+
+<p>当词法分析源代码的时候，它会一个一个字母地读取代码，所以很形象地称之为扫描 - scans。当它遇到空格、操作符，或者特殊符号的时候，它会认为一个话已经完成了。</p>
+<h3 id="第二步：语法分析，也称解析器"><a href="#第二步：语法分析，也称解析器" class="headerlink" title="第二步：语法分析，也称解析器"></a><strong>第二步：语法分析，也称解析器</strong></h3><p>它会将词法分析出来的数组转换成树形的形式，同时，验证语法。语法如果有错的话，抛出语法错误。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[&#123;<span class="attr">value</span>: <span class="string">&#x27;const&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;keyword&#x27;</span>&#125;, &#123;<span class="attr">value</span>: <span class="string">&#x27;a&#x27;</span>, <span class="attr">type</span>: <span class="string">&#x27;identifier&#x27;</span>&#125;, ...]</span><br><span class="line"><span class="comment">// 语法分析后的树形形式</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="attr">type</span>: <span class="string">&quot;VariableDeclarator&quot;</span>, </span><br><span class="line">   <span class="attr">id</span>: &#123;</span><br><span class="line">       <span class="attr">type</span>: <span class="string">&quot;Identifier&quot;</span>,</span><br><span class="line">       <span class="attr">name</span>: <span class="string">&quot;a&quot;</span></span><br><span class="line">   &#125;,</span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当生成树的时候，解析器会删除一些没必要的标识 tokens（比如：不完整的括号），因此 AST 不是 100% 与源码匹配的。</p>
+<blockquote>
+<p>解析器100%覆盖所有代码结构生成树叫做CST（具体语法树）。</p>
+</blockquote>
+<p><strong>用例：代码转换之babel</strong></p>
+<p>babel 是一个 JavaScript 编译器。宏观来说，它分3个阶段运行代码：</p>
+<ol>
+<li>解析(parsing) — 将代码字符串转换成 AST抽象语法树，</li>
+<li>转译(transforming) — 对抽象语法树进行变换操作，</li>
+<li>生成(generation) — 根据变换后的抽象语法树生成新的代码字符串。</li>
+</ol>
+<p>我们给 babel 一段 js 代码，它修改代码然后生成新的代码返回。它是怎么修改代码的呢？没错，它创建了 AST，遍历树，修改 tokens，最后从 AST中生成新的代码。</p>
+<h1 id="详解-AST"><a href="#详解-AST" class="headerlink" title="详解 AST"></a>详解 AST</h1><p>本文将带大家从底层了解AST,并且通过发布一个小型前端工具，来带大家了解AST的强大功能</p>
+<p>Javascript就像一台精妙运作的机器，我们可以用它来完成一切天马行空的构思。我们对javascript生态了如指掌，却常忽视javascript本身。这台机器，究竟是哪些零部件在支持着它运行？</p>
+<blockquote>
+<p>AST在日常业务中也许很难涉及到，但当你不止于想做一个工程师，而想做工程师的工程师，写出vue、react之类的大型框架，或类似webpack、vue-cli前端自动化的工具，或者有批量修改源码的工程需求，那你必须懂得AST。AST的能力十分强大，且能帮你真正吃透javascript的语言精髓。</p>
+<p>事实上，在javascript世界中，你可以认为抽象语法树(AST)是最底层。 再往下，就是关于转换和编译的“黑魔法”领域了。</p>
+</blockquote>
+<h3 id="人生第一次拆解Javascript"><a href="#人生第一次拆解Javascript" class="headerlink" title="人生第一次拆解Javascript"></a><strong>人生第一次拆解Javascript</strong></h3><p>小时候，当我们拿到一个螺丝刀和一台机器，人生中最令人怀念的梦幻时刻便开始了：我们把机器，拆成一个一个小零件，一个个齿轮与螺钉，用巧妙的机械原理衔接在一起…当我们把它重新照不同的方式组装起来，这时，机器重新又跑动了起来——世界在你眼中如获新生。</p>
+<p>通过抽象语法树解析，我们可以像童年时拆解玩具一样，透视Javascript这台机器的运转，并且重新按着你的意愿来组装。</p>
+<p><strong>现在，我们拆解一个简单的add函数</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，我们拿到的这个语法块，是一个FunctionDeclaration(函数定义)对象。</p>
+<p>用力拆开，它成了三块：</p>
+<ul>
+<li>一个id，就是它的名字，即add</li>
+<li>两个params，就是它的参数，即[a, b]</li>
+<li>一块body，也就是大括号内的一堆东西</li>
+</ul>
+<p>add没办法继续拆下去了，它是一个最基础<strong>Identifier（标志）对象</strong>，用来作为函数的唯一标志，就像人的姓名一样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;add&#x27;</span></span><br><span class="line">    <span class="attr">type</span>: <span class="string">&#x27;identifier&#x27;</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>params继续拆下去，其实是两个Identifier组成的数组。之后也没办法拆下去了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;a&#x27;</span></span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;identifier&#x27;</span></span><br><span class="line">        ...</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;b&#x27;</span></span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;identifier&#x27;</span></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们继续拆开body</p>
+<p>我们发现，body其实是一个<strong>BlockStatement（块状域）对象</strong>，用来表示是{return a + b}</p>
+<p>打开Blockstatement，里面藏着一个ReturnStatement（Return域）对象，用来表示return a + b</p>
+<p>继续打开ReturnStatement,里面是一个BinaryExpression(二项式)对象，用来表示a + b</p>
+<p>继续打开BinaryExpression，它成了三部分，left，operator，right</p>
+<ul>
+<li>operator 即+</li>
+<li>left 里面装的，是Identifier对象 a</li>
+<li>right 里面装的，是Identifer对象 b</li>
+</ul>
+<p>就这样，我们把一个简单的add函数拆解完毕，用图表示就是</p>
+<p><img src="/images/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h1YW5ncGIxMjM=,size_16,color_FFFFFF,t_70.jpeg" alt="img"></p>
+<p>看！抽象语法树(Abstract Syntax Tree)，的确是一种标准的树结构。</p>
+<p>那么，上面我们提到的Identifier、Blockstatement、ReturnStatement、BinaryExpression， 这一个个小部件的说明书去哪查？</p>
+<h3 id="送给你的AST螺丝刀：recast"><a href="#送给你的AST螺丝刀：recast" class="headerlink" title="送给你的AST螺丝刀：recast"></a><strong>送给你的AST螺丝刀：recast</strong></h3><p>输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i recast -S</span><br></pre></td></tr></table></figure>
+
+<p>你即可获得一把操纵语法树的螺丝刀</p>
+<p>接下来，你可以在任意js文件下操纵这把螺丝刀，我们新建一个parse.js示意：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parse.js</span></span><br><span class="line"><span class="comment">// 给你一把&quot;螺丝刀&quot;——recast</span></span><br><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">&quot;recast&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 你的&quot;机器&quot;——一段代码</span></span><br><span class="line"><span class="comment">// 我们使用了很奇怪格式的代码，想测试是否能维持代码结构</span></span><br><span class="line"><span class="keyword">const</span> code =</span><br><span class="line">  <span class="string">`</span></span><br><span class="line"><span class="string">  function add(a, b) &#123;</span></span><br><span class="line"><span class="string">    return a +</span></span><br><span class="line"><span class="string">      // 有什么奇怪的东西混进来了</span></span><br><span class="line"><span class="string">      b</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  `</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用螺丝刀解析机器</span></span><br><span class="line"><span class="keyword">const</span> ast = recast.parse(code);</span><br><span class="line"><span class="comment">// ast可以处理很巨大的代码文件</span></span><br><span class="line"><span class="comment">// 但我们现在只需要代码块的第一个body，即add函数</span></span><br><span class="line"><span class="keyword">const</span> add  = ast.program.body[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">console</span>.log(add)</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>node parse.js</code>你可以查看到add函数的结构，与之前所述一致，通过AST对象文档可查到它的具体属性：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FunctionDeclaration&#123;</span><br><span class="line">    type: &#x27;FunctionDeclaration&#x27;,</span><br><span class="line">    id: ...</span><br><span class="line">    params: ...</span><br><span class="line">    body: ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="recast-types-builders-制作模具"><a href="#recast-types-builders-制作模具" class="headerlink" title="recast.types.builders 制作模具"></a><strong>recast.types.builders 制作模具</strong></h3><p>一个机器，你只会拆开重装，不算本事。拆开了，还能改装，才算上得了台面。</p>
+<p>recast.types.builders里面提供了不少“模具”，让你可以轻松地拼接成新的机器。</p>
+<p>最简单的例子，我们想把之前的function add(a, b){…}声明，改成匿名函数式声明const add = function(a ,b){…}</p>
+<p>如何改装？</p>
+<ol>
+<li>第一步，我们创建一个VariableDeclaration变量声明对象，声明头为const， 内容为一个即将创建的VariableDeclarator对象。</li>
+<li>第二步，创建一个VariableDeclarator，放置add.id在左边， 右边是将创建的FunctionDeclaration对象</li>
+<li>第三步，我们创建一个FunctionDeclaration，如前所述的三个组件，id params body中，因为是匿名函数id设为空，params使用add.params，body使用add.body。</li>
+<li>这样，就创建好了const add = function(){}的AST对象。</li>
+</ol>
+<p>在之前的parse.js代码之后，加入以下代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入变量声明，变量符号，函数声明三种“模具”</span></span><br><span class="line"><span class="keyword">const</span> &#123;variableDeclaration, variableDeclarator, functionExpression&#125; = recast.types.builders</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将准备好的组件置入模具，并组装回原来的ast对象。</span></span><br><span class="line">ast.program.body[<span class="number">0</span>] = variableDeclaration(<span class="string">&quot;const&quot;</span>, [</span><br><span class="line">  variableDeclarator(add.id, functionExpression(</span><br><span class="line">    <span class="literal">null</span>, <span class="comment">// Anonymize the function expression.</span></span><br><span class="line">    add.params,</span><br><span class="line">    add.body</span><br><span class="line">  ))</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//将AST对象重新转回可以阅读的代码</span></span><br><span class="line"><span class="keyword">const</span> output = recast.print(ast).code;</span><br><span class="line"><span class="built_in">console</span>.log(output)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，我们打印出了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> add = <span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a +</span><br><span class="line">    <span class="comment">// 有什么奇怪的东西混进来了</span></span><br><span class="line">    b&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>最后一行</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> output = recast.print(ast).code;</span><br></pre></td></tr></table></figure>
+
+<p>其实是recast.parse的逆向过程，具体公式为</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recast.print(recast.parse(source)).code === source</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实战进阶：命令行修改js文件"><a href="#实战进阶：命令行修改js文件" class="headerlink" title="实战进阶：命令行修改js文件"></a><strong>实战进阶：命令行修改js文件</strong></h3><p>除了parse/print/builder以外，Recast的三项主要功能：</p>
+<ul>
+<li>run: 通过命令行读取js文件，并转化成ast以供处理。</li>
+<li>tnt: 通过assert()和check()，可以验证ast对象的类型。</li>
+<li>visit: 遍历ast树，获取有效的AST对象并进行更改。</li>
+</ul>
+<p>我们通过一个系列小务来学习全部的recast工具库：</p>
+<p>创建一个用来示例文件，假设是demo.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sub</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a - b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">commonDivision</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">while</span> (b !== <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (a &gt; b) &#123;</span><br><span class="line">      a = sub(a, b)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      b = sub(b, a)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="recast-run-——-命令行文件读取"><a href="#recast-run-——-命令行文件读取" class="headerlink" title="recast.run —— 命令行文件读取"></a><strong>recast.run —— 命令行文件读取</strong></h4><p>新建一个名为read.js的文件，写入</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">recast.run( <span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>)</span>&#123;</span><br><span class="line">    printSource(ast)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>命令行输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node read demo.js</span><br></pre></td></tr></table></figure>
+
+<p>我们查以看到js文件内容打印在了控制台上。</p>
+<p>我们可以知道，node read可以读取demo.js文件，并将demo.js内容转化为ast对象。</p>
+<p>同时它还提供了一个printSource函数，随时可以将ast的内容转换回源码，以方便调试。</p>
+<h4 id="recast-visit-——-AST节点遍历"><a href="#recast-visit-——-AST节点遍历" class="headerlink" title="recast.visit —— AST节点遍历"></a><strong>recast.visit —— AST节点遍历</strong></h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env node</span></span><br><span class="line"><span class="comment">// read.js</span></span><br><span class="line"><span class="keyword">const</span> recast  = <span class="built_in">require</span>(<span class="string">&#x27;recast&#x27;</span>)</span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  recast.visit(ast, &#123;</span><br><span class="line">      <span class="attr">visitExpressionStatement</span>: <span class="function"><span class="keyword">function</span>(<span class="params">&#123;node&#125;</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(node)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>recast.visit将AST对象内的节点进行逐个遍历。</p>
+<p>注意</p>
+<ul>
+<li>你想操作函数声明，就使用visitFunctionDelaration遍历，想操作赋值表达式，就使用visitExpressionStatement。 只要在 AST对象文档中定义的对象，在前面加visit，即可遍历。</li>
+<li>通过node可以取到AST对象</li>
+<li>每个遍历函数后必须加上return false，或者选择以下写法，否则报错：</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env node</span></span><br><span class="line"><span class="keyword">const</span> recast  = <span class="built_in">require</span>(<span class="string">&#x27;recast&#x27;</span>)</span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  recast.visit(ast, &#123;</span><br><span class="line">      <span class="attr">visitExpressionStatement</span>: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> node = path.node</span><br><span class="line">        printSource(node)</span><br><span class="line">        <span class="built_in">this</span>.traverse(path)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>调试时，如果你想输出AST对象，可以console.log(node)</p>
+<p>如果你想输出AST对象对应的源码，可以printSource(node)</p>
+<p>命令行输入<code>node read demo.js</code>进行测试。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env node</span><br></pre></td></tr></table></figure>
+
+<p>在所有使用recast.run()的文件顶部都需要加入这一行，它的意义我们最后再讨论。</p>
+<h4 id="TNT-——-判断AST对象类型"><a href="#TNT-——-判断AST对象类型" class="headerlink" title="TNT —— 判断AST对象类型"></a><strong>TNT —— 判断AST对象类型</strong></h4><p>TNT，即recast.types.namedTypes，就像它的名字一样火爆，它用来判断AST对象是否为指定的类型。</p>
+<p>TNT.Node.assert()，就像在机器里埋好的炸药，当机器不能完好运转时（类型不匹配），就炸毁机器(报错退出)</p>
+<p>TNT.Node.check()，则可以判断类型是否一致，并输出False和True</p>
+<p>上述Node可以替换成任意AST对象，例如TNT.ExpressionStatement.check(),TNT.FunctionDeclaration.assert()</p>
+<p>read.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env node</span></span><br><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">&quot;recast&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> TNT = recast.types.namedTypes</span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  recast.visit(ast, &#123;</span><br><span class="line">      <span class="attr">visitExpressionStatement</span>: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> node = path.value</span><br><span class="line">        <span class="comment">// 判断是否为ExpressionStatement，正确则输出一行字。</span></span><br><span class="line">        <span class="keyword">if</span>(TNT.ExpressionStatement.check(node))&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">&#x27;这是一个ExpressionStatement&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.traverse(path);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>read.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env node</span></span><br><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">&quot;recast&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> TNT = recast.types.namedTypes</span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  recast.visit(ast, &#123;</span><br><span class="line">      <span class="attr">visitExpressionStatement</span>: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> node = path.node</span><br><span class="line">        <span class="comment">// 判断是否为ExpressionStatement，正确不输出，错误则全局报错</span></span><br><span class="line">        TNT.ExpressionStatement.assert(node)</span><br><span class="line">        <span class="built_in">this</span>.traverse(path);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>命令行输入<code>node read demo.js</code>进行测试。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
