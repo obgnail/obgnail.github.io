@@ -36,7 +36,7 @@
 <blockquote>
 <p><code>peerDependencies</code>的目的是提示宿主环境去安装满足插件peerDependencies所指定依赖的包，然后在插件import或者require所依赖的包的时候，永远都是引用宿主环境统一安装的npm包，最终解决插件与所依赖包不一致的问题。</p>
 </blockquote>
-<p>举个例子，就拿目前基于react的ui组件库<strong><a href="mailto:&#97;&#110;&#x74;&#45;&#100;&#x65;&#x73;&#105;&#x67;&#x6e;&#64;&#x33;&#x2e;&#120;">&#97;&#110;&#x74;&#45;&#100;&#x65;&#x73;&#105;&#x67;&#x6e;&#64;&#x33;&#x2e;&#120;</a></strong>来说，因该ui组件库只是提供一套react组件库，它要求宿主环境需要安装指定的react版本。具体可以看它<a target="_blank" rel="noopener" href="https://github.com/ant-design/ant-design/blob/master/package.json#L37">package.json</a>中的配置：</p>
+<p>举个例子，就拿目前基于react的ui组件库<strong><a href="mailto:&#97;&#x6e;&#116;&#45;&#100;&#x65;&#x73;&#105;&#x67;&#110;&#x40;&#51;&#46;&#x78;">&#97;&#x6e;&#116;&#45;&#100;&#x65;&#x73;&#105;&#x67;&#110;&#x40;&#51;&#46;&#x78;</a></strong>来说，因该ui组件库只是提供一套react组件库，它要求宿主环境需要安装指定的react版本。具体可以看它<a target="_blank" rel="noopener" href="https://github.com/ant-design/ant-design/blob/master/package.json#L37">package.json</a>中的配置：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;peerDependencies&quot;</span>: &#123;</span><br><span class="line">  <span class="attr">&quot;react&quot;</span>: <span class="string">&quot;&gt;=16.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;react-dom&quot;</span>: <span class="string">&quot;&gt;=16.0.0&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>它要求宿主环境安装react@&gt;=16.0.0和react-dom@&gt;=16.0.0的版本，而在每个antd组件的定义文件顶部：</p>
