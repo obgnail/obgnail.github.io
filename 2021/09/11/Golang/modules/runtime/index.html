@@ -1,0 +1,78 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;函数&quot;&gt;&lt;a href=&quot;#函数&quot; class=&quot;headerlink&quot; title=&quot;函数&quot;&gt;&lt;/a&gt;函数&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;runtime 调度器是个非常有用的东西，关于 runtime 包几个方法:&lt;/strong&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>runtime | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2021-09-11</div></div></div><div class="container post-header"><h1>runtime</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#runtime-Gosched"><span class="toc-number">1.1.</span> <span class="toc-text">runtime.Gosched()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runtime-Goexit"><span class="toc-number">1.2.</span> <span class="toc-text">runtime.Goexit()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runtime-GOMAXPROCS"><span class="toc-number">1.3.</span> <span class="toc-text">runtime.GOMAXPROCS()</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p><strong>runtime 调度器是个非常有用的东西，关于 runtime 包几个方法:</strong></p>
+<ul>
+<li><p><code>NumCPU</code>：返回当前系统的 CPU 核数量。</p>
+</li>
+<li><p><code>GOMAXPROCS</code>：设置最大的可同时使用的 CPU 核数。</p>
+<blockquote>
+<ul>
+<li>通过runtime.GOMAXPROCS函数，应用程序何以在运行期间设置运行时系统中的P最大数量。但这会引起“Stop the World”。</li>
+<li>所以，应在应用程序最早的调用。并且最好是在运行Go程序之前设置好操作程序的环境变量GOMAXPROCS，而不是在程序中调用runtime.GOMAXPROCS函数。</li>
+<li>无论我们传递给函数的整数值是什么值，运行时系统的P最大值总会在1~256之间。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>Gosched</code>：让当前goroutine让出CPU，好让其它的goroutine获得执行的机会。同时，当前的goroutine也会在未来的某个时间点继续运行。</p>
+</li>
+<li><p><code>Goexit</code>：退出当前 goroutine。(但是defer语句会照常执行)</p>
+</li>
+<li><p><code>NumGoroutine</code>：返回正在执行和排队的任务总数</p>
+<blockquote>
+<ul>
+<li>runtime.NumGoroutine函数在被调用后，会返回系统中的处于特定状态的Goroutine的数量。</li>
+<li>这里的特指是指Grunnable\Gruning\Gsyscall\Gwaition。处于这些状态的Groutine即被看做是活跃的或者说正在被调度。</li>
+<li>注意：垃圾回收所在Groutine的状态也处于这个范围内的话，也会被纳入该计数器。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>GOOS</code>：目标操作系统</p>
+</li>
+<li><p><code>runtime.GC</code>：会让运行时系统进行一次强制性的垃圾收集</p>
+<blockquote>
+<ol>
+<li>强制的垃圾回收：不管怎样，都要进行的垃圾回收。</li>
+<li>非强制的垃圾回收：只会在一定条件下进行的垃圾回收（即运行时，系统自上次垃圾回收之后新申请的堆内存的单元（也成为单元增量）达到指定的数值）。</li>
+</ol>
+</blockquote>
+</li>
+<li><p><code>GOROOT</code>：获取goroot目录</p>
+</li>
+<li><p><code>GOOS</code> : 查看目标操作系统 很多时候，我们会根据平台的不同实现不同的操作，就而已用GOOS了：</p>
+</li>
+</ul>
+<h3 id="runtime-Gosched"><a href="#runtime-Gosched" class="headerlink" title="runtime.Gosched()"></a>runtime.Gosched()</h3><ul>
+<li>让出CPU时间片，重新等待安排任务</li>
+<li>大概意思就是本来计划的好好的周末出去烧烤，但是你妈让你去相亲,两种情况第一就是你相亲速度非常快，见面就黄不耽误你继续烧烤，第二种情况就是你相亲速度特别慢，见面就是你侬我侬的，耽误了烧烤，但是还馋就是耽误了烧烤你还得去烧烤</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(s <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">2</span>; i++ &#123;</span><br><span class="line">            fmt.Println(s)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;(<span class="string">&quot;world&quot;</span>)</span><br><span class="line">    <span class="comment">// 主协程</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">2</span>; i++ &#123;</span><br><span class="line">        <span class="comment">// 让出时间片，先让别的协程执行，它执行完，再回来执行此协程</span></span><br><span class="line">        runtime.Gosched()</span><br><span class="line">        fmt.Println(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="runtime-Goexit"><a href="#runtime-Goexit" class="headerlink" title="runtime.Goexit()"></a>runtime.Goexit()</h3><p>退出当前协程(一边烧烤一边相亲，突然发现相亲对象太丑影响烧烤，果断让她滚蛋，然后也就没有然后了)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> fmt.Println(<span class="string">&quot;A.defer&quot;</span>)</span><br><span class="line">        <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            <span class="keyword">defer</span> fmt.Println(<span class="string">&quot;B.defer&quot;</span>)</span><br><span class="line">            <span class="comment">// 结束协程</span></span><br><span class="line">            runtime.Goexit()</span><br><span class="line">            <span class="keyword">defer</span> fmt.Println(<span class="string">&quot;C.defer&quot;</span>)</span><br><span class="line">            fmt.Println(<span class="string">&quot;B&quot;</span>)</span><br><span class="line">        &#125;()</span><br><span class="line">        fmt.Println(<span class="string">&quot;A&quot;</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">for</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="runtime-GOMAXPROCS"><a href="#runtime-GOMAXPROCS" class="headerlink" title="runtime.GOMAXPROCS()"></a>runtime.GOMAXPROCS()</h3><ul>
+<li>Go运行时的调度器使用GOMAXPROCS参数来确定需要使用多少个OS线程来同时执行Go代码。默认值是机器上的CPU核心数。</li>
+<li>例如在一个8核心的机器上，调度器会把Go代码同时调度到8个OS线程上（GOMAXPROCS是m:n调度中的n）。</li>
+<li>Go语言中可以通过runtime.GOMAXPROCS()函数设置当前程序并发时占用的CPU逻辑核心数。</li>
+<li>Go1.5版本之前，默认使用的是单核心执行。Go1.5版本之后，默认使用全部的CPU逻辑核心数。</li>
+<li>我们可以通过将任务分配到不同的CPU逻辑核心上实现并行的效果，这里举个例子：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">a</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;A:&quot;</span>, i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">b</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;B:&quot;</span>, i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">go</span> a()</span><br><span class="line">    <span class="keyword">go</span> b()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>两个任务只有一个逻辑核心，此时是做完一个任务再做另一个任务。 将逻辑核心数设为2，此时两个任务并行执行，代码如下。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">a</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;A:&quot;</span>, i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">b</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;B:&quot;</span>, i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">go</span> a()</span><br><span class="line">    <span class="keyword">go</span> b()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Go语言中的操作系统线程和goroutine的关系：</p>
+<ul>
+<li>一个操作系统线程对应用户态多个goroutine。</li>
+<li>go程序可以同时使用多个操作系统线程。</li>
+<li>goroutine和OS线程是多对多的关系，即m:n。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

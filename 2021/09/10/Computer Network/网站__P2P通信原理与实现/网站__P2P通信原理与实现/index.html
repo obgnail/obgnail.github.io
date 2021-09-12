@@ -1,0 +1,266 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;P2P通信原理与实现&quot;&gt;&lt;a href=&quot;#P2P通信原理与实现&quot; class=&quot;headerlink&quot; title=&quot;P2P通信原理与实现&quot;&gt;&lt;/a&gt;P2P通信原理与实现&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;当今互联网到处存在着一些中间件(MIddleBoxes)，如&lt;code&gt;NAT&lt;/code&gt;和&lt;code&gt;防火墙&lt;/code&gt;，导致两个(不在同一内网)中的客户端无法直接通信。 这些问题即便是到了IPV6时代也会存在，因为即使不需要NAT，但还有其他中间件如防火墙阻挡了链接的建立。 &lt;/li&gt;
+&lt;li&gt;目前部署的中间件多都是在C/S架构上设计的，其中相对隐匿的客户机主动向周知的服务端(拥有静态IP地址和DNS名称)发起链接请求。 大多数中间件实现了一种非对称的通讯模型，即&lt;strong&gt;内网中的主机可以初始化对外的链接，而外网的主机却不能初始化对内网的链接&lt;/strong&gt;， 除非经过中间件管理员特殊配置。&lt;/li&gt;
+&lt;li&gt;在中间件为常见的NAPT的情况下（也是本文主要讨论的），内网中的客户端没有单独的公网IP地址， 而是通过NAPT转换，和其他同一内网用户共享一个公网IP。这种内网主机隐藏在中间件后的不可访问性对于一些客户端软件(比如浏览器)来说，并不是一个问题，因为其只需要初始化对外的链接，从某方面来看反而还对隐私保护有好处。&lt;/li&gt;
+&lt;li&gt;然而在P2P应用中， 内网主机（客户端）需要对另外的终端（Peer）直接建立链接，但是发起者和响应者可能在不同的中间件后面， 两者都没有公网IP地址。而&lt;strong&gt;外部对NAT公网IP和端口主动的链接或数据都会因内网未请求被丢弃掉&lt;/strong&gt;。本文讨论的就是如何跨越NAT实现内网主机直接通讯的问题。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;主机的七种网络环境&quot;&gt;&lt;a href=&quot;#主机的七种网络环境&quot; class=&quot;headerlink&quot; title=&quot;主机的七种网络环境&quot;&gt;&lt;/a&gt;主机的七种网络环境&lt;/h2&gt;&lt;p&gt;(最后四种下面介绍)"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>P2P通信原理与实现 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-09-10</div></div></div><div class="container post-header"><h1>P2P通信原理与实现</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#P2P%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">P2P通信原理与实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E7%9A%84%E4%B8%83%E7%A7%8D%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.</span> <span class="toc-text">主机的七种网络环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%88Firewall%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">防火墙（Firewall）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E5%99%A8%EF%BC%88NAT%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">网络地址转换器（NAT）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%A5%E5%BD%A2NAT-Cone-NAT"><span class="toc-number">1.3.1.</span> <span class="toc-text">锥形NAT(Cone NAT)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E9%94%A5%E5%BD%A2NAT%EF%BC%88Full-Cone-NAT%EF%BC%89"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">全锥形NAT（Full Cone NAT）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%97%E9%99%90%E9%94%A5%E5%BD%A2NAT%EF%BC%88Restricted-Cone-NAT%EF%BC%89"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">受限锥形NAT（Restricted Cone NAT）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E5%8F%97%E9%99%90%E9%94%A5%E5%BD%A2NAT%EF%BC%88Port-Restricted-Cone-NAT%EF%BC%89"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">端口受限锥形NAT（Port-Restricted Cone NAT）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E7%A7%B0NAT%EF%BC%88Symmetric-NAT%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">对称NAT（Symmetric NAT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%B5%8BNAT%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.4.</span> <span class="toc-text">检测NAT类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NAT%E6%98%A0%E5%B0%84%E8%80%81%E5%8C%96%E6%97%B6%E9%97%B4"><span class="toc-number">1.3.5.</span> <span class="toc-text">NAT映射老化时间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#P2P%E9%80%9A%E4%BF%A1"><span class="toc-number">1.4.</span> <span class="toc-text">P2P通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E7%BB%A7%EF%BC%88Relaying%EF%BC%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">中继（Relaying）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%90%91%E9%93%BE%E6%8E%A5%EF%BC%88Connection-reversal%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">逆向链接（Connection reversal）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP%E6%89%93%E6%B4%9E%EF%BC%88UDP-hole-punching%EF%BC%89"><span class="toc-number">1.4.3.</span> <span class="toc-text">UDP打洞（UDP hole punching）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E7%82%B9%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%9A%84NAT%E4%B9%8B%E5%90%8E"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">端点在不同的NAT之后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E7%82%B9%E5%9C%A8%E7%9B%B8%E5%90%8C%E7%9A%84NAT%E4%B9%8B%E5%90%8E"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">端点在相同的NAT之后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E7%82%B9%E5%9C%A8%E5%A4%9A%E7%BA%A7NAT%E4%B9%8B%E5%90%8E"><span class="toc-number">1.4.3.3.</span> <span class="toc-text">端点在多级NAT之后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E7%AB%AF%E5%8F%A3%E7%BB%91%E5%AE%9A"><span class="toc-number">1.4.3.4.</span> <span class="toc-text">固定端口绑定</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP%E6%89%93%E6%B4%9E%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.4.</span> <span class="toc-text">UDP打洞流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP%E6%89%93%E6%B4%9E%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.5.</span> <span class="toc-text">UDP打洞具体实现</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h1 id="P2P通信原理与实现"><a href="#P2P通信原理与实现" class="headerlink" title="P2P通信原理与实现"></a>P2P通信原理与实现</h1><ul>
+<li>当今互联网到处存在着一些中间件(MIddleBoxes)，如<code>NAT</code>和<code>防火墙</code>，导致两个(不在同一内网)中的客户端无法直接通信。 这些问题即便是到了IPV6时代也会存在，因为即使不需要NAT，但还有其他中间件如防火墙阻挡了链接的建立。 </li>
+<li>目前部署的中间件多都是在C/S架构上设计的，其中相对隐匿的客户机主动向周知的服务端(拥有静态IP地址和DNS名称)发起链接请求。 大多数中间件实现了一种非对称的通讯模型，即<strong>内网中的主机可以初始化对外的链接，而外网的主机却不能初始化对内网的链接</strong>， 除非经过中间件管理员特殊配置。</li>
+<li>在中间件为常见的NAPT的情况下（也是本文主要讨论的），内网中的客户端没有单独的公网IP地址， 而是通过NAPT转换，和其他同一内网用户共享一个公网IP。这种内网主机隐藏在中间件后的不可访问性对于一些客户端软件(比如浏览器)来说，并不是一个问题，因为其只需要初始化对外的链接，从某方面来看反而还对隐私保护有好处。</li>
+<li>然而在P2P应用中， 内网主机（客户端）需要对另外的终端（Peer）直接建立链接，但是发起者和响应者可能在不同的中间件后面， 两者都没有公网IP地址。而<strong>外部对NAT公网IP和端口主动的链接或数据都会因内网未请求被丢弃掉</strong>。本文讨论的就是如何跨越NAT实现内网主机直接通讯的问题。</li>
+</ul>
+<h2 id="主机的七种网络环境"><a href="#主机的七种网络环境" class="headerlink" title="主机的七种网络环境"></a>主机的七种网络环境</h2><p>(最后四种下面介绍)</p>
+<ul>
+<li><code>Open Internet</code>：主机具有公网IP，允许主动发起和被动响应两种方式的UDP通信。</li>
+<li><code>UDP Blocked</code>：位于防火墙之后，并且防火墙阻止了UDP通信。</li>
+<li><code>Symmetric Firewall</code>：主机具有公网IP，但位于防火墙之后，且防火墙阻止了外部主机的主动UDP通信。</li>
+<li><code>Full Cone NAT</code></li>
+<li><code>Restricted Cone NAT</code></li>
+<li><code>Port Restricted Cone NAT</code></li>
+<li><code>Symmetrict NAT</code></li>
+</ul>
+<h2 id="防火墙（Firewall）"><a href="#防火墙（Firewall）" class="headerlink" title="防火墙（Firewall）"></a>防火墙（Firewall）</h2><ul>
+<li>防火墙主要限制内网和公网的通讯，通常丢弃未经许可的数据包。</li>
+<li>防火墙会检测(但是不修改)试图进入内网数据包的IP地址和TCP/UDP端口信息。</li>
+</ul>
+<h2 id="网络地址转换器（NAT）"><a href="#网络地址转换器（NAT）" class="headerlink" title="网络地址转换器（NAT）"></a>网络地址转换器（NAT）</h2><p><img src="/images/2.png" alt="Alt text"></p>
+<p><code>网络地址转换器</code>（NAT）： NAT不止检查进入数据包的头部，而且对其进行修改，从而实现同一内网中不同主机共用更少的公网IP（通常是一个）。</p>
+<ul>
+<li><code>基本NAT</code>（Basic NAT）： 基本NAT会将内网主机的IP地址映射为一个公网IP，不改变其TCP/UDP端口号。基本NAT通常只有在当NAT有公网IP池的时候才有用。<ul>
+<li><code>静态NAT</code>：内网主机的IP地址转换的公有IP地址是一成不变的。</li>
+<li><code>动态NAT</code>：内网主机的IP地址转换的公有IP地址是从公网IP池随机取出的。</li>
+</ul>
+</li>
+<li><code>网络地址-端口转换器</code>（NAPT）： 到目前为止最常见的即为NAPT，其<strong>检测并修改出入数据包的IP地址和端口号</strong>，从而允许多个内网主机同时共享一个公网IP地址。</li>
+</ul>
+<blockquote>
+<ul>
+<li>对称NAT是一个请求对应一个端口，</li>
+<li>非对称NAT是多个请求对应一个端口(象锥形，所以叫Cone NAT)。</li>
+</ul>
+</blockquote>
+<p>下面重点讲锥形NAT和对称NAT</p>
+<h3 id="锥形NAT-Cone-NAT"><a href="#锥形NAT-Cone-NAT" class="headerlink" title="锥形NAT(Cone NAT)"></a>锥形NAT(Cone NAT)</h3><p><code>锥形NAT</code>（Cone NAT）： 在建立了一对<code>（公网IP，公网端口）</code>和<code>（内网IP，内网端口）</code>二元组的绑定之后，Cone NAT会重用这组绑定用于接下来该应用程序的所有会话（同一内网IP和端口），只要还有一个会话还是激活的，就会重用。</p>
+<p>例如：</p>
+<ul>
+<li>客户端A从端口（10.0.0.1:6780）连接到外部服务器S1（18.181.0.31:1235 ）</li>
+<li>客户端A从端口（10.0.0.1:3450）连接到外部服务器S2（138.76.29.7:1234）</li>
+</ul>
+<p>Cone NAT只为两个会话映射了一个公网端点（155.99.25.11:62000）， 确保客户端端口的“身份”在地址转换的时候保持不变。</p>
+<blockquote>
+<p>由于<code>基本NAT</code>和<code>防火墙</code>都不改变数据包的端口号，因此这些类型的中间件也可以看作是退化的Cone NAT。</p>
+</blockquote>
+<p>![frp流程-第 3 页](/images/frp流程-第 3 页.jpg)</p>
+<p>内网主机6780端口请求S1的流程：</p>
+<ol>
+<li>10.0.0.1:6780首先通过NAT，NAT在内存添加一个<code>&#123; 18.181.0.31:1235 : 10.0.0.1:6780 &#125;</code>映射，</li>
+<li>因为是第一次请求，NAT为本次连接申请使用端口6000，然后将数据包头部的源地址字段改成155.99.25.11:6000，发给S1</li>
+<li>在S1的视角中，完全看不到10.0.0.1:6780，只知道是155.99.25.11:6000请求的。S1处理完，返回数据给155.99.25.11:6000。</li>
+<li>NAT从数据包头部取出源地址18.181.0.31:1235，根据映射，将数据包头部的目的地址字段改成10.0.0.1:6780，将其发给10.0.0.1:6780。</li>
+</ol>
+<p>其中Cone NAT根据NAT如何接收已经建立的<code>（公网IP，公网端口）</code>对的输入数据还可以细分为以下三类：</p>
+<h4 id="全锥形NAT（Full-Cone-NAT）"><a href="#全锥形NAT（Full-Cone-NAT）" class="headerlink" title="全锥形NAT（Full Cone NAT）"></a>全锥形NAT（Full Cone NAT）</h4><p><img src="/images/full-cone.png" alt="img"></p>
+<p><code>全锥形NAT</code>（Full Cone NAT）：在一个新会话建立了公网/内网端口绑定之后，全锥形NAT接下来会<strong>接受对应公网端口的所有数据，无论是来自哪个（公网）终端</strong>。 全锥NAT有时候也被称为“混杂”NAT（promiscuous NAT）。</p>
+<ol>
+<li>当内网主机创建一个UDP socket并通过它第一次向外发送UDP数据包时，NAT会为之分配一个固定的<code>&#123;公网IP:端口&#125;</code>。</li>
+<li>此后，通过这个socket发送的任何UDP数据包都是通过这个<code>&#123;公网IP:端口&#125;</code>发送出去的；</li>
+<li>同时，<strong>任何外部主机</strong>都可以使用这个<code>&#123;公网IP:端口&#125;</code>向该socket发送UDP数据包。</li>
+<li>即是说，NAT维护了一个映射表，内网主机的<code>&#123;内网IP:端口&#125;</code>与<code>&#123;公网IP:端口&#125;</code>是一一对应的关系。一旦这个映射关系建立起来<strong>（内部主机向某一外部主机发送一次数据即可）</strong>，任何外部主机就可以直接向NAT内的这台主机发起UDP通信了，此时NAT透明化了。</li>
+</ol>
+<h4 id="受限锥形NAT（Restricted-Cone-NAT）"><a href="#受限锥形NAT（Restricted-Cone-NAT）" class="headerlink" title="受限锥形NAT（Restricted Cone NAT）"></a>受限锥形NAT（Restricted Cone NAT）</h4><p><img src="/images/restricted-cone.png" alt="img"></p>
+<p><code>受限锥形NAT</code>（Restricted Cone NAT）：受限锥形NAT<strong>只会转发符合某个条件的输入数据包</strong>。条件为：外部（源）IP地址匹配内网主机之前发送一个或多个数据包的结点的IP地址。 AT通过限制输入数据包为一组“已知的”外部IP地址，有效地精简了防火墙的规则。</p>
+<ol>
+<li>当内网主机创建一个UDP socket并通过它第一次向外发送UDP数据包时，NAT会为之分配一个<code>&#123;公网IP:端口&#125;</code>。</li>
+<li>此后，通过这个socket向外发送的任何UDP数据包都是通过这个<code>&#123;公网IP:端口&#125;</code>发送出去的；</li>
+<li>而任何收到过从这个socket发送来的数据的外部主机（由IP标识），都可以通过这个<code>&#123;公网IP:端口&#125;</code>向该socket发送UDP数据包。</li>
+<li>即是说，NAT维护了一个<code>&#123;内网IP:端口&#125;</code>到<code>&#123;公网IP:端口&#125;</code>的映射，还维护了一个<code>&#123;外部主机&#123;IP&#125;, 公网&#123;IP:端口&#125;&#125;</code>到<code>&#123;内网IP:端口&#125;</code>的映射。</li>
+<li>因此，要想外部主机能够主动向该内部主机发起通信，必须先由该内部主机向这个外部发起一次通信。</li>
+</ol>
+<h4 id="端口受限锥形NAT（Port-Restricted-Cone-NAT）"><a href="#端口受限锥形NAT（Port-Restricted-Cone-NAT）" class="headerlink" title="端口受限锥形NAT（Port-Restricted Cone NAT）"></a>端口受限锥形NAT（Port-Restricted Cone NAT）</h4><p><img src="/images/port-restricted-cone.png" alt="img"></p>
+<p><code>端口受限锥形NAT</code>（Port-Restricted Cone NAT）：端口受限锥形NAT也类似，<strong>只当外部数据包的IP地址和端口号都匹配内网主机发送过的地址和端口号时才进行转发</strong>。 端口受限锥形NAT为内部结点提供了和对称NAT相同等级的保护，以隔离未关联的数据。</p>
+<ol>
+<li>当内网主机创建一个UDP socket并通过它第一次向外发送UDP数据包时，NAT会为之分配一个<code>&#123;公网IP:端口&#125;</code>。</li>
+<li>此后，通过这个socket向外部发送的任何UDP数据包都是通过这个<code>&#123;公网IP:端口&#125;</code>发送出去的；</li>
+<li>一旦外部主机在<code>&#123;IP:端口&#125;</code>上收到过从这个socket发送来的数据后，都可以通过这个外部主机<code>&#123;IP:端口&#125;</code>向该socket发送UDP数据包。</li>
+<li>即是说，NAT维护了一个从<code>&#123;内网IP:端口&#125;</code>到<code>&#123;公网IP:端口&#125;</code>的映射，还维护了一个从<code>&#123;外部主机&#123;IP:端口&#125;, 公网&#123;IP:端口&#125;&#125;</code>到<code>&#123;内网IP:端口&#125;</code>的映射。</li>
+</ol>
+<h3 id="对称NAT（Symmetric-NAT）"><a href="#对称NAT（Symmetric-NAT）" class="headerlink" title="对称NAT（Symmetric NAT）"></a>对称NAT（Symmetric NAT）</h3><p><img src="/images/symmetric.png" alt="img"></p>
+<p><code> 对称NAT</code>（Symmetric NAT）: 对称NAT正好相反，不是在所有公网-内网对的会话中维持一个固定的端口绑定。而是其为每个新的会话开辟一个新的端口。简单来说就是：<strong>访问不同的外网IP地址都会分配不同的IP或端口号</strong>。</p>
+<ol>
+<li>当内网主机创建一个UDP socket 并通过它第一次向外部主机1发送UDP数据包时，NAT会为之分配一个<code>&#123;公网IP:端口&#125;</code>。</li>
+<li>以后内网主机发送给外部主机1的所有UDP数据包都是通过<code>&#123;公网IP1:端口1&#125;</code>发送的；</li>
+<li>当内网主机通过这个socket向外部主机2发送UDP数据包时，NAT为其分配一个<code>&#123;公网IP2:端口2&#125;</code>，以后内网主机发送给外部主机2的所有UDP数据包都是通过<code>&#123;公网IP2:端口2&#125;</code>发送的。<code>&#123;公网IP1:端口1&#125;</code>和<code>&#123;公网IP2:端口2&#125;</code>一定不会完全相同（即要么IP不同，要么端口不同，或者都不同）。</li>
+<li>这种情况下，外部主机只能在接收到内网主机发来的数据时，才能向内网主机回送数据。</li>
+</ol>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">   Server S1                                     Server S2</span><br><span class="line">18.181.0.31:1235                              138.76.29.7:1235</span><br><span class="line">       |                                             |</span><br><span class="line">       |                                             |</span><br><span class="line">       +----------------------+----------------------+</span><br><span class="line">                              |</span><br><span class="line">  ^  Session 1 (A-S1)  ^      |      ^  Session 2 (A-S2)  ^</span><br><span class="line">  |  18.181.0.31:1235  |      |      |  138.76.29.7:1235  |</span><br><span class="line">  v 155.99.25.11:62000 v      |      v 155.99.25.11:62001 v</span><br><span class="line">                              |</span><br><span class="line">                         Symmetric NAT</span><br><span class="line">                         155.99.25.11</span><br><span class="line">                              |</span><br><span class="line">  ^  Session 1 (A-S1)  ^      |      ^  Session 2 (A-S2)  ^</span><br><span class="line">  |  18.181.0.31:1235  |      |      |  138.76.29.7:1235  |</span><br><span class="line">  v   10.0.0.1:1234    v      |      v   10.0.0.1:1234    v</span><br><span class="line">                              |</span><br><span class="line">                           Client A</span><br><span class="line">                        10.0.0.1:1234</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><code>Full Cone NAT</code>：任意外部主机都可以连接一个打开的内网UDP端口。也就是说：全锥形NAT的<strong>IP、端口都不受限</strong>。</li>
+<li><code>Restricted Cone NAT</code>：只有通过内网UDP端口请求的外部主机才可以连接到此内网UDP端口。(比Full Cone NAT多限制了主机)。也就是说：受限锥形NAT的<strong>IP受限，端口不受限</strong>。</li>
+<li><code>Port Restricted Cone NAT</code>：只有通过内网UDP端口请求的外部主机的端口才可以连接到此内网UDP端口。(比Restricted Cone NAT多限制了端口)。也就是说：端口受限锥型NAT的<strong>IP、端口都受限。</strong></li>
+<li><code>Symmetrict NAT</code>：每个新的会话开辟一个新的端口。</li>
+</ul>
+<h3 id="检测NAT类型"><a href="#检测NAT类型" class="headerlink" title="检测NAT类型"></a>检测NAT类型</h3><p><img src="/images/ice.png" alt="img"></p>
+<p>连接服务器为A，NAT检测服务器为B。</p>
+<ol>
+<li><p>当一个接收客户端（Endpoint-Receiver ,简称 EP-R）需要接收文件信息时，在其向连接服务器发送文件请求的同时，紧接着向检测服务器发送NAT检测请求。</p>
+<blockquote>
+<p>注意是“紧接着”，因为对于对称型NAT来说，这个操作可以直接算出其地址分配的增量(⊿p)。</p>
+</blockquote>
+</li>
+<li><p>当EP-R收到A或B的反馈信息时发现其外部地址与自身地址不同时就可以确定自己在NAT后面；否则，就是公网IP。</p>
+</li>
+<li><p>由服务器A向B发送其获得的EP-R的外部映射地址(IPa/Porta)，服务器B获得后进行比较，如果端口不同，则说明这是对称型NAT，同时可以直接计算出其分配增量：⊿p=Portb-Porta</p>
+</li>
+<li><p>如果端口号相同，则由B向EP-R的Porta发送连接请求，如果EP-R有响应，则说明EP-R没有IP和Port的限制，属于全ConeNAT类型。</p>
+</li>
+<li><p>如果没有响应，则由服务器B使用其新端口b’向EP-R的Portb端口发送连接请求，如果有响应，则说明EP-R只对IP限制，属于限制性ConeNAT类型；否则就是对IP和port都限制，属于端口限制性ConeNAT类型。  </p>
+</li>
+</ol>
+<p>通过上述五步基本可以全部检测出EP-R是否在公网，还是在某种NAT后面。</p>
+<h3 id="NAT映射老化时间"><a href="#NAT映射老化时间" class="headerlink" title="NAT映射老化时间"></a>NAT映射老化时间</h3><ul>
+<li>由于UDP转换协议提供的“洞”不是绝对可靠的，多数NAT设备内部都有一个UDP转换的空闲状态计时器，如果在一段时间内没有 UDP数据通信，NAT设备会关掉由“打洞”操作打出来的“洞”。</li>
+<li>作为应用程序来讲如果想要做到与设备无关，就最好在穿越NAT后设定一个穿越的有效期。这个有效期与NAT设备内部的配置有关，目前没有标准有效期，最短的只有20秒左右。</li>
+<li>在这个有效期内，即使没有P2P数据报文需要传输，应用程序为了维持该“洞”可以 正常工作，也必须向对方发送“打洞”维持报文。这个维持报文是需要双方应用都发送的，只有一方发送不会维持另一方的映射关系正常工作。</li>
+<li>除了频繁发送“打洞”维持报文以外，还有一个方法就是在当前的“洞”有效期过期之前，P2P客户端双方重新 “打洞”，丢弃原有的“洞”，这也不失为一个有效的方法。</li>
+</ul>
+<p>可根据需要为NAT 地址映射表配置老化时间，以控制用户对NAT 配置的使用，确保内外网的通信安全。</p>
+<p>配置NAT 地址映射表项老化时间的方法也很简单，只须在系统视图下使用下面的命令配置即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-nat session &#123; dns | ftp | ftp-data | http | icmp | tcp | tcp-proxy | udp | sip | sip-media | rtsp |rtsp-media &#125; aging-time time-value </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>参数 time-value的取值范围为1～65 535的整数秒。如果要配置多个会话表项的超时时间需要分别用本命令配置。</p>
+</li>
+<li><p>缺省情况下，各协议的老化时间为：DNS（120 s）、ftp（120 s）、ftp-data（120 s）、HTTP（120 s）、icmp（20 s）、tcp（600 s）、tcp-proxy（10 s）、udp（120 s）、sip（1 800 s）、sip-media （ 120 s ）、rtsp （ 60 s ）、rtsp-media （ 120 s ）， </p>
+</li>
+<li><p>可用命令恢复对应会话表项的超时时间为缺省值。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">undo firewall-natsession &#123; all | dns | ftp | ftp-data | http | icmp | tcp | tcp-proxy | udp | sip | sip-media | rtsp |rtsp-media &#125; aging-time </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="P2P通信"><a href="#P2P通信" class="headerlink" title="P2P通信"></a>P2P通信</h2><p>根据客户端的不同，客户端之间进行P2P传输的方法也略有不同，这里介绍了现有的穿越中间件进行P2P通信的几种技术。</p>
+<h3 id="中继（Relaying）"><a href="#中继（Relaying）" class="headerlink" title="中继（Relaying）"></a>中继（Relaying）</h3><p>这是最可靠但也是最低效的一种P2P通信实现。其原理是通过一个有公网IP的服务器中间人对两个内网客户端的通信数据进行中继和转发。如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">                       Server S</span><br><span class="line">                          |</span><br><span class="line">                          |</span><br><span class="line">   +----------------------+----------------------+</span><br><span class="line">   |                                             |</span><br><span class="line"> NAT A                                         NAT B</span><br><span class="line">   |                                             |</span><br><span class="line">   |                                             |</span><br><span class="line">Client A                                      Client B</span><br></pre></td></tr></table></figure>
+
+<p>客户端A和客户端B不直接通信，而是先都与服务端S建立链接，然后再通过S和对方建立的通路来中继传递的数据。这钟方法的缺陷很明显， 当链接的客户端变多之后，会显著增加服务器的负担，完全没体现出P2P的优势。但这种方法的好处是能保证成功，因此在实践中也常作为一种备选方案。</p>
+<h3 id="逆向链接（Connection-reversal）"><a href="#逆向链接（Connection-reversal）" class="headerlink" title="逆向链接（Connection reversal）"></a>逆向链接（Connection reversal）</h3><p>第二种方法在当两个端点中有一个不存在中间件的时候有效。例如，客户端A在NAT之后而客户端B拥有全局IP地址，如下图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">                            Server S</span><br><span class="line">                        18.181.0.31:1235</span><br><span class="line">                               |</span><br><span class="line">                               |</span><br><span class="line">        +----------------------+----------------------+</span><br><span class="line">        |                                             |</span><br><span class="line">      NAT A                                           |</span><br><span class="line">155.99.25.11:62000                                    |</span><br><span class="line">        |                                             |</span><br><span class="line">        |                                             |</span><br><span class="line">     Client A                                      Client B</span><br><span class="line">  10.0.0.1:1234                               138.76.29.7:1234　</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>客户端A内网地址为10.0.0.1，且应用程序正在使用TCP端口1234。A和服务器S建立了一个链接，服务器的IP地址为18.181.0.31，监听1235端口。NAT A给客户端A分配了TCP端口62000，地址为NAT的公网IP地址155.99.25.11， 作为客户端A对外当前会话的临时IP和端口。因此S认为客户端A就是155.99.25.11:62000。而B由于有公网地址，所以对S来说B就是138.76.29.7:1234。</p>
+</li>
+<li><p>当客户端B想要发起一个对客户端A的P2P链接时，要么链接A的外网地址155.99.25.11:62000，要么链接A的内网地址10.0.0.1:1234，然而两种方式链接都会失败。 链接10.0.0.1:1234失败自不用说，为什么链接155.99.25.11:62000也会失败呢？</p>
+<p>来自B的TCP SYN握手请求到达NAT A的时候会被拒绝，因为<strong>对NAT A来说只有外出的链接才是允许的</strong>，也就是说拒绝该请求主要有如下原因：</p>
+<ol>
+<li>NAT A没有映射过62000端口，NAT A不知道该请求是给谁的</li>
+<li>NAT A映射过62000端口，但是需要首先从Client A发起请求，然后才能转发应答</li>
+</ol>
+<p>在直接连接Client A失败之后，Client B可以通过Server S向Client A中继一个连接请求，从而从Client A方向“逆向“地建立起Client A- Client B之间的点对点连接（因为Client A连接到了Server S）。</p>
+</li>
+<li><p>很多当前的P2P系统都实现了这种技术，但其局限性也是很明显的，只有当其中一方有公网IP时链接才能建立。越来越多的情况下， 通信的双方都在NAT之后，因此就要用到我们下面介绍的第三种技术了。</p>
+</li>
+</ul>
+<p><img src="/images/img7.png" alt="Connection reversal"></p>
+<h3 id="UDP打洞（UDP-hole-punching）"><a href="#UDP打洞（UDP-hole-punching）" class="headerlink" title="UDP打洞（UDP hole punching）"></a>UDP打洞（UDP hole punching）</h3><p>第三种P2P通信技术，被广泛采用的，名为“P2P打洞“。P2P打洞技术依赖于通常防火墙和cone NAT允许正当的P2P应用程序在中间件中打洞且与对方建立直接链接的特性。 </p>
+<p>以下主要考虑两种常见的场景。</p>
+<ul>
+<li>第一种场景代表了大多数情况，即两个需要直接链接的客户端处在两个不同的NAT 之后；</li>
+<li>第二种场景是两个客户端在同一个NAT之后，但客户端自己并不需要知道。</li>
+</ul>
+<h4 id="端点在不同的NAT之后"><a href="#端点在不同的NAT之后" class="headerlink" title="端点在不同的NAT之后"></a>端点在不同的NAT之后</h4><ul>
+<li>假设客户端A和客户端B的地址都是内网地址，且在不同的NAT后面。</li>
+<li>A、B上运行的P2P应用程序和服务器S都使用了UDP端口1234，</li>
+<li>A和B分别初始化了 与Server的UDP通信，</li>
+<li>地址映射如图所示:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">                            Server S</span><br><span class="line">                        18.181.0.31:1234</span><br><span class="line">                               |</span><br><span class="line">                               |</span><br><span class="line">        +----------------------+----------------------+</span><br><span class="line">        |                                             |</span><br><span class="line">      NAT A                                         NAT B</span><br><span class="line">155.99.25.11:62000                            138.76.29.7:31000</span><br><span class="line">        |                                             |</span><br><span class="line">        |                                             |</span><br><span class="line">     Client A                                      Client B</span><br><span class="line">  10.0.0.1:1234                                 10.1.1.3:1234</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>现在假设客户端A打算与客户端B直接建立一个UDP通信会话。如果A直接给B的公网地址138.76.29.7:31000发送UDP数据，NAT B将很可能会无视进入的数据（除非是Full Cone NAT），因为源地址和端口与S不匹配，而最初只与S建立过会话。B往A直接发信息也类似。</li>
+<li>假设A开始给B的公网地址发送UDP数据的同时，给服务器S发送一个中继请求，<strong>要求B开始给A的公网地址发送UDP信息</strong>。A往B的输出信息会导致NAT A打开 一个A的内网地址与与B的外网地址之间的新通讯会话，B往A亦然。一旦新的UDP会话在两个方向都打开之后，客户端A和客户端B就能直接通讯， 而无须再通过引导服务器S了。</li>
+<li>UDP打洞技术有许多有用的性质。一旦一个的P2P链接建立，链接的双方都能反过来作为<code>引导服务器</code>来帮助其他中间件后的客户端进行打洞， 极大减少了服务器的负载。应用程序不需要知道中间件具体是什么（如果有的话），因为以上的过程在没有中间件或者有多个中间件的情况下 也一样能建立通信链路。</li>
+</ul>
+<h4 id="端点在相同的NAT之后"><a href="#端点在相同的NAT之后" class="headerlink" title="端点在相同的NAT之后"></a>端点在相同的NAT之后</h4><ul>
+<li>两个客户端A和B正好在同一个NAT之后（而且可能他们自己并不知道），因此在同一个内网网段之内。 </li>
+<li>客户端A和服务器S建立了一个UDP会话，NAT为此分配了公网端口62000，B同样和S建立会话，分配到了端口62001，</li>
+<li>如下图：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">                          Server S</span><br><span class="line">                      18.181.0.31:1234</span><br><span class="line">                             |</span><br><span class="line">                             |</span><br><span class="line">                            NAT</span><br><span class="line">                   A-S 155.99.25.11:62000</span><br><span class="line">                   B-S 155.99.25.11:62001</span><br><span class="line">                             |</span><br><span class="line">      +----------------------+----------------------+</span><br><span class="line">      |                                             |</span><br><span class="line">   Client A                                      Client B</span><br><span class="line">10.0.0.1:1234                                 10.1.1.3:1234</span><br></pre></td></tr></table></figure>
+
+<p>假设A和B使用了上节介绍的UDP打洞技术来建立P2P通路，那么会发生什么呢？</p>
+<ul>
+<li><p>首先A和B会得到由S观测到的对方的公网IP和端口号，然后给对方的地址发送信息。 </p>
+</li>
+<li><p>两个客户端只有在<strong>NAT允许内网主机对内网其他主机发起UDP会话的时候才能正常通信</strong>，我们把这种情况称之为<code>回环传输</code>(lookback translation)，因为从内部 到达NAT的数据会被“回送”到内网中而不是转发到外网。</p>
+<p>例如，当A发送一个UDP数据包给B的公网地址时，数据包最初有源IP地址和端口地址10.0.0.1:1234和 目的地址155.99.25.11:62001，NAT收到包后，将其转换为源155.99.25.11:62000（A的公网地址）和目的10.1.1.3:1234，然后再转发给B。即便NAT支持 回环传输，这种转换和转发在此情况下也是没必要的，且有可能会增加A与B的对话延时和加重NAT的负担。</p>
+</li>
+<li><p>对于这个情况，优化方案是很直观的。当A和B最初通过S交换地址信息时，他们应该包含自身的IP地址和端口号（从自己看），同时也包含从服务器看的自己的 地址和端口号。然后客户端同时开始从对方已知的两个的地址中同时开始互相发送数据，并使用第一个成功通信的地址作为对方地址。</p>
+<ul>
+<li>如果两个客户端在同一个 NAT后，发送到对方内网地址的数据最有可能先到达，从而可以建立一条不经过NAT的通信链路；</li>
+<li>如果两个客户端在不同的NAT之后，发送给对方内网地址的数据包 根本就到达不了对方，但仍然可以通过公网地址来建立通路。</li>
+</ul>
+<p>值得一提的是，虽然这些数据包通过某种方式验证，但是在不同NAT的情况下完全有可能会导致A往B 发送的信息发送到其他A内网网段中无关的结点上去的。</p>
+</li>
+</ul>
+<h4 id="端点在多级NAT之后"><a href="#端点在多级NAT之后" class="headerlink" title="端点在多级NAT之后"></a>端点在多级NAT之后</h4><p>在一些拓朴结构中，可能会存在多级NAT设备，在这种情况下，如果没有关于拓朴的具体信息， 两个Peer要建立“最优”的P2P链接是不可能的，下面来说为什么。</p>
+<p>以下图为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">                            Server S</span><br><span class="line">                        18.181.0.31:1234</span><br><span class="line">                               |</span><br><span class="line">                               |</span><br><span class="line">                             NAT X</span><br><span class="line">                     A-S 155.99.25.11:62000</span><br><span class="line">                     B-S 155.99.25.11:62001</span><br><span class="line">                               |</span><br><span class="line">                               |</span><br><span class="line">        +----------------------+----------------------+</span><br><span class="line">        |                                             |</span><br><span class="line">      NAT A                                         NAT B</span><br><span class="line">192.168.1.1:30000                             192.168.1.2:31000</span><br><span class="line">        |                                             |</span><br><span class="line">        |                                             |</span><br><span class="line">     Client A                                      Client B</span><br><span class="line">  10.0.0.1:1234                                 10.1.1.3:1234</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>假设NAT X是一个网络提供商ISP部署的工业级NAT，其下子网共用一个公网地址155.99.25.11，NAT A和NAT B分别是其下不同用户的网关部署的NAT。只有服务器S 和NAT X有全局的路由地址。Client A在NAT A的子网中，同时Client B在NAT B的子网中，每经过一级NAT都要进行一次网络地址转换。</li>
+<li>现在假设A和B打算建立直接P2P链接，用一般的方法（通过Server S来打洞）自然是没问题的，</li>
+<li>那能不能优化呢？一种想当然的优化办法是A直接把信息发送给NAT B的 内网地址192.168.1.2:31000，且B通过NAT B把信息发送给A的路由地址192.168.1.1:30000，不幸的是，A和B都没有办法得知这两个目的地址，因为S只看见了客户端 ‵全局‵地址155.99.25.11。退一步说，即便A和B通过某种方法得知了那些地址，我们也无法保证他们是可用的。因为ISP分配的子网地址可能和NAT A B分配的子网地址 域相冲突。因此客户端没有其他选择，只能使用S来进行打洞并进行回环传输。</li>
+</ul>
+<h4 id="固定端口绑定"><a href="#固定端口绑定" class="headerlink" title="固定端口绑定"></a>固定端口绑定</h4><ul>
+<li>UDP打洞技术有一个主要的条件：<strong>只有当两个NAT都是Cone NAT（或者非NAT的防火墙）时才能工作</strong>。</li>
+<li>因为其维持了一个给定的（内网IP，内网UDP）二元组 和（公网IP， 公网UDP）二元组固定的端口绑定，只要该UDP端口还在使用中，就不会变化。如果像对称NAT一样，给每个新会话分配一个新的公网端口，就 会导致UDP应用程序无法使用跟外部端点已经打通了的通信链路。</li>
+<li>由于Cone NAT是当今最广泛使用的，尽管有一小部分的对称NAT是不支持打洞的，UDP打洞 技术也还是被广泛采纳应用。</li>
+</ul>
+<h3 id="UDP打洞流程"><a href="#UDP打洞流程" class="headerlink" title="UDP打洞流程"></a>UDP打洞流程</h3><ol>
+<li>双方都通过UDP与服务器通讯后，网关默认就是做了一个<code>外网IP和端口号</code>与<code>内网IP与端口号</code>的映射，这个无需设置的，服务器也不需要知道客户的真正内网IP </li>
+<li>用户A先通过服务器知道用户B的外网地址与端口 </li>
+<li>用户A向用户B的外网地址与端口发送消息， </li>
+<li>在这一次发送中，用户B的网关会拒收这条消息，因为它的映射中并没有这条规则。 </li>
+<li><strong>但是用户A的网关就会增加了一条允许规则，允许接收从B发送过来的消息</strong> </li>
+<li>服务器要求用户B发送一个消息到用户A的外网IP与端口号</li>
+<li>用户B发送一条消息，这时用户A就可以接收到B的消息，而且网关B也增加了允许规则</li>
+<li>之后，由于网关A与网关B都增加了允许规则，所以A与B都可以向对方的外网IP和端口号发送消息。</li>
+</ol>
+<blockquote>
+<p><img src="/images/hole-punching.png" alt="img"></p>
+<ol>
+<li>A 与 S 建立连接（Session A-S），向 S 注册自己的内网地址 <code>10.0.0.1:4321</code> ；S 会同时记录 A 在公网的地址 <code>155.99.25.11:62000</code> 。</li>
+<li>B 与 S 建立连接（Session B-S），向 S 注册自己的内网地址 <code>10.1.1.3:4321</code> ；S 会同时记录 B 在公网的地址 <code>138.76.29.7:31000</code> 。</li>
+<li>A 向 S 发送请求，获取 B 的地址（Request Connection to B）；S 会同时把 A 的地址转发给 B（Forward A’s Endpoints to B）。然后 A 和 B 都开始尝试相互向对方发送数据包。</li>
+<li>当 A 向 B 第一次发送数据包时（Send to B at）会在 NAT_A 中产生映射 <code>(10.0.0.1:4321, 138.76.29.7:31000)</code> ；此时 NAT_B 并没有 A 和 B 的映射记录，数据包仍然会被丢弃。</li>
+<li>当 B 向 A 第一次发送数据包时（Send to A at）会在 NAT_B 中产生映射 <code>(10.1.1.3:4321, 155.99.25.11:62000)</code> ；因为之前 NAT_A 已经创建了 A 和 B 的映射，所以 B 请求成功。</li>
+<li>当 A 向 B 第二次发送数据包时，因为 NAT_B 也有了 A 和 B 的映射记录，所以 A 也请求成功。于是打洞完成，A 和 B 可以直接建立点对点连接（Session A-B）。</li>
+</ol>
+<p>为什么要向 S 上报内网地址？假设存在两台设备 A1 和 A2，它们同时位于 NAT_A 之后，且它们并不知晓各自的地址。当 A1 和 A2 通过上述步骤建立连接后，它们会发现双方都在同一内网，而所有数据包仍然需要通过 NAT_A 转发是没有必要的，直接使用内网地址建立连接显然更快。</p>
+<p>真实的网络情况可能会更加复杂，比如需要在多层 NAT 之间打洞。以及目前业界习惯使用 UDP 协议进行打洞，而不是 TCP 协议。若想要了解更多打洞细节，可以参考这篇文章：<a target="_blank" rel="noopener" href="https://bford.info/pub/net/p2pnat/">Peer-to-Peer Communication Across Network Address Translators</a>。</p>
+</blockquote>
+<h3 id="UDP打洞具体实现"><a href="#UDP打洞具体实现" class="headerlink" title="UDP打洞具体实现"></a>UDP打洞具体实现</h3><ul>
+<li>一般的网络编程，都是客户端比服务端要难，因为要处理与服务器的通信同时还要处理来自用户的事件；</li>
+<li>对于P2P客户端来说更是如此，因为P2P客户端不止作 为客户端，同时也作为对等连接的服务器端。这里的大体思路是，输入命令传输给服务器之后，接收来自服务器的反馈，并执行相应代码。<ol>
+<li>例如A想要与B建立 通信链路，先给服务器发送punch命令以及给B发送数据，</li>
+<li>服务器接到命令后给B发送punch_requst信息以及A的端点信息，B收到之后向A发送数据打通通路，然 后A与B就可以进行P2P通信了。</li>
+<li>经测试，打通通路后即便把服务器关闭，A与B也能正常通信。</li>
+</ol>
+</li>
+</ul>
+<p>一个UDP打洞的例子见<a href="https://link.zhihu.com/?target=https://github.com/pannzh/P2P-Over-MiddleBoxes-Demo">P2P-Over-MiddleBoxes-Demo</a></p>
+<p>地址：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://evilpan.com/2015/10/31/p2p-over-middle-box/">P2P通信原理与实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://bford.info/pub/net/p2pnat/">Peer-to-Peer Communication Across Network Address Translators</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/GO-NO-1/p/7241556.html">NAT穿透（UDP打洞）</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014023993/article/details/86563976">P2P如何实现内网穿透（打洞）</a></li>
+<li><a target="_blank" rel="noopener" href="https://webrtc.mthli.com/basic/ice-stun-turn/">ICE 交互流程介绍</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cyrus0w/p/13123504.html">内网穿透详解</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

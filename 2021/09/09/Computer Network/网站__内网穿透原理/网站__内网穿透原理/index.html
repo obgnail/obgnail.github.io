@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;一、前言&quot;&gt;&lt;a href=&quot;#一、前言&quot; class=&quot;headerlink&quot; title=&quot;一、前言&quot;&gt;&lt;/a&gt;一、前言&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;内网宽带中的主机可以访问公网宽带主机，反之不可以访问；公网宽带主机可以和公网宽带主机双向访问；内网宽带中的主机和内网宽带中的主机互相无法访问。&lt;/li&gt;
+&lt;li&gt;那么内网宽带中的客户机和公网宽带中的客户机如何访问另一个内网宽带中的服务器呢？这里就需要用到内网穿透技术。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;二、应用场景&quot;&gt;&lt;a href=&quot;#二、应用场景&quot; class=&quot;headerlink&quot; title=&quot;二、应用场景&quot;&gt;&lt;/a&gt;二、应用场景&lt;/h2&gt;&lt;p&gt;家里或公司是运营商内网ipv4宽带或公网IP在防火墙后，且需要在外访问家里或公司的电脑、NAS、树莓派、摄像头等网络设备或远程控制等情况下。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>内网穿透原理 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-09-09</div></div></div><div class="container post-header"><h1>内网穿透原理</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">一、前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">二、应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%A6%E7%BB%86%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、详细原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E8%BD%AC%E6%95%B0%E6%8D%AE%E7%A9%BF%E9%80%8F%E5%8E%9F%E7%90%86"><span class="toc-number">3.1.</span> <span class="toc-text">服务器中转数据穿透原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%AF%B9%E7%82%B9%E7%A9%BF%E9%80%8F%E5%8E%9F%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">点对点穿透原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UDP%E6%89%93%E6%B4%9E%E6%8A%80%E6%9C%AF"><span class="toc-number">3.2.1.</span> <span class="toc-text">UDP打洞技术</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E6%89%93%E6%B4%9E%E6%8A%80%E6%9C%AF"><span class="toc-number">3.2.2.</span> <span class="toc-text">TCP打洞技术</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E4%B8%80%E4%B8%AA%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%9F%A5%E8%AF%86"><span class="toc-number">3.3.</span> <span class="toc-text">延伸一个内网渗透知识</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A9%BF%E9%80%8F%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">穿透原理总结</span></a></li></ol></details></div><div class="container post-content"><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><ul>
+<li>内网宽带中的主机可以访问公网宽带主机，反之不可以访问；公网宽带主机可以和公网宽带主机双向访问；内网宽带中的主机和内网宽带中的主机互相无法访问。</li>
+<li>那么内网宽带中的客户机和公网宽带中的客户机如何访问另一个内网宽带中的服务器呢？这里就需要用到内网穿透技术。</li>
+</ul>
+<h2 id="二、应用场景"><a href="#二、应用场景" class="headerlink" title="二、应用场景"></a>二、应用场景</h2><p>家里或公司是运营商内网ipv4宽带或公网IP在防火墙后，且需要在外访问家里或公司的电脑、NAS、树莓派、摄像头等网络设备或远程控制等情况下。</p>
+<h2 id="三、详细原理"><a href="#三、详细原理" class="headerlink" title="三、详细原理"></a>三、详细原理</h2><h3 id="服务器中转数据穿透原理"><a href="#服务器中转数据穿透原理" class="headerlink" title="服务器中转数据穿透原理"></a>服务器中转数据穿透原理</h3><p>对于在NAT之后的服务器来说，其不是不能主动访问公网端口，而是不能反过来有效的被公网访问。所以可以在中间架设一个公网服务器，<strong>让在NAT之后的服务器持续主动访问这个拥有公网IP地址的服务器，</strong>，这样内网服务器就成功与公网中转服务器建立了一个连接通道。然后当有任何其他NAT后的客户端主动连接公网中转服务器时，公网服务器接收到连接请求之后马上把这连接请求通过先前建立好的隧道转发到内网服务器，内网服务器将响应数据包再原路转发回去，最终到达公网中转服务器，然后返回给其他NAT后的客户端。<br><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/2062669/202006/2062669-20200614002855017-521361250.png"><img src="/images/2062669-20200614002855017-521361250.png" alt="img"></a></p>
+<h3 id="点对点穿透原理"><a href="#点对点穿透原理" class="headerlink" title="点对点穿透原理"></a>点对点穿透原理</h3><p>在内网穿透传输大量数据时如果都经过服务器中转的话，这样会对服务器端带宽压力比较大。只要是数据量很大，而一般利用中转服务器又需要一定规模投入的应用，我们都可以考虑用P2P技术。</p>
+<h4 id="UDP打洞技术"><a href="#UDP打洞技术" class="headerlink" title="UDP打洞技术"></a>UDP打洞技术</h4><ul>
+<li><p>最为常见的实现P2P的方式是采用UDP打洞技术</p>
+</li>
+<li><p>UDP打洞技术是<strong>通过中间服务器的协助在各自的NAT网关上建立相关的表项，使P2P连接的双方发送的报文能够直接穿透对方的NAT网关，从而实现P2P客户端互连</strong>。</p>
+</li>
+<li><p>如果两台位于NAT设备后面的P2P客户端希望在自己的NAT网关上打个洞，那么他们需要一个协助者——集中服务器，并且还需要一种用于打洞的Session建立机制。</p>
+</li>
+<li><p>Session建立机制：</p>
+<p>假定客户端A要发起对客户端B的直接连接，具体的“打洞”过程如下：</p>
+<ol>
+<li>A最初不知道如何向客户端B发起连接，于是A向集中服务器（本质上是一台被设置在公网上的服务器，建立P2P的双方都可以直接访问到这台服务器。<strong>位于NAT网关后面的客户端A和B都可以与一台已知的集中服务器建立连接，并通过这台集中服务器了解对方的信息并中转各自的信息</strong>）发送消息，请求集中服务器帮助建立与客户端B的UDP连接。</li>
+<li>集中服务器将含有<code>B的外网</code>和<code>内网的地址</code>二元组发给A，同时，集中服务器将包含有<code>A的外网</code>和<code>内网的地址</code>二元组信息的消息也发给B。这样一来， A与B就都知道对方外网和内网的地址二元组信息了。</li>
+<li>当A收到由集中服务器发来的包含B的外网和内网的地址二元组信息后，A开始向B的地址二元组发送UDP数据包，并且A会自动锁定第一个给出响应的B的地址二元组。同理，当B收到由集中服务器发来的A的外网和内网地址二元组信息后，也会开始向A的外网和内网的地址二元组发送UDP数据包，并且自动锁定第一个得到A回应的地址二元组。一旦A与B都向对方的NAT设备在外网上的地址二元组发送了数据包，就打开了A与B之间的“洞”，A与B向对方的外网地址发送数据，等效为向对方的客户端直接发送UDP数据包了。一旦应用程序确认已经可以通过往对方的外网地址发送数据包的方式让数据包到达NAT后面的目的应用程序，程序会自动停止继续发送用于“打洞”的数据包，转而开始真正的P2P数据传输。</li>
+</ol>
+</li>
+<li><p>当然，UDP转换协议提供的“洞”不是绝对可靠的，多数NAT设备内部都有一个UDP转换的空闲状态计时器，如果在一段时间内没有UDP数据通信，NAT设备会关掉由“打洞”过程打出来的“洞”。如果P2P应用程序希望“洞”的存活时间不受NAT网关的限制，就最好在穿越NAT以后设定一个穿越的有效期。</p>
+</li>
+</ul>
+<h4 id="TCP打洞技术"><a href="#TCP打洞技术" class="headerlink" title="TCP打洞技术"></a>TCP打洞技术</h4><p>从现在的主流应用的角度上来看，基于TCP的P2P应用显然不如基于UDP的应用那么广泛，但是也存在打洞的需求。TCP相对于UDP而言要复杂的多，TCP连接的建立要依赖于三次握手的交互，所以NAT网关在处理TCP连接的时候，需要更多的开销。但是，由于TCP协议完备的状态机机制，TCP反而比UDP更能精确的获取某个Session的生命期。<br>一种新的代理类型 XTCP 能解决这个问题，实现方式可以是采用搭建FRP服务器的方式，在传输数据的两端都部署上FRP客户端用于建立直接的连接。<br><img src="/images/2062669-20200614010430884-1313551261.png" alt="img"></p>
+<h3 id="延伸一个内网渗透知识"><a href="#延伸一个内网渗透知识" class="headerlink" title="延伸一个内网渗透知识"></a>延伸一个内网渗透知识</h3><ul>
+<li>为了安全起见，通常会在网络中加入防火墙，防火墙有入站规则和出站规则。如果不是非常严格的安全管控，通常是不会设置出站规则的，但是入站规则一般都会设置的，比如说外部可以通过80端口传入内网的WEB服务器访问网页，但是不能通过3389端口登陆内网的远程桌面。</li>
+<li>而在内网渗透的过程中碰到这种情况，我们也可以借助上面内网传统的方式实现穿透防火墙的入站规则。因为防火墙通常只拦截了入站，没有拦截出站，那么我们可以<strong>让内网服务器主动出站（主动连接到黑客的服务器），与黑客自己的服务器打通隧道，最终绕过防火墙连上3389远程桌面</strong>。</li>
+<li>还有一种情况就是我们已经拿下了内网其中一台并没有做任何防火墙规则的白名单服务器，但是我们想连上内网另一台做了入站规则的目标服务器，那么我们可以让这台白名单服务器作为一个跳板，让他先监听自身任意一个端口，然后在有任何用户连上这个端口之后，白名单服务器就主动连上内网的目标服务器，然后借助这台白名单服务器打通黑客和目标服务器的连接隧道。而在黑客工具中大名鼎鼎的lcx原理也就是如此，前者的实现是lcx的listen和slave命令，后者的实现是lcx的tran命令。</li>
+</ul>
+<h2 id="穿透原理总结"><a href="#穿透原理总结" class="headerlink" title="穿透原理总结"></a>穿透原理总结</h2><ul>
+<li>内网穿透传统方式会出现服务器和客户机之间的数据传输全部经过中转服务器，传输速度将受制于中转服务器的上下行带宽，不过稳定性很好，对于自己要购置的云主机要求就是大带宽，一般这种云主机按流量计费，传输的数据量越大价格自然越贵。所以点对点穿透便能解决流量带来的困扰，</li>
+<li>点对点可以实现服务器和客户机之间打洞直接进行数据通信，这种方式一般用于udp协议的传输，比如应用于远程NAS看视频听歌，但这种方式需要服务器和客户机都安装穿透工具，对用户访问端来说不够方便，而且这种方式受复杂网络环境影响较大，不能100%实现，稳定性欠缺。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

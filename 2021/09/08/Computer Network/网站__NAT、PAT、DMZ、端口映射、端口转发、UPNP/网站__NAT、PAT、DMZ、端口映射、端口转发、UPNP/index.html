@@ -1,0 +1,60 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;一般运营商宽带分为&lt;code&gt;运营商公网宽带&lt;/code&gt;和&lt;code&gt;运营商内网宽带&lt;/code&gt;，&lt;/li&gt;
+&lt;li&gt;企业或者家庭中用公网宽带可以实现一些对外的服务器环境，但因为全球网络设备的增多，ipv4无法给所有网络设备分配地址，这时候便出现了“运营商内网宽带”，通过NAT和内网（局域网）、公网的方法解决了ipv4地址紧张问题，&lt;/li&gt;
+&lt;li&gt;目前家庭宽带一般都是内网宽带，也正是因为“运营商内网宽带”，所以一般家用宽带现在均无法实现在家建设对外服务器，不过可以通过内网穿透等技术实现，本文不做过多阐述。&lt;/li&gt;
+&lt;li&gt;本文中的DMZ、端口映射、端口转发、UPNP只有在“运营商公网宽带”中用来做对外web服务器或远程跳板机等才有意义，所以用它们之前，你得有个公网宽带。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;运营商公网宽带网络图："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>NAT、PAT、DMZ、端口映射、端口转发、UPNP | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-09-08</div></div></div><div class="container post-header"><h1>NAT、PAT、DMZ、端口映射、端口转发、UPNP</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NAT%EF%BC%88%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E6%96%B9%E6%B3%95%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">NAT（网络地址转换方法）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAT%EF%BC%88NAPT%EF%BC%8C%E5%8D%B3%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E7%AB%AF%E5%8F%A3%E8%BD%AC%E6%8D%A2%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">PAT（NAPT，即网络地址端口转换）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DMZ%EF%BC%88%E9%9A%94%E7%A6%BB%E5%8C%BA%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">DMZ（隔离区）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%EF%BC%88%E6%89%8B%E5%8A%A8%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">端口映射（手动）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%EF%BC%88%E6%89%8B%E5%8A%A8%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">端口转发（手动）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UPNP-%E9%80%9A%E7%94%A8%E5%8D%B3%E6%8F%92%E5%8D%B3%E7%94%A8%EF%BC%8C%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3%E4%B8%BA%E8%87%AA%E5%8A%A8%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="toc-number">7.</span> <span class="toc-text">UPNP(通用即插即用，简单理解为自动端口映射)</span></a></li></ol></details></div><div class="container post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
+<li>一般运营商宽带分为<code>运营商公网宽带</code>和<code>运营商内网宽带</code>，</li>
+<li>企业或者家庭中用公网宽带可以实现一些对外的服务器环境，但因为全球网络设备的增多，ipv4无法给所有网络设备分配地址，这时候便出现了“运营商内网宽带”，通过NAT和内网（局域网）、公网的方法解决了ipv4地址紧张问题，</li>
+<li>目前家庭宽带一般都是内网宽带，也正是因为“运营商内网宽带”，所以一般家用宽带现在均无法实现在家建设对外服务器，不过可以通过内网穿透等技术实现，本文不做过多阐述。</li>
+<li>本文中的DMZ、端口映射、端口转发、UPNP只有在“运营商公网宽带”中用来做对外web服务器或远程跳板机等才有意义，所以用它们之前，你得有个公网宽带。</li>
+</ul>
+<p>运营商公网宽带网络图：</p>
+<p><img src="/images/2062669-20200613145402659-626636869.png" alt="img"></p>
+<p>运营商内网宽带网络图：</p>
+<p><img src="/images/2062669-20200613215024890-1545669827.png" alt="img"></p>
+<ul>
+<li>对比这俩张图可以发现内网宽带比公网宽带在运营商那边多了一个NAT，相当于保留地址实际就是运营商那边的一个局域网IP，当然图片只是示意，运营商那边可能不止一个NAT，而这也是为什么内网宽带无法做对外服务器的原因，</li>
+<li>公网宽带只要设置路由器中的NAT（静态端口映射）内网IP+内网端口和公网IP+端口对应就能实现内网主机与公网主机的双向访问，</li>
+<li>而内网宽带图中尽管路由设置了NAT（静态端口映射），此时也只是实现了保留地址与局域网的对应关系，在运营商部分的NAT是PAT（动态端口映射），即<strong>一个公网IP，通过多个不同端口来映射内网设备，当没有连接时，映射将会取消，再次连接时再自动分配一个映射端口，且个人无法进行设置对应关系</strong>，</li>
+<li>所以内网IP+端口映射到最后的公网IP+未知端口上，此时局域网中的主机只能访问公网中其他主机，而公网中其他主机因为找不到局域网中映射的公网具体端口，不能访问局域网主机，针对这种情况，我个人有个想法，就是通过扫描最后的公网IP开放端口，然后一个端口一个端口进行连接测试，最终应该会找到映射的那个端口，不过这种方法不够现实。</li>
+</ul>
+<h2 id="NAT（网络地址转换方法）"><a href="#NAT（网络地址转换方法）" class="headerlink" title="NAT（网络地址转换方法）"></a>NAT（网络地址转换方法）</h2><ul>
+<li>允许一个整体机构以一个公用IP地址出现在Internet上。</li>
+<li>顾名思义，它是一种把内部私有网络地址（IP地址）NAT转发成合法公有网络IP地址的技术。</li>
+<li>随着接入Internet的计算机数量的不断猛增，IP地址资源也就愈加显得捉襟见肘，显然，这样少的IP地址根本无法满足网络用户的需求，于是也就产生了NAT技术。虽然NAT可以借助于某些代理服务器来实现，但考虑到运算成本和网络性能，很多时候都是在路由器上来实现的。NAT不仅能解决IPv4地址不足问题，还可以为私网提供了安全保障。</li>
+<li>NAT包括：静态NAT、动态NAT、ALG(应用程序级网关技术)、PAT（NAPT，即网络地址端口转换），这里着重解释下PAT。</li>
+</ul>
+<h2 id="PAT（NAPT，即网络地址端口转换）"><a href="#PAT（NAPT，即网络地址端口转换）" class="headerlink" title="PAT（NAPT，即网络地址端口转换）"></a>PAT（NAPT，即网络地址端口转换）</h2><ul>
+<li>可将多个内部地址映射为一个合法公网地址，但<strong>以不同的协议端口号与不同的内部地址相对应</strong>，也就是&lt;内部地址+内部端口&gt;与&lt;外部地址+外部端口&gt;之间的转换。</li>
+<li>NAPT普遍用于接入设备中，它可以将中小型的网络隐藏在一个合法的IP地址后面。PAT(NAPT)也被称为“多对一”的NAT。</li>
+<li>PAT(NAPT)的主要优势在于，能够使用一个全球有效IP地址获得通用性。</li>
+<li><strong>主要缺点在于其通信仅限于TCP或UDP</strong>。</li>
+</ul>
+<h2 id="DMZ（隔离区）"><a href="#DMZ（隔离区）" class="headerlink" title="DMZ（隔离区）"></a>DMZ（隔离区）</h2><ul>
+<li><p>一般为外网提供服务的服务器（如公司的对外宣传网站)很容易被黑客攻击。所以，如果把对外提供服务的服务器放到企业内网，一旦被攻陷入侵，黑客就可以利用这台机器（肉机）做跳版，通过局域网的漏洞与共享等来攻克其他内网机器。因此有必要建立一个特殊的区域，把这个区域起名为DMZ，即隔离区，或者叫非军事化区。</p>
+</li>
+<li><p>如果把本文中的“端口映射”看完，你会发现DMZ实际就是“多个端口映射组合”。那为什么不把这些对外网提供服务的机器单独弄一条线连到公网呢？因为一般中小企业都仅有一个出口。</p>
+</li>
+<li><p>DMZ区要求：</p>
+<ol>
+<li>内网可以访问外网: 内网的用户显然需要自由地访问外网。在这一策略中，防火墙需要进行源地址转换。</li>
+<li>内网可以访问DMZ: 此策略是为了方便内网用户使用和管理DMZ中的服务器。</li>
+<li>外网不能访问内网: 很显然，内网中存放的是公司内部数据，这些数据不允许外网的用户进行访问。</li>
+<li>外网可以访问DMZ: DMZ中的服务器本身就是要给外界提供服务的，所以外网必须可以访问DMZ。同时，外网访问DMZ需要由防火墙完成对外地址到服务器实际地址的转换。</li>
+<li>DMZ不能访问内网: 很明显，如果违背此策略，则当入侵者攻陷DMZ时，就可以进一步进攻到内网的重要数据。</li>
+<li>DMZ不能访问外网: 此条策略也有例外，比如DMZ中放置邮件服务器时，就需要访问外网，否则将不能正常工作。</li>
+</ol>
+</li>
+<li><p><strong>应用场景：</strong></p>
+<p><strong>因为DMZ是将计算机全部公开显露在互联网上，也就是将一台内网机器所有端口全部映射出去，所以适合要映射的服务端口全部在一台内网机器上且数量较多的时候，一般用于企业服务器对外端口较多的场景。</strong></p>
+</li>
+</ul>
+<h2 id="端口映射（手动）"><a href="#端口映射（手动）" class="headerlink" title="端口映射（手动）"></a>端口映射（手动）</h2><p>端口映射是NAT的一种，就是将内网中的主机的一个端口映射到外网主机的一个端口，提供相应的服务。当用户访问外网IP的这个端口时，服务器自动将请求映射到对应局域网内部的机器上。比如，我们在内网中有一台Web服务器，但是外网中的用户是没有办法直接访问该服务器的。&gt; 于是我们可以在路由器上设置一个端口映射，只要外网用户访问路由器ip的80端口，那么路由器会把自动把流量转到内网Web服务器的80端口上。并且，在路由器上还存在一个Session，当内网服务器返回数据给路由器时，路由器能准确的将消息发送给外网请求用户的&gt; 主机。在这过程中，路由器充当了一个反向代理的作用，他保护了内网中主机的安全。<strong>端口映射可以实现外网到内网和内网到外网双向的通信</strong>。<br>动态端口映射:其实就是PAT网关的工作方式，即一个公网IP，通过多个不同端口来映射内网设备，当没有连接时，映射将会取消，再次连接时再自动分配一个映射端口。<br>静态端口映射: 就是在NAT网关上开放一个固定的端口，然后设定此端口收到的数据要转发给内网哪个端口上，不管有没有连接，这个映射关系都会一直存在。<br><strong>应用场景：</strong><br><strong>1.动态端口映射最典型的场景就是运营商对家庭宽带内网上网，有兴趣可以百度NAT相关知识。</strong><br><strong>2.静态端口映射可以映射内网中任意一台计算机的任意一个服务，适用于要映射的服务端口分散在几个机器上，且数量不多的时候，一般用于企业或公网家庭宽带中的web服务器或其他服务器对外端口较少的场景以及PT。这里要注意被映射端口所在主机做好与内网其他机器的通信防护，以防黑客入侵到此映射主机后继而破坏内网其他主机。</strong></p>
+<h2 id="端口转发（手动）"><a href="#端口转发（手动）" class="headerlink" title="端口转发（手动）"></a>端口转发（手动）</h2><p>有时被叫做隧道，是安全壳（SSH）为网络安全通信使用的一种方法。比如，我们现在在内网中，是没有办法直接访问外网的。但是我们可以通过路由器的NAT方式访问外网。假如我们内网现在有100台主机，那么我们现在都是通过路由器的这一个公网IP和外网通信的。那么，当互联网上的消息发送回来时，路由器是怎么知道这个消息是给他的，而另外消息是给你的呢？这就要我们的ip地址和路由器的端口进行绑定了，这时，在路由器中就会有一个内网ip和路由器端口对应的一张表。当路由器的10000端口收到消息时，就知道把消息发送给他，而当20000端口收到消息时，就知道把消息发送给你。这就是端口转发，其转发一个端口收到的流量，给另一个主机。<strong>映射转发只能实现外网到内网的单向通信</strong>。<br><strong>应用场景：</strong><br><strong>因为端口转发只能实现外网到内网的单向通信，不能双向通信，所以不作为服务器对外访问，目前本人接触到的使用场景是部分路由器（如Padavan固件、openwrt固件）只能设置端口转发没有端口映射，所以怀疑这部分路由器的端口转发就是端口映射，一般用于PT。</strong></p>
+<h2 id="UPNP-通用即插即用，简单理解为自动端口映射"><a href="#UPNP-通用即插即用，简单理解为自动端口映射" class="headerlink" title="UPNP(通用即插即用，简单理解为自动端口映射)"></a>UPNP(通用即插即用，简单理解为自动端口映射)</h2><p>通用即插即用，是一组协议的统称，是一种基于TCP/IP、UDP和HTTP的分布式、开放体系，不能简单理解为UPnP=“自动端口映射”。由操作系统和应用与路由器协商开放哪个端口，必须同时满足支持UPnP，缺一不可，否则不能实现。UPnP包含了2层意思：<br>1、对于一台内网电脑，UPnP功能可以使网关或路由器的NAT模块做自动端口映射，将监听的端口从网关或路由器映射到内网电脑上。<br>2、网关或路由器的网络防火墙模块开始对Internet上其他电脑开放这个端口。<br>PS:官方说不能简单理解为UPnP=“自动端口映射”，但我一般就理解为自动端口映射。<br><strong>应用场景：</strong><br><strong>自动端口映射会映射内网所有开放端口，本人之前用于PT，由于安全因素以及稳定性，个人不建议使用，特别是企业环境中，适用的场景暂未深入研究。</strong></p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

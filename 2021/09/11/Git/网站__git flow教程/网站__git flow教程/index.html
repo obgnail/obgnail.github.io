@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;GitFlow的常用分支&quot;&gt;&lt;a href=&quot;#GitFlow的常用分支&quot; class=&quot;headerlink&quot; title=&quot;GitFlow的常用分支&quot;&gt;&lt;/a&gt;GitFlow的常用分支&lt;/h2&gt;&lt;h3 id=&quot;master&quot;&gt;&lt;a href=&quot;#master&quot; class=&quot;headerlink&quot; title=&quot;master&quot;&gt;&lt;/a&gt;master&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;永远处于production-ready状态"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>git flow教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Git/" rel="tag">Git</a></div><div class="post-time">2021-09-11</div></div></div><div class="container post-header"><h1>git flow教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GitFlow%E7%9A%84%E5%B8%B8%E7%94%A8%E5%88%86%E6%94%AF"><span class="toc-number">1.</span> <span class="toc-text">GitFlow的常用分支</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#master"><span class="toc-number">1.1.</span> <span class="toc-text">master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#develop"><span class="toc-number">1.2.</span> <span class="toc-text">develop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#feature"><span class="toc-number">1.3.</span> <span class="toc-text">feature</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#release"><span class="toc-number">1.4.</span> <span class="toc-text">release</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hotfix"><span class="toc-number">1.5.</span> <span class="toc-text">hotfix</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">主要工作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-Flow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">3.</span> <span class="toc-text">Git Flow工作流程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-Flow%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">Git Flow命令总结</span></a></li></ol></details></div><div class="container post-content"><h2 id="GitFlow的常用分支"><a href="#GitFlow的常用分支" class="headerlink" title="GitFlow的常用分支"></a>GitFlow的常用分支</h2><h3 id="master"><a href="#master" class="headerlink" title="master"></a>master</h3><blockquote>
+<p>永远处于production-ready状态</p>
+</blockquote>
+<ul>
+<li>主分支，产品的功能全部实现后，最终在 master 分支对外发布</li>
+<li>该分支为只读唯一分支，只能从其他分支 (release/hotfix) 合并，不能在此分支修改</li>
+<li>另外所有在 master 分支的推送应该打标签做记录，方便追溯</li>
+</ul>
+<p>例如 release 合并到 master , 或 hotfix 合并到 master</p>
+<h3 id="develop"><a href="#develop" class="headerlink" title="develop"></a>develop</h3><blockquote>
+<p>最新的下次发布的开发状态</p>
+</blockquote>
+<ul>
+<li>主开发分支，基于 master 分支克隆</li>
+<li>包含所有要发布到下一个 release 的代码</li>
+<li>该分支为只读唯一分支，只能从其他分支合并</li>
+<li>feature 功能分支完成，合并到 develop (不推送)</li>
+<li>develop 拉取 release 分支，提测</li>
+<li>release/hotfix 分支上线完毕，合并到 develop 并推送</li>
+</ul>
+<h3 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h3><blockquote>
+<p>开发新功能都从develop分支出来，完成后merge回develop</p>
+</blockquote>
+<ul>
+<li>功能开发分支，基于 develop 分支克隆，主要用于新需求新功能的开发</li>
+<li>功能开发完毕后合到 develop 分支 (<strong>未正式上线之前不推送到远程中央仓库！</strong>)</li>
+<li>feature 分支可同时存在多个，用于团队中多个功能同时开发，属于临时分支，功能完成后可选删除</li>
+</ul>
+<h3 id="release"><a href="#release" class="headerlink" title="release"></a>release</h3><blockquote>
+<p>准备要release的版本，只修bug。从develop出来，完成后merge回master和develop</p>
+</blockquote>
+<ul>
+<li>测试分支，基于 feature 分支合并到 develop 之后，从 develop 分支克隆</li>
+<li>主要用于提交给测试人员进行功能测试，测试过程中发现的 BUG 在本分支进行修复，修复完成上线后合并到 develop/master 分支并推送 (完成功能) , 打 Tag</li>
+<li>属于临时分支，功能上线后可选删除</li>
+</ul>
+<h3 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h3><blockquote>
+<p>等不及release版本就必须马上修复master上线。从master出来，完成后merge回master和develop</p>
+</blockquote>
+<ul>
+<li>补丁分支，基于 master 分支克隆，主要用于对线上的版本进行 BUG 修复</li>
+<li>修复完毕后合并到 develop/master 分支并推送，打 Tag</li>
+<li>属于临时分支，补丁修复上线后可选删除</li>
+<li>所有 hotfix 分支的修改会进入到下一个 release</li>
+</ul>
+<h2 id="主要工作流程"><a href="#主要工作流程" class="headerlink" title="主要工作流程"></a>主要工作流程</h2><ol>
+<li>初始化项目为 gitflow , 默认创建 master 分支，然后从 master 拉取第一个 develop 分支</li>
+<li>从 develop 拉取 feature 分支进行编码开发 (多个开发人员拉取多个 feature 同时进行并行开发，互不影响)</li>
+<li>feature 分支完成后，合并到 develop (不推送，feature 功能完成还未提测，推送后会影响其他功能分支的开发)<br>合并 feature 到 develop , 可以选择删除当前 feature , 也可以不删除。但当前 feature 就不可更改了，必须从 release 分支继续编码修改</li>
+<li>从 develop 拉取 release 分支进行提测，提测过程中在 release 分支上修改 BUG</li>
+<li>release 分支上线后，合并 release 分支到 develop/master 并推送<br>合并之后，可选删除当前 release 分支，若不删除，则当前 release 不可修改。线上有问题也必须从 master 拉取 hotfix 分支进行修改</li>
+<li>上线之后若发现线上 BUG , 从 master 拉取 hotfix 进行 BUG 修改</li>
+<li>hotfix 通过测试上线后，合并 hotfix 分支到 develop/master 并推送<br>合并之后，可选删除当前 hostfix , 若不删除，则当前 hotfix 不可修改，若补丁未修复，需要从 master 拉取新的 hotfix 继续修改</li>
+<li>当进行一个 feature 时，若 develop 分支有变动，如其他开发人员完成功能并上线，则需要将完成的功能合并到自己分支上<br>即合并 develop 到当前 feature 分支</li>
+<li>当进行一个 release 分支时，若 develop 分支有变动，如其他开发人员完成功能并上线，则需要将完成的功能合并到自己分支上</li>
+</ol>
+<p>即合并 develop 到当前 release 分支 (因为当前 release 分支通过测试后会发布到线上，如果不合并最新的 develop 分支，就会发生丢代码的情况)</p>
+<h2 id="Git-Flow工作流程图"><a href="#Git-Flow工作流程图" class="headerlink" title="Git Flow工作流程图"></a>Git Flow工作流程图</h2><p><img src="/images/bNnF2XeqFL.png" alt="img"></p>
+<h2 id="Git-Flow命令总结"><a href="#Git-Flow命令总结" class="headerlink" title="Git Flow命令总结"></a>Git Flow命令总结</h2><p><img src="/images/watermark.png" alt="git flow命令总结"></p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
