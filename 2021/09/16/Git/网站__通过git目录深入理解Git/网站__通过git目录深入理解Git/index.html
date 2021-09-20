@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;通过-git-目录深入理解-Git！&quot;&gt;&lt;a href=&quot;#通过-git-目录深入理解-Git！&quot; class=&quot;headerlink&quot; title=&quot;通过 .git 目录深入理解 Git！&quot;&gt;&lt;/a&gt;通过 .git 目录深入理解 Git！&lt;/h1&gt;&lt;h2 id=&quot;研究-git-目录&quot;&gt;&lt;a href=&quot;#研究-git-目录&quot; class=&quot;headerlink&quot; title=&quot;研究 .git 目录&quot;&gt;&lt;/a&gt;研究 .git 目录&lt;/h2&gt;&lt;p&gt;当你通过 git init 创建 git 仓库时， git 就会创建 .git 目录。该目录包含让 git 能够正常工作所需的所有信息。直白点说，如果你不想在项目中继续使用 git ，直接将 .git 目录删除只保留项目文件即可。但是为什么这样做就可以呢？"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>通过git目录深入理解Git | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Git/" rel="tag">Git</a></div><div class="post-time">2021-09-16</div></div></div><div class="container post-header"><h1>通过git目录深入理解Git</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-git-%E7%9B%AE%E5%BD%95%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-Git%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">通过 .git 目录深入理解 Git！</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6-git-%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">研究 .git 目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E6%8F%90%E4%BA%A4%E5%8C%85%E5%90%AB%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">一次提交包含哪些内容？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF-%E6%A0%87%E7%AD%BE-HEAD-%E9%83%BD%E4%B8%80%E6%A0%B7"><span class="toc-number">1.3.</span> <span class="toc-text">分支, 标签, HEAD 都一样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">1.4.</span> <span class="toc-text">写在最后</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="通过-git-目录深入理解-Git！"><a href="#通过-git-目录深入理解-Git！" class="headerlink" title="通过 .git 目录深入理解 Git！"></a>通过 .git 目录深入理解 Git！</h1><h2 id="研究-git-目录"><a href="#研究-git-目录" class="headerlink" title="研究 .git 目录"></a>研究 .git 目录</h2><p>当你通过 git init 创建 git 仓库时， git 就会创建 .git 目录。该目录包含让 git 能够正常工作所需的所有信息。直白点说，如果你不想在项目中继续使用 git ，直接将 .git 目录删除只保留项目文件即可。但是为什么这样做就可以呢？</p>
+<p>下面是你第一次提交后 .git 文件夹的样子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">├── HEAD</span><br><span class="line">   ├── branches</span><br><span class="line">   ├── config</span><br><span class="line">   ├── description</span><br><span class="line">   ├── hooks</span><br><span class="line">   │ ├── pre-commit.sample</span><br><span class="line">   │ ├── pre-push.sample</span><br><span class="line">   │ └── ...</span><br><span class="line">   ├── info</span><br><span class="line">   │ └── exclude</span><br><span class="line">   ├── objects</span><br><span class="line">   │ ├── info</span><br><span class="line">   │ └── pack</span><br><span class="line">   └── refs</span><br><span class="line">    ├── heads</span><br><span class="line">    └── tags</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>HEAD后面再讲。</li>
+<li>config （配置）该文件包含你的仓库配置，比如远程的 url ，你的邮箱和用户名等。每次你在控制台使用 git config… 都会对这里产生影响。</li>
+<li>description（描述）供 gitweb ( github 的一种前身) 使用，显示仓库的描述。</li>
+<li>hooks (钩子)这是一个有趣的特性。 Git 提供了一套脚本，可以在每个有意义的 Git 阶段自动运行。这些被称为钩子的脚本可以在提交 (commit)、变基 (rebase)、拉取 ( pull ) 操作的前后运行。脚本命预示着它的执行时机。如我们可以编写 pre-push 的作为钩子，进行推送代码前的检查。</li>
+<li>info (信息)你可以将不想被 git 管理的文件记录到 .gitignore 文件中。排除文件的意思是不想共享这个文件。例如你不想共享你的 IDE 自定义配置，将其添加到 .gitignore 文件中即可。</li>
+</ul>
+<h2 id="一次提交包含哪些内容？"><a href="#一次提交包含哪些内容？" class="headerlink" title="一次提交包含哪些内容？"></a>一次提交包含哪些内容？</h2><p>每次你创建一个文件，并追踪它，git 都将把文件进行压缩并存储在自己的数据结构中。被压缩的对象将具有唯一的名称和 hash 值，并将存储到对象 (object) 目录中。</p>
+<p>在研究对象目录之前，我们必须明白一次提交的含义是什么。你可能会说，一次提交就是当前工作目录的一个快照，但事实远不止如此。</p>
+<p>实际上，当你提交时，git 通过下面两个步骤对你的工作目录创建快照：</p>
+<ul>
+<li>如果文件没啥变化，git 只是将压缩的文件（哈希值）添加到快照中。</li>
+<li>如果文件发生了变化， git 将对其进行压缩并将其存储在 object 文件夹。最终，将这个压缩文件的名称（哈希值）添加到快照中。</li>
+</ul>
+<p>这里给出一个简化的过程，实际上整个过程有点复杂，将在以后的文章中给出详细的介绍。</p>
+<p>一旦快照被创建出来，它将会被压缩，以哈希值命名。那么这些压缩的对象存在哪里呢？他们被存在 object 文件夹中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">├── 4c</span><br><span class="line">│ └── f44f1e3fe4fb7f8aa42138c324f63f5ac85828 // hash</span><br><span class="line">├── 86</span><br><span class="line">│ └── 550c31847e518e1927f95991c949fc14efc711 // hash</span><br><span class="line">├── e6</span><br><span class="line">│ └── 9de29bb2d1d6434b8b29ae775ad8c2e48c5391 // hash</span><br><span class="line">├── info // let&#x27;s ignore that</span><br><span class="line">└── pack // let&#x27;s ignore that too</span><br></pre></td></tr></table></figure>
+
+<p>这是我创建了一个空的文件 1.txt 并提交后 object 文件夹的样子。请注意，如果你的文件哈希值为 “4cf44f1e…”，git 会将其存储到 “4c”子目录中，并将其命名为”f44f1…”。这个小技巧，将 /objects 目录的数量减少到 255 个以内。</p>
+<p>你要记住的是，一次提交包含 4 个部分：</p>
+<ol>
+<li>工作目录快照名称（一个哈希值）。</li>
+<li>一条评论/注释。</li>
+<li>提交者信息。</li>
+<li>父提交的哈希值。</li>
+</ol>
+<p>如果我们解压提交的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 通过查看提交历史，你可以轻松地查询到提交的哈希值</span><br><span class="line">// 你都不需要复制完整的哈希值字符串，</span><br><span class="line">// 复制能够保证哈希值的唯一性的前面一段即可。</span><br><span class="line">git cat-file -p 4cf44f1e3fe4fb7f8aa42138c324f63f5ac85828</span><br></pre></td></tr></table></figure>
+
+<p>得到下面的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tree 86550c31847e518e1927f95991c949fc14efc711</span><br><span class="line">author Pierre De Wulf &lt;test[@gmail.com](mailto:pierredewulf31@gmail.com)&gt; 1455775173 -0500</span><br><span class="line">committer Pierre De Wulf &lt;[test@gmail.com](mailto:pierredewulf31@gmail.com)&gt; 1455775173 -0500</span><br><span class="line"></span><br><span class="line">commit A</span><br></pre></td></tr></table></figure>
+
+<p>正如预想的一样，我们看到了快照的哈希值、作者信息和提交的注释。</p>
+<p>有两个非常重要的事项：</p>
+<ul>
+<li>正如所预想的那样，快照的哈希 “86550…” 也是一个对象，你可以在对象文件夹中找到它。</li>
+<li>因为这是第一次提交，所以没有父提交的哈希值。</li>
+</ul>
+<p>那么，在快照中存的是啥呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git cat-file -p 86550c31847e518e1927f95991c949fc14efc711</span><br><span class="line"></span><br><span class="line">100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 file_1.txt</span><br></pre></td></tr></table></figure>
+
+<p>我们找到之前存储的最后一个对象，也是我们快照中的唯一的一个对象。它是一个 blob 对象，这是另外的知识点，不在这里讨论。</p>
+<h2 id="分支-标签-HEAD-都一样"><a href="#分支-标签-HEAD-都一样" class="headerlink" title="分支, 标签, HEAD 都一样"></a>分支, 标签, HEAD 都一样</h2><p>你现在已经了解到，git 中的所有内容都可以通过正确的哈希值来获取到。现在让我们聚焦于 HEAD。那么什么是 HEAD？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat HEAD</span><br><span class="line">ref: refs/heads/master</span><br></pre></td></tr></table></figure>
+
+<p>HEAD 不是一个哈希，HEAD 可以理解为指向你正在使用的分支的顶端的指针。我们接下来看下 refs/heads/master：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat refs/heads/master</span><br><span class="line">4cf44f1e3fe4fb7f8aa42138c324f63f5ac85828</span><br></pre></td></tr></table></figure>
+
+<p>看起来眼熟吗？这和我们第一次提交的哈希值相同。这表明分支 ( branch) 和标签 (tag) 只不过是一个指向提交的指针。这就意味着，即使你删掉了你要删除的分支和标签，他们指向的提交依然还在那里，只不过删除后难获取这些提交更困难一些。如果你想了解更详细的内容，可以通过 git book 来学习。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>所以学到这里，你应该明白 git 提交就是把你当前工作目录的文件“压缩”，然后将其和其他信息一起存储到对象文件夹中。如果你对 git 足够熟悉，你就会知道哪些文件会包含在提交中，哪些文件不会被提交。</p>
+<p>我这里说的提交，并不是指你的工作目录快照，而是指你要提交的文件快照。在实际执行之前，git 会在哪里存储你要提交的文件？它将他们存储到索引文件中。不过，我们暂时不打算深入研究它。如果你真的感兴趣，可以通过这里（<a href="https://link.zhihu.com/?target=https://github.com/git/git/blob/master/Documentation/technical/index-format.txt">https://github.com/git/git/blob/master/Documentation/technical/index-format.txt</a>）深入学习。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
