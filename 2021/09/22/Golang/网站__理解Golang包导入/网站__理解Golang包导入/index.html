@@ -1,0 +1,153 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;理解Golang包导入&quot;&gt;&lt;a href=&quot;#理解Golang包导入&quot; class=&quot;headerlink&quot; title=&quot;理解Golang包导入&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://tonybai.com/2015/03/09/understanding-import-packages/&quot;&gt;理解Golang包导入&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;Golang所有语法可见性均定义在package这个级别。包的定义和使用看起来十分简单：通过package关键字定义包：&lt;code&gt;  package xxx&lt;/code&gt;，使用import关键字，导入要使用的标准库包或第三方依赖包。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>理解Golang包导入 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2021-09-22</div></div></div><div class="container post-header"><h1>理解Golang包导入</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%90%86%E8%A7%A3Golang%E5%8C%85%E5%AF%BC%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">理解Golang包导入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%BC%96%E8%AF%91%E6%97%B6%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E5%8C%85%E6%BA%90%E7%A0%81%E8%BF%98%E6%98%AF-a"><span class="toc-number">1.1.</span> <span class="toc-text">一、编译时使用的是包源码还是.a</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%9B%AE%E5%BD%95%E5%90%8D%E8%BF%98%E6%98%AF%E5%8C%85%E5%90%8D"><span class="toc-number">1.2.</span> <span class="toc-text">二、目录名还是包名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81import-m-%E2%80%9Clib-math%E2%80%9D"><span class="toc-number">1.3.</span> <span class="toc-text">三、import m “lib&#x2F;math”</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="理解Golang包导入"><a href="#理解Golang包导入" class="headerlink" title="理解Golang包导入"></a><a target="_blank" rel="noopener" href="https://tonybai.com/2015/03/09/understanding-import-packages/">理解Golang包导入</a></h1><p>Golang所有语法可见性均定义在package这个级别。包的定义和使用看起来十分简单：通过package关键字定义包：<code>  package xxx</code>，使用import关键字，导入要使用的标准库包或第三方依赖包。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;a/b/c&quot;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">c.Func1()</span><br><span class="line">fmt.Println(<span class="string">&quot;Hello, World&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>很多Golang初学者看到上面代码，都会想当然的将import后面的”c”、”fmt”当成包名，将其与c.Func1()和 fmt.Println()中的c和fmt认作为同一个语法元素：包名。</p>
+<p>但在深入Golang后，很多人便会发现事实上并非如此。比如在使用实时分布式消息平台nsq提供的go client api时：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> “github.com/bitly/<span class="keyword">go</span>-nsq”</span><br></pre></td></tr></table></figure>
+
+<p>但在使用其提供的export functions时，却用<a target="_blank" rel="noopener" href="http://github.com/bitly/nsq">nsq</a>做前缀包名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q, _ := nsq.NewConsumer(<span class="string">&quot;write_test&quot;</span>, <span class="string">&quot;ch&quot;</span>, config)</span><br></pre></td></tr></table></figure>
+
+<p>不禁要问：import后面路径中的最后一个元素到底代表的是啥? 是包名还是仅仅是一个路径？</p>
+<p>通过试验来理解一下。 实验环境：darwin_amd64 , go 1.4。初始试验环境目录结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GOPATH = /Users/tony/Test/Go/pkgtest/</span><br><span class="line">pkgtest/</span><br><span class="line">  pkg/</span><br><span class="line">  src/</span><br><span class="line">    libproj1/</span><br><span class="line">      foo/</span><br><span class="line">       foo1.go</span><br><span class="line">    app1/</span><br><span class="line">      main.go</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="一、编译时使用的是包源码还是-a"><a href="#一、编译时使用的是包源码还是-a" class="headerlink" title="一、编译时使用的是包源码还是.a"></a>一、编译时使用的是包源码还是.a</h2><ul>
+<li><strong>一个非main包在编译后会生成一个.a文件</strong>（在临时目录下生成，除非使用go install安装到$GOROOT或$GOPATH下，否则你看不到.a），用于后续可执行程序链接使用。</li>
+<li>比如GO标准库中的包对应的源码部分路径在：$GOROOT/src，而标准库中包编译后的.a文件路径在$GOROOT/pkg/darwin_amd64下。</li>
+<li>那么，编译时，编译器到底用的是.a还是源码？</li>
+</ul>
+<p>我们先以用户自定义的package为例做个小实验。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH/src/</span><br><span class="line">  libproj1/foo/</span><br><span class="line">      – foo1.go</span><br><span class="line">  app1</span><br><span class="line">      – main.go</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//foo1.go</span></span><br><span class="line"><span class="keyword">package</span> foo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Foo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;Foo1&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;libproj1/foo&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  foo.Foo1()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>执行<code>go install libproj1/foo</code>，Go编译器编译foo包，并将foo.a安装到$GOPATH/pkg/darwin_amd64/libproj1下。</p>
+</li>
+<li><p>编译app1：<code>go build app1</code>，在app1目录下生成app1*可执行文件，执行app1，我们得到一个初始预期结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./app1</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line">Foo1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>现在我们无法看出使用的到底是foo的源码还是foo.a，因为目前它们的输出都是一致的。我们修改一下foo1.go的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//foo1.go</span></span><br><span class="line"><span class="keyword">package</span> foo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Foo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;Foo1 – modified&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新编译执行app1，我们得到结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./app1</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line">Foo1 – modified</span><br></pre></td></tr></table></figure>
+
+<p>实际测试结果告诉我们：</p>
+<blockquote>
+<p><strong>在使用第三方包的时候，当源码和.a均已安装的情况下，编译器链接的是源码。</strong></p>
+</blockquote>
+<p>那么是否可以只链接.a，不用第三方包源码呢？我们临时删除掉libproj1目录，但保留之前install的libproj1/foo.a文件。</p>
+<p>我们再次尝试编译app1，得到如下错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$go build app1</span><br><span class="line">main.go:5:2: cannot find package &quot;libproj1/foo&quot; in any of:</span><br><span class="line">  /Users/tony/.Bin/go14/src/libproj1/foo (from $GOROOT)</span><br><span class="line">  /Users/tony/Test/Go/pkgtest/src/libproj1/foo (from $GOPATH)</span><br></pre></td></tr></table></figure>
+
+<p>编译器还是去找源码，而不是.a，因此我们要依赖第三方包，就必须搞到第三方包的源码，这也是Golang包管理的一个特点。</p>
+<p>其实通过编译器的详细输出我们也可得出上面结论。我们在编译app1时给编译器传入-x -v选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$go build -x -v app1</span><br><span class="line">WORK=/var/folders/2h/xr2tmnxx6qxc4w4w13m01fsh0000gn/T/go-build797811168</span><br><span class="line">libproj1/foo</span><br><span class="line">mkdir -p $WORK/libproj1/foo/_obj/</span><br><span class="line">mkdir -p $WORK/libproj1/</span><br><span class="line">cd /Users/tony/Test/Go/pkgtest/src/libproj1/foo</span><br><span class="line">/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6g -o $WORK/libproj1/foo.a -trimpath $WORK -p libproj1/foo -complete -D _/Users/tony/Test/Go/pkgtest/src/libproj1/foo -I $WORK -pack ./foo1.go ./foo2.go</span><br><span class="line">app1</span><br><span class="line">mkdir -p $WORK/app1/_obj/</span><br><span class="line">mkdir -p $WORK/app1/_obj/exe/</span><br><span class="line">cd /Users/tony/Test/Go/pkgtest/src/app1</span><br><span class="line">/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6g -o $WORK/app1.a -trimpath $WORK -p app1 -complete -D _/Users/tony/Test/Go/pkgtest/src/app1 -I $WORK -I /Users/tony/Test/Go/pkgtest/pkg/darwin_amd64 -pack ./main.go</span><br><span class="line">cd .</span><br><span class="line">**/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6l -o $WORK/app1/_obj/exe/a.out -L $WORK -L /Users/tony/Test/Go/pkgtest/pkg/darwin_amd64 -extld=clang $WORK/app1.a**</span><br><span class="line">mv $WORK/app1/_obj/exe/a.out app1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>可以看到编译器6g首先在临时路径下编译出依赖包foo.a，放在$WORK/libproj1下。</li>
+<li>但我们在最后6l链接器的执行语句中并未显式看到app1链接的是$WORK/libproj1下的foo.a。</li>
+<li>但是从6l链接器的-L参数来看：<code>-L $WORK -L /Users/tony/Test/Go/pkgtest/pkg/darwin_amd64，</code>我们发现$WORK目录放在了前面，我们猜测6l首先搜索到的时$WORK下面的libproj1/foo.a。</li>
+</ul>
+<p>为了验证我们的推论，我们按照编译器输出，按顺序手动执行了一遍如上命令，但在最后执行6l命令时，去掉了-L $WORK：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6l -o $WORK/app1/_obj/exe/a.out -L /Users/tony/Test/Go/pkgtest/pkg/darwin_amd64 -extld=clang $WORK/app1.a**</span><br></pre></td></tr></table></figure>
+
+<p>这样做的结果是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./app1</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line">Foo1</span><br></pre></td></tr></table></figure>
+
+<p>编译器链接了$GOPATH/pkg下的foo.a。到这里我们明白了:</p>
+<blockquote>
+<p><strong>所谓的使用第三方包源码，实际上是链接了以该最新源码编译的临时目录下的.a文件而已。</strong></p>
+</blockquote>
+<p>Go标准库中的包也是这样么？对于标准库，比如fmt而言，编译时，到底使用的时$GOROOT/src下源码还是$GOROOT/pkg下已经编译好的.a呢？</p>
+<p>我们不妨也来试试，一个最简单的hello world例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.go</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;Hello, World&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们先将$GOROOT/src/fmt目录rename为fmtbak，看看go compiler有何反应？</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">go build -x -v ./</span><br><span class="line">WORK=/var/folders/2h/xr2tmnxx6qxc4w4w13m01fsh0000gn/T/go-build957202426</span><br><span class="line">main.go:4:8: cannot find package <span class="string">&quot;fmt&quot;</span> <span class="keyword">in</span> any of:</span><br><span class="line">  /Users/tony/.Bin/go14/src/fmt (from <span class="variable">$GOROOT</span>)</span><br><span class="line">  /Users/tony/Test/Go/pkgtest/src/fmt (from <span class="variable">$GOPATH</span>)</span><br></pre></td></tr></table></figure>
+
+<p>找不到fmt包了。显然标准库在编译时也是必须要源码的。不过与自定义包不同的是，<strong>即便你修改了fmt包的源码（未重新编译GO安装包），用户源码编译时，也不会尝试重新编译fmt包的，依旧只是在链接时链接已经编译好的fmt.a</strong>。</p>
+<p>通过下面的gc输出可以验证这点：</p>
+<p>找不到fmt包了。显然标准库在编译时也是必须要源码的。不过与自定义包不同的是，即便你修改了fmt包的源码（未重新编译GO安装包），用户源码编译时，也不会尝试重新编译fmt包的，依旧只是在链接时链接已经编译好的fmt.a。通过下面的gc输出可以验证这点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$go build -x -v ./</span><br><span class="line">WORK=/var/folders/2h/xr2tmnxx6qxc4w4w13m01fsh0000gn/T/go-build773440756</span><br><span class="line">app1</span><br><span class="line">mkdir -p $WORK/app1/_obj/</span><br><span class="line">mkdir -p $WORK/app1/_obj/exe/</span><br><span class="line">cd /Users/tony/Test/Go/pkgtest/src/app1</span><br><span class="line">/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6g -o $WORK/app1.a -trimpath $WORK -p app1 -complete -D _/Users/tony/Test/Go/pkgtest/src/app1 -I $WORK -pack ./main.go</span><br><span class="line">cd .</span><br><span class="line">/Users/tony/.Bin/go14/pkg/tool/darwin_amd64/6l -o $WORK/app1/_obj/exe/a.out -L $WORK -extld=clang $WORK/app1.a</span><br><span class="line">mv $WORK/app1/_obj/exe/a.out app1</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，编译器的确并未尝试编译标准库中的fmt源码。</p>
+<h2 id="二、目录名还是包名"><a href="#二、目录名还是包名" class="headerlink" title="二、目录名还是包名"></a>二、目录名还是包名</h2><p>从第一节的实验中，我们得知了编译器在编译过程中依赖的是包源码的路径，这为后续的实验打下了基础。</p>
+<p>下面我们再来看看，Go语言中import后面路径中最后的一个元素到底是包名还是路径名？</p>
+<p>本次实验目录结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH</span><br><span class="line">  src/</span><br><span class="line">    libproj2/</span><br><span class="line">       foo/</span><br><span class="line">        foo1.go</span><br><span class="line">    app2/</span><br><span class="line">       main.go</span><br></pre></td></tr></table></figure>
+
+<p>按照Golang语言习惯，一个go package的所有源文件放在同一个目录下，且该目录名与该包名相同，比如libproj1/foo目录下的package为foo，foo1.go、 foo2.go…共同组成foo package的源文件。但目录名与包名也可以不同，我们就来试试不同的。</p>
+<p>我们建立libproj2/foo目录，其中的foo1.go代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//foo1.go</span></span><br><span class="line"><span class="keyword">package</span> bar</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bar1</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;Bar1&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：这里package名为bar，与目录名foo完全不同。</p>
+<p>接下来就给app2带来了难题：该如何import bar包呢？我们假设import路径中的最后一个元素是包名，而非路径名。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app2/main.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;libproj2/bar&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  bar.Bar1()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译app2：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$go build -x -v app2</span><br><span class="line">WORK=/var/folders/2h/xr2tmnxx6qxc4w4w13m01fsh0000gn/T/go-build736904327</span><br><span class="line">main.go:5:2: cannot find package &quot;libproj2/bar&quot; in any of:</span><br><span class="line">  /Users/tony/.Bin/go14/src/libproj2/bar (from $GOROOT)</span><br><span class="line">  /Users/tony/Test/Go/pkgtest/src/libproj2/bar (from $GOPATH)</span><br></pre></td></tr></table></figure>
+
+<p>编译失败，在两个路径下无法找到对应libproj2/bar包。</p>
+<p>我们的假设错了，我们把它改为路径：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app2/main.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;libproj2/foo&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  bar.Bar1()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再编译执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go build app2</span><br><span class="line">app2</span><br><span class="line">Bar1</span><br></pre></td></tr></table></figure>
+
+<p>这回编译顺利通过，执行结果也是OK的。这样我们得到了结论：</p>
+<blockquote>
+<p><strong>import后面的最后一个元素应该是路径，就是目录，并非包名</strong></p>
+</blockquote>
+<p>go编译器在这些路径(libproj2/foo)下找bar包。这样看来，go语言的惯例只是一个特例，即恰好目录名与包名一致罢了。也就是说下面例子中的两个foo含义不同：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;libproj1/foo&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  foo.Foo()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>import中的<code>foo</code>只是一个文件系统的路径罢了。</li>
+<li>而下面foo.Foo()中的<code>foo</code>则是包名。而这个包是在libproj1/foo目录下的源码中找到的。</li>
+</ul>
+<p>再类比一下标准库包fmt。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line">fmt.Println(<span class="string">&quot;xxx&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里上下两行中虽然都是<code>fmt</code>，但同样含义不同，</p>
+<ul>
+<li>一个是路径 ，对于标准库来说，是$GOROOT/src/fmt这个路径。</li>
+<li>而第二行中的fmt则是包名。gc会在$GOROOT/src/fmt路径下找到fmt包的源文件。</li>
+</ul>
+<h2 id="三、import-m-“lib-math”"><a href="#三、import-m-“lib-math”" class="headerlink" title="三、import m “lib/math”"></a>三、import m “lib/math”</h2><p>Go language specification中关于import package时列举的一个例子如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Import declaration     Local name of Sin</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span>  <span class="string">&quot;lib/math&quot;</span>     math.Sin</span><br><span class="line"><span class="keyword">import</span> m <span class="string">&quot;lib/math&quot;</span>     m.Sin</span><br><span class="line"><span class="keyword">import</span> . <span class="string">&quot;lib/math&quot;</span>     Sin</span><br></pre></td></tr></table></figure>
+
+<p>我们看到<code>import m &quot;lib/math&quot; m.Sin</code>一行。我们说过lib/math是路径，import语句用m替代lib/math，并在代码中通过m访问math包中的导出函数Sin。</p>
+<p>那m到底是包名还是路径呢？既然能通过m访问Sin，那m肯定是包名了，Right！</p>
+<p>那import m “lib/math”该如何理解呢？ </p>
+<p>根据上面得出的结论，我们尝试理解一下m：</p>
+<blockquote>
+<p><strong>m指代的是lib/math路径下唯一的那个包</strong></p>
+</blockquote>
+<p>一个目录下是否可以存在两个包呢？我们来试试。</p>
+<p>我们在libproj1/foo下新增一个go源文件，bar1.go：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> bar</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bar1</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;Bar1&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们重新构建一下这个目录下的包：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$go build libproj1/foo</span><br><span class="line">can&#x27;t load package: package libproj1/foo: found packages bar1.go (bar) and foo1.go (foo) in /Users/tony/Test/Go/pkgtest/src/libproj1/foo</span><br></pre></td></tr></table></figure>
+
+<p>我们收到了错误提示，编译器在这个路径下发现了两个包，这是不允许的。</p>
+<p>我们再作个实验，来验证我们对m含义的解释。</p>
+<p>我们建立app3目录，其main.go的源码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> m <span class="string">&quot;libproj2/foo&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  m.Bar1()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>libproj2/foo路径下的包的包名为bar，按照我们的推论，m指代的就是bar这个包，通过m我们可以访问bar的Bar1导出函数。</p>
+<p>编译并执行上面main.go：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$go build app3</span><br><span class="line">$app3</span><br><span class="line">Bar1</span><br></pre></td></tr></table></figure>
+
+<p>执行结果与我们推论完全一致。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
