@@ -3,7 +3,7 @@
 <p>根据调研和实测，目前有两种备份树莓派系统的方法，它们有各自的适用范围。以下分别介绍这两种方法。</p>
 <h3 id="对-TF-卡进行完整备份"><a href="#对-TF-卡进行完整备份" class="headerlink" title="对 TF 卡进行完整备份"></a>对 TF 卡进行完整备份</h3><p>我们在 PC 上用来向 TF 卡烧录系统的软件 Win32DiskImager，也可以用来将 TF 卡上的系统完整备份为一个镜像文件。</p>
 <p>我们把树莓派关机后，将 TF 卡拔出，通过读卡器连到 PC 上（照例忽视系统弹出的「需要格式化」等警告）。在 PC 上打开 Win32DiskImager，在「映像文件」中选择准备存放镜像文件的路径，并输入镜像文件名称和「.img」后缀。确认「设备」选中的是 TF 卡 boot 分区对应的盘符，然后点击「读取」，此时软件会从「设备」向「映像文件」传输文件，完成后，TF 卡上的树莓派系统就备份到 <code>D:/Raspberry Pi/systemBackUp.img</code> 这个镜像文件中了。</p>
-<p><img src="/images/1.png" alt="img"></p>
+<p><img src="/images/83e1daee-1.png" alt="img"></p>
 <p>现在，我们就将树莓派现在的系统完整备份到了这个镜像文件。想恢复这个系统时，我们只需要将 TF 卡格式化之后，按照上文「2. 烧录树莓派系统」中的操作，将此镜像文件烧录到 TF 卡中即可。</p>
 <p>推荐大家使用 <a target="_blank" rel="noopener" href="https://www.sdcardformatter.com/download/">SD Card Formatter</a> 来格式化 TF 卡，有 Windows 和 MacOS 版本。它可以十分方便、干净完成对 TF 卡的格式化，不容易误格式化其他硬盘。</p>
 <p><img src="/images/1-20210809141655700.png" alt="img"></p>

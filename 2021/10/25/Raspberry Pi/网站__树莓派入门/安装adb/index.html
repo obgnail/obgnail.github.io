@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;win10安装ADB&quot;&gt;&lt;a href=&quot;#win10安装ADB&quot; class=&quot;headerlink&quot; title=&quot;win10安装ADB&quot;&gt;&lt;/a&gt;win10安装ADB&lt;/h1&gt;&lt;p&gt;下载"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>安装adb | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Raspberry-Pi/" rel="tag">Raspberry Pi</a></div><div class="post-time">2021-10-25</div></div></div><div class="container post-header"><h1>安装adb</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#win10%E5%AE%89%E8%A3%85ADB"><span class="toc-number">1.</span> <span class="toc-text">win10安装ADB</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%9A%E8%BF%87WIFI%E8%BF%9E%E6%8E%A5%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA"><span class="toc-number">2.</span> <span class="toc-text">通过WIFI连接安卓手机</span></a></li></ol></details></div><div class="container post-content"><h1 id="win10安装ADB"><a href="#win10安装ADB" class="headerlink" title="win10安装ADB"></a>win10安装ADB</h1><p>下载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://dl.google.com/android/repository/platform-tools-latest-windows.zip</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>解压缩文件。</p>
+</li>
+<li><p>设置两个全局变量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\software\adb\platform-tools</span><br><span class="line">%Android%</span><br></pre></td></tr></table></figure></li>
+<li><p>cmd执行<code>ADB version</code>，输出如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Android Debug Bridge version 1.0.41</span><br><span class="line">Version 31.0.3-7562133</span><br><span class="line">Installed as D:\software\adb\platform-tools\adb.exe</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="通过WIFI连接安卓手机"><a href="#通过WIFI连接安卓手机" class="headerlink" title="通过WIFI连接安卓手机"></a>通过WIFI连接安卓手机</h1><p>确保电脑和 Android 设备连接在同一个 WIFI 网络环境</p>
+<ol>
+<li><p>查看手机IP</p>
+<p>设置－关于手机－状态信息－IP 地址中查看</p>
+</li>
+<li><p><code>ping android设备的IP</code>，如果 ping 成功，说明可以连接</p>
+</li>
+<li><p><code> adb connect android设备的IP</code> </p>
+<ul>
+<li>如果不成功，报错<code>cannot connect to 192.168.3.4:5555: 由于目标计算机积极拒绝，无法连接。 (10061)</code>。</li>
+<li>将手机通过USB连接到电脑，</li>
+<li>手机开启开发者选项和 USB 调试模式</li>
+<li>PC执行<code>adb devices -l</code>就可以看到手机了</li>
+<li>设置手机的监听 <code>adb tcpip 5555</code>;</li>
+<li>通过 IP 连接到手机 <code>adb connect ip</code>（端口默认：5555）;</li>
+<li><code>adb devices -l</code> 命令查看。</li>
+</ul>
+</li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第一部分-HTTP：Web的基础&quot;&gt;&lt;a href=&quot;#第一部分-HTTP：Web的基础&quot; class=&quot;headerlink&quot; title=&quot;第一部分 HTTP：Web的基础&quot;&gt;&lt;/a&gt;第一部分 HTTP：Web的基础&lt;/h2&gt;&lt;h3 id=&quot;URL和URI的关系&quot;&gt;&lt;a href=&quot;#URL和URI的关系&quot; class=&quot;headerlink&quot; title=&quot;URL和URI的关系&quot;&gt;&lt;/a&gt;URL和URI的关系&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;URI 有两种形式，分别称为 URL 和 URN。现在，几乎所有的 URI 都是 URL。&lt;/li&gt;
+&lt;li&gt;URN（Uniform Resource Name）是作为特定内容的唯一名称使用的，与目前的资源所在地无关。使用这些与位置无关的 URN，就可以将资源四处搬移。通过 URN，还可以用同一个名字通过多种网络访问协议来访问资源。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;从名字入手：&lt;ul&gt;
+&lt;li&gt;URI = Uniform Resource Identifier 统一资源&lt;strong&gt;标志符&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;URL = Uniform Resource Locator 统一资源&lt;strong&gt;定位符&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;URN = Uniform Resource Name 统一资源&lt;strong&gt;名称&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;URI是抽象的定义，不管用什么方法表示，只要能定位一个资源，就叫URI。&lt;/li&gt;
+&lt;li&gt;URI本来设想的的使用两种方法定位：&lt;ul&gt;
+&lt;li&gt;URL：用地址定位资源&lt;/li&gt;
+&lt;li&gt;URN：用名称定位资源&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;举个例子：去村子找个具体的人（URI）："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>HTTP权威指南 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-10-25</div></div></div><div class="container post-header"><h1>HTTP权威指南</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-HTTP%EF%BC%9AWeb%E7%9A%84%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">第一部分 HTTP：Web的基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL%E5%92%8CURI%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.</span> <span class="toc-text">URL和URI的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web%E7%9A%84%E7%BB%93%E6%9E%84%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">Web的结构组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E5%85%B3"><span class="toc-number">1.2.1.</span> <span class="toc-text">网关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%A7%E9%81%93"><span class="toc-number">1.2.2.</span> <span class="toc-text">隧道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Agent%E4%BB%A3%E7%90%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">Agent代理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP%E6%80%A7%E8%83%BD%E8%81%9A%E7%84%A6%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.3.</span> <span class="toc-text">HTTP性能聚焦区域</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E8%BF%9E%E6%8E%A5%E7%9A%84%E6%8F%A1%E6%89%8B%E6%97%B6%E5%BB%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">TCP连接的握手时延</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E6%85%A2%E5%90%AF%E5%8A%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">TCP慢启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Nagle%E7%AE%97%E6%B3%95%E4%B8%8ETCP-NODELAY"><span class="toc-number">1.3.3.</span> <span class="toc-text">Nagle算法与TCP_NODELAY</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TIME-WAIT%E7%B4%AF%E7%A7%AF%E4%B8%8E%E7%AB%AF%E5%8F%A3%E8%80%97%E5%B0%BD"><span class="toc-number">1.3.4.</span> <span class="toc-text">TIME_WAIT累积与端口耗尽</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-HTTP%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">第二部分 HTTP结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WEB%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">WEB服务器的处理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90HTML%E6%8A%A5%E6%96%87"><span class="toc-number">2.2.</span> <span class="toc-text">解析HTML报文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E7%9A%84%E8%BE%93%E5%85%A5-%E8%BE%93%E5%87%BA%E5%A4%84%E7%90%86%E7%BB%93%E6%9E%84"><span class="toc-number">2.3.</span> <span class="toc-text">连接的输入&#x2F;输出处理结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B2%E4%B8%AD%E7%BB%A7%E5%8F%AF%E8%83%BD%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">2.4.</span> <span class="toc-text">盲中继可能引发的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E8%AF%86%E5%88%AB%E3%80%81%E8%AE%A4%E8%AF%81%E4%B8%8E%E5%AE%89%E5%85%A8"><span class="toc-number">3.</span> <span class="toc-text">第三部分 识别、认证与安全</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="toc-number">3.1.</span> <span class="toc-text">cookie的字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="toc-number">3.2.</span> <span class="toc-text">数字签名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSL%E6%8F%A1%E6%89%8B"><span class="toc-number">3.3.</span> <span class="toc-text">SSL握手</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E5%AE%9E%E4%BD%93%E3%80%81%E7%BC%96%E7%A0%81%E5%92%8C%E5%9B%BD%E9%99%85%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">第四部分 实体、编码和国际化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Content-Length-%E5%AE%9E%E4%BD%93%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="toc-number">4.1.</span> <span class="toc-text">Content-Length: 实体的大小</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="第一部分-HTTP：Web的基础"><a href="#第一部分-HTTP：Web的基础" class="headerlink" title="第一部分 HTTP：Web的基础"></a>第一部分 HTTP：Web的基础</h2><h3 id="URL和URI的关系"><a href="#URL和URI的关系" class="headerlink" title="URL和URI的关系"></a>URL和URI的关系</h3><ul>
+<li>URI 有两种形式，分别称为 URL 和 URN。现在，几乎所有的 URI 都是 URL。</li>
+<li>URN（Uniform Resource Name）是作为特定内容的唯一名称使用的，与目前的资源所在地无关。使用这些与位置无关的 URN，就可以将资源四处搬移。通过 URN，还可以用同一个名字通过多种网络访问协议来访问资源。</li>
+</ul>
+<blockquote>
+<ul>
+<li>从名字入手：<ul>
+<li>URI = Uniform Resource Identifier 统一资源<strong>标志符</strong></li>
+<li>URL = Uniform Resource Locator 统一资源<strong>定位符</strong></li>
+<li>URN = Uniform Resource Name 统一资源<strong>名称</strong></li>
+</ul>
+</li>
+<li>URI是抽象的定义，不管用什么方法表示，只要能定位一个资源，就叫URI。</li>
+<li>URI本来设想的的使用两种方法定位：<ul>
+<li>URL：用地址定位资源</li>
+<li>URN：用名称定位资源</li>
+</ul>
+</li>
+</ul>
+<p>举个例子：去村子找个具体的人（URI）：</p>
+<ul>
+<li>如果用地址某村多少号房子第几间房的主人 就是URL， </li>
+<li>如果用身份证号+名字去找就是URN了。</li>
+</ul>
+<p>结果就是目前WEB上就URL流行开了，平常见得URI 基本都是URL。</p>
+</blockquote>
+<h3 id="Web的结构组件"><a href="#Web的结构组件" class="headerlink" title="Web的结构组件"></a>Web的结构组件</h3><h4 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h4><p>网关（gateway）是一种特殊的服务器，<strong>作为其他服务器的中间实体使用</strong>。</p>
+<p>通常用于将 HTTP 流量转换成其他的协议。网关接受请求时就好像自己是资源的源端服务器 一样。客户端可能并不知道自己正在与一个网关进行通信。</p>
+<p>例如，一个 HTTP/FTP 网关会通过 HTTP 请求接收对 FTP URI 的请求，但通过 FTP 协议来获取文档。得到的文档会被封装成一条 HTTP 报文，发送给客户端。</p>
+<p><img src="/images/image-20211020154735487.png" alt="image-20211020154735487"></p>
+<p>可以使用一个斜杠来分隔客户端和服务器端协议，并以此对网关进行描述：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;客户端协议&gt;/&lt;服务器端协议&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此，将 HTTP 客户端连接到 NNTP 新闻服务器的网关就是一个 HTTP/NNTP 网关。</p>
+<p>常见的网关：</p>
+<ul>
+<li><code>HTTP/*</code>：服务器端Web网关</li>
+<li><code>HTTP/HTTPS</code>：服务器端安全网关</li>
+<li><code>HTTPS/HTTP</code>：客户端安全加速器网关</li>
+</ul>
+<h4 id="隧道"><a href="#隧道" class="headerlink" title="隧道"></a>隧道</h4><p>隧道（tunnel）是建立起来之后，就会<strong>在两条连接之间对原始数据进行盲转发的 HTTP 应用程序</strong>。HTTP 隧道通常用来在一条或多条 HTTP 连接上转发非 HTTP 数据，转发时不会窥探数据。</p>
+<ul>
+<li>Web隧道允许用户通过 HTTP 连接发送非 HTTP 流量，这样就可以在 HTTP 上捎带 其他协议数据了。</li>
+<li>使用 Web隧道最常见的原因就是要在 HTTP 连接中嵌入非 HTTP 流量，这样，这类流量就可以穿过只允许 Web 流量通过的防火墙了。</li>
+</ul>
+<p>使用CONNECT 方法建立一条 SSL 隧道：</p>
+<ul>
+<li>客户端发送了一 条 CONNECT 请求给隧道网关。客户端的 CONNECT 方法请求隧道网关打开一条 TCP 连接（在这里，打开的是到主机 orders.joes-hardware.com 的标准 SSL 端口 443 的连接）。 </li>
+<li>b 和c 创建了 TCP 连接。 </li>
+<li>一旦建立了 TCP 连接，网关就会发送一条 HTTP 200 Connection Established 响应来通知客户端。</li>
+<li>此时，隧道就建立起来了。客户端通过 HTTP 隧道发送的所有数据都会被直接转发给输出 TCP 连接，服务器发送的所有数据都会通过 HTTP 隧道转发给客户端。</li>
+</ul>
+<p><img src="/images/image-20211023110739637.png" alt="image-20211023110739637"></p>
+<h4 id="Agent代理"><a href="#Agent代理" class="headerlink" title="Agent代理"></a>Agent代理</h4><p>Agent代理：发起自动 HTTP 请求的半智能 Web 客户端。最常见的 HTTP Agent 代理：Web 浏览器。</p>
+<h3 id="HTTP性能聚焦区域"><a href="#HTTP性能聚焦区域" class="headerlink" title="HTTP性能聚焦区域"></a>HTTP性能聚焦区域</h3><h4 id="TCP连接的握手时延"><a href="#TCP连接的握手时延" class="headerlink" title="TCP连接的握手时延"></a>TCP连接的握手时延</h4><ul>
+<li>通常 HTTP 事务都不会交换太多数据，此时，SYN/SYN+ACK 握手会产生一个可测量的时延。</li>
+<li>TCP 连接的 ACK 分组通常都足够大，可以承载整个 HTTP 请求报文，而且很多 HTTP 服务器响应报文都可以放入一个 IP 分组中去（比如，响应是包含了装饰性图片的小型 HTML 文件，或者是对浏览器高速缓存请求产生的 304 Not Modified 响应）。</li>
+<li>最后的结果是，小的 HTTP 事务可能会在 TCP 建立上花费 50%，或更多的时间。</li>
+</ul>
+<p>解决方案：HTTP 通过重用现存连接，来减小这种 TCP 建立时延所造成的影响。</p>
+<h4 id="TCP慢启动"><a href="#TCP慢启动" class="headerlink" title="TCP慢启动"></a>TCP慢启动</h4><p>TCP 慢启动限制了一个 TCP 端点在任意时刻可以传输的分组数。简单来说，每成功 接收一个分组，发送端就有了发送另外两个分组的权限。如果某个 HTTP 事务有大 量数据要发送，是不能一次将所有分组都发送出去的。必须发送一个分组，等待确 认；然后可以发送两个分组，每个分组都必须被确认，这样就可以发送四个分组了， 以此类推。这种方式被称为“打开拥塞窗口”。</p>
+<p>解决方案：由于已调谐连接要更快一些，所以 HTTP可以重用现存连接。</p>
+<h4 id="Nagle算法与TCP-NODELAY"><a href="#Nagle算法与TCP-NODELAY" class="headerlink" title="Nagle算法与TCP_NODELAY"></a>Nagle算法与TCP_NODELAY</h4><ul>
+<li>TCP 有一个数据流接口，应用程序可以通过它将任意尺寸的数据放入 TCP 栈中—— 即使一次只放一个字节也可以！但是，每个 TCP 段中都至少装载了 40 个字节的标 记和首部，所以如果 TCP 发送了大量包含少量数据的分组，网络的性能就会严重 下降。</li>
+<li>Nagle 算法试图在发送一个分组之前，将大量 TCP 数据绑定在一起，以提高网络效率。</li>
+<li>Nagle 算法鼓励发送全尺寸（LAN 上最大尺寸的分组大约是 1500 字节，在因特网 上是几百字节）的段。只有当所有其他分组都被确认之后，Nagle 算法才允许发送非全尺寸的分组。如果其他分组仍然在传输过程中，就将那部分数据缓存起来。只有当挂起分组被确认，或者缓存中积累了足够发送一个全尺寸分组的数据时，才会 将缓存的数据发送出去。</li>
+<li>Nagle 算法会引发几种 HTTP 性能问题。首先，小的 HTTP 报文可能无法填满一个 分组，可能会因为等待那些永远不会到来的额外数据而产生时延。其次，Nagle 算 法与延迟确认之间的交互存在问题——Nagle 算法会阻止数据的发送，直到有确认 分组抵达为止，但确认分组自身会被延迟确认算法延迟 100 ～ 200 毫秒。</li>
+</ul>
+<p>解决方案：HTTP在自己的栈中设置参数 TCP_NODELAY，禁用 Nagle 算法， 提高性能。</p>
+<h4 id="TIME-WAIT累积与端口耗尽"><a href="#TIME-WAIT累积与端口耗尽" class="headerlink" title="TIME_WAIT累积与端口耗尽"></a>TIME_WAIT累积与端口耗尽</h4><ul>
+<li>当某个 TCP 端点关闭 TCP 连接时，会在内存中维护一个小的控制块，用来记录最近所关闭连接的 IP 地址和端口号。这类信息只会维持一小段时间，通常是所估计的最大分段使用期的两倍（称为 2MSL，通常为 2 分钟）左右，以确保在这段时间内不会创建具有相同地址和端口号的新连接。这个算法可以防止在两分钟内创建、关闭并重新创建两个具有相同 IP 地址和端口号的连接。</li>
+<li>由于可用源端口的数量有限（比如，60 000 个），而且在 2MSL 秒（比如，120 秒）内连接是无法重用的，连接率就被限制在了 60 000/120=500 次 / 秒。</li>
+</ul>
+<p>解决方案：增加客户端负载生成机器的数量，或者确保客户端和服务器<strong>在循环使用几个虚拟 IP 地址以增加更多的连接组合</strong>。</p>
+<h2 id="第二部分-HTTP结构"><a href="#第二部分-HTTP结构" class="headerlink" title="第二部分 HTTP结构"></a>第二部分 HTTP结构</h2><h3 id="WEB服务器的处理流程"><a href="#WEB服务器的处理流程" class="headerlink" title="WEB服务器的处理流程"></a>WEB服务器的处理流程</h3><p><img src="/images/image-20211021152950006.png" alt="image-20211021152950006"></p>
+<ol>
+<li><p>建立连接——接受一个客户端连接，或者如果不希望与这个客户端建立连接，就将其关闭。</p>
+<blockquote>
+<ul>
+<li>客户端收到一条连接之后，那么它将会<strong>把新连接添加到现存web服务器连接列表中，用于监视当前连接上的数据传输情况</strong>。期间服务器还应该做到通过一定的设备机制阻止未认证或已知恶意黑名客户端的连接，</li>
+<li>相关设别技术有：客户端主机名设别、通过ident设别客户端用户等</li>
+</ul>
+</blockquote>
+</li>
+<li><p>接收请求——从网络中读取一条 HTTP 请求报文。 </p>
+<blockquote>
+<p>主要经过几个步骤来解析报文：</p>
+<ol>
+<li>解析请求行，得知方法、url、协议版本，以及crlf符</li>
+<li>解析得到以crlf结尾的首部</li>
+<li>得到以crlf结尾，标志首部结束的空行（如果有的话）</li>
+<li>解析得到主体，（如果有的话）</li>
+</ol>
+</blockquote>
+</li>
+<li><p>处理请求——对请求报文进行解释，并采取行动。 </p>
+</li>
+<li><p>访问资源——访问报文中指定的资源。 </p>
+</li>
+<li><p>构建响应——创建带有正确首部的 HTTP 响应报文。 </p>
+</li>
+<li><p>发送响应——将响应回送给客户端。 </p>
+</li>
+<li><p>记录事务处理过程——将与已完成事务有关的内容记录在一个日志文件中。</p>
+</li>
+</ol>
+<h3 id="解析HTML报文"><a href="#解析HTML报文" class="headerlink" title="解析HTML报文"></a>解析HTML报文</h3><p><img src="/images/image-20211022122919065.png" alt="image-20211022122919065"></p>
+<h3 id="连接的输入-输出处理结构"><a href="#连接的输入-输出处理结构" class="headerlink" title="连接的输入/输出处理结构"></a>连接的输入/输出处理结构</h3><p>因为请求可能会在任意时刻到达，所以 Web 服务器会不停地观察有无新的 Web 请求。不同的 Web 服务器结构会以不同的方式为请求服务。</p>
+<ul>
+<li><p>单线程 Web 服务器</p>
+<p>单线程的 Web 服务器一次只处理一个请求，直到其完成为止。一个事务处理结束之后，才去处理下一条连接。这种结构易于实现，但在处理过程中，所有其他连接都会被忽略。这样会造成严重的性能问题，只适用于低负荷的服务器。 </p>
+</li>
+<li><p>多进程及多线程 Web 服务器</p>
+<p>多进程和多线程 Web 服务器用多个进程，或更高效的线程同时对请求进行处理。可以根据需要创建，或者预先创建一些线程 / 进程。有些服务器会为每条连接分配一个线程 / 进程，但当服务器同时要处理成百、上千，甚至数以万计的连接时，需要的进程或线程数量可能会消耗太多的内存或系统资源。因此，很多多线程 Web 服务器都会对线程 / 进程的最大数量进行限制。</p>
+</li>
+<li><p>复用 I/O 的服务器</p>
+<p>为了支持大量的连接，很多 Web 服务器都采用了复用结构。在复用结构中，要同时监视所有连接上的活动。当连接的状态发生变化时（比如，有数据可用，或出现错误时），就对那条连接进行少量的处理；处理结束之后，将连接返回到开放连接列表中，等待下一次状态变化。只有在有事情可做时才会对连接进行处理；在空闲连接上等待的时候并不会绑定线程和进程。</p>
+</li>
+<li><p>复用的多线程 Web 服务器</p>
+<p>有些系统会将多线程和复用功能结合在一起，以利用计算机平台上的多个 CPU。 多个线程（通常是一个物理处理器）中的每一个都在观察打开的连接（或打开的连接中的一个子集），并对每条连接执行少量的任务。</p>
+</li>
+</ul>
+<p><img src="/images/image-20211022123411749.png" alt="image-20211022123411749"></p>
+<h3 id="盲中继可能引发的问题"><a href="#盲中继可能引发的问题" class="headerlink" title="盲中继可能引发的问题"></a>盲中继可能引发的问题</h3><p>由于盲中继无法正确处理 Connection 首部，所以有潜在的挂起 keep-alive 连接的可能。</p>
+<p><img src="/images/image-20211023134853681.png" alt="image-20211023134853681"></p>
+<ul>
+<li>在 a 中，Web 客户端向中继发送了一条包含 Connection: Keep-Alive 首部的报文，如果可能的话要求建立一条 keep-alive 连接。客户端等待响应，以确定它要求建立 keep-alive 信道的请求是否被认可了。</li>
+<li>中继收到了这条 HTTP 请求，但它并不理解 Connection 首部，因此会将报文一字不漏地沿着链路传递给服务器（参见b）。但 Connection 首部是个<code>逐跳首部</code>；只适用于单条传输链路，是不应该沿着链路传送下去的。要有不好的事 情发生了！</li>
+<li>在 b 中，经过中继转发的 HTTP 请求抵达 Web 服务器。当 Web 服务器收到经过代理转发的 Connection: Keep-Alive 首部时，会错误地认为中继（对服务器来说，它看起来就和其他客户端一样）要求进行 keep-alive 的对话！这对 Web 服务器来说没什么问题——它同意进行 keep-alive 对话，并在图 c 中回送了一个 Connection: Keep-Alive 响应首部。那么，此时，Web 服务器就认为它是在与中继进行 keep-alive 对话，会遵循 keep-alive 对话的规则。但中继对 keep-alive 会话根本就一无所知。 </li>
+<li>在 d 中， 中继将 Web 服务器的响应报文，以及来自 Web 服务器的 Connection: Keep-Alive 首部一起发回给客户端。客户端看到这个首部，认为中继同意进行 keep-alive 对话。此时，客户端和服务器都认为它们是在进行 keep-alive 对话，但与它们进行对话的中继却根本不知道什么 keep-alive 对话。 </li>
+<li>中继对持久对话一无所知，所以它会将收到的所有数据都转发给客户端，<strong>等待原始服务器关闭连接</strong>。但原始服务器认为中继要求服务器将连接保持在活跃状态， 所以是不会关闭连接的！这样，中继就会挂起，等待连接的关闭。</li>
+<li>在图 d 中，当客户端收到回送的响应报文时，它会直接转向第二条请求，在 keep-alive 连接上向中继发送另一条请求（参见图e）。简单中继通常不会期待同一条连接上还会有另一条请求到达。浏览器上的圈会不停地转，但没有任何进展。</li>
+</ul>
+<h2 id="第三部分-识别、认证与安全"><a href="#第三部分-识别、认证与安全" class="headerlink" title="第三部分 识别、认证与安全"></a>第三部分 识别、认证与安全</h2><h3 id="cookie的字段"><a href="#cookie的字段" class="headerlink" title="cookie的字段"></a>cookie的字段</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">domain allh path secure expires name value</span><br><span class="line">www.fedex.com FALSE / FALSE 1136109676 cc /us/</span><br><span class="line">.bankofamericaonline.com TRUE / FALSE 1009789256 state CA</span><br><span class="line">.cnn.com TRUE / FALSE 1035069235 SelEdition www</span><br><span class="line">secure.eepulse.net FALSE /eePulse FALSE 1007162968 cid %FE%FF%002</span><br><span class="line">www.reformamt.org TRUE /forum FALSE 1033761379 LastVisit 1003520952</span><br><span class="line">www.reformamt.org TRUE /forum FALSE 1033761379 UserName Guest</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>domain（域）：cookie 的域。 </li>
+<li>allh：是域中所有的主机都获取 cookie，还是只有指定了名字的主机获取。 </li>
+<li>path（路径） ：<strong>只有这个路径下才能拥有这个cookie</strong>。</li>
+<li>secure（安全）：是否只有在使用 SSL 连接时才发送这个 cookie。 </li>
+<li>expiration（过期）：从格林尼治标准时间 1970 年 1 月 1 日 00:00:00 开始的 cookie 过期秒数。 </li>
+<li>name（名字）：cookie 变量的名字。 </li>
+<li>value（值） ：cookie 变量的值。</li>
+</ul>
+<h3 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h3><ul>
+<li>用加密系统对报文进行签名（sign），以说明是谁编写的报文，同时证明报文未被篡改过。这种技术被称为数字签名（digital signing）</li>
+<li>数字签名通常是用非对称公开密钥技术产生的。因为只有所有者才知道其私有密钥， 所以可以将作者的私有密钥当作一种“指纹”使用。</li>
+</ul>
+<p>使用如下：</p>
+<p><img src="/images/image-20211025115547717.png" alt="image-20211025115547717"></p>
+<ul>
+<li>节点 A 将变长报文提取为定长的摘要。 </li>
+<li>节点 A 对摘要应用了一个“签名”函数，这个函数会将用户的私有密钥作为参数。 因为只有用户才知道私有密钥，所以正确的签名函数会说明签名者就是其所有者。 在图中，由于解码函数 D 中包含了用户的私有密钥，所以我们将其作为签名函数使用。</li>
+<li>一旦计算出签名，节点 A 就将其附加在报文的末尾，并将报文和签名都发送给 B。</li>
+<li>在接收端，如果节点 B 需要确定报文确实是节点 A 写的，而且没有被篡改过， 节点 B 就可以对签名进行检查。节点 B 接收经私有密钥扰码的签名，并应用了使用公开密钥的反函数。如果拆包后的摘要与节点 B 自己的摘要版本不匹配，要么就是报文在传输过程中被篡改了，要么就是发送端没有节点 A 的私有密钥（也就是说它不是节点 A）。</li>
+</ul>
+<h3 id="SSL握手"><a href="#SSL握手" class="headerlink" title="SSL握手"></a>SSL握手</h3><p>在发送已加密的 HTTP 报文之前，客户端和服务器要进行一次 SSL 握手，在这个握手过程中，它们要完成以下工作：</p>
+<ul>
+<li>交换协议版本号； </li>
+<li>选择一个两端都了解的密码； </li>
+<li>对两端的身份进行认证； </li>
+<li>生成临时的会话密钥，以便加密信道。</li>
+</ul>
+<p><img src="/images/image-20211025121740035.png" alt="image-20211025121740035"></p>
+<h2 id="第四部分-实体、编码和国际化"><a href="#第四部分-实体、编码和国际化" class="headerlink" title="第四部分 实体、编码和国际化"></a>第四部分 实体、编码和国际化</h2><h3 id="Content-Length-实体的大小"><a href="#Content-Length-实体的大小" class="headerlink" title="Content-Length: 实体的大小"></a>Content-Length: 实体的大小</h3><ul>
+<li><strong>除非使用了分块编码，否则 Content-Length 首部就是带有实体主体的报文必须使用的</strong>。</li>
+<li>使用 Content-Length 首部是为了能够检测出服务器崩溃而导致的报文截尾，并对共享持久连接的多个报文进行正确分段。</li>
+<li>Content-Length 首部对于持久连接是必不可少的。如果响应通过持久连接传送， 就可能有另一条 HTTP 响应紧随其后。客户端通过 Content-Length 首部就可以知道报文在何处结束，下一条报文从何处开始。因为连接是持久的，客户端无法依赖连接关闭来判别报文的结束。如果没有 Content-Length 首部，HTTP 应用程序就不知道某个实体主体在哪里结束，下一条报文从哪里开始。</li>
+</ul>
+<p>好像P390后面的知识都不太重要，先不看了吧。后续再说(2021-10-25)</p>
+<p>以后有时间也可以看简略版的<a target="_blank" rel="noopener" href="https://github.com/woai30231/http">https://github.com/woai30231/http</a></p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,1044 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="ockquote&gt;
+&lt;p&gt;翻译关键字约定"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Elasticsearch权威指南 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a></div><div class="post-time">2021-10-19</div></div></div><div class="container post-header"><h1>Elasticsearch权威指南</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#curl%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">curl命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES%E7%B1%BB%E6%AF%94%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">ES类比传统关系型数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PUT%E8%83%8C%E5%90%8E%E7%9A%84%E9%80%BB%E8%BE%91"><span class="toc-number">1.3.</span> <span class="toc-text">PUT背后的逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%89%8D10%E6%9D%A1%E8%AE%B0%E5%BD%95"><span class="toc-number">1.4.</span> <span class="toc-text">获取前10条记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E5%AD%97%E7%AC%A6%E4%B8%B2-query-string"><span class="toc-number">1.5.</span> <span class="toc-text">查询字符串(query string)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DSL%E8%AF%AD%E5%8F%A5%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.6.</span> <span class="toc-text">DSL语句查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%9A%E5%90%88-aggregations"><span class="toc-number">1.7.</span> <span class="toc-text">聚合(aggregations)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E8%81%9A%E5%90%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.7.1.</span> <span class="toc-text">常用的聚合操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8term%E5%AF%B9%E7%B1%BB%E5%9E%8B%E6%98%AFtext%E7%9A%84%E5%AD%97%E6%AE%B5%E8%BF%9B%E8%A1%8C%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.7.2.</span> <span class="toc-text">不要使用term对类型是text的字段进行查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E6%9F%A5%E8%AF%A2%EF%BC%8C%E5%90%8E%E5%88%86%E7%BB%84"><span class="toc-number">1.7.3.</span> <span class="toc-text">先查询，后分组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E7%BA%A7%E8%81%9A%E5%90%88"><span class="toc-number">1.7.4.</span> <span class="toc-text">多级聚合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-number">1.7.5.</span> <span class="toc-text">分布式的特性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE"><span class="toc-number">2.</span> <span class="toc-text">数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-number">2.1.</span> <span class="toc-text">文档元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%86%B2%E7%AA%81"><span class="toc-number">2.2.</span> <span class="toc-text">处理冲突</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%A4%96%E9%83%A8%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.3.</span> <span class="toc-text">使用外部版本控制系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%B1%80%E9%83%A8%E6%9B%B4%E6%96%B0"><span class="toc-number">2.4.</span> <span class="toc-text">文档局部更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Groovy%E8%84%9A%E6%9C%AC%E5%B1%80%E9%83%A8%E6%9B%B4%E6%96%B0"><span class="toc-number">2.5.</span> <span class="toc-text">使用Groovy脚本局部更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E6%A3%80%E7%B4%A2mget"><span class="toc-number">2.6.</span> <span class="toc-text">批量检索mget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9Cbulk"><span class="toc-number">2.7.</span> <span class="toc-text">批量操作bulk</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">3.</span> <span class="toc-text">搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E6%90%9C%E7%B4%A2"><span class="toc-number">3.1.</span> <span class="toc-text">空搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E9%A1%B5"><span class="toc-number">3.2.</span> <span class="toc-text">分页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%9D%A1%E4%BB%B6%E7%9A%84%E6%9F%A5%E8%AF%A2%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">3.3.</span> <span class="toc-text">多条件的查询字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E5%AD%97%E6%AE%B5"><span class="toc-number">3.4.</span> <span class="toc-text">查询所有字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%A0%E5%B0%84%E5%92%8C%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">映射和分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AE%E5%88%87%E5%80%BC-Exact-values-vs-%E5%85%A8%E6%96%87%E6%96%87%E6%9C%AC-Full-text"><span class="toc-number">4.1.</span> <span class="toc-text">确切值(Exact values) vs 全文文本(Full text)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="toc-number">4.2.</span> <span class="toc-text">倒排索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%92%8C%E5%88%86%E6%9E%90%E5%99%A8"><span class="toc-number">4.3.</span> <span class="toc-text">分析和分析器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%A0%E5%B0%84"><span class="toc-number">4.4.</span> <span class="toc-text">映射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#index"><span class="toc-number">4.4.1.</span> <span class="toc-text">index</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="toc-number">4.4.2.</span> <span class="toc-text">创建索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%AF%B9%E8%B1%A1%E5%A6%82%E4%BD%95%E7%B4%A2%E5%BC%95"><span class="toc-number">4.5.</span> <span class="toc-text">复杂对象如何索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%95%B0%E7%BB%84%E5%A6%82%E4%BD%95%E7%B4%A2%E5%BC%95"><span class="toc-number">4.6.</span> <span class="toc-text">对象的数组如何索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.</span> <span class="toc-text">结构化查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E5%AD%90%E5%8F%A5"><span class="toc-number">5.1.</span> <span class="toc-text">查询子句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84query-name"><span class="toc-number">5.2.</span> <span class="toc-text">常用的query name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bool%E6%9F%A5%E8%AF%A2-%E5%A4%8D%E5%90%88%E8%AF%AD%E5%8F%A5%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.3.</span> <span class="toc-text">bool查询(复合语句查询)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Query%E6%9F%A5%E8%AF%A2%E5%92%8CFilter%E6%9F%A5%E8%AF%A2%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">5.4.</span> <span class="toc-text">Query查询和Filter查询的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E4%B8%8E%E8%BF%87%E6%BB%A4%E7%9A%84%E6%80%A7%E8%83%BD%E5%B7%AE%E5%BC%82"><span class="toc-number">5.5.</span> <span class="toc-text">查询与过滤的性能差异</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.6.</span> <span class="toc-text">验证查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">排序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E6%AE%B5%E5%80%BC%E6%8E%92%E5%BA%8F"><span class="toc-number">6.1.</span> <span class="toc-text">字段值排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%8E%92%E5%BA%8F"><span class="toc-number">6.2.</span> <span class="toc-text">默认排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E7%BA%A7%E6%8E%92%E5%BA%8F"><span class="toc-number">6.3.</span> <span class="toc-text">多级排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8F%82%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="toc-number">6.4.</span> <span class="toc-text">字符串参数排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5%E6%8E%92%E5%BA%8F"><span class="toc-number">6.5.</span> <span class="toc-text">为多值字段排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8E%92%E5%BA%8F"><span class="toc-number">6.6.</span> <span class="toc-text">多值字段字符串排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="toc-number">6.7.</span> <span class="toc-text">相关性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E5%BA%8F%E6%98%AF%E5%8D%81%E5%88%86%E6%B6%88%E8%80%97%E8%B5%84%E6%BA%90%E7%9A%84"><span class="toc-number">6.8.</span> <span class="toc-text">排序是十分消耗资源的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%AE%A1%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">索引管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lucene-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%96%87%E6%A1%A3"><span class="toc-number">7.1.</span> <span class="toc-text">Lucene 如何处理文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="toc-number">7.2.</span> <span class="toc-text">类型是怎么实现的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E9%98%B2%E7%B1%BB%E5%9E%8B%E9%99%B7%E9%98%B1"><span class="toc-number">7.3.</span> <span class="toc-text">预防类型陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E5%AF%B9%E8%B1%A1"><span class="toc-number">7.4.</span> <span class="toc-text">根对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%BB%BA%E7%B4%A2%E5%BC%95%E4%B8%8E%E5%88%AB%E5%90%8D"><span class="toc-number">7.5.</span> <span class="toc-text">重建索引与别名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E6%90%9C%E7%B4%A2"><span class="toc-number">8.</span> <span class="toc-text">结构化搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1%E8%BF%87%E6%BB%A4%E7%9A%84%E5%86%85%E9%83%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">8.1.</span> <span class="toc-text">执行一次过滤的内部流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E9%A1%BA%E5%BA%8F"><span class="toc-number">8.2.</span> <span class="toc-text">过滤顺序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E6%96%87%E6%90%9C%E7%B4%A2"><span class="toc-number">9.</span> <span class="toc-text">全文搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E9%AB%98%E7%B2%BE%E5%BA%A6"><span class="toc-number">9.1.</span> <span class="toc-text">提高精度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E9%AB%98%E6%9F%A5%E8%AF%A2%E5%88%86%E6%95%B0"><span class="toc-number">9.2.</span> <span class="toc-text">提高查询分数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E7%B2%BE%E5%BA%A6"><span class="toc-number">9.3.</span> <span class="toc-text">控制精度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E6%8E%A7%E5%88%B6"><span class="toc-number">9.4.</span> <span class="toc-text">分析控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E5%AD%97%E6%AE%B5%E6%90%9C%E7%B4%A2"><span class="toc-number">10.</span> <span class="toc-text">多字段搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#bool%E6%9F%A5%E8%AF%A2%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E5%BE%97%E5%88%B0%E5%85%B6%E5%88%86%E5%80%BC"><span class="toc-number">10.1.</span> <span class="toc-text">bool查询是如何计算得到其分值</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#dis-max%E6%9F%A5%E8%AF%A2"><span class="toc-number">10.1.1.</span> <span class="toc-text">dis_max查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%85%A5%E5%88%86%E7%89%87"><span class="toc-number">11.</span> <span class="toc-text">深入分片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4"><span class="toc-number">12.</span> <span class="toc-text">分布式集群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8FCURD"><span class="toc-number">13.</span> <span class="toc-text">分布式CURD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2"><span class="toc-number">14.</span> <span class="toc-text">分布式搜索</span></a></li></ol></details></div><div class="container post-content"><blockquote>
+<p>翻译关键字约定</p>
+<ul>
+<li>index -&gt; 索引</li>
+<li>type -&gt; 类型</li>
+<li>token -&gt; 表征</li>
+<li>filter -&gt; 过滤器</li>
+<li>analyser -&gt; 分析器</li>
+</ul>
+</blockquote>
+<h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><h3 id="curl命令"><a href="#curl命令" class="headerlink" title="curl命令"></a>curl命令</h3><p>向Elasticsearch发出的请求的组成部分与其它普通的HTTP请求是一样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X&lt;VERB&gt; <span class="string">&#x27;&lt;PROTOCOL&gt;://&lt;HOST&gt;:&lt;PORT&gt;/&lt;PATH&gt;?&lt;QUERY_STRING&gt;&#x27;</span> -d <span class="string">&#x27;&lt;BODY&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>VERB HTTP方法：<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>HEAD</code>, <code>DELETE</code></li>
+<li>PROTOCOL http或者https协议（只有在Elasticsearch前面有https代理的时候可用）</li>
+<li>HOST Elasticsearch集群中的任何一个节点的主机名，如果是在本地的节点，那么就叫localhost</li>
+<li>PORT Elasticsearch HTTP服务所在的端口，默认为9200</li>
+<li>PATH API路径（例如<code>_count</code>将返回集群中文档的数量），PATH可以包含多个组件，例如<code>_cluster/stats</code>或者<code>_nodes/stats/jvm</code></li>
+<li>QUERY_STRING 一些可选的查询请求参数，例如<code>?pretty</code>参数将使请求返回更加美观易读的JSON数据</li>
+<li>BODY 一个JSON格式的请求主体（如果请求需要的话）</li>
+</ul>
+<blockquote>
+<p>示例：获取集群中文档的数量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -H <span class="string">&quot;Content-Type: application/json&quot;</span> -XGET <span class="string">&#x27;http://localhost:9200/_count?pretty&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string"> &quot;query&quot;: &#123;</span></span><br><span class="line"><span class="string">     &quot;match_all&quot;: &#123;&#125;</span></span><br><span class="line"><span class="string"> &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>获取索引project_s5062，类型user下 的其中一个Documents</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">&#x27;127.0.0.1:9200/project_s5062/user/_search?pretty&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;query&quot;: &#123; &quot;match_all&quot;: &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  &quot;size&quot; : 1</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="ES类比传统关系型数据库"><a href="#ES类比传统关系型数据库" class="headerlink" title="ES类比传统关系型数据库"></a>ES类比传统关系型数据库</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Relational DB -&gt; Databases -&gt; Tables -&gt; Rows      -&gt; Columns</span><br><span class="line">Elasticsearch -&gt; Indices   -&gt; Types  -&gt; Documents -&gt; Fields</span><br></pre></td></tr></table></figure>
+
+<p>Elasticsearch集群可以包含多个**索引(indices)<strong>（数据库），每一个索引可以包含多个</strong>类型(types)<strong>（表），每一个类型包含多个</strong>文档(documents)<strong>（行），然后每个文档包含多个</strong>字段(Fields)**（列）。</p>
+<blockquote>
+<p>「索引」含义的区分：</p>
+<p>你可能已经注意到**索引(index)**这个词在Elasticsearch中有着不同的含义，所以有必要在此做一下区分:</p>
+<ul>
+<li>索引（名词） 如上文所述，一个<strong>索引(index)<strong>就像是传统关系数据库中的</strong>数据库</strong>，它是相关文档存储的地方，index的复数是<strong>indices</strong> 或<strong>indexes</strong>。</li>
+<li>索引（动词） <strong>「索引一个文档」</strong>表示把一个文档存储到<strong>索引（名词）</strong>里，以便它可以被检索或者查询。这很像SQL中的<code>INSERT</code>关键字，差别是，如果文档已经存在，新的文档将覆盖旧的文档。</li>
+<li>倒排索引 传统数据库为特定列增加一个索引，例如B-Tree索引来加速检索。Elasticsearch和Lucene使用一种叫做**倒排索引(inverted index)**的数据结构来达到相同目的。</li>
+</ul>
+</blockquote>
+<h3 id="PUT背后的逻辑"><a href="#PUT背后的逻辑" class="headerlink" title="PUT背后的逻辑"></a>PUT背后的逻辑</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PUT /megacorp/employee/<span class="number">1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;first_name&quot;</span> : <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;last_name&quot;</span> :  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span> :        <span class="number">25</span>,</span><br><span class="line">    <span class="string">&quot;about&quot;</span> :      <span class="string">&quot;I love to go rock climbing&quot;</span>,</span><br><span class="line">    <span class="string">&quot;interests&quot;</span>: [ <span class="string">&quot;sports&quot;</span>, <span class="string">&quot;music&quot;</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以为了创建员工目录，我们将进行如下操作：</p>
+<ul>
+<li>为每个员工的**文档(document)**建立索引，每个文档包含了相应员工的所有信息。</li>
+<li>每个文档的类型为<code>employee</code>。</li>
+<li><code>employee</code>类型归属于索引<code>megacorp</code>。</li>
+<li><code>megacorp</code>索引存储在Elasticsearch集群中。</li>
+</ul>
+<h3 id="获取前10条记录"><a href="#获取前10条记录" class="headerlink" title="获取前10条记录"></a>获取前10条记录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;127.0.0.1:9200/project_s5062/user/_search?pretty&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="查询字符串-query-string"><a href="#查询字符串-query-string" class="headerlink" title="查询字符串(query string)"></a>查询字符串(query string)</h3><p>注意：此查询不是精确匹配。可能得出多个不同score的document</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;127.0.0.1:9200/project_s5062/user/_search?q=user_uuid:QDAEVhuC&amp;pretty&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="DSL语句查询"><a href="#DSL语句查询" class="headerlink" title="DSL语句查询"></a>DSL语句查询</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost:9200/project_s5062/user/_search?pretty&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">-d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;query&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;match&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;user_uuid&quot;:&quot;QDAEVhuC&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="聚合-aggregations"><a href="#聚合-aggregations" class="headerlink" title="聚合(aggregations)"></a>聚合(aggregations)</h3><h4 id="常用的聚合操作"><a href="#常用的聚合操作" class="headerlink" title="常用的聚合操作"></a>常用的聚合操作</h4><ul>
+<li><p><strong>度量聚合</strong>：min、count、stats、max、sum、avg。度量聚合接收一个输入文档集并生成至少一个统计值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;sum&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;log_type&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>桶聚合</strong>：</p>
+<ul>
+<li>term聚合：词条的聚合</li>
+<li>range聚合</li>
+</ul>
+</li>
+<li><p><strong>分级聚合</strong></p>
+</li>
+</ul>
+<h4 id="不要使用term对类型是text的字段进行查询"><a href="#不要使用term对类型是text的字段进行查询" class="headerlink" title="不要使用term对类型是text的字段进行查询"></a>不要使用term对类型是text的字段进行查询</h4><p><strong>不要使用term对类型是text的字段进行查询</strong>，要查询text类型的字段，请改用match查询。因为text自动会被分词解析，就算是使用term去全量匹配，一样也是匹配不了的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># good</span></span><br><span class="line"><span class="comment"># 因为age字段是long类型，支持使用terms</span></span><br><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;terms&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;age&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># error</span></span><br><span class="line"><span class="comment"># 因为tags是text类型，不支持使用terms</span></span><br><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;terms&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;tags&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># error</span></span><br><span class="line"><span class="comment"># 聚合操作只有terms，没有match</span></span><br><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;match&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;tags&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># good</span></span><br><span class="line"><span class="comment"># 使用tags.keyword将tags转为关键字</span></span><br><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;terms&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;tags.keyword&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="先查询，后分组"><a href="#先查询，后分组" class="headerlink" title="先查询，后分组"></a>先查询，后分组</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">-d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;query&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;bool&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;filter&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;range&quot;: &#123;</span></span><br><span class="line"><span class="string">                    &quot;age&quot;: &#123;</span></span><br><span class="line"><span class="string">                        &quot;gt&quot;: 26</span></span><br><span class="line"><span class="string">                    &#125;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;,</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;my_froms&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;terms&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;from.keyword&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="多级聚合"><a href="#多级聚合" class="headerlink" title="多级聚合"></a>多级聚合</h4><p>查询来自每种from的平均年龄</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/zhifou/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;all_tags&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;terms&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;field&quot;: &quot;from.keyword&quot;</span></span><br><span class="line"><span class="string">            &#125;,</span></span><br><span class="line"><span class="string">            &quot;aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;my_avg_aggs&quot;: &#123;</span></span><br><span class="line"><span class="string">                    &quot;avg&quot;: &#123;</span></span><br><span class="line"><span class="string">                        &quot;field&quot;: &quot;age&quot;</span></span><br><span class="line"><span class="string">                    &#125;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="分布式的特性"><a href="#分布式的特性" class="headerlink" title="分布式的特性"></a>分布式的特性</h4><p>Elasticsearch为分布式而生，而且它的设计隐藏了分布式本身的复杂性。</p>
+<p>Elasticsearch在分布式概念上做了很大程度上的透明化，<strong>你不需要知道任何关于分布式系统、分片、集群发现或者其他大量的分布式概念</strong>。你既可以运行在你的笔记本上，也可以运行在拥有100个节点的集群上，其工作方式是一样的。</p>
+<p>Elasticsearch致力于隐藏分布式系统的复杂性。以下这些操作都是在底层自动完成的：</p>
+<ul>
+<li>将你的文档分区到不同的容器或者**分片(shards)**中，它们可以存在于一个或多个节点中。</li>
+<li>将分片均匀的分配到各个节点，对索引和搜索做负载均衡。</li>
+<li>冗余每一个分片，防止硬件故障造成的数据丢失。</li>
+<li>将集群中任意一个节点上的请求路由到相应数据所在的节点。</li>
+<li>无论是增加节点，还是移除节点，分片都可以做到无缝的扩展和迁移。</li>
+</ul>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>在Elasticsearch中，<strong>每一个字段的数据都是默认被索引</strong>的。也就是说，每个字段专门有一个反向索引用于快速检索。</p>
+<h3 id="文档元数据"><a href="#文档元数据" class="headerlink" title="文档元数据"></a>文档元数据</h3><p>一个文档不只有数据。它还包含了**元数据(metadata)**——关于文档的信息。三个必须的元数据节点是：</p>
+<table>
+<thead>
+<tr>
+<th align="left">节点</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>_index</code></td>
+<td align="left">文档存储的地方</td>
+</tr>
+<tr>
+<td align="left"><code>_type</code></td>
+<td align="left">文档代表的对象的类</td>
+</tr>
+<tr>
+<td align="left"><code>_id</code></td>
+<td align="left">文档的唯一标识</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>_index</code>：</p>
+<p>**索引(index)**类似于关系型数据库里的“数据库”——它是我们存储和索引关联数据的地方。</p>
+<blockquote>
+<p>事实上，我们的数据被存储和索引在**分片(shards)<strong>中，索引只是一个把一个或多个分片分组在一起的逻辑空间。然而，这只是一些内部细节——我们的程序完全不用关心分片。对于我们的程序而言，文档存储在</strong>索引(index)**中。剩下的细节由Elasticsearch关心既可。</p>
+</blockquote>
+<p>我们唯一需要做的仅仅是选择一个索引名。这个名字必须是全部小写，不能以下划线开头，不能包含逗号。</p>
+</li>
+<li><p><code>_type</code></p>
+<p>在应用中，我们使用对象表示一些“事物”，例如一个用户、一篇博客、一个评论，或者一封邮件。每个对象都属于一个**类(class)**，这个类定义了属性或与对象关联的数据。<code>user</code>类的对象可能包含姓名、性别、年龄和Email地址。</p>
+<p>在关系型数据库中，我们经常将相同类的对象存储在一个表里，因为它们有着相同的结构。同理，在Elasticsearch中，我们使用相同**类型(type)**的文档表示相同的“事物”，因为他们的数据结构也是相同的。</p>
+<p>每个**类型(type)<strong>都有自己的</strong>映射(mapping)<strong>或者结构定义，就像传统数据库表中的列一样。所有类型下的文档被存储在同一个索引下，但是类型的</strong>映射(mapping)**会告诉Elasticsearch不同的文档如何被索引。 </p>
+<p><code>_type</code>的名字可以是大写或小写，不能包含下划线或逗号。</p>
+</li>
+<li><p><code>_id</code></p>
+<p><strong>id</strong>仅仅是一个字符串，它与<code>_index</code>和<code>_type</code>组合时，就可以在Elasticsearch中唯一标识一个文档。当创建一个文档，你可以自定义<code>_id</code>，也可以让Elasticsearch帮你自动生成。</p>
+</li>
+</ul>
+<blockquote>
+<p><code>_index</code>、<code>_type</code>、<code>_id</code>三者唯一确定一个文档。</p>
+</blockquote>
+<h3 id="处理冲突"><a href="#处理冲突" class="headerlink" title="处理冲突"></a>处理冲突</h3><p>当使用<code>index</code> API更新文档的时候，我们读取原始文档，做修改，然后将**整个文档(whole document)**一次性重新索引。最近的索引请求会生效——Elasticsearch中只存储最后被索引的任何文档。如果其他人同时也修改了这个文档，他们的修改将会丢失。</p>
+<p>想象一下我们使用Elasticsearch存储大量在线商店的库存信息。每当销售一个商品，Elasticsearch中的库存就要减一。一天，老板决定做一个促销。瞬间，我们每秒就销售了几个商品。想象两个同时运行的web进程，两者同时处理一件商品的订单：</p>
+<p><img src="/images/elas_0301.png" alt="img"></p>
+<blockquote>
+<p>Elasticsearch是分布式的。当文档被创建、更新或删除，文档的新版本会被复制到集群的其它节点。Elasticsearch即是同步的又是异步的，意思是这些复制请求都是平行发送的，并**无序(out of sequence)**的到达目的地。这就需要一种方法确保老版本的文档永远不会覆盖新的版本。</p>
+</blockquote>
+<p>上文我们提到<code>index</code>、<code>get</code>、<code>delete</code>请求时，我们指出每个文档都有一个<code>_version</code>号码，这个号码在文档被改变时加一。Elasticsearch使用这个<code>_version</code>保证所有修改都被正确排序。当一个旧版本出现在新版本之后，它会被简单的忽略。</p>
+<p>使用<code>_create</code>能保证创建一个新的文档，而不是更新：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/<span class="number">123</span>/_create</span><br><span class="line">&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果请求成功的创建了一个新文档，Elasticsearch将返回正常的元数据且响应状态码是<code>201 Created</code>。</li>
+<li>如果包含相同的<code>_index</code>、<code>_type</code>和<code>_id</code>的文档已经存在，Elasticsearch将返回<code>409 Conflict</code>响应状态码</li>
+</ul>
+<p>这是这么做到的？其实底层类似于添加了version=0</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 我们只希望文档的`_version`是`0`时(不存在时)更新才生效。</span></span><br><span class="line">PUT /website/blog/123?version=0</span><br><span class="line">&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是更新，version肯定大于等于1。Elasticsearch将返回<code>409 Conflict</code>状态的HTTP响应。响应体类似这样：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;error&quot;</span> : <span class="string">&quot;DocumentAlreadyExistsException[[website][4] [blog][123]:document already exists]&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;status&quot;</span> : <span class="number">409</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="使用外部版本控制系统"><a href="#使用外部版本控制系统" class="headerlink" title="使用外部版本控制系统"></a>使用外部版本控制系统</h3><p>一种常见的结构是<strong>使用一些其他的数据库做为主数据库，然后使用Elasticsearch搜索数据</strong>，这意味着所有主数据库发生变化，就要将其拷贝到Elasticsearch中。如果有多个进程负责这些数据的同步，就会遇到上面提到的并发问题。</p>
+<p>如果主数据库有版本字段——或一些<strong>类似于<code>timestamp</code>等可以用于版本控制的字段</strong>——于是你就可以在Elasticsearch的查询字符串后面添加<code>version_type=external</code>来使用这些版本号。版本号必须是整数，大于零小于<code>9.2e+18</code>。</p>
+<blockquote>
+<p>外部版本号与之前说的内部版本号在处理的时候有些不同。它不再检查<code>_version</code>是否与请求中指定的<strong>一致</strong>，而是检查是否<strong>小于</strong>指定的版本。如果请求成功，外部版本号就会被存储到<code>_version</code>中。</p>
+</blockquote>
+<p>例如，创建一个包含外部版本号<code>5</code>的新博客，我们可以这样做：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/2?version=5&amp;version_type=external</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first external blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;Starting to get the hang of this...&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="文档局部更新"><a href="#文档局部更新" class="headerlink" title="文档局部更新"></a>文档局部更新</h3><ul>
+<li><p>使用<code>update</code> API，我们可以使用一个请求来实现局部更新，例如增加数量的操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/1/_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;doc&quot; : &#123;</span><br><span class="line">      &quot;tags&quot; : [ &quot;testing&quot; ],</span><br><span class="line">      &quot;views&quot;: 0</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>然而文档是不可变的——它们不能被更改，只能被替换。<code>update</code> API<strong>必须</strong>遵循相同的规则。</p>
+</li>
+<li><p>表面看来，我们似乎是局部更新了文档的位置，内部却是像我们之前说的一样简单的使用<code>update</code> API处理相同的<em>检索-修改-重建索引</em>流程：</p>
+<ol>
+<li>从旧文档中检索JSON</li>
+<li>修改它</li>
+<li>删除旧文档</li>
+<li>索引新文档</li>
+</ol>
+</li>
+</ul>
+<p>虽然我们在**检索(retrieve)<strong>和</strong>重建索引(reindex)**中保持更小的窗口，减少冲突性变更发生的概率，不过这些无法被完全避免，像一个其他进程在<code>update</code>进行重建索引时修改了文档这种情况依旧可能发生。</p>
+<p>为了避免丢失数据，<code>update</code> API在**检索(retrieve)<strong>阶段检索文档的当前<code>_version</code>，然后在</strong>重建索引(reindex)<strong>阶段通过<code>index</code>请求提交。如果其他进程在</strong>检索(retrieve)<strong>和</strong>重建索引(reindex)**阶段修改了文档，<code>_version</code>将不能被匹配，然后更新失败。</p>
+<h3 id="使用Groovy脚本局部更新"><a href="#使用Groovy脚本局部更新" class="headerlink" title="使用Groovy脚本局部更新"></a>使用Groovy脚本局部更新</h3><p>脚本能够使用<code>update</code> API改变<code>_source</code>字段的内容，它在脚本内部以<code>ctx._source</code>表示。例如，我们可以使用脚本增加博客的<code>views</code>数量：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/<span class="number">1</span>/_update</span><br><span class="line">&#123;</span><br><span class="line">   <span class="string">&quot;script&quot;</span> : <span class="string">&quot;ctx._source.views+=1&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们还可以使用脚本增加一个新标签到<code>tags</code>数组中。在这个例子中，我们定义了一个新标签做为参数而不是硬编码在脚本里。这允许Elasticsearch未来可以重复利用脚本，而不是在想要增加新标签时必须每次编译新脚本：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/<span class="number">1</span>/_update</span><br><span class="line">&#123;</span><br><span class="line">   <span class="string">&quot;script&quot;</span> : <span class="string">&quot;ctx._source.tags+=new_tag&quot;</span>,</span><br><span class="line">   <span class="string">&quot;params&quot;</span> : &#123;</span><br><span class="line">      <span class="string">&quot;new_tag&quot;</span> : <span class="string">&quot;search&quot;</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">## output</span><br><span class="line">&#123;</span><br><span class="line">   <span class="string">&quot;_index&quot;</span>:    <span class="string">&quot;website&quot;</span>,</span><br><span class="line">   <span class="string">&quot;_type&quot;</span>:     <span class="string">&quot;blog&quot;</span>,</span><br><span class="line">   <span class="string">&quot;_id&quot;</span>:       <span class="string">&quot;1&quot;</span>,</span><br><span class="line">   <span class="string">&quot;_version&quot;</span>:  <span class="number">5</span>,</span><br><span class="line">   <span class="string">&quot;found&quot;</span>:     <span class="literal">true</span>,</span><br><span class="line">   <span class="string">&quot;_source&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;title&quot;</span>:  <span class="string">&quot;My first blog entry&quot;</span>,</span><br><span class="line">      <span class="string">&quot;text&quot;</span>:   <span class="string">&quot;Starting to get the hang of this...&quot;</span>,</span><br><span class="line">      <span class="string">&quot;tags&quot;</span>:  [<span class="string">&quot;search&quot;</span>], # <span class="string">`search`</span>标签已经被添加到<span class="string">`tags`</span>数组。</span><br><span class="line">      <span class="string">&quot;views&quot;</span>:  <span class="number">1</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用<code>upsert</code>参数定义文档来使其不存在时被创建。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /website/pageviews/1/_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &quot;ctx._source.views+=1&quot;,</span><br><span class="line">   &quot;upsert&quot;: &#123;</span><br><span class="line">       &quot;views&quot;: 1</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一次执行这个请求，<code>upsert</code>值被索引为一个新文档，初始化<code>views</code>字段为<code>1</code>。接下来文档已经存在，所以<code>script</code>被更新代替，增加<code>views</code>数量。</p>
+<h3 id="批量检索mget"><a href="#批量检索mget" class="headerlink" title="批量检索mget"></a>批量检索mget</h3><p>如果你需要从Elasticsearch中检索多个文档，相对于一个一个的检索，更快的方式是在一个请求中使用<strong>multi-get</strong>或者<code>mget</code> API。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;docs&quot; : [</span><br><span class="line">      &#123; &quot;_id&quot; : 2 &#125;,</span><br><span class="line">      &#123; &quot;_type&quot; : &quot;pageviews&quot;, &quot;_id&quot; :   1 &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">## output</span><br><span class="line">&#123;</span><br><span class="line">  &quot;docs&quot; : [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot; :   &quot;website&quot;,</span><br><span class="line">      &quot;_type&quot; :    &quot;blog&quot;,</span><br><span class="line">      &quot;_id&quot; :      &quot;2&quot;,</span><br><span class="line">      &quot;_version&quot; : 10,</span><br><span class="line">      &quot;found&quot; :    true,</span><br><span class="line">      &quot;_source&quot; : &#123;</span><br><span class="line">        &quot;title&quot;:   &quot;My first external blog entry&quot;,</span><br><span class="line">        &quot;text&quot;:    &quot;This is a piece of cake...&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot; :   &quot;website&quot;,</span><br><span class="line">      &quot;_type&quot; :    &quot;blog&quot;,</span><br><span class="line">      &quot;_id&quot; :      &quot;1&quot;,</span><br><span class="line">      &quot;found&quot; :    false</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：<br>尽管前面提到有一个文档没有被找到，但HTTP请求状态码还是<code>200</code>。事实上，就算所有文档都找不到，请求也还是返回<code>200</code>，原因是<code>mget</code>请求本身成功了。如果想知道每个文档是否都成功了，你需要检查<code>found</code>标志。</p>
+</blockquote>
+<h3 id="批量操作bulk"><a href="#批量操作bulk" class="headerlink" title="批量操作bulk"></a>批量操作bulk</h3><p><code>bulk</code> API允许我们使用单一请求来实现多个文档的<code>create</code>、<code>index</code>、<code>update</code>或<code>delete</code>。</p>
+<p>Eg:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -XPOST <span class="string">&#x27;http://localhost:9200/_bulk?pretty&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;user&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;1&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;email&quot; : &quot;john@smith.com&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;username&quot; : &quot;@john&quot; &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;user&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;2&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;email&quot; : &quot;mary@jones.com&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;username&quot; : &quot;@mary&quot; &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;3&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-13&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;Elasticsearch means full text search has never been so easy&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;4&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-14&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;tweet&quot; : &quot;@mary it is not just text, it does everything&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;5&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-15&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;However did I manage before Elasticsearch?&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;6&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-16&quot;, &quot;name&quot; : &quot;John Smith&quot;,  &quot;tweet&quot; : &quot;The Elasticsearch API is really easy to use&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;7&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-17&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;The Query DSL is really powerful and flexible&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;8&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-18&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;9&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-19&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;Geo-location aggregations are really cool&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;10&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-20&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;tweet&quot; : &quot;Elasticsearch surely is one of the hottest new NoSQL products&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;11&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-21&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;Elasticsearch is built for the cloud, easy to scale&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;12&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-22&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;tweet&quot; : &quot;Elasticsearch and I have left the honeymoon stage, and I still love her.&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;13&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-23&quot;, &quot;name&quot; : &quot;Mary Jones&quot;, &quot;tweet&quot; : &quot;So yes, I am an Elasticsearch fanboy&quot;, &quot;user_id&quot; : 2 &#125;</span></span><br><span class="line"><span class="string">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;tweet&quot;, &quot;_type&quot;: &quot;doc&quot;, &quot;_id&quot;: &quot;14&quot; &#125;&#125;</span></span><br><span class="line"><span class="string">&#123; &quot;date&quot; : &quot;2014-09-24&quot;, &quot;name&quot; : &quot;John Smith&quot;, &quot;tweet&quot; : &quot;How many more cheesy tweets do I have to write?&quot;, &quot;user_id&quot; : 1 &#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>Eg:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">POST /_bulk</span><br><span class="line">&#123; &quot;delete&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My first blog post&quot; &#125;</span><br><span class="line">&#123; &quot;index&quot;:  &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My second blog post&quot; &#125;</span><br><span class="line">&#123; &quot;update&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot;, &quot;_retry_on_conflict&quot; : 3&#125; &#125;</span><br><span class="line">&#123; &quot;doc&quot; : &#123;&quot;title&quot; : &quot;My updated blog post&quot;&#125; &#125;</span><br><span class="line"></span><br><span class="line">## output</span><br><span class="line">&#123;</span><br><span class="line">   &quot;took&quot;: 4,</span><br><span class="line">   &quot;errors&quot;: false,</span><br><span class="line">   &quot;items&quot;: [</span><br><span class="line">      &#123;  &quot;delete&quot;: &#123;</span><br><span class="line">            &quot;_index&quot;:   &quot;website&quot;,</span><br><span class="line">            &quot;_type&quot;:    &quot;blog&quot;,</span><br><span class="line">            &quot;_id&quot;:      &quot;123&quot;,</span><br><span class="line">            &quot;_version&quot;: 2,</span><br><span class="line">            &quot;status&quot;:   200,</span><br><span class="line">            &quot;found&quot;:    true</span><br><span class="line">      &#125;&#125;,</span><br><span class="line">      &#123;  &quot;create&quot;: &#123;</span><br><span class="line">            &quot;_index&quot;:   &quot;website&quot;,</span><br><span class="line">            &quot;_type&quot;:    &quot;blog&quot;,</span><br><span class="line">            &quot;_id&quot;:      &quot;123&quot;,</span><br><span class="line">            &quot;_version&quot;: 3,</span><br><span class="line">            &quot;status&quot;:   201</span><br><span class="line">      &#125;&#125;,</span><br><span class="line">      &#123;  &quot;create&quot;: &#123;</span><br><span class="line">            &quot;_index&quot;:   &quot;website&quot;,</span><br><span class="line">            &quot;_type&quot;:    &quot;blog&quot;,</span><br><span class="line">            &quot;_id&quot;:      &quot;EiwfApScQiiy7TIKFxRCTw&quot;,</span><br><span class="line">            &quot;_version&quot;: 1,</span><br><span class="line">            &quot;status&quot;:   201</span><br><span class="line">      &#125;&#125;,</span><br><span class="line">      &#123;  &quot;update&quot;: &#123;</span><br><span class="line">            &quot;_index&quot;:   &quot;website&quot;,</span><br><span class="line">            &quot;_type&quot;:    &quot;blog&quot;,</span><br><span class="line">            &quot;_id&quot;:      &quot;123&quot;,</span><br><span class="line">            &quot;_version&quot;: 4,</span><br><span class="line">            &quot;status&quot;:   200</span><br><span class="line">      &#125;&#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>bulk</code>请求不是原子操作——它们不能实现事务。每个请求操作时分开的，所以每个请求的成功与否不干扰其它操作。</p>
+</blockquote>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><h3 id="空搜索"><a href="#空搜索" class="headerlink" title="空搜索"></a>空搜索</h3><p>最基本的搜索API表单是**空搜索(empty search)**，它没有指定任何的查询条件，只返回集群索引中的所有文档：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>/_search</code>：在所有索引的所有类型中搜索</li>
+<li><code>/gb/_search</code>：在索引gb的所有类型中搜索</li>
+<li><code>/gb,us/_search</code>：在索引gb和us的所有类型中搜索</li>
+<li><code>/g*,u*/_search</code>：在以g或u开头的索引的所有类型中搜索</li>
+<li><code>/gb/user/_search</code>：在索引gb的类型user中搜索</li>
+<li><code>/gb,us/user,tweet/_search</code>：在索引gb和us的类型为user和tweet中搜索</li>
+<li><code>/_all/user,tweet/_search</code>：在所有索引的user和tweet中搜索(search types user and tweet in all indices)</li>
+</ul>
+<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?size=<span class="number">5</span></span><br><span class="line">GET /_search?size=<span class="number">5</span>&amp;<span class="keyword">from</span>=<span class="number">5</span></span><br><span class="line">GET /_search?size=<span class="number">5</span>&amp;<span class="keyword">from</span>=<span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>应该当心分页太深或者一次请求太多的结果。结果在返回前会被排序。</li>
+<li>但是记住一个搜索请求常常涉及多个分片。每个分片生成自己排好序的结果，它们接着需要集中起来排序以确保整体排序正确。</li>
+</ul>
+<blockquote>
+<p>在集群系统中深度分页：</p>
+<ul>
+<li>为了理解为什么深度分页是有问题的，让我们假设在一个有5个主分片的索引中搜索。当我们请求结果的第一页（结果1到10）时，每个分片产生自己最顶端10个结果然后返回它们给**请求节点(requesting node)**，它再排序这所有的50个结果以选出顶端的10个结果。</li>
+<li>现在假设我们请求第1000页——结果10001到10010。工作方式都相同，不同的是每个分片都必须产生顶端的10010个结果。然后请求节点排序这50050个结果并丢弃50040个！</li>
+<li>你可以看到在分布式系统中，排序结果的花费随着分页的深入而成倍增长。这也是为什么网络搜索引擎中任何语句不能返回多于1000个结果的原因。</li>
+</ul>
+</blockquote>
+<h3 id="多条件的查询字符串"><a href="#多条件的查询字符串" class="headerlink" title="多条件的查询字符串"></a>多条件的查询字符串</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_all/tweet/_search?q=tweet:elasticsearch +name:john +tweet:mary +date:&gt;2014-09-19</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&quot;+&quot;</code>前缀表示语句匹配条件<strong>必须</strong>被满足。</li>
+<li><code>&quot;-&quot;</code>前缀表示条件<strong>必须不</strong>被满足。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+name:(name1 name2) +date:&gt;<span class="number">2014</span>-<span class="number">09</span>-<span class="number">10</span> +(myvalue1 myvalue2)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>name</code>字段包含<code>&quot;name1&quot;</code>或<code>&quot;name2&quot;</code></li>
+<li><code>date</code>晚于<code>2014-09-10</code></li>
+<li><code>_all</code>字段包含<code>&quot;myvalue1&quot;</code>或<code>&quot;myvalue2&quot;</code></li>
+</ul>
+<h3 id="查询所有字段"><a href="#查询所有字段" class="headerlink" title="查询所有字段"></a>查询所有字段</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?q=mary</span><br></pre></td></tr></table></figure>
+
+<p>查询所有字段中包含mary的文档。</p>
+<blockquote>
+<p>对于这种查询，ES又是怎么做到的？</p>
+<p>当你索引一个文档，Elasticsearch把所有字符串字段值连接起来放在一个大字符串中，它被索引为一个特殊的字段<code>_all</code>。例如，当索引这个文档：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;tweet&quot;</span>:    <span class="string">&quot;However did I manage before Elasticsearch?&quot;</span>,</span><br><span class="line">    <span class="string">&quot;date&quot;</span>:     <span class="string">&quot;2014-09-14&quot;</span>,</span><br><span class="line">    <span class="string">&quot;name&quot;</span>:     <span class="string">&quot;Mary Jones&quot;</span>,</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>:  <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这好比我们增加了一个叫做<code>_all</code>的额外字段值：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;However did I manage before Elasticsearch? 2014-09-14 Mary Jones 1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>若没有指定字段，查询字符串搜索（即q=xxx）使用<code>_all</code>字段搜索。</p>
+</blockquote>
+<h2 id="映射和分析"><a href="#映射和分析" class="headerlink" title="映射和分析"></a>映射和分析</h2><ul>
+<li>**映射(mapping)**机制用于进行字段类型确认，将每个字段匹配为一种确定的数据类型(<code>string</code>, <code>number</code>, <code>booleans</code>, <code>date</code>等)。</li>
+<li>**分析(analysis)<strong>机制用于进行</strong>全文文本(Full Text)**的分词，以建立供搜索用的反向索引。</li>
+</ul>
+<h3 id="确切值-Exact-values-vs-全文文本-Full-text"><a href="#确切值-Exact-values-vs-全文文本-Full-text" class="headerlink" title="确切值(Exact values) vs 全文文本(Full text)"></a>确切值(Exact values) vs 全文文本(Full text)</h3><p>Elasticsearch中的数据可以大致分为两种类型：<em>确切值</em> 及 <em>全文文本</em>。</p>
+<ul>
+<li>确切值是确定的，正如它的名字一样。比如一个date或用户ID，也可以包含更多的字符串比如username或email地址。确切值<code>&quot;Foo&quot;</code>和<code>&quot;foo&quot;</code>就并不相同。确切值<code>2014</code>和<code>2014-09-15</code>也不相同。</li>
+<li>全文文本，从另一个角度来说是文本化的数据(常常以人类的语言书写)，比如一篇推文(Twitter的文章)或邮件正文。</li>
+</ul>
+<blockquote>
+<ul>
+<li>当你查询**全文(full text)**字段，查询将使用相同的分析器来分析查询字符串，以产生正确的词列表。</li>
+<li>当你查询一个**确切值(exact value)**字段，查询将不分析查询字符串。</li>
+</ul>
+</blockquote>
+<p>确切值是很容易查询的，因为结果是二进制的——要么匹配，要么不匹配。下面的查询很容易以SQL表达：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WHERE name    = <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">  AND user_id = <span class="number">2</span></span><br><span class="line">  AND date    &gt; <span class="string">&quot;2014-09-15&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>而对于全文数据的查询来说，却有些微妙。我们不会去询问<code>这篇文档是否匹配查询要求？</code>。 但是，我们会询问<code>这篇文档和查询的匹配程度如何？</code>。换句话说，对于查询条件，这篇文档的_相关性_有多高？</p>
+<p>我们很少确切的匹配整个全文文本。我们想在全文中查询<em>包含</em>查询文本的部分。不仅如此，我们还期望搜索引擎能理解我们的<em>意图</em>：</p>
+<ul>
+<li>一个针对<code>&quot;UK&quot;</code>的查询将返回涉及<code>&quot;United Kingdom&quot;</code>的文档</li>
+<li>一个针对<code>&quot;jump&quot;</code>的查询同时能够匹配<code>&quot;jumped&quot;</code>， <code>&quot;jumps&quot;</code>， <code>&quot;jumping&quot;</code>甚至<code>&quot;leap&quot;</code></li>
+<li><code>&quot;johnny walker&quot;</code>也能匹配<code>&quot;Johnnie Walker&quot;</code>， <code>&quot;johnnie depp&quot;</code>及<code>&quot;Johnny Depp&quot;</code></li>
+<li><code>&quot;fox news hunting&quot;</code>能返回有关hunting on Fox News的故事，而<code>&quot;fox hunting news&quot;</code>也能返回关于fox hunting的新闻故事。</li>
+</ul>
+<p>为了方便在全文文本字段中进行这些类型的查询，Elasticsearch首先对文本<strong>分析(analyzes)<strong>，然后使用结果建立一个</strong>倒排索引</strong>。</p>
+<h3 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h3><p>Elasticsearch使用一种叫做**倒排索引(inverted index)**的结构来做快速的全文搜索。倒排索引由在文档中出现的唯一的单词列表，以及对于每个单词在文档中的位置组成。</p>
+<p>例如，我们有两个文档，每个文档<code>content</code>字段包含：</p>
+<ol>
+<li>The quick brown fox jumped over the lazy dog</li>
+<li>Quick brown foxes leap over lazy dogs in summer</li>
+</ol>
+<p>为了创建倒排索引，我们首先切分每个文档的<code>content</code>字段为单独的单词，我们把它们叫做**词(terms)<strong>或者</strong>表征(tokens)**，把所有的唯一词放入列表并排序，结果是这个样子的：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Term</th>
+<th align="left">Doc_1</th>
+<th align="left">Doc_2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Quick</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">The</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">brown</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">dog</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">dogs</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">fox</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">foxes</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">in</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">jumped</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">lazy</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">leap</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">over</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">quick</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">summer</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">the</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>现在，如果我们想搜索<code>&quot;quick brown&quot;</code>，我们只需要找到每个词在哪个文档中出现即可：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Term</th>
+<th align="left">Doc_1</th>
+<th align="left">Doc_2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">brown</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">quick</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">—–</td>
+<td align="left">——-</td>
+<td align="left">—–</td>
+</tr>
+<tr>
+<td align="left">Total</td>
+<td align="left">2</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>两个文档都匹配，但是第一个比第二个有更多的匹配项。 如果我们加入简单的**相似度算法(similarity algorithm)**，计算匹配单词的数目，这样我们就可以说第一个文档比第二个匹配度更高——对于我们的查询具有更多相关性。</p>
+<p>但是在我们的倒排索引中还有些问题：</p>
+<ol>
+<li><code>&quot;Quick&quot;</code>和<code>&quot;quick&quot;</code>被认为是不同的单词，但是用户可能认为它们是相同的。</li>
+<li><code>&quot;fox&quot;</code>和<code>&quot;foxes&quot;</code>很相似，就像<code>&quot;dog&quot;</code>和<code>&quot;dogs&quot;</code>——它们都是同根词。</li>
+<li><code>&quot;jumped&quot;</code>和<code>&quot;leap&quot;</code>不是同根词，但意思相似——它们是同义词。</li>
+</ol>
+<p>上面的索引中，单复数和同义词没法匹配。搜索<code>&quot;+Quick +fox&quot;</code>不会匹配任何文档（记住，前缀<code>+</code>表示单词必须匹配到）。只有<code>&quot;Quick&quot;</code>和<code>&quot;fox&quot;</code>都在同一文档中才可以匹配查询。用户希望两个文档都能匹配查询。</p>
+<p>如果我们将词为统一为标准格式，这样就可以找到不是确切匹配查询，但是足以相似从而可以关联的文档。例如：</p>
+<ol>
+<li><code>&quot;Quick&quot;</code>可以转为小写成为<code>&quot;quick&quot;</code>。</li>
+<li><code>&quot;foxes&quot;</code>可以被转为根形式<code>&quot;fox&quot;</code>。同理<code>&quot;dogs&quot;</code>可以被转为<code>&quot;dog&quot;</code>。</li>
+<li><code>&quot;jumped&quot;</code>和<code>&quot;leap&quot;</code>同义就可以只索引为单个词<code>&quot;jump&quot;</code></li>
+</ol>
+<p>现在的索引：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Term</th>
+<th align="left">Doc_1</th>
+<th align="left">Doc_2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">brown</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">dog</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">fox</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">in</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">jump</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">lazy</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">over</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">quick</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">summer</td>
+<td align="left"></td>
+<td align="left">X</td>
+</tr>
+<tr>
+<td align="left">the</td>
+<td align="left">X</td>
+<td align="left">X</td>
+</tr>
+</tbody></table>
+<p>但我们还未成功。我们的搜索<code>&quot;+Quick +fox&quot;</code>依旧失败，因为<code>&quot;Quick&quot;</code>的确切值已经不在索引里，不过，如果我们使用相同的标准化规则处理查询字符串的<code>content</code>字段，查询将变成<code>&quot;+quick +fox&quot;</code>，这样就可以匹配到两个文档。</p>
+<blockquote>
+<p>当我们<strong>索引(index)<strong>一个文档，全文字段会被分析为单独的词来创建倒排索引。不过，当我们在全文字段</strong>搜索(search)<strong>时，我们要让查询字符串经过</strong>同样的分析流程</strong>处理，以确保这些词在索引中存在。</p>
+</blockquote>
+<p>这个标记化和标准化的过程叫做**分词(analysis)**。</p>
+<h3 id="分析和分析器"><a href="#分析和分析器" class="headerlink" title="分析和分析器"></a>分析和分析器</h3><p>**分析(analysis)**是这样一个过程：</p>
+<ul>
+<li>首先，标记化一个文本块为适用于倒排索引单独的<strong>词(term)</strong></li>
+<li>然后标准化这些词为标准形式，提高它们的“可搜索性”或“查全率”</li>
+</ul>
+<p>这个工作是**分析器(analyzer)<strong>完成的。一个</strong>分析器(analyzer)**只是一个包装，用于将三个功能放到一个包里。</p>
+<ol>
+<li><p><code>字符过滤器</code>：</p>
+<p>首先字符串经过**字符过滤器(character filter)**，它们的工作是在标记化前处理字符串。字符过滤器能够去除HTML标记，或者转换<code>&quot;&amp;&quot;</code>为<code>&quot;and&quot;</code>。</p>
+</li>
+<li><p><code>分词器</code>：</p>
+<p>**分词器(tokenizer)<strong>被标记化成独立的词。一个简单的</strong>分词器(tokenizer)**可以根据空格或逗号将单词分开（这个在中文不适用）。</p>
+</li>
+<li><p><code>标记过滤</code>：</p>
+<p>最后，每个词都通过所有**标记过滤(token filters)**，它可以修改词（例如将<code>&quot;Quick&quot;</code>转为小写），去掉词（例如停用词像<code>&quot;a&quot;</code>、<code>&quot;and&quot;</code>、<code>&quot;the&quot;</code>等等），或者增加词（例如同义词像<code>&quot;jump&quot;</code>和<code>&quot;leap&quot;</code>）</p>
+<p>Elasticsearch提供很多开箱即用的字符过滤器，分词器和标记过滤器。这些可以组合来创建自定义的分析器以应对不同的需求。</p>
+</li>
+</ol>
+<h3 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h3><p>Elasticsearch支持以下简单字段类型：</p>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">表示的数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">String</td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left">Whole number</td>
+<td align="left"><code>byte</code>, <code>short</code>, <code>integer</code>, <code>long</code></td>
+</tr>
+<tr>
+<td align="left">Floating point</td>
+<td align="left"><code>float</code>, <code>double</code></td>
+</tr>
+<tr>
+<td align="left">Boolean</td>
+<td align="left"><code>boolean</code></td>
+</tr>
+<tr>
+<td align="left">Date</td>
+<td align="left"><code>date</code></td>
+</tr>
+</tbody></table>
+<p>当你索引一个包含新字段的文档——一个之前没有的字段——Elasticsearch将使用动态映射猜测字段类型，这类型来自于JSON的基本数据类型，使用以下规则：</p>
+<table>
+<thead>
+<tr>
+<th align="left">JSON type</th>
+<th align="left">Field type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Boolean: <code>true</code> or <code>false</code></td>
+<td align="left"><code>&quot;boolean&quot;</code></td>
+</tr>
+<tr>
+<td align="left">Whole number: <code>123</code></td>
+<td align="left"><code>&quot;long&quot;</code></td>
+</tr>
+<tr>
+<td align="left">Floating point: <code>123.45</code></td>
+<td align="left"><code>&quot;double&quot;</code></td>
+</tr>
+<tr>
+<td align="left">String, valid date: <code>&quot;2014-09-15&quot;</code></td>
+<td align="left"><code>&quot;date&quot;</code></td>
+</tr>
+<tr>
+<td align="left">String: <code>&quot;foo bar&quot;</code></td>
+<td align="left"><code>&quot;string&quot;</code></td>
+</tr>
+</tbody></table>
+<h4 id="index"><a href="#index" class="headerlink" title="index"></a>index</h4><p><code>index</code>参数控制字符串以何种方式被索引。它包含以下三个值当中的一个：</p>
+<table>
+<thead>
+<tr>
+<th align="left">值</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>analyzed</code></td>
+<td align="left">首先分析这个字符串，然后索引。换言之，以全文形式索引此字段。</td>
+</tr>
+<tr>
+<td align="left"><code>not_analyzed</code></td>
+<td align="left">索引这个字段，使之可以被搜索，但是索引内容和指定值一样。不分析此字段。</td>
+</tr>
+<tr>
+<td align="left"><code>no</code></td>
+<td align="left">不索引这个字段。这个字段不能为搜索到。</td>
+</tr>
+</tbody></table>
+<p><code>string</code>类型字段默认值是<code>analyzed</code>。如果我们想映射字段为确切值，我们需要设置它为<code>not_analyzed</code>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;tag&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>:     <span class="string">&quot;string&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>:    <span class="string">&quot;not_analyzed&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>其他简单类型（<code>long</code>、<code>double</code>、<code>date</code>等等）也接受<code>index</code>参数，但相应的值只能是<code>no</code>和<code>not_analyzed</code>，它们的值不能被分析。</p>
+</blockquote>
+<h4 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h4><p>你可以向已有映射中<strong>增加</strong>字段，但你不能<strong>修改</strong>它。<strong>如果一个字段在映射中已经存在，这可能意味着那个字段的数据已经被索引。如果你改变了字段映射，那已经被索引的数据将错误并且不能被正确的搜索到</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">PUT /myindex</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;tweet&quot; : &#123;</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;tweet&quot; : &#123;</span><br><span class="line">          &quot;type&quot; :    &quot;string&quot;,</span><br><span class="line">          &quot;analyzer&quot;: &quot;english&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;date&quot; : &#123;</span><br><span class="line">          &quot;type&quot; :   &quot;date&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;name&quot; : &#123;</span><br><span class="line">          &quot;type&quot; :   &quot;string&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;user_id&quot; : &#123;</span><br><span class="line">          &quot;type&quot; :   &quot;long&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="复杂对象如何索引"><a href="#复杂对象如何索引" class="headerlink" title="复杂对象如何索引"></a>复杂对象如何索引</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;tweet&quot;:            &quot;Elasticsearch is very flexible&quot;,</span><br><span class="line">    &quot;user&quot;: &#123;</span><br><span class="line">        &quot;id&quot;:           &quot;@johnsmith&quot;,</span><br><span class="line">        &quot;gender&quot;:       &quot;male&quot;,</span><br><span class="line">        &quot;age&quot;:          26,</span><br><span class="line">        &quot;name&quot;: &#123;</span><br><span class="line">            &quot;full&quot;:     &quot;John Smith&quot;,</span><br><span class="line">            &quot;first&quot;:    &quot;John&quot;,</span><br><span class="line">            &quot;last&quot;:     &quot;Smith&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Lucene 并不了解内部对象。 一个 Lucene 文件包含一个键-值对应的扁平表单。 为了让 Elasticsearch 可以有效的索引内部对象，将文件转换为以下格式：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;tweet&quot;</span>: [elasticsearch, flexible, very],</span><br><span class="line">    <span class="attr">&quot;user.id&quot;</span>: [@johnsmith],</span><br><span class="line">    <span class="attr">&quot;user.gender&quot;</span>: [male],</span><br><span class="line">    <span class="attr">&quot;user.age&quot;</span>: [<span class="number">26</span>],</span><br><span class="line">    <span class="attr">&quot;user.name.full&quot;</span>: [john, smith],</span><br><span class="line">    <span class="attr">&quot;user.name.first&quot;</span>: [john],</span><br><span class="line">    <span class="attr">&quot;user.name.last&quot;</span>: [smith]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意： 在以上扁平化文件中，并没有栏位叫作<code>user</code>也没有栏位叫作<code>user.name</code>。 Lucene 只索引阶层或简单的值，而不会索引复杂的资料结构。</p>
+</blockquote>
+<h3 id="对象的数组如何索引"><a href="#对象的数组如何索引" class="headerlink" title="对象的数组如何索引"></a>对象的数组如何索引</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;followers&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;age&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Mary White&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;age&quot;</span>: <span class="number">26</span>,</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Alex Jones&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;age&quot;</span>: <span class="number">19</span>,</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Lisa Smith&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此文件会如我们以上所说的被扁平化，但其结果会像如此：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;followers.age&quot;: [19,26,35],</span><br><span class="line">    &quot;followers.name&quot;: [alex, jones, lisa, smith, mary, white]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>&#123;age: 35&#125;</code>与<code>&#123;name: Mary White&#125;</code>之间的关联会消失，因每个多值的栏位会变成一个值集合，而非有序的阵列。 </p>
+<p>这让我们可以知道： <em>是否有26岁的追随者？</em> 但我们无法取得准确的资料如: <em>是否有26岁的追随者<strong>且名字叫Alex Jones？</strong></em> </p>
+<p>关联内部对象可解决此类问题，我们称之为<code>嵌套对象</code>，我们之后会在嵌套对象中提到它。</p>
+<h2 id="结构化查询"><a href="#结构化查询" class="headerlink" title="结构化查询"></a>结构化查询</h2><h3 id="查询子句"><a href="#查询子句" class="headerlink" title="查询子句"></a>查询子句</h3><p>一个查询子句一般使用这种结构：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">QUERY_NAME</span>: &#123;</span><br><span class="line">        <span class="attr">ARGUMENT</span>: VALUE,</span><br><span class="line">        <span class="attr">ARGUMENT</span>: VALUE,...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或指向一个指定的字段：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">QUERY_NAME</span>: &#123;</span><br><span class="line">        <span class="attr">FIELD_NAME</span>: &#123;</span><br><span class="line">            <span class="attr">ARGUMENT</span>: VALUE,</span><br><span class="line">            <span class="attr">ARGUMENT</span>: VALUE,...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如，你可以使用<code>match</code>查询子句用来找寻在<code>tweet</code>字段中找寻包含<code>elasticsearch</code>的成员：    </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;tweet&quot;</span>: <span class="string">&quot;elasticsearch&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="常用的query-name"><a href="#常用的query-name" class="headerlink" title="常用的query name"></a>常用的query name</h3><ul>
+<li>match/multi_match/match_all/match_phrase</li>
+<li>term/terms</li>
+<li>range</li>
+<li>exists</li>
+<li>wildcard</li>
+<li>regexp</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /my_index/address/_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;wildcard&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;postcode&quot;</span>: <span class="string">&quot;W?F*HW&quot;</span> </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：在ik环境下，可能使用大写关键字搜索是搜不到东西的，这时可能需要改为小写</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:9200/user/_search&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;query&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;wildcard&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;name&quot;:&quot;Joh?&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的<code>Joh?</code>可能时搜索不到的，需要使用<code>joh?</code></p>
+</blockquote>
+<h3 id="bool查询-复合语句查询"><a href="#bool查询-复合语句查询" class="headerlink" title="bool查询(复合语句查询)"></a>bool查询(复合语句查询)</h3><p>Bool查询包含四种操作符:</p>
+<ul>
+<li><code>must</code>：必须匹配。贡献算分 </li>
+<li><code>must_not</code>：过滤子句，必须不能匹配，但不贡献算分</li>
+<li><code>should</code>：选择性匹配，至少满足一条。贡献算分</li>
+<li><code>filter</code>：  过滤子句，必须匹配，但不贡献算分</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;bool&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;must&quot;</span>:     &#123; <span class="string">&quot;match&quot;</span>: &#123; <span class="string">&quot;tweet&quot;</span>: <span class="string">&quot;elasticsearch&quot;</span> &#125;&#125;,</span><br><span class="line">        <span class="string">&quot;must_not&quot;</span>: &#123; <span class="string">&quot;match&quot;</span>: &#123; <span class="string">&quot;name&quot;</span>:  <span class="string">&quot;mary&quot;</span> &#125;&#125;,</span><br><span class="line">        <span class="string">&quot;should&quot;</span>:   &#123; <span class="string">&quot;match&quot;</span>: &#123; <span class="string">&quot;tweet&quot;</span>: <span class="string">&quot;full text&quot;</span> &#125;&#125;,</span><br><span class="line">      	<span class="string">&quot;filter&quot;</span>: &#123; <span class="string">&quot;term&quot;</span> : &#123; <span class="string">&quot;tag&quot;</span> : <span class="string">&quot;tech&quot;</span> &#125;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Bool查询语法有以下特点</p>
+<ol>
+<li>子查询可以任意顺序出现</li>
+<li>可以嵌套多个查询，包括bool查询</li>
+<li>如果bool查询中没有must条件，should中必须至少满足一条才会返回结果。</li>
+</ol>
+<p>eg：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;range&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;location.lat&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;gt&quot;</span>: <span class="number">30</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">&quot;must_not&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;city&quot;</span>: <span class="string">&quot;深圳&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Query查询和Filter查询的关系"><a href="#Query查询和Filter查询的关系" class="headerlink" title="Query查询和Filter查询的关系"></a>Query查询和Filter查询的关系</h3><ul>
+<li><code>Query context</code>：<strong>查询上下文</strong>， 这种语句在执行时既要计算文档是否匹配，还要计算文档相对于其他文档的匹配度有多高，匹配度越高，<code>_score</code> 分数就越高。</li>
+<li><code>Filter context</code>：<strong>过滤上下文</strong>， 过滤上下文中的语句在执行时只关心文档是否和查询匹配，不会计算匹配度，也就是得分。</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;must&quot;</span>: [</span><br><span class="line">        &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>:   <span class="string">&quot;Search&quot;</span>        &#125;&#125;,</span><br><span class="line">        &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;content&quot;</span>: <span class="string">&quot;Elasticsearch&quot;</span> &#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">&quot;filter&quot;</span>: [</span><br><span class="line">        &#123; <span class="attr">&quot;term&quot;</span>:  &#123; <span class="attr">&quot;status&quot;</span>: <span class="string">&quot;published&quot;</span> &#125;&#125;,</span><br><span class="line">        &#123; <span class="attr">&quot;range&quot;</span>: &#123; <span class="attr">&quot;publish_date&quot;</span>: &#123; <span class="attr">&quot;gte&quot;</span>: <span class="string">&quot;2015-01-01&quot;</span> &#125;&#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>query</code> 参数表示整个语句是处于 query context 中</li>
+<li><code>bool</code> 和 <code>match</code> 语句被用在 query context 中，也就是说它们会计算每个文档的匹配度(<code>_score</code>)</li>
+<li><code>filter</code> 参数则表示这个子查询处于 filter context 中</li>
+<li><code>filter</code> 语句中的 <code>term</code> 和 <code>range</code> 语句用在 filter context 中，它们只起到过滤的作用，并不会计算文档的得分。</li>
+</ul>
+<p>query查询和filter查询的关系：</p>
+<ul>
+<li><p>对于简单的情况，我们就使用query简单语句</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">		<span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">			<span class="attr">&quot;name&quot;</span>: <span class="string">&quot;hyl&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>当情况复制起来的时候，我们就需要使用到复杂查询。因为bool语句支持嵌套，所以我们就可以使用bool语句来实现这个需求。</p>
+</li>
+<li><p>bool语句支持<code>must</code>,<code>must_not</code>,<code>should</code>,<code>filter</code>四种。其中前三种是<code>是或非</code>，而filter则最为强大。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">POST /products/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;must&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;term&quot;</span>: &#123;</span><br><span class="line">          <span class="attr">&quot;price&quot;</span>: <span class="string">&quot;30&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;must_not&quot;</span>: &#123;</span><br><span class="line">              <span class="attr">&quot;term&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;avaliable&quot;</span>: <span class="string">&quot;false&quot;</span></span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">&quot;minimum_should_match&quot;</span>: <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>总结：</p>
+<ul>
+<li>复杂的query查询需要用到bool查询</li>
+<li>filter查询必须在bool语句下才能工作</li>
+<li>bool语句支持嵌套，以实现更加复杂的查询</li>
+</ul>
+</li>
+</ul>
+<h3 id="查询与过滤的性能差异"><a href="#查询与过滤的性能差异" class="headerlink" title="查询与过滤的性能差异"></a>查询与过滤的性能差异</h3><ul>
+<li>使用过滤语句得到的结果集是一个简单的文档列表，快速匹配运算并存入内存是十分方便的， 每个文档仅需要1个字节。这些缓存的过滤结果集与后续请求的结合使用是非常高效的。</li>
+<li>查询语句不仅要查找相匹配的文档，还需要计算每个文档的相关性，所以一般来说查询语句要比过滤语句更耗时，并且查询结果也不可缓存。</li>
+<li>幸亏有了倒排索引，一个只匹配少量文档的简单查询语句在百万级文档中的查询效率会与一条经过缓存 的过滤语句旗鼓相当，甚至略占上风。 </li>
+<li>但是一般情况下，一条经过缓存的过滤查询要远胜一条查询语句的执行效率。</li>
+<li>过滤语句的目的就是缩小匹配的文档结果集，所以需要仔细检查过滤条件。</li>
+</ul>
+<h3 id="验证查询"><a href="#验证查询" class="headerlink" title="验证查询"></a>验证查询</h3><p><code>validate</code> API 可以验证一条查询语句是否合法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /gb/tweet/_validate/query?explain</span><br><span class="line">&#123;</span><br><span class="line">   &quot;query&quot;: &#123;</span><br><span class="line">      &quot;tweet&quot; : &#123;</span><br><span class="line">         &quot;match&quot; : &quot;really powerful&quot;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>explain</code> 参数可以提供语句错误的更多详情。</p>
+<p>很显然，我们把 query 语句的 <code>match</code> 与字段名位置弄反了：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;valid&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">&quot;_shards&quot;</span>: &#123; ... &#125;,</span><br><span class="line">    <span class="attr">&quot;explanations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;gb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;valid&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;error&quot;</span>: <span class="string">&quot;org.elasticsearch.index.query.QueryParsingException: [gb] No query registered for [tweet]&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果是合法语句的话，使用 <code>explain</code> 参数可以返回一个带有查询语句的可阅读描述， 可以帮助了解查询语句在ES中是如何执行的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /_validate/query?explain </span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">            &quot;tweet&quot;: &quot;really powerful&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>explanation</code> 会为每一个索引返回一段描述，因为每个索引会有不同的映射关系和分析器：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;valid&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;_shards&quot;</span>: &#123; ... &#125;,</span><br><span class="line">    <span class="attr">&quot;explanations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;us&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;valid&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">            <span class="attr">&quot;explanation&quot;</span>: <span class="string">&quot;tweet:really tweet:powerful&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;gb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;valid&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">            <span class="attr">&quot;explanation&quot;</span>: <span class="string">&quot;tweet:really tweet:power&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从返回的 <code>explanation</code> 你会看到 <code>match</code> 是如何为查询字符串 <code>&quot;really powerful&quot;</code> 进行查询的， </p>
+<ol>
+<li>首先，它被拆分成两个独立的词分别在 <code>tweet</code> 字段中进行查询。</li>
+<li>而且，在索引<code>us</code>中这两个词为<code>&quot;really&quot;</code>和<code>&quot;powerful&quot;</code>，在索引<code>gb</code>中被拆分成<code>&quot;really&quot;</code> 和 <code>&quot;power&quot;</code>。 这是因为我们在索引<code>gb</code>中使用了<code>english</code>分析器。</li>
+</ol>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><h3 id="字段值排序"><a href="#字段值排序" class="headerlink" title="字段值排序"></a>字段值排序</h3><p>使用 <code>sort</code> 参数进行排序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;bool&quot; : &#123;</span><br><span class="line">            &quot;filter&quot; : &#123; &quot;term&quot; : &#123; &quot;user_id&quot; : 1 &#125;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;sort&quot;: &#123; &quot;date&quot;: &#123; &quot;order&quot;: &quot;desc&quot; &#125;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你会发现这里有两个不同点：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;hits&quot;</span> : &#123;</span><br><span class="line">    <span class="attr">&quot;total&quot;</span> :           <span class="number">6</span>,</span><br><span class="line">    <span class="attr">&quot;max_score&quot;</span> :       <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;hits&quot;</span> : [ &#123;</span><br><span class="line">        <span class="attr">&quot;_index&quot;</span> :      <span class="string">&quot;us&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_type&quot;</span> :       <span class="string">&quot;tweet&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_id&quot;</span> :         <span class="string">&quot;14&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_score&quot;</span> :      <span class="literal">null</span>,</span><br><span class="line">        <span class="attr">&quot;_source&quot;</span> :     &#123;</span><br><span class="line">             <span class="attr">&quot;date&quot;</span>:    <span class="string">&quot;2014-09-24&quot;</span>,</span><br><span class="line">             ...</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">&quot;sort&quot;</span> :        [ <span class="number">1411516800000</span> ]</span><br><span class="line">    &#125;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>_score</code> 字段没有经过计算。</p>
+<p>默认情况下，我们是以<code>_sorce</code>进行排序的，既然现在已经使用了<code>date</code>作为排序，那么自然就没有必要计算<code>_sorce</code>了。没有计算<code>_sroce</code>，自然<code>max_sorce</code>也为空。如果你想强制计算其相关性，可以设置<code>track_scores</code>为 <code>true</code>。</p>
+</li>
+<li><p>在每个结果中增加了一个 <code>sort</code> 字段，它所包含的值就是用来排序的。 在这个例子当中 <code>date</code> 字段在内部被转为毫秒，即长整型数字<code>1411516800000</code>等同于日期字符串 <code>2014-09-24 00:00:00 UTC</code>。</p>
+</li>
+</ul>
+<h3 id="默认排序"><a href="#默认排序" class="headerlink" title="默认排序"></a>默认排序</h3><p>字段值默认以顺序排列，而 <code>_score</code> 默认以倒序排列。 </p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;match_all&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;sort&quot;</span>: <span class="string">&quot;date&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果希望倒序排序，可以如下使用</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;match_all&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;sort&quot;</span>: &#123;</span><br><span class="line">      	<span class="attr">&quot;date&quot;</span>: &#123;</span><br><span class="line">          	<span class="attr">&quot;order&quot;</span>: <span class="string">&quot;desc&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="多级排序"><a href="#多级排序" class="headerlink" title="多级排序"></a>多级排序</h3><p>如果我们想要合并一个查询语句，并且展示所有匹配的结果集使用第一排序是<code>date</code>，第二排序是 <code>_score</code>： </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;match&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;tweet&quot;</span>: <span class="string">&quot;elasticsearch&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;filter&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;term&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;mary&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;sort&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;date&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;order&quot;</span>: <span class="string">&quot;desc&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;_score&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;order&quot;</span>: <span class="string">&quot;asc&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="字符串参数排序"><a href="#字符串参数排序" class="headerlink" title="字符串参数排序"></a>字符串参数排序</h3><p>字符查询也支持自定义排序，在查询字符串使用<code>sort</code>参数就可以： </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?sort=date:desc&amp;sort=_score&amp;q=search</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="为多值字段排序"><a href="#为多值字段排序" class="headerlink" title="为多值字段排序"></a>为多值字段排序</h3><p>为一个字段的多个值进行排序。对于数字和日期，你可以从多个值中取出一个来进行排序，你可以使用<code>min</code>, <code>max</code>, <code>avg</code> 或 <code>sum</code>这些模式。 比说你可以在 <code>dates</code> 字段中最早的日期来进行排序： </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;sort&quot;</span>: &#123; <span class="string">&quot;dates&quot;</span>: &#123; <span class="string">&quot;order&quot;</span>: <span class="string">&quot;asc&quot;</span>, <span class="string">&quot;mode&quot;</span>: <span class="string">&quot;min&quot;</span> &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="多值字段字符串排序"><a href="#多值字段字符串排序" class="headerlink" title="多值字段字符串排序"></a>多值字段字符串排序</h3><blockquote>
+<p><code>多值字段</code>是指同一个字段在ES索引中有多个含义，即<strong>使用多个分析器(analyser)进行分词与排序</strong>。</p>
+</blockquote>
+<ul>
+<li><p>被分析器(analyser)处理过的字符称为<code>analyzed field</code>(即已被分词并排序的字段，所有写入ES中的字段默认圴会被analyzed)</p>
+</li>
+<li><p><code>analyzed</code>字符串字段同时也是多值字段，在这些字段上排序往往得不到你想要的值。</p>
+<blockquote>
+<ul>
+<li>比如对一个字符 <code>&quot;fine old art&quot;</code>，我们想按如下的方法进行排序：按照第一个词首字母排序， 如果第一个单词相同的话，再用第二个词的首字母排序，以此类推。</li>
+<li>字符会被analyer，得到三个值：<code>fine</code>，<code>old</code>，<code>art</code>。然后将这三个值放入倒排索引中，此时这个三个词的顺序信息就丢失了，进而就无法完成排序。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>为了使一个string字段可以进行排序，它必须只包含一个词：即完整的<code>not_analyzed</code>字符串(未经分析器分词并排序的原字符串)。当然我们需要对字段进行全文本搜索的时候还必须使用被 <code>analyzed</code> 标记的字段。</p>
+</li>
+</ul>
+<p>在 <code>_source</code> 下相同的字符串上排序两次会造成不必要的资源浪费。 而我们想要的是同一个字段中同时包含这两种索引方式，我们只需要改变索引(index)的mapping即可。 方法是在所有核心字段类型上，使用通用参数 <code>fields</code>对mapping进行修改。 </p>
+<p>比如，我们原有mapping如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;tweet&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;type&quot;</span>:     <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;english&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改变后的多值字段mapping如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;tweet&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;type&quot;</span>:     <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;english&quot;</span>,</span><br><span class="line">    <span class="string">&quot;fields&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;raw&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>:  <span class="string">&quot;string&quot;</span>,</span><br><span class="line">            <span class="string">&quot;index&quot;</span>: <span class="string">&quot;not_analyzed&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>tweet</code> 字段用于全文本的 <code>analyzed</code> 索引方式不变。 新增的 <code>tweet.raw</code> 子字段索引方式是 <code>not_analyzed</code>。</p>
+</li>
+<li><p>现在，在给数据重建索引后，我们既可以使用 <code>tweet</code> 字段进行全文本搜索，也可以用<code>tweet.raw</code>字段进行排序：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /_search </span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;tweet&quot;</span>: <span class="string">&quot;elasticsearch&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;sort&quot;</span>: <span class="string">&quot;tweet.raw&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>警告</strong>： 对 <code>analyzed</code> 字段进行强制排序会消耗大量内存。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="相关性"><a href="#相关性" class="headerlink" title="相关性"></a>相关性</h3><p>ElasticSearch的相似度算法被定义为 TF/IDF，即检索词频率/反向文档频率，包括一下内容：</p>
+<ul>
+<li><code>检索词频率</code>：检索词在该字段出现的频率。出现频率越高，相关性也越高。 字段中出现过5次要比只出现过1次的相关性高。</li>
+<li><code>反向文档频率</code>：每个检索词在索引中出现的频率。频率越高，相关性越低。 检索词出现在多数文档中会比出现在少数文档中的权重更低， 即检验一个检索词在文档中的普遍重要性。</li>
+<li><code>字段长度准则</code>：字段的长度是多少。长度越长，相关性越低。 检索词出现在一个短的 <code>title</code> 要比同样的词出现在一个长的 <code>content</code> 字段。</li>
+</ul>
+<h3 id="排序是十分消耗资源的"><a href="#排序是十分消耗资源的" class="headerlink" title="排序是十分消耗资源的"></a>排序是十分消耗资源的</h3><p>倒排索引是优秀的索引结构，但却不是理想的排序结构。</p>
+<ul>
+<li>当搜索的时候，我们需要用检索词去遍历所有的文档。</li>
+<li>当排序的时候，我们需要遍历文档中所有的值，我们需要做反倒序排列操作。</li>
+</ul>
+<p>为了提高排序效率，ElasticSearch 会将所有字段的值加载到内存中，这就叫做<code>字段数据</code>。</p>
+<blockquote>
+<ul>
+<li>ElasticSearch将所有字段数据加载到内存中<strong>并不是匹配到的那部分数据。 而是索引下所有文档中的值</strong>，包括所有类型。</li>
+<li>将所有字段数据加载到内存中是因为从硬盘反向倒排索引是非常缓慢的。尽管你这次请求需要的是某些文档中的部分数据， 但你下个请求却需要另外的数据，所以将所有字段数据一次性加载到内存中是十分必要的。</li>
+</ul>
+</blockquote>
+<p>ElasticSearch中的字段数据常被应用到以下场景：</p>
+<ul>
+<li>对一个字段进行排序</li>
+<li>对一个字段进行聚合</li>
+<li>某些过滤，比如地理位置过滤</li>
+<li>某些与字段相关的脚本计算</li>
+</ul>
+<p>毫无疑问，这会消耗掉很多内存，尤其是大量的字符串数据 — string字段可能包含很多不同的值，比如邮件内容。 值得庆幸的是，内存不足是可以通过横向扩展解决的，我们可以增加更多的节点到集群。</p>
+<h2 id="索引管理"><a href="#索引管理" class="headerlink" title="索引管理"></a>索引管理</h2><p>你可以通过在 <code>config/elasticsearch.yml</code> 中添加下面的配置来防止自动创建索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">action.auto_create_index: false</span><br></pre></td></tr></table></figure>
+
+
+
+<p>索引最重要的配置</p>
+<ul>
+<li><p><code>number_of_shards</code>：定义一个索引的主分片个数，默认值是 5。这个配置在索引创建后不能修改。</p>
+</li>
+<li><p><code>number_of_replicas</code>：每个主分片的复制分片个数，默认是 1。这个配置可以随时在活跃的索引上修改。</p>
+</li>
+<li><p><code>analysis</code> 部分：用来配置已存在的分析器或创建自定义分析器来定制化你的索引。</p>
+<blockquote>
+<p><code>分析器</code>是三个顺序执行的组件的结合（字符过滤器，分词器，标记过滤器）。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Lucene-如何处理文档"><a href="#Lucene-如何处理文档" class="headerlink" title="Lucene 如何处理文档"></a>Lucene 如何处理文档</h3><ul>
+<li>Lucene 中，一个文档由一组简单的键值对组成，一个字段至少需要有一个值，但是任何字段都可以有多个值。</li>
+<li>类似的，一个单独的字符串可能在分析过程中被转换成多个值。Lucene 不关心这些值是字符串，数字或日期，所有的值都被当成<code>不透明字节</code></li>
+<li>当我们在 Lucene 中索引一个文档时，每个字段的值都被加到相关字段的倒排索引中。你也可以选择将原始数据<strong>储存</strong>起来以备今后取回。</li>
+</ul>
+<h3 id="类型是怎么实现的"><a href="#类型是怎么实现的" class="headerlink" title="类型是怎么实现的"></a>类型是怎么实现的</h3><ul>
+<li>Elasticsearch 类型是在这个简单基础上实现的。一个索引可能包含多个类型，每个类型有各自的映射和文档，保存在同一个索引中。</li>
+<li>因为 Lucene 没有文档类型的概念，每个文档的类型名被储存在一个叫 <code>_type</code> 的元数据字段上。当我们搜索一种特殊类型的文档时，Elasticsearch 简单的通过 <code>_type</code> 字段来过滤出这些文档。</li>
+<li>Lucene 同样没有映射的概念。映射是 Elasticsearch 将复杂 JSON 文档<strong>映射</strong>成 Lucene 需要的扁平化数据的方式。</li>
+</ul>
+<p>例如，<code>user</code> 类型中 <code>name</code> 字段的映射声明这个字段是一个 <code>string</code> 类型，在被加入倒排索引之前，它的数据需要通过 <code>whitespace</code> 分析器来分析。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;name&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;type&quot;</span>:     <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;analyzer&quot;</span>: <span class="string">&quot;whitespace&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="预防类型陷阱"><a href="#预防类型陷阱" class="headerlink" title="预防类型陷阱"></a>预防类型陷阱</h3><p>事实上不同类型的文档可以被加到同一个索引里，这带来了一些预想不到的困难。</p>
+<p>想象一下我们的索引中有两种类型：<code>blog_en</code> 表示英语版的博客，<code>blog_es</code> 表示西班牙语版的博客。两种类型都有 <code>title</code> 字段，但是其中一种类型使用 <code>english</code> 分析器，另一种使用 <code>spanish</code> 分析器。</p>
+<p>使用下面的查询就会遇到问题：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;The quick brown fox&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在两种类型中搜索 <code>title</code> 字段，首先需要分析查询语句，但是应该使用哪种分析器呢，<code>spanish</code> 还是 <code>english</code>？</p>
+<p><strong>Elasticsearch 会采用第一个被找到的 <code>title</code> 字段使用的分析器</strong>，这对于这个字段的文档来说是正确的，但对另一个来说却是错误的。</p>
+<p>我们可以通过给字段取不同的名字来避免这种错误 —— 比如，用 <code>title_en</code> 和 <code>title_es</code>。或者在查询中明确包含各自的类型名。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;multi_match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;query&quot;</span>:    <span class="string">&quot;The quick brown fox&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;fields&quot;</span>: [ <span class="string">&quot;blog_en.title&quot;</span>, <span class="string">&quot;blog_es.title&quot;</span> ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新的查询中 <code>english</code> 分析器用于 <code>blog_en.title</code> 字段，<code>spanish</code> 分析器用于 <code>blog_es.title</code> 字段，然后通过综合得分组合两种字段的结果。</p>
+<p>这种办法对具有相同数据类型的字段有帮助，但是想象一下如果你将下面两个文档加入同一个索引，会发生什么：</p>
+<ul>
+<li>类型: user</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;login&quot;: &quot;john_smith&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>类型: event</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;login&quot;: &quot;2014-06-01&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Lucene 不在乎一个字段是字符串而另一个字段是日期，它会一视同仁的索引这两个字段。</p>
+<p>然而，假如我们试图排序<code>event.login</code> 字段，Elasticsearch 需要将 <code>login</code> 字段的值加载到内存中。，它将 <strong>任意文档</strong> 的值加入索引而不管它们的类型。它会尝试加载这些值为字符串或日期，取决于它遇到的第一个 <code>login</code> 字段。这可能会导致预想不到的结果或者以失败告终。</p>
+<blockquote>
+<p>为了保证不会遇到这些冲突，建议在同一个索引的每一个类型中，确保用<strong>同样的方式映射同名的字段</strong></p>
+</blockquote>
+<h3 id="根对象"><a href="#根对象" class="headerlink" title="根对象"></a>根对象</h3><p>映射的最高一层被称为<code>根对象</code>，它可能包含下面几项：</p>
+<ul>
+<li>一个<code>properties</code>节点，列出了文档中可能包含的每个字段的映射</li>
+<li>多个元数据字段，每一个都以下划线开头，例如 <code>_type</code>, <code>_id</code> 和 <code>_source</code></li>
+<li>设置项，控制如何动态处理新的字段，例如 <code>analyzer</code>, <code>dynamic_date_formats</code> 和 <code>dynamic_templates</code>。</li>
+<li>其他设置，可以同时应用在根对象和其他 <code>object</code> 类型的字段上，例如 <code>enabled</code>, <code>dynamic</code> 和 <code>include_in_all</code></li>
+</ul>
+<h3 id="重建索引与别名"><a href="#重建索引与别名" class="headerlink" title="重建索引与别名"></a>重建索引与别名</h3><p><strong>在应用中使用别名而不是索引。然后你就可以在任何时候重建索引。</strong></p>
+<p>你的应用采用一个叫 <code>my_index</code> 的索引。而事实上，<code>my_index</code> 是一个指向当前真实索引的别名。真实的索引名为：<code>my_index_v1</code>。</p>
+<p>开始，我们创建一个索引 <code>my_index_v1</code>，然后将别名 <code>my_index</code> 指向它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建索引 my_index_v1</span></span><br><span class="line">PUT /my_index_v1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将别名 my_index 指向 my_index_v1</span></span><br><span class="line">PUT /my_index_v1/_alias/my_index</span><br></pre></td></tr></table></figure>
+
+
+
+<p>你可以检测这个别名指向哪个索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /*/_alias/my_index</span><br></pre></td></tr></table></figure>
+
+<p>或哪些别名指向这个索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /my_index_v1/_alias/*</span><br></pre></td></tr></table></figure>
+
+<p>两者都将返回下列值：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;my_index_v1&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;aliases&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;my_index&quot;</span>: &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后，我们决定修改索引中一个字段的映射。当然我们不能修改现存的映射，索引我们需要重新索引数据。首先，我们创建有新的映射的索引 <code>my_index_v2</code>。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index_v2</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;my_type&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;tags&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;not_analyzed&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们从将数据从 <code>my_index_v1</code> 迁移到 <code>my_index_v2</code>。一旦我们认为数据已经被正确的索引了，我们就将别名指向新的索引。</p>
+<p>别名可以指向多个索引，所以我们需要在新索引中添加别名的同时从旧索引中删除它。这个操作需要原子化，所以我们需要用 <code>_aliases</code> 操作：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">POST /_aliases</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;actions&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;remove&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;my_index_v1&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;alias&quot;</span>: <span class="string">&quot;my_index&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;add&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;index&quot;</span>: <span class="string">&quot;my_index_v2&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;alias&quot;</span>: <span class="string">&quot;my_index&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，你的应用就从旧索引迁移到了新的，而没有停机时间。</p>
+<h2 id="结构化搜索"><a href="#结构化搜索" class="headerlink" title="结构化搜索"></a>结构化搜索</h2><ul>
+<li><code>结构化搜索</code>：是指查询包含内部结构的数据。</li>
+<li>日期，时间，和数字都是结构化的：它们有明确的格式给你执行逻辑操作。一般包括比较数字或日期的范围，或确定两个值哪个大。</li>
+<li>文本也可以被结构化。一包蜡笔有不同的颜色：<code>红色</code>，<code>绿色</code>，<code>蓝色</code>。一篇博客可能被打上 <code>分布式</code> 和 <code>搜索</code>的标签。电子商务产品有商品统一代码（UPCs） 或其他有着严格格式的标识。</li>
+<li>通过结构化搜索，你的查询结果始终是<code>是</code>或<code>非</code>。结构化搜索不关心文档的相关性或分数，它<strong>只是简单的包含或排除文档</strong>。</li>
+<li>这必须是有意义的逻辑，比如说，一个数字不能比同一个范围中的其他数字更多。它只能包含在一个范围中 —— 或不在其中。类似的，对于结构化文本，一个值必须相等或不等。这里没有<em>更匹配</em>的概念。</li>
+</ul>
+<h3 id="执行一次过滤的内部流程"><a href="#执行一次过滤的内部流程" class="headerlink" title="执行一次过滤的内部流程"></a>执行一次过滤的内部流程</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET /my_store/products/_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span> : &#123;</span><br><span class="line">            <span class="attr">&quot;filter&quot;</span> : &#123;</span><br><span class="line">                <span class="attr">&quot;term&quot;</span> : &#123;</span><br><span class="line">                    <span class="attr">&quot;productID&quot;</span> : <span class="string">&quot;XHDK-A-1293-#fJ3&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>查找匹配文档：<code>term</code> 过滤器在倒排索引中查找词 <code>XHDK-A-1293-#fJ3</code>，然后返回包含那个词的文档列表。在这个例子中，只有文档 1 有我们想要的词。</li>
+<li>创建字节集：然后过滤器将创建一个 <em>字节集</em> —— 一个由 1 和 0 组成的数组 —— 描述哪些文档包含这个词。匹配的文档得到 <code>1</code> 字节，在我们的例子中，字节集将是 <code>[1,0,0,0]</code></li>
+<li>缓存字节集：最后，字节集被储存在内存中，以使我们能用它来跳过步骤 1 和 2。这大大的提升了性能，让过滤变得非常的快。</li>
+</ol>
+<h3 id="过滤顺序"><a href="#过滤顺序" class="headerlink" title="过滤顺序"></a>过滤顺序</h3><p>在 <code>bool</code> 条件中过滤器的顺序对性能有很大的影响。更详细的过滤条件应该被放置在其他过滤器之前，以便在更早的排除更多的文档。</p>
+<p>假如条件 A 匹配 1000 万个文档，而 B 只匹配 100 个文档，那么需要将 B 放在 A 前面。</p>
+<p>缓存的过滤器非常快，所以它们需要被放在不能缓存的过滤器之前。想象一下我们有一个索引包含了一个月的日志事件，然而，我们只对近一个小时的事件感兴趣：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">GET /logs/<span class="number">2014</span><span class="number">-01</span>/_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;filtered&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;filter&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;range&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;timestamp&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;gt&quot;</span>: <span class="string">&quot;now-1h&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个过滤条件没有被缓存，因为它使用了 <code>now</code> 方法，这个值每毫秒都在变化。这意味着我们需要每次执行这条查询时都检测一整个月的日志事件。</p>
+<p>我们可以通过组合一个缓存的过滤器来让这变得更有效率：</p>
+<p>我们可以添加一个含固定时间的过滤器来排除掉这个月的大部分数据，例如昨晚凌晨：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;must&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">&quot;range&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;timestamp&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;gt&quot;</span>: <span class="string">&quot;now-1h/d&quot;</span> &lt;<span class="number">1</span>&gt;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">&quot;range&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;timestamp&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;gt&quot;</span>: <span class="string">&quot;now-1h&quot;</span> &lt;<span class="number">2</span>&gt;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>&lt;1&gt; 这个过滤器被缓存了，因为它使用了取整到昨夜凌晨 <code>now</code> 条件。</li>
+<li>&lt;2&gt; 这个过滤器没有被缓存，因为它没有对 <code>now</code> 取整。</li>
+</ul>
+<p><code>now-1h/d</code> 条件取整到昨夜凌晨，所以所有今天之前的文档都被排除掉了。这个结果的字节集被缓存了，因为 <code>now</code> 被取整了，意味着它只需要每天当<em>昨夜凌晨</em>的值改变时被执行一次。<code>now-1h</code> 条件没有被缓存，因为 <code>now</code> 表示最近一毫秒的时间。然而，得益于第一个过滤器，第二个过滤器只需要检测当天的文档就行。</p>
+<p>这些条件的排序很重要。上面的实现能正常工作是因为<em>自从昨晚凌晨</em>条件比<em>最近一小时</em>条件位置更前。假如它们用别的方式组合，那么<em>最近一小时</em>条件还是需要检测所有的文档，而不仅仅是昨夜以来的文档。</p>
+<h2 id="全文搜索"><a href="#全文搜索" class="headerlink" title="全文搜索"></a>全文搜索</h2><h3 id="提高精度"><a href="#提高精度" class="headerlink" title="提高精度"></a>提高精度</h3><p>匹配包含任意个数查询关键字的文档可能会得到一些看似不相关的结果，这是一种霰弹策略(shotgun approach)。然而我们可能想得到包含<em>所有</em>查询关键字的文档。换句话说，我们想得到的是匹配<code>&#39;brown AND dog&#39;</code>的文档，而非<code>&#39;brown OR dog&#39;</code>。</p>
+<p><code>match</code>查询接受一个<code>&#39;operator&#39;</code>参数，默认值为<code>or</code>。如果要求所有查询关键字都匹配，可以更改参数值为<code>and</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /my_index/my_type/_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;title&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;query&quot;</span>: <span class="string">&quot;brown fox&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;operator&quot;</span>: <span class="string">&quot;and&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上面的查询等同于：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;must&quot;</span>: [</span><br><span class="line">      &#123; <span class="attr">&quot;term&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;brown&quot;</span> &#125;&#125;,</span><br><span class="line">      &#123; <span class="attr">&quot;term&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;fox&quot;</span>   &#125;&#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="提高查询分数"><a href="#提高查询分数" class="headerlink" title="提高查询分数"></a>提高查询分数</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;content&quot;</span>: &#123; (1)</span><br><span class="line">                        <span class="attr">&quot;query&quot;</span>:    <span class="string">&quot;full text search&quot;</span>,</span><br><span class="line">                        <span class="attr">&quot;operator&quot;</span>: <span class="string">&quot;and&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">&quot;should&quot;</span>: [ (<span class="number">2</span>)</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;content&quot;</span>: <span class="string">&quot;Elasticsearch&quot;</span> &#125;&#125;,</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;content&quot;</span>: <span class="string">&quot;Lucene&quot;</span>        &#125;&#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>content</code>字段必须包含<code>full</code>,<code>text</code>,<code>search</code>这三个单词。</li>
+<li>如果<code>content</code>字段也包含了“Elasticsearch”或者“Lucene”，则文档会有一个更高的得分。</li>
+</ul>
+<p>可以使用<code>boost</code>值来控制相对权重：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;match&quot;</span>: &#123;  (1)</span><br><span class="line">                    <span class="attr">&quot;content&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;query&quot;</span>:    <span class="string">&quot;full text search&quot;</span>,</span><br><span class="line">                        <span class="attr">&quot;operator&quot;</span>: <span class="string">&quot;and&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;content&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;query&quot;</span>: <span class="string">&quot;Elasticsearch&quot;</span>,</span><br><span class="line">                        <span class="attr">&quot;boost&quot;</span>: <span class="number">3</span> (<span class="number">2</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;&#125;,</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;content&quot;</span>: &#123;</span><br><span class="line">                        <span class="attr">&quot;query&quot;</span>: <span class="string">&quot;Lucene&quot;</span>,</span><br><span class="line">                        <span class="attr">&quot;boost&quot;</span>: <span class="number">2</span> (<span class="number">3</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;&#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这些查询子句的<code>boost</code>值为默认值<code>1</code>。</li>
+<li>这个子句是最重要的，因为他有最高的<code>boost</code>值。</li>
+<li>这个子句比第一个查询子句的要重要，但是没有“Elasticsearch”子句重要。</li>
+</ul>
+<ol>
+<li>当<code>boost</code>值大于<code>1</code>：提高子句的相对权重；</li>
+<li><code>boost</code>值在<code>0</code>-<code>1</code>之间：降低子句的相对权重，</li>
+<li>注意提高和降低并非是线性的。换句话说，<code>boost</code>值为2并不能够使结果变成两倍的得分。</li>
+</ol>
+<h3 id="控制精度"><a href="#控制精度" class="headerlink" title="控制精度"></a>控制精度</h3><p>在 <em>all</em> 和 <em>any</em> 之间的选择有点过于非黑即白。如果用户指定了5个查询关键字，而一个文档只包含了其中的4个。将<code>&#39;operator&#39;</code>设置为<code>&#39;and&#39;</code>会排除这个文档。</p>
+<p>有时这的确是用户想要的结果。但在大多数全文检索的使用场景下，用户想得到相关的文档，排除那些不太可能相关的文档。换句话说，我们需要介于二者之间的选项。</p>
+<p><code>match</code>查询有<code>&#39;minimum_should_match&#39;</code>参数，参数值表示被视为<em>相关</em>的文档必须匹配的关键词个数。参数值可以设为整数，也可以设置为百分数。因为不能提前确定用户输入的查询关键词个数，使用百分数也很合理。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /my_index/my_type/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;match&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;title&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;query&quot;</span>: <span class="string">&quot;quick brown dog&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;minimum_should_match&quot;</span>: <span class="string">&quot;75%&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当<code>&#39;minimum_should_match&#39;</code>被设置为百分数时，查询进行如下：在上面的例子里，<code>&#39;75%&#39;</code>会被下舍为<code>&#39;66.6%&#39;</code>，也就是2个关键词。不论参数值为多少，进入结果集的文档至少应匹配一个关键词。</p>
+<h3 id="分析控制"><a href="#分析控制" class="headerlink" title="分析控制"></a>分析控制</h3><p>查询只能查找在倒排索引中出现的词，所以确保在文档索引的时候以及字符串查询的时候使用同一个分析器是很重要的，为了查询的词能够在倒排索引中匹配到。</p>
+<p>像<code>match</code>查询一样的高级别的查询可以知道字段的映射并且能够在被查询的字段上使用正确的分析器。我们可以在<code>validate-query</code> API的执行中看到这个：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /my_index/my_type/_validate/query?explain</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>:         <span class="string">&quot;Foxes&quot;</span>&#125;&#125;,</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;english_title&quot;</span>: <span class="string">&quot;Foxes&quot;</span>&#125;&#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它会返回<code>explanation</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(title:foxes english_title:fox)</span><br></pre></td></tr></table></figure>
+
+<p><code>match</code>查询为每个字段使用合适的分析器用来确保在那个字段上可以用正确的格式查询这个词。</p>
+<p>有时候，在创建索引与查询索引的时候使用不同的分析器也是有意义的。举个例子：在创建索引的时候想要索引同义词 (比如, 出现quick的时候，我们也索引 fast, rapid, 和 speedy)。但是在查询索引的时候，我们不需要查询所有的同义词，我们只要查询用户输入的一个单词就可以了，它可以是<code>quick</code>, <code>fast</code>, <code>rapid</code>, 或者 <code>speedy</code>。</p>
+<p>为了满足这种差异，Elasticsearch也支持<code>index_analyzer</code> 和 <code>search_analyzer</code> 参数，并且分析器被命名为<code>default_index</code>和<code>default_search</code>。</p>
+<h2 id="多字段搜索"><a href="#多字段搜索" class="headerlink" title="多字段搜索"></a>多字段搜索</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">        &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>:  <span class="string">&quot;War and Peace&quot;</span> &#125;&#125;,</span><br><span class="line">        &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;Leo Tolstoy&quot;</span>   &#125;&#125;,</span><br><span class="line">        &#123; <span class="attr">&quot;bool&quot;</span>:  &#123;</span><br><span class="line">          <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">            &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;translator&quot;</span>: <span class="string">&quot;Constance Garnett&quot;</span> &#125;&#125;,</span><br><span class="line">            &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;translator&quot;</span>: <span class="string">&quot;Louise Maude&quot;</span>      &#125;&#125;</span><br><span class="line">          ]</span><br><span class="line">        &#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>为什么我们把翻译者的子句放在一个独立的布尔查询中？所有的匹配查询都是should子句，所以为什么不把翻译者的子句放在和title以及作者的同一级？</li>
+<li>布尔查询执行每个匹配查询，把他们的得分加在一起，然后乘以匹配子句的数量，并且除以子句的总数。<strong>每个同级的子句权重是相同的</strong>。</li>
+<li>在前面的查询中，包含翻译者的布尔查询占用总得分的三分之一。如果我们把翻译者的子句放在和标题与作者同级的目录中，我们会把标题与作者的作用减少的四分之一。</li>
+</ul>
+<h3 id="bool查询是如何计算得到其分值"><a href="#bool查询是如何计算得到其分值" class="headerlink" title="bool查询是如何计算得到其分值"></a>bool查询是如何计算得到其分值</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index/my_type/<span class="number">1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Quick brown rabbits&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;Brown rabbits are commonly seen.&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">PUT /my_index/my_type/<span class="number">2</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Keeping pets healthy&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;My quick brown fox eats rabbits on a regular basis.&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用户输入了”Brown fox”，然后按下了搜索键。我们无法预先知道用户搜索的词条会出现在博文的title或者body字段中，但是用户是在搜索和他输入的单词相关的内容。右眼观察，以上的两份文档中，文档2似乎匹配的更好一些，因为它包含了用户寻找的两个单词。</p>
+<p>让我们运行下面的bool查询：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;should&quot;</span>: [</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Brown fox&quot;</span> &#125;&#125;,</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;Brown fox&quot;</span> &#125;&#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们发现文档1的分值更高：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;hits&quot;</span>: [</span><br><span class="line">     &#123;</span><br><span class="line">        <span class="attr">&quot;_id&quot;</span>:      <span class="string">&quot;1&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_score&quot;</span>:   <span class="number">0.14809652</span>,</span><br><span class="line">        <span class="attr">&quot;_source&quot;</span>: &#123;</span><br><span class="line">           <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Quick brown rabbits&quot;</span>,</span><br><span class="line">           <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;Brown rabbits are commonly seen.&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;,</span><br><span class="line">     &#123;</span><br><span class="line">        <span class="attr">&quot;_id&quot;</span>:      <span class="string">&quot;2&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_score&quot;</span>:   <span class="number">0.09256032</span>,</span><br><span class="line">        <span class="attr">&quot;_source&quot;</span>: &#123;</span><br><span class="line">           <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Keeping pets healthy&quot;</span>,</span><br><span class="line">           <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;My quick brown fox eats rabbits on a regular basis.&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要理解原因，想想bool查询是如何计算得到其分值的：</p>
+<ol>
+<li>运行should子句中的两个查询</li>
+<li>相加查询返回的分值</li>
+<li>将相加得到的分值乘以匹配的查询子句的数量</li>
+<li>除以总的查询子句的数量</li>
+</ol>
+<p>文档1在两个字段中都包含了brown，因此两个match查询都匹配成功并拥有了一个分值。文档2在body字段中包含了brown以及fox，但是在title字段中没有出现任何搜索的单词。因此对body字段查询得到的高分加上对title字段查询得到的零分，然后在乘以匹配的查询子句数量1，最后除以总的查询子句数量2，导致整体分值比文档1的低。</p>
+<p>在这个例子中，title和body字段是互相竞争的。我们想要找到一个最佳匹配(Best-matching)的字段。</p>
+<p>如果我们不是合并来自每个字段的分值，而是使用最佳匹配字段的分值作为整个查询的整体分值呢？这就会让包含有我们寻找的两个单词的字段有更高的权重，而不是在不同的字段中重复出现的相同单词。</p>
+<h4 id="dis-max查询"><a href="#dis-max查询" class="headerlink" title="dis_max查询"></a>dis_max查询</h4><p>相比使用bool查询，我们可以使用dis_max查询(Disjuction Max Query)。Disjuction的意思”OR”(而Conjunction的意思是”AND”)，因此Disjuction Max Query的意思就是返回<strong>匹配了任何查询的文档，并且分值是产生了最佳匹配的查询所对应的分值</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;query&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;dis_max&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;queries&quot;</span>: [</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Brown fox&quot;</span> &#125;&#125;,</span><br><span class="line">                &#123; <span class="attr">&quot;match&quot;</span>: &#123; <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;Brown fox&quot;</span> &#125;&#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它会产生我们期望的结果:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;hits&quot;</span>: [</span><br><span class="line">     &#123;</span><br><span class="line">        <span class="attr">&quot;_id&quot;</span>:      <span class="string">&quot;2&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_score&quot;</span>:   <span class="number">0.21509302</span>,</span><br><span class="line">        <span class="attr">&quot;_source&quot;</span>: &#123;</span><br><span class="line">           <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Keeping pets healthy&quot;</span>,</span><br><span class="line">           <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;My quick brown fox eats rabbits on a regular basis.&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;,</span><br><span class="line">     &#123;</span><br><span class="line">        <span class="attr">&quot;_id&quot;</span>:      <span class="string">&quot;1&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;_score&quot;</span>:   <span class="number">0.12713557</span>,</span><br><span class="line">        <span class="attr">&quot;_source&quot;</span>: &#123;</span><br><span class="line">           <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;Quick brown rabbits&quot;</span>,</span><br><span class="line">           <span class="attr">&quot;body&quot;</span>:  <span class="string">&quot;Brown rabbits are commonly seen.&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="深入分片"><a href="#深入分片" class="headerlink" title="深入分片"></a>深入分片</h2><h2 id="分布式集群"><a href="#分布式集群" class="headerlink" title="分布式集群"></a>分布式集群</h2><h2 id="分布式CURD"><a href="#分布式CURD" class="headerlink" title="分布式CURD"></a>分布式CURD</h2><h2 id="分布式搜索"><a href="#分布式搜索" class="headerlink" title="分布式搜索"></a>分布式搜索</h2><p>地址：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.jishuchi.com/read/elasticsearch-definitive-guide-cn/4523">https://www.jishuchi.com/read/elasticsearch-definitive-guide-cn/4523</a></li>
+<li><a target="_blank" rel="noopener" href="https://wiki.jikexueyuan.com/project/elasticsearch-definitive-guide-cn/010_Intro/05_What_is_it.html">https://wiki.jikexueyuan.com/project/elasticsearch-definitive-guide-cn/010_Intro/05_What_is_it.html</a></li>
+</ul>
+<p>跳过章节：</p>
+<ul>
+<li>地理坐标点</li>
+<li>Geohashe</li>
+<li>地址位置聚合</li>
+<li>地理形状</li>
+<li>多字段搜索</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

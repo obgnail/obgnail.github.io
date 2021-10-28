@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Twisted理论基础&quot;&gt;&lt;a href=&quot;#Twisted理论基础&quot; class=&quot;headerlink&quot; title=&quot;Twisted理论基础&quot;&gt;&lt;/a&gt;Twisted理论基础&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/images/image-20211019190533680.png&quot; alt=&quot;image-20211019190533680&quot;&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Twisted入门教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Twisted/" rel="tag">Twisted</a></div><div class="post-time">2021-10-19</div></div></div><div class="container post-header"><h1>Twisted入门教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Twisted%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">Twisted理论基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.</span> <span class="toc-text">异步编程模型与多线程模型区别</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="Twisted理论基础"><a href="#Twisted理论基础" class="headerlink" title="Twisted理论基础"></a>Twisted理论基础</h2><p><img src="/images/image-20211019190533680.png" alt="image-20211019190533680"></p>
+<ul>
+<li><p><strong>单线程的同步模型</strong>：</p>
+<p>这是最简单的编程方式。在一个时刻，只能有一个任务在执行，并且前一个任务结束后一个任务才能开始。如果任务都能按照事先规定好的顺序执行，最后一个任务的完成意味着前面所有的任务都已无任何差错地完成并输出其可用的结果。</p>
+</li>
+<li><p><strong>多线程模型</strong>：</p>
+<ul>
+<li>在这个模型中，每个任务都在单独的线程中完成。这些线程都是由操作系统来管理，若在多处理机、多核处理机的系统中可能会相互独立的运行，若在单处理机上，则会交错运行。</li>
+<li>关键点在于，在线程模式中，具体哪个任务执行由操作系统来处理。但编程人员则只需简单地认为：它们的指令流是相互独立且可以并行执行。</li>
+<li>虽然，从图示看起来很简单，实际上多线程编程是很麻烦的，比如任务之间的要通信就要是线程之间的通信。线程间的通信那不是一般的复杂。什么邮箱、通道、共享内存等等。</li>
+</ul>
+</li>
+<li><p><strong>异步编程模型</strong>：</p>
+<ul>
+<li>在这个模型中，任务是交错完成，值得注意的是：<strong>这是在单线程的控制下</strong>。</li>
+<li>这要比多线程模型简单多了，因为编程人员总可以认为只有一个任务在执行，而其它的在停止状态。虽然在单处理机系统中，线程也是像图3（第三点的图）那样交替进行。但作为程序员在使用多线程时，仍然需要使用图2（第二点的图）而不是图3的来思考问题，以防止程序在挪到多处理机的系统上无法正常运行（考虑到兼容性)。</li>
+<li>单线程的异步程序不管是在单处理机还是在多处理机上都能很好的运行。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>在事件驱动版本的程序中，3个任务交错执行，但仍然在一个单独的线程控制中。</li>
+<li><strong>当处理I/O或者其他昂贵的操作时，注册一个回调到事件循环中，然后当I/O操作完成时继续执行。回调描述了该如何处理某个事件。事件循环轮询所有的事件，当事件到来时将它们分配给等待处理事件的回调函数</strong>。</li>
+<li>这种方式让程序尽可能的得以执行而不需要用到额外的线程。事件驱动型程序比多线程程序更容易推断出行为，因为程序员不需要关心线程安全问题。</li>
+</ul>
+<h3 id="异步编程模型与多线程模型区别"><a href="#异步编程模型与多线程模型区别" class="headerlink" title="异步编程模型与多线程模型区别"></a>异步编程模型与多线程模型区别</h3><ul>
+<li>在多线程程序中，对于停止某个线程启动另外一个线程，其决定权并不在程序员手里而在操作系统那里，因此，程序员在编写程序过程中必须要假设在任何时候一个线程都有可能被停止而启动另外一个线程。</li>
+<li>相反，在异步模型中，一个任务要想运行必须<strong>显式放弃当前运行的任务的控制权</strong>。这也是相比多线程模型来说，最简洁的地方。</li>
+<li>值得注意的是：将异步编程模型与同步模型混合在同一个系统中是可以的。但在介绍中的绝大多数时候，我们只研究在单个线程中的异步编程模型。</li>
+</ul>
+<p>异步编程模型比多线程模型简单的原因：</p>
+<ul>
+<li>异步单令流与显式地放弃对任务的控制权而不是被操作系统随机地停止。</li>
+<li>但是异步模型要比同步模型复杂得多。程序员必须将任务组织成序列来交替的小步完成。因此，若其中一个任务用到另外一个任务的输出，则依赖的任务（即接收输出的任务）需要被设计成：接收系列比特或分片而不是一下全部接收。</li>
+<li>一个异步程序会花费一个同步程序所需要的时间，但是由于没有实质上的并行，可能会由于异步程序的性能问题而花费更长的时间。</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

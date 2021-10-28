@@ -1,0 +1,492 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;本书的结构&quot;&gt;&lt;a href=&quot;#本书的结构&quot; class=&quot;headerlink&quot; title=&quot;本书的结构&quot;&gt;&lt;/a&gt;本书的结构&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/images/image-20210928152951266.png&quot; alt=&quot;image-20210928152951266&quot;&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>网络是怎样连接的 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Network/" rel="tag">Computer Network</a></div><div class="post-time">2021-10-11</div></div></div><div class="container post-header"><h1>网络是怎样连接的</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E4%B9%A6%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">本书的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC1%E7%AB%A0-%E6%B5%8F%E8%A7%88%E5%99%A8%E7%94%9F%E6%88%90%E6%B6%88%E6%81%AF-%E6%8E%A2%E7%B4%A2%E6%B5%8F%E8%A7%88%E5%99%A8%E5%86%85%E9%83%A8"><span class="toc-number">2.</span> <span class="toc-text">第1章 浏览器生成消息(探索浏览器内部)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#url%E8%B7%AF%E5%BE%84%E7%9C%81%E7%95%A5%E9%97%AE%E9%A2%98"><span class="toc-number">2.1.</span> <span class="toc-text">url路径省略问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C"><span class="toc-number">2.2.</span> <span class="toc-text">DNS 服务器的基本工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E7%9A%84%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number">2.3.</span> <span class="toc-text">域名的层次结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC2%E7%AB%A0-%E7%94%A8%E7%94%B5%E4%BF%A1%E5%8F%B7%E4%BC%A0%E8%BE%93-TCP-IP-%E6%95%B0%E6%8D%AE-%E6%8E%A2%E7%B4%A2%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%92%8C%E7%BD%91%E5%8D%A1"><span class="toc-number">3.</span> <span class="toc-text">第2章 用电信号传输 TCP&#x2F;IP 数据(探索协议栈和网卡)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">协议栈的内部结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%92%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="toc-number">3.2.</span> <span class="toc-text">协议栈和浏览器的交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ACK-%E5%8E%9F%E7%90%86"><span class="toc-number">3.3.</span> <span class="toc-text">ACK 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%8C%E5%90%91%E4%BC%A0%E8%BE%93%E6%97%B6%E5%BA%8F%E5%8F%B7%E5%92%8C-ACK-%E5%8F%B7%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="toc-number">3.4.</span> <span class="toc-text">数据双向传输时序号和 ACK 号的交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E5%AE%9E%E4%B8%AD%E5%BA%8F%E5%8F%B7%E5%92%8C-ACK-%E5%8F%B7%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="toc-number">3.5.</span> <span class="toc-text">现实中序号和 ACK 号的交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E5%85%B7%E4%BD%93%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">3.6.</span> <span class="toc-text">滑动窗口的具体工作方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%B6%E7%BC%93%E5%88%A0%E9%99%A4%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="toc-number">3.7.</span> <span class="toc-text">延缓删除套接字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP-%E7%9A%84%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="toc-number">3.8.</span> <span class="toc-text">TCP 的整体流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B8%8E%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="toc-number">3.9.</span> <span class="toc-text">路由器与集线器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E8%A1%A8"><span class="toc-number">3.10.</span> <span class="toc-text">路由表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-ARP-%E6%9F%A5%E8%AF%A2%E7%9B%AE%E6%A0%87%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84-MAC-%E5%9C%B0%E5%9D%80"><span class="toc-number">3.11.</span> <span class="toc-text">通过 ARP 查询目标路由器的 MAC 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="toc-number">3.12.</span> <span class="toc-text">以太网的基本知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E7%9A%84%E5%8F%91%E5%B1%95"><span class="toc-number">3.13.</span> <span class="toc-text">以太网的发展</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8E%9F%E5%9E%8B"><span class="toc-number">3.13.1.</span> <span class="toc-text">以太网原型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E4%B8%AD%E7%BB%A7%E5%BC%8F%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="toc-number">3.13.2.</span> <span class="toc-text">采用中继式集线器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E4%BA%A4%E6%8D%A2%E5%BC%8F%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="toc-number">3.13.3.</span> <span class="toc-text">采用交换式集线器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E7%9A%84%E5%8C%85%E6%94%B6%E5%8F%91%E6%93%8D%E4%BD%9C"><span class="toc-number">3.14.</span> <span class="toc-text">以太网的包收发操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1%E5%A6%82%E4%BD%95%E5%B0%86%E5%8C%85%E8%BD%AC%E6%8D%A2%E6%88%90%E7%94%B5%E4%BF%A1%E5%8F%B7%E5%B9%B6%E5%8F%91%E9%80%81%E5%88%B0%E7%BD%91%E7%BA%BF%E4%B8%AD"><span class="toc-number">3.14.1.</span> <span class="toc-text">网卡如何将包转换成电信号并发送到网线中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E7%BD%91%E7%BA%BF%E4%B8%AD%E7%9A%84%E7%94%B5%E4%BF%A1%E5%8F%B7%E8%BD%AC%E6%88%90%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7-MAC%E6%A8%A1%E5%9D%97"><span class="toc-number">3.14.2.</span> <span class="toc-text">如何将网线中的电信号转成数字信号(MAC模块)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E6%95%B0%E6%8D%AE%E5%8C%85%E4%BB%8E-IP-%E4%BC%A0%E9%80%92%E7%BB%99-TCP"><span class="toc-number">3.14.3.</span> <span class="toc-text">将数据包从 IP 传递给 TCP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP%E4%B8%8E%E9%9F%B3%E9%A2%91%E3%80%81%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE"><span class="toc-number">3.15.</span> <span class="toc-text">UDP与音频、视频数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC3%E7%AB%A0-%E9%9B%86%E7%BA%BF%E5%99%A8%E3%80%81%E4%BA%A4%E6%8D%A2%E6%9C%BA%E3%80%81%E8%B7%AF%E7%94%B1%E5%99%A8-%E6%8E%A2%E7%B4%A2%E9%9B%86%E7%BA%BF%E5%99%A8%E3%80%81%E4%BA%A4%E6%8D%A2%E6%9C%BA%E5%92%8C%E8%B7%AF%E7%94%B1%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">第3章 集线器、交换机、路由器(探索集线器、交换机和路由器)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.</span> <span class="toc-text">局域网的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E5%9C%A8%E7%BD%91%E7%BA%BF%E5%92%8C%E9%9B%86%E7%BA%BF%E5%99%A8%E4%B8%AD%E4%BC%A0%E8%BE%93"><span class="toc-number">4.2.</span> <span class="toc-text">信号在网线和集线器中传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA%E6%A0%B9%E6%8D%AE%E5%9C%B0%E5%9D%80%E8%A1%A8%E8%BF%9B%E8%A1%8C%E8%BD%AC%E5%8F%91"><span class="toc-number">4.3.</span> <span class="toc-text">交换机根据地址表进行转发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%94%B5%E8%B7%AF%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.3.1.</span> <span class="toc-text">交换电路的设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%8C%85%E8%BD%AC%E5%8F%91%E6%93%8D%E4%BD%9C"><span class="toc-number">4.4.</span> <span class="toc-text">路由器的包转发操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E8%B7%AF%E7%94%B1%E8%A1%A8%E7%A1%AE%E5%AE%9A%E8%BE%93%E5%87%BA%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.5.</span> <span class="toc-text">查询路由表确定输出端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%88%86%E7%89%87%E5%8A%9F%E8%83%BD%E6%8B%86%E5%88%86%E5%A4%A7%E7%BD%91%E7%BB%9C%E5%8C%85"><span class="toc-number">4.6.</span> <span class="toc-text">通过分片功能拆分大网络包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B8%8E%E4%BA%A4%E6%8D%A2%E6%9C%BA%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">4.7.</span> <span class="toc-text">路由器与交换机的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%8C%85%E8%BF%87%E6%BB%A4%E5%8A%9F%E8%83%BD"><span class="toc-number">4.8.</span> <span class="toc-text">路由器的地址转换和包过滤功能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">4.8.1.</span> <span class="toc-text">地址转换的基本原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%8C%85%E8%BF%87%E6%BB%A4%E5%8A%9F%E8%83%BD"><span class="toc-number">4.8.2.</span> <span class="toc-text">路由器的包过滤功能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC4%E7%AB%A0-%E6%8E%A5%E5%85%A5%E7%BD%91%E3%80%81%E7%BD%91%E7%BB%9C%E8%BF%90%E8%90%A5%E5%95%86-%E6%8E%A2%E7%B4%A2%E6%8E%A5%E5%85%A5%E7%BD%91%E5%92%8C%E7%BD%91%E7%BB%9C%E8%BF%90%E8%90%A5%E5%95%86"><span class="toc-number">5.</span> <span class="toc-text">第4章 接入网、网络运营商(探索接入网和网络运营商)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ADSL-%E6%8E%A5%E5%85%A5%E7%BD%91%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">5.1.</span> <span class="toc-text">ADSL 接入网的结构和工作方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E6%96%AD%E6%94%B9%E5%8F%98%E5%BD%A2%E6%80%81%E7%9A%84%E7%BD%91%E7%BB%9C%E5%8C%85"><span class="toc-number">5.1.1.</span> <span class="toc-text">不断改变形态的网络包</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%89%E7%BA%A4%E6%8E%A5%E5%85%A5%E7%BD%91%EF%BC%88FTTH%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">光纤接入网（FTTH）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC5%E7%AB%A0-%E9%98%B2%E7%81%AB%E5%A2%99%E3%80%81%E7%BC%93%E5%AD%98%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">第5章 防火墙、缓存服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%8E%9F%E7%90%86"><span class="toc-number">6.1.</span> <span class="toc-text">防火墙的结构和原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%85%E8%BF%87%E6%BB%A4%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">6.1.1.</span> <span class="toc-text">包过滤的规则</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E5%92%8C%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">6.2.</span> <span class="toc-text">透明代理和正向代理的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CDN%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E6%9C%80%E8%BF%91%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">6.3.</span> <span class="toc-text">CDN如何找到最近的缓存服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8DNS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">6.3.1.</span> <span class="toc-text">使用DNS服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Location%E5%AD%97%E6%AE%B5"><span class="toc-number">6.3.2.</span> <span class="toc-text">使用Location字段</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC6%E7%AB%A0-Web%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">7.</span> <span class="toc-text">第6章 Web服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%80%9A%E4%BF%A1%E6%93%8D%E4%BD%9C"><span class="toc-number">7.1.</span> <span class="toc-text">服务器程序的通信操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="toc-number">7.2.</span> <span class="toc-text">服务器的工作过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">7.3.</span> <span class="toc-text">Web 服务器的访问控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95-%E7%BD%91%E7%BB%9C%E5%8C%85%E7%9A%84%E6%97%85%E7%A8%8B"><span class="toc-number">8.</span> <span class="toc-text">附录 网络包的旅程</span></a></li></ol></details></div><div class="container post-content"><h2 id="本书的结构"><a href="#本书的结构" class="headerlink" title="本书的结构"></a>本书的结构</h2><p><img src="/images/image-20210928152951266.png" alt="image-20210928152951266"></p>
+<p><img src="/images/image-20210928154908734.png" alt="image-20210928154908734"></p>
+<ul>
+<li>请求和响应的本质都是电信号和光信号，这些信号可能会因受到杂音等的干扰而损坏。所以，我们需要一种机制，<strong>无论遇到任何情况都能够将请求和响应准确无误地发送给对方</strong>。</li>
+<li>由于请求和响应都是由 0 和 1 组成的数字信息，所以可以说，我们需要的是一种能够将数字信息搬运到指定目的地的机制。 </li>
+<li>这种机制是由操作系统中的网络控制软件，以及交换机、路由器等设备分工合作来实现的，它的基本思路是<strong>将数字信息分割成一个一个的小块， 然后装入一些被称为<code>包</code>（Packet）的容器中来运送</strong>。</li>
+<li>“包”这个词在这里类似于邮政和快递中的概念。可以这样理解：包相当于信件或者包裹，而交换机和路由器则相当于邮局或快递公司的分拣处理区。</li>
+<li>包的头部存有目的地等控制信息，通过许多交换机和路由器的接力，就可以根据控制信息对这些包进行分拣，然后将它们一步一步地搬运到目的地。无论是家庭和公司里的局域网，还是外面的互联网，它们只是在规模上有所不同，基本的机制都是相同的。</li>
+</ul>
+<h2 id="第1章-浏览器生成消息-探索浏览器内部"><a href="#第1章-浏览器生成消息-探索浏览器内部" class="headerlink" title="第1章 浏览器生成消息(探索浏览器内部)"></a>第1章 浏览器生成消息(探索浏览器内部)</h2><h3 id="url路径省略问题"><a href="#url路径省略问题" class="headerlink" title="url路径省略问题"></a>url路径省略问题</h3><p>路径<code>http://www.lab.glasscom.com/dir1/file1.html</code>解释为: 要访问 <a target="_blank" rel="noopener" href="http://www.lab.glasscom.com/">www.lab.glasscom.com</a> 这个 Web 服务器上路径名为 /dir/file1.html 的文件，也就是位于 /dir/ 目录下的 file1.html 这个文件</p>
+<p><img src="/images/image-20210928160718729.png" alt="image-20210928160718729"></p>
+<p>省略文件名的情况，<code>http://www.lab.glasscom.com/dir/</code>要怎么解释</p>
+<p>以“/”结尾代表 /dir/ 后面本来应该有的文件名被省略了。所以服务器会直接访问的默认文件名。这个设置根 据服务器不同而不同，大多数情况下是 index.html 或者 default.htm 之类的文件名。因此，像前面这样省略文件名时，服务器就会访问 /dir/index.html 或者 /dir/default.htm。</p>
+<p>所以，</p>
+<ul>
+<li><code>http://www.lab.glasscom.com/</code>代表访问/index.html 或者 /default.htm。</li>
+<li><code>http://www.lab.glasscom.com</code>，这种直接省略目录的，代表访问根目录下事先设置的默认文件，也就是 /index. html 或者 /default.htm 这些文件。</li>
+</ul>
+<h3 id="DNS-服务器的基本工作"><a href="#DNS-服务器的基本工作" class="headerlink" title="DNS 服务器的基本工作"></a>DNS 服务器的基本工作</h3><p>DNS 服务器的基本工作就是接收来自客户端的查询消息，然后根据消息的内容返回响应。其中，来自客户端的查询消息包含以下 3 种信息。</p>
+<ul>
+<li>域名：服务器、邮件服务器（邮件地址中 @ 后面的部分）的名称</li>
+<li>Class：在最早设计 DNS 方案时，DNS 在互联网以外的其他网络中的应用也被考虑到了，而 Class 就是用来识别网络的信息。不过，如今除了互联网并没有其他的网络了，因此 Class 的值永远是代表互联网的 IN</li>
+<li>记录类型：<strong>表示域名对应何种类型的记录</strong>。例如，当类型为 A (A 是 Address 的缩写)时，表示域名对应的是 IP 地址；当类型为 MX(Mail eXchange) 时，表示域名对应的是邮件服务器。对于不同的记录类型，服务器向客户端返回的信息也会不同</li>
+</ul>
+<p>DNS 服务器上事先保存有前面这 3 种信息对应的记录数据。DNS 服务器就是根据这些记录查找符合查询请求的内容并对客户端作出响应的。</p>
+<blockquote>
+<p>DNS 查询使用 UDP。</p>
+</blockquote>
+<p><img src="/images/image-20210929121650161.png" alt="image-20210929121650161"></p>
+<p>例如，如果要查询 <a target="_blank" rel="noopener" href="http://www.lab.glasscom.com/">www.lab.glasscom.com</a> 这个域名对应的 IP 地址，客户端会向 DNS 服务器发送包含以下信息的查询消息。</p>
+<ul>
+<li>域名 = <a target="_blank" rel="noopener" href="http://www.lab.glasscom.com/">www.lab.glasscom.com</a></li>
+<li> Class = IN</li>
+<li>记录类型 = A</li>
+</ul>
+<p>然后，DNS 服务器会从已有的记录中查找域名、Class 和记录类型全部匹配的记录。</p>
+<p>查询邮件服务器时则要使用 MX类型。例如，对于一个邮件地址 <a href="mailto:&#116;&#111;&#x6e;&#101;&#64;&#103;&#x6c;&#x61;&#x73;&#x73;&#99;&#111;&#x6d;&#x2e;&#99;&#x6f;&#x6d;">&#116;&#111;&#x6e;&#101;&#64;&#103;&#x6c;&#x61;&#x73;&#x73;&#99;&#111;&#x6d;&#x2e;&#99;&#x6f;&#x6d;</a>，当需要知道这个地址对应的邮件服务器时，我们需要提供 @ 后面的那一串名称：glasscom.com。DNS 服务器会返回 10 和 mail.glasscom.com 这两条信息。当记录类型为 MX 时，DNS 服务器会在记录中保存两种信息，分别是邮件服务器的<code>域名</code>和<code>优先级</code>。DNS之后会使用这个域名再次查表，在这个例子中，我们得到的 IP 地址是 192.0.2.227。</p>
+<blockquote>
+<p>当一个邮件地址对应多个邮件服务器时，需要根据优先级来判断哪个邮件服务器是优先的。优先级数值较小的邮件服务器代表更优先。</p>
+</blockquote>
+<h3 id="域名的层次结构"><a href="#域名的层次结构" class="headerlink" title="域名的层次结构"></a>域名的层次结构</h3><p>DNS 服务器中的所有信息都是按照域名以分层次的结构来保存的。比如 <a target="_blank" rel="noopener" href="http://www.lab.glasscom.com/">www.lab.glasscom.com</a></p>
+<ul>
+<li><p>首先，将负责管理下级域的 DNS 服务器的 IP 地址注 册到它们的上级 DNS 服务器中，然后上级 DNS 服务器的 IP 地址再注册到 更上一级的 DNS 服务器中，以此类推。</p>
+</li>
+<li><p>也就是说，负责管理 lab.glasscom.com 这个域的 DNS 服务器的 IP 地址需要注册到 glasscom.com 域的 DNS 服务器中，而 glasscom.com 域的 DNS 服务器的 IP 地址又需要注册到 com 域的 DNS 服务器中。这样，我们就可以通过上级 DNS 服务器查询出下级 DNS 服务器的 IP 地址，也就可以向下级 DNS 服务器发送查询请求了。</p>
+</li>
+<li><p>由于上级 DNS 服务器保管着所有下级 DNS 服务器的信息，所以我们可以从根域开始一路往下顺藤摸瓜找到任意 一个域的 DNS 服务器。</p>
+</li>
+<li><p>除此之外还需要完成另一项工作，那就是将根域的 DNS 服务器信息保存在互联网中所有的 DNS 服务器中。这样一来，任何 DNS 服务器就都可以找到并访问根域 DNS 服务器了。因此，客户端只要能够找到任意一台 DNS 服务器，就可以通过它找到根域 DNS 服务器，然后再一路顺藤摸瓜找到位于下层的某台目标 DNS 服务器</p>
+</li>
+<li><p>分配给根域 DNS 服务器 的 IP 地址在全世界仅有 13 个，而且这些地址几乎不发生变化，因此将这 些地址保存在所有的 DNS 服务器中也并不是一件难事。</p>
+<blockquote>
+<p>根域 DNS 服务器在运营上使用多台服务器来对应一个 IP 地址，因此尽管 IP 地址只有 13 个，但其实服务器的数量是很多的。</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/images/image-20210929141130359.png" alt="image-20210929141130359"></p>
+<h2 id="第2章-用电信号传输-TCP-IP-数据-探索协议栈和网卡"><a href="#第2章-用电信号传输-TCP-IP-数据-探索协议栈和网卡" class="headerlink" title="第2章 用电信号传输 TCP/IP 数据(探索协议栈和网卡)"></a>第2章 用电信号传输 TCP/IP 数据(探索协议栈和网卡)</h2><h3 id="协议栈的内部结构"><a href="#协议栈的内部结构" class="headerlink" title="协议栈的内部结构"></a>协议栈的内部结构</h3><p><img src="/images/image-20210929154419861.png" alt="image-20210929154419861"></p>
+<h3 id="协议栈和浏览器的交互"><a href="#协议栈和浏览器的交互" class="headerlink" title="协议栈和浏览器的交互"></a>协议栈和浏览器的交互</h3><p><img src="/images/image-20210929162741036.png" alt="image-20210929162741036"></p>
+<ul>
+<li>MTU：一个网络包的最大长度，以太网中一般为 1500 字节。 </li>
+<li>MSS：除去头部之后，一个网络包所能容纳的 TCP 数据的最大长度。</li>
+<li>FCS：Frame Check Sequence，帧校验序列。</li>
+</ul>
+<p><img src="/images/image-20210929171317614.png" alt="image-20210929171317614"></p>
+<h3 id="ACK-原理"><a href="#ACK-原理" class="headerlink" title="ACK 原理"></a>ACK 原理</h3><ul>
+<li><p>TCP 模块<strong>在拆分数据时</strong>， 会先算好每一块数据相当于从头开始的第几个字节，接下来在发送这一块数据时，将算好的字节数写在 TCP 头部中，“序号”字段就是派在这个用场上的。</p>
+</li>
+<li><p>然后，发送数据的长度也需要告知接收方，不过这个并不是放在 TCP 头部里面的，因为使用整个网络包的长度减去头部的长度就可以得到数据的长度，所以接收方可以用这种方法来进行计算。</p>
+</li>
+<li><p>有了上面两个数值， 我们就可以知道发送的数据是从第几个字节开始，长度是多少了。</p>
+</li>
+<li><p>假设上次接收到第 1460 字节，那么接下来如果收到序号为 1461 的包，说明中间没有遗漏；但如果收到的包序号为 2921，那就说明中间有包遗漏了。</p>
+</li>
+<li><p>如果确认没有遗漏，接收方会将到目前为止接收到的数据长度加起来，计算出一共已经收到了多少个字节，然后将这个数值写入 TCP 头部的 ACK 号中发送给发送方。</p>
+<p>（返回 ACK 号时，除了要设置 ACK 号的值以外，还需要将控制位中的 ACK 比特设为 1，这代表 ACK 号字段有效，接收方也就可以知道这个网 络包是用来告知 ACK 号的。）</p>
+<blockquote>
+<p>简单来说，发送方说的是“现在发送的是从第 ×× 字节开始的部分，一共有 ×× 字节哦！”而接收方则回复说， “到第 ×× 字节之前的数据我已经都收到了哦！”</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/images/image-20210929172501577.png" alt="image-20210929172501577"></p>
+<h3 id="数据双向传输时序号和-ACK-号的交互"><a href="#数据双向传输时序号和-ACK-号的交互" class="headerlink" title="数据双向传输时序号和 ACK 号的交互"></a>数据双向传输时序号和 ACK 号的交互</h3><p>上面只考虑了单向的数据传输，但 TCP 数据收发是双向的，实际上只要增加一种左右相反的情形就可以了</p>
+<ol>
+<li>首先客户端先计算出一个序号，然后将序号和数据一起发送给服务器，服务器收到之后会计算 ACK 号并返回给客户端；</li>
+<li>相反地，服务器也需要先计算出另一个序号，然后将序号和数据一起发送给客户端，客户端收到之后计算 ACK 号并返回给服务器。</li>
+<li>此外，如图所示， 客户端和服务器双方都需要各自计算序号，因此双方需要在连接过程中互 相告知自己计算的序号初始值。</li>
+</ol>
+<p><img src="/images/image-20210929173648128.png" alt="image-20210929173648128"></p>
+<h3 id="现实中序号和-ACK-号的交互"><a href="#现实中序号和-ACK-号的交互" class="headerlink" title="现实中序号和 ACK 号的交互"></a>现实中序号和 ACK 号的交互</h3><ol>
+<li>首先，客户端在连接时需要计算出与从客户端到服务器方向通信相关的序号初始值，并将这个值发送给服务器（①）。</li>
+<li>接下来，服务器会通过这个初始值计 算出 ACK 号并返回给客户端（②）。初始值有可能在通信过程中丢失，因此当服务器收到初始值后需要返回 ACK 号作为确认。同时，服务 器也需要计算出与从服务器到客户端方向通信相关的序号初始值，并将这个值发送给客户端（②）。</li>
+<li>接下来像刚才一样，客户端也需要根据服务器发来的初始值计算出 ACK 号并返回给服务器（③）。到这里，序号和 ACK 号都已经准备完成了，接下来就可以进入数据收发阶段了。</li>
+<li>数据收发操作本身是可以双向同时进行的，但 Web 中是先由客户端向服务器发送请求，序号也会跟随数据一起发送（④）。然后，服务器收到数据后再返回 ACK 号（⑤）。从服务器向客户端发送数据的过程则正好相反（⑥⑦）。</li>
+</ol>
+<p><img src="/images/image-20210929173838675.png" alt="image-20210929173838675"></p>
+<p>因为TCP的确认重传机制，我们就不需要在其他地方对错误进行补救了。因此，网卡、集线器、路由器都没有错误补偿机制，一旦检测到错误就直接丢弃相应的包。</p>
+<h3 id="滑动窗口的具体工作方式"><a href="#滑动窗口的具体工作方式" class="headerlink" title="滑动窗口的具体工作方式"></a>滑动窗口的具体工作方式</h3><p>该如何确保发送方不会发送过多的数据，导致超出接收方的处理能力？</p>
+<p><img src="/images/image-20210929174844881.png" alt="image-20210929174844881"></p>
+<h3 id="延缓删除套接字"><a href="#延缓删除套接字" class="headerlink" title="延缓删除套接字"></a>延缓删除套接字</h3><p>和服务器的通信结束之后，用来通信的套接字也就不会再使用了，不过，套接字并不会立即被删除，而是 会等待一段时间之后再被删除。</p>
+<p>等待这段时间是为了防止误操作，引发误操作的原因有很多，下面来举一个最容易理解的例子。</p>
+<ol>
+<li>客户端发送 FIN</li>
+<li>服务器返回 ACK 号</li>
+<li>服务器发送 FIN</li>
+<li>客户端返回 ACK 号</li>
+</ol>
+<ul>
+<li>如果最后客户端返回的 ACK 号丢失了，结果会如何呢？这时，服务 器没有接收到 ACK 号，可能会重发一次 FIN。</li>
+<li>如果这时客户端的套接字已 经删除了，会发生什么事呢？套接字被删除，那么套接字中保存的控制信 息也就跟着消失了，套接字对应的端口号就会被释放出来。</li>
+<li>这时，如果别的应用程序要创建套接字，新套接字碰巧又被分配了同一个端口号，而服务器重发的 FIN 正好到达，会怎么样呢？于是这个 FIN 就会错误 地跑到新套接字里面，新套接字就开始执行断开操作了。</li>
+</ul>
+<h3 id="TCP-的整体流程"><a href="#TCP-的整体流程" class="headerlink" title="TCP 的整体流程"></a>TCP 的整体流程</h3><ol>
+<li>第一步是创建套接字。一般来说，服务器一方的应用程序在启动时就会创建好套接字并进入等待连接的状态。客户端则一般是 在用户触发特定动作，需要访问服务器的时候创建套接字。在这个阶段，还没有开始传输网络包。创建套接字之后，客户端会向服务器发起连接操作。</li>
+<li>首先，客户端会生成一个 SYN 为 1 的 TCP 包并发送给服务器（①）。这个 TCP 包 的头部还包含了客户端向服务器发送数据时使用的初始序号，以及服务器 向客户端发送数据时需要用到的窗口大小 A。</li>
+<li>当这个包到达服务器之后，服务器会返回一个 SYN 为 1 的 TCP 包（②）。和①一样，这个包的头部中也包含了序号和窗口大小，此外还包含表示确认已收到包①的 ACK 号 B。</li>
+<li>当这个包到达客户端时，客户端会向服务器返回一个包含表示确认的 ACK 号的 TCP 包（③）。到这里，连接操作就完成了，双方进入数据收发阶段。</li>
+<li>数据收发阶段的操作根据应用程序的不同而有一些差异，首先客户端会向服务器发送请求消息。TCP 会将请求消息切分成一定大小的块，并在每一块前面加上 TCP 头部，然后发送给服务器（④）。TCP 头部中包含序号，它表示当前发送的是第几个字节的数据。</li>
+<li>当服务器收到数据时，会向客户端返回 ACK 号（⑤）。在最初的阶段，服务器只是不断接收数据，随着数据收发的进行，数据不断传递给应用程序， 接收缓冲区就会被逐步释放。这时，服务器需要将新的窗口大小告知客户端。当服务器收到客户端的请求消息后，会向客户端返回响应消息，这个过程和刚才的过程正好相反（⑥⑦）。 </li>
+<li>服务器的响应消息发送完毕之后，数据收发操作就结束了，这时就会开始执行断开操作。服务器会先发起断开过程 A。在这个过程 ，服务器先发送一个 FIN 为 1 的 TCP 包（⑧），然后客户端返回一 个表示确认收到的 ACK 号（⑨）。接下来，双方还会交换一组方向相 反的 FIN 为 1 的 TCP 包（⑩）和包含 ACK 号的 TCP 包（k）。</li>
+<li>最后，在等待一段时间后，套接字会被删除。</li>
+</ol>
+<p><img src="/images/image-20210929185025853.png" alt="image-20210929185025853"></p>
+<h3 id="路由器与集线器"><a href="#路由器与集线器" class="headerlink" title="路由器与集线器"></a>路由器与集线器</h3><ul>
+<li>路由器根据目标地址判断下一个路由器的位置</li>
+<li>集线器在<strong>子网</strong>中将网络包传输到下一个路由</li>
+</ul>
+<p>实际上，集线器是按照以太网规则传输包的设备，而路由器是按照 IP 规则传输包的设备，因此我们也可以作如下理解。 </p>
+<ul>
+<li>IP 协议根据目标地址判断下一个 IP 转发设备的位置(网络层)</li>
+<li>子网中的以太网协议将包传输到下一个转发设备(链路层)</li>
+</ul>
+<h3 id="路由表"><a href="#路由表" class="headerlink" title="路由表"></a>路由表</h3><p>如TCP 模块告知的目标 IP 地址为 192.168.1.21，那么就对应图中的第 6 行，因为它和 192.168.1 的部分相匹配。如果目标 IP 地址 为 10.10.1.166，那么就和 10.10.1 的部分相匹配，所以对应第 3 行。以此类 推，我们需要找到与 IP 地址左边部分相匹配的条目</p>
+<ul>
+<li><p>Interface 列，表示网卡等网络接口，这些网络接口可以将包发送给通信对 象</p>
+</li>
+<li><p>Gateway 列，表示下一个路由器的 IP 地址，将包发给这个 IP 地址，该地址对应的路由器就会将包转发到目标地址</p>
+<blockquote>
+<p>如果 Gateway 和 Interface 列的 IP 地址相同，就表示不需要路由器进行转 发，可以直接将包发给接收方的 IP 地址。</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/images/image-20210930151150305.png" alt="image-20210930151150305"></p>
+<h3 id="通过-ARP-查询目标路由器的-MAC-地址"><a href="#通过-ARP-查询目标路由器的-MAC-地址" class="headerlink" title="通过 ARP 查询目标路由器的 MAC 地址"></a>通过 ARP 查询目标路由器的 MAC 地址</h3><ul>
+<li>ARP：根据目标的IP地址找出目标的MAC地址</li>
+<li>ARP 就是利用广播对所有设备提问：“×× 这个 IP 地址是谁的？请把你的 MAC 地址 告诉我。”然后就会有人回答：“这个 IP 地址是我的，我的 MAC 地址是 ××××。”</li>
+</ul>
+<p><img src="/images/image-20210930163250197.png" alt="image-20210930163250197"></p>
+<h3 id="以太网的基本知识"><a href="#以太网的基本知识" class="headerlink" title="以太网的基本知识"></a>以太网的基本知识</h3><ul>
+<li><p><strong>以太网，其实是一种技术。就是一种在局域网内，把附近的设备连接起来，使它们之间可以进行通讯的技术</strong>。也就是说，通过以太网这个技术，我们将多台电脑组合成一个局域网。多个局域网组成广域网。多个广域网组成互联网。</p>
+<blockquote>
+<p>以太网（Ethernet）是为了实现局域网通信而设计的<strong>一种技术</strong>，它规定了包括物理层的连线、电子信号和介质访问层协议的内容。以太网是目前应用最普遍的局域网技术，取代了其他局域网标准如令牌环、FDDI和ARCNET。</p>
+</blockquote>
+</li>
+<li><p>所谓的<code>以太网技术</code>，其实就是<code>CSMA/CA技术</code>。</p>
+</li>
+<li><p>以太网的三个基本性质</p>
+<ul>
+<li>将包发送到 MAC 头部的接收方 MAC 地址代表的目的地，</li>
+<li>用发送方 MAC 地址识别发送方，</li>
+<li>用以太类型识别包的内容。</li>
+</ul>
+</li>
+<li><p>以太网的工作层级</p>
+<p><img src="/images/2952fe53eb489a89ad8d49cb9a32850e_1440w.jpg" alt="img"></p>
+</li>
+</ul>
+<h3 id="以太网的发展"><a href="#以太网的发展" class="headerlink" title="以太网的发展"></a>以太网的发展</h3><h4 id="以太网原型"><a href="#以太网原型" class="headerlink" title="以太网原型"></a>以太网原型</h4><p>以太网的原型如图（a）所示</p>
+<ul>
+<li>从图上不难看出，这种网络的本质其实就是一根网线。</li>
+<li>图上还有一种叫作<code>收发器</code>的小设备，它的功能只是将不同网线之间的信号连接起来而已。</li>
+<li>因此，当一台计算机发送信号时， 信号就会通过网线流过整个网络，最终到达所有的设备。这样就实现了<code>广播</code></li>
+</ul>
+<p><img src="/images/image-20210930164425759.png" alt="image-20210930164425759"></p>
+<h4 id="采用中继式集线器"><a href="#采用中继式集线器" class="headerlink" title="采用中继式集线器"></a>采用中继式集线器</h4><p>以太网后来发展成（b）中的结构。</p>
+<p>这个结构是将主干网线替换成了一个中继式集线器，将收发器网线替换成了双绞线。不过，虽然网络的结构有所变化，但信号会发送给所有设备这一基本性质并没有改变。</p>
+<p><img src="/images/image-20210930164525975.png" alt="image-20210930164525975"></p>
+<h4 id="采用交换式集线器"><a href="#采用交换式集线器" class="headerlink" title="采用交换式集线器"></a>采用交换式集线器</h4><p>这个结构看上去和（b）很像，但其实里面有一个重要的变化，即信号会发送给所有设备这一性质变了，现在信号只会流到根据 MAC 地址指定的设备，而不会到达其他设备了。当然，根据 MAC 地址来传输包这一点并没有变，因此 MAC 头部的设计也得以保留。</p>
+<p><img src="/images/image-20210930164658519.png" alt="image-20210930164658519"></p>
+<h3 id="以太网的包收发操作"><a href="#以太网的包收发操作" class="headerlink" title="以太网的包收发操作"></a>以太网的包收发操作</h3><ul>
+<li>IP 生成的网络包只是存放在内存中 的一串数字信息，没有办法直接发送给对方。因此，我们需要将数字信息 转换为电或光信号，才能在网线上传输，也就是说，这才是真正的数据发 送过程。</li>
+<li>负责执行这一操作的是<code>网卡</code>，但网卡也无法单独工作，要控制网卡还需要网卡驱动程序。</li>
+<li>网卡并不是通上电之后就可以马上开始工作的，需要网卡驱动程序对硬件进行初始化。这些操作包括硬件错误检查、初始设置等步骤，其中有一个重要的步骤，那就是在控制以太网收发操作的 MAC 模块中<strong>设置 MAC 地址</strong>。</li>
+<li>设置 MAC 地址：网卡的 ROM 中保存着全世界唯一的 MAC 地址，这是在生产网卡时写入的，将这个值读出之后就可以对 MAC 模块进行设置，MAC 模块就知道自己对应的 MAC 地址了。</li>
+</ul>
+<h4 id="网卡如何将包转换成电信号并发送到网线中"><a href="#网卡如何将包转换成电信号并发送到网线中" class="headerlink" title="网卡如何将包转换成电信号并发送到网线中"></a>网卡如何将包转换成电信号并发送到网线中</h4><ol>
+<li><p>网卡驱动从 IP 模块获取包之后，会将其复制到网卡内的缓冲区中，然后向 MAC 模块发送发送包的命令。接下来就轮到 MAC 模块进行工作了。</p>
+</li>
+<li><p>首先，MAC 模块会将包从缓冲区中取出，并在开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列</p>
+<p><img src="/images/image-20210930171025675.png" alt="image-20210930171025675"></p>
+</li>
+<li><p>报头是一串像 10101010…这样 1 和 0 交替出现的比特序列，长度为 56 比特，它的作用是确定包的读取时机。当这些 1010 的比特序列被转换成电信号后，会形成如下图这样的波形。</p>
+<p><img src="/images/image-20210930171707174.png" alt="image-20210930171707174"></p>
+</li>
+<li><p>众所周知，信号分为数据信号和时钟信号。但是如果同时发送两种信号，当距离较远，网线较长时，两条线路的长度会发生差异，数据 信号和时钟信号的传输会产生时间差，时钟就会发生偏移。</p>
+</li>
+<li><p>解决方法就是：将数据信号和时钟信号叠加。</p>
+<p>由于时 钟信号是像图（b）这样按固定频率进行变化的，只要能够找到这个变化的周期，就可以从接收到的信号（c）中提取出时钟信号（b），进而通过接收信号（c）和时钟信号（b）计算出数据信号（a）</p>
+<p><img src="/images/image-20210930172240531.png" alt="image-20210930172240531"></p>
+</li>
+<li><p>这里的重点在于如何判断时钟信号的变化周期。时钟信号是以 10 Mbit/s 或者 100 Mbit/s 这种固定频率进行变化的，只要对信号进行一段时间的观察，就可以找到其变化的周期。因此，我们不能一开始就发送包的数据，而是要在前面加上一段用来测量时钟信号的特殊信号，这就是报头的作用。</p>
+</li>
+</ol>
+<p>网卡的内部结构：</p>
+<p><img src="/images/image-20210930165445674.png" alt="image-20210930165445674"></p>
+<h4 id="如何将网线中的电信号转成数字信号-MAC模块"><a href="#如何将网线中的电信号转成数字信号-MAC模块" class="headerlink" title="如何将网线中的电信号转成数字信号(MAC模块)"></a>如何将网线中的电信号转成数字信号(MAC模块)</h4><ul>
+<li>信号的开头是报头，通过报头的波形同步时钟，然后遇到起始帧分界符时开始将后面的信号转换成数字信息。这个操作和发送时是相反的，即 PHY（MAU）模块先开始工作， 然后再轮到 MAC 模块。 </li>
+<li>首先，MAU 模块会将信号转换成通用格式并发送给 MAC 模块，MAC 模块再从头开始将信号转换为数字信息，并存放到缓冲区中。当到达信号的末尾时，还需要检查 FCS。具体来说，就是将从包开头到结尾的所有比特套用 到公式中计算出 FCS，然后和包末尾的 FCS 进行对比，正常情况下两者应 该是一致的，如果中途受到噪声干扰而导致波形发生紊乱，则两者的值会产生差异，这时这个包就会被当作错误包而被丢弃。</li>
+<li>MAC 模块判断这 个包是不是发给自己的，如果接收方 MAC 地址和自己 MAC 地址一致，则将包放入缓冲区中，接下来网卡会通知计算机收到了一个包。</li>
+</ul>
+<h4 id="将数据包从-IP-传递给-TCP"><a href="#将数据包从-IP-传递给-TCP" class="headerlink" title="将数据包从 IP 传递给 TCP"></a>将数据包从 IP 传递给 TCP</h4><ul>
+<li><p>第 一步是检查 IP 头部，确认格式是否正确。</p>
+</li>
+<li><p>如果格式没有问题，下一步就是查看接收方 IP 地址。服务器返回的包的接收方 IP 地址应该与客户端网卡的地址一致， 检查确认之后我们就可以接收这个包了。</p>
+</li>
+<li><p>如果接收方 IP 地址正确，则这个包会被接收下来，如果接收到的包是经过分片的，那么 IP 模块会进行<code>分片重组</code>，将它们还原成原始的包。接下来包会被交给 TCP 模块。</p>
+</li>
+<li><p>TCP 模块会根据 IP 头部中的接收方和发送方 IP 地址，以及 TCP 头部中的接收方和发送方端口号来查找对应的套接字。找到对应的套接字之后，就可以 根据套接字中记录的通信状态，执行相应的操作了。</p>
+<p>例如，如果包的内容是应用程序数据，则返回确认接收的包，并将数据放入缓冲区，等待应用程序来读取；如果是建立或断开连接的控制包，则返回相应的响应控制包， 并告知应用程序建立和断开连接的操作状态。</p>
+</li>
+</ul>
+<h3 id="UDP与音频、视频数据"><a href="#UDP与音频、视频数据" class="headerlink" title="UDP与音频、视频数据"></a>UDP与音频、视频数据</h3><ul>
+<li>音频和视频数据必须在规定的时间内送达，一旦送达晚了，就会错过播放时机， 导致声音和图像卡顿。</li>
+<li>如果像 TCP 一样通过接收确认响应来检查错误并重 发，重发的过程需要消耗一定的时间，因此重发的数据很可能已经错过了 播放的时机。一旦错过播放时机，重发数据也是没有用的，因为声音和图像已经卡顿了，这是无法挽回的。在这些无需重发数据，或者是重发了也没什么意义的情况下，使用 UDP 发送数据的效率会更高。</li>
+</ul>
+<h2 id="第3章-集线器、交换机、路由器-探索集线器、交换机和路由器"><a href="#第3章-集线器、交换机、路由器-探索集线器、交换机和路由器" class="headerlink" title="第3章 集线器、交换机、路由器(探索集线器、交换机和路由器)"></a>第3章 集线器、交换机、路由器(探索集线器、交换机和路由器)</h2><h3 id="局域网的结构"><a href="#局域网的结构" class="headerlink" title="局域网的结构"></a>局域网的结构</h3><p><img src="/images/image-20211008115523410.png" alt="image-20211008115523410"></p>
+<p>网络包从客户端计算机发出之后，要经过集线器、交换机和路由器最终进入互联网。</p>
+<p>实际上，我们家里用的路由器已经集成了集线器和交换机的功能，像图上这样使用独立设备的情况很少见。</p>
+<h3 id="信号在网线和集线器中传输"><a href="#信号在网线和集线器中传输" class="headerlink" title="信号在网线和集线器中传输"></a>信号在网线和集线器中传输</h3><p><img src="/images/image-20211008120006731.png" alt="image-20211008120006731"></p>
+<ol>
+<li><p>从信号流出网卡进入网线开始。网卡中的 PHY（MAU）模块负责将包转换成电信号，信号通过 RJ-45 接口进入双绞线。</p>
+<p>以太网信号的本质是<strong>正负变化的电压</strong>，我们可以认为网卡的 PHY（MAU）模块就是一个<strong>从正负两个信号端子输出信号的电路</strong>。</p>
+</li>
+<li><p>但是，信号到达集线器的时候并不是跟刚发送出去的时候一模一样。 集线器收到的信号会出现衰减</p>
+<p><img src="/images/image-20211008120607800.png" alt="image-20211008120607800"></p>
+<blockquote>
+<p>“双绞”是为了抑制噪声：</p>
+<ul>
+<li>局域网网线使用的是双绞线，其中“双绞”的意思就是以两根信号线为一组缠绕在一起，这种拧麻花一样的设计是为了抑制噪声的影响。</li>
+<li>产生噪声的原因是网线周围的电磁波，当电磁波接触到金属等导体 时，在其中就会产生电流。因此，如果网线周围存在电磁波，就会在网线 中产生和原本的信号不同的电流。由于信号本身也是一种带有电压变化的 电流，其本质和噪声产生的电流是一样的，所以信号和噪声的电流就会混 杂在一起，导致信号的波形发生失真。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>集线器将信号发往所有线路：</p>
+<p>信号到达集线器的 PHY（MAU）模块后，会进入中继电路。中继电路的基本功能就是将输入的信号广播到集线器的所有端口上。当然，也有一些产品具有信号整形、错误抑制等功能，但基本上就是将输入的信号原封不动地输出到网线接口。</p>
+<blockquote>
+<p>当信号到达集线器后，会被广播到整个网络中。<strong>以太网的基本架构就是将包发到所有的设备，然后由设备根据接收方 MAC 地址来判断应该接收哪些包</strong>，而集线器就是这一架构的忠实体现，它就是负责按照以太网的 基本架构将信号广播出去。</p>
+</blockquote>
+</li>
+<li><p>接下来，信号从所有接口流出，到达连接在集线器上的所有设备。然后，这些设备在收到信号之后会通过 MAC 头部中的接收方 MAC 地址判断是不是发给自己的，如果是发给自己的就接受，否则就忽略。这样，网络包就能够到达指定 MAC 地址的接收方了。</p>
+</li>
+</ol>
+<h3 id="交换机根据地址表进行转发"><a href="#交换机根据地址表进行转发" class="headerlink" title="交换机根据地址表进行转发"></a>交换机根据地址表进行转发</h3><p><img src="/images/image-20211008122510145.png" alt="image-20211008122510145"></p>
+<ol>
+<li>首先，信号到达网线接口，并由 PHY（MAU）模块进行接收，这一部 分和集线器是相同的。也就是说，它的接口和 PHY（MAU）模块也是以 MDI-X 模式进行连接的，当信号从双绞线传入时，就会进入 PHY（MAU） 模块的接收部分。</li>
+<li>接下来，PHY（MAU）模块会将网线中的信号转换为通用格式，然后传递给 MAC 模块。MAC 模块将信号转换为数字信息，然后通过包末尾的 FCS 校验错误，如果没有问题则存放到缓冲区中。这部分操作和网卡基本 相同，大家可以认为交换机的每个网线接口后面都是一块网卡。</li>
+<li>将包存入缓冲区后，接下来需要查询一下这个包的接收方 MAC 地址 是否已经在 MAC 地址表中有记录了。然后就可以通过交换电 路将包发送到相应的端口了。</li>
+<li>当网络包通过交换电路到达发送端口时，端口中的 MAC 模块和 PHY （MAU）模块会执行发送操作，将信号发送到网线中，这部分和网卡发送信 号的过程是一样的。</li>
+</ol>
+<h4 id="交换电路的设计"><a href="#交换电路的设计" class="headerlink" title="交换电路的设计"></a>交换电路的设计</h4><p>假设现在要将包从 2 号端口发送到 7 号端口，那么信号会从输入端 的 2 号线进入交换电路，这时，如果让左起的 6 个开关水平导通，然后将 第 7 个开关切换为垂直导通，信号就会像图上一样流到输出端 7 号线路， 于是网络包就被发送到了 7 号端口。</p>
+<p><img src="/images/image-20211008185447631.png" alt="image-20211008185447631"></p>
+<h3 id="路由器的包转发操作"><a href="#路由器的包转发操作" class="headerlink" title="路由器的包转发操作"></a>路由器的包转发操作</h3><ol>
+<li><p>路由器在转发包时，首先会通过端口将发过来的包接收进来。</p>
+<p>这一步的工作过程取决于端口对应的通信技术。对于以太网端口来说，就是按照以太网规范进行工作，而无线局域网端口则按照无线局域网的规范工作，总之就是委托端口的硬件将包接收进来。</p>
+</li>
+<li><p>接下来，转发模块会根据接收到的包的 IP 头部中记录的接收方 IP 地址，在路由表中进行查询，以此判断转发目标。</p>
+</li>
+<li><p>然后，转发模块将包转移到转发目标对应的端口，端口再按照硬件的规则将包发送出去。</p>
+</li>
+</ol>
+<h3 id="查询路由表确定输出端口"><a href="#查询路由表确定输出端口" class="headerlink" title="查询路由表确定输出端口"></a>查询路由表确定输出端口</h3><p><img src="/images/image-20211009115043540.png" alt="image-20211009115043540"></p>
+<ol>
+<li><p>假设地址为 10.10.1.101 的计算机要向地址为 192.168.1.10 的服务器发送一个包， 这个包先到达图中的路由器。</p>
+</li>
+<li><p>完成包接收操作之后，路由器就会丢弃包开头的 MAC 头部。MAC 头 部的作用就是将包送达路由器，其中的接收方 MAC 地址就是路由器端口 的 MAC 地址。因此，当包到达路由器之后，MAC 头部的任务就完成了， 于是 MAC 头部就会被丢弃。</p>
+</li>
+<li><p>判断转发目标的第一步，就是根据包的接收方 IP 地址查询路由表中的目标地址栏，以找到相匹配的记录。这个匹配并不是匹配全部 32 个比特，而是根据子网掩码列中的 值判断网络号的比特数，并匹配相应数量的比特。</p>
+<blockquote>
+<p>例如，图的第 3 行，子网掩码列为 255.255.255.0，就表示需要匹配从左起 24 个比特。网络包的接收方 IP 地址和路由表中的目标地址左起 24 个比特的内容都是 192.168.1，因此两者是匹配的，该行记录就是候选转发目标之一。</p>
+</blockquote>
+</li>
+<li><p>按照这样的规则，我们可能会匹配到多条候选记录。在这个例子中， 第 3、4、5 行都可以匹配。其中，路由器首先寻找网络号比特数最长的一条记录。</p>
+<p>第 3 行 192.168.1.0/255.255.255.0 表示一个子网，第 4 行 192.168.1.10/ 255.255.255.255 表示一台服务器。相比服务器所属的子网来说，直接指定 服务器本身的地址时范围更小，因此这里应该选择第 4 行作为转发目标。 按照最长匹配原则筛选后，如果只剩一条候选记录，则按照这条记录的内 容进行转发。</p>
+<blockquote>
+<p>网络号比特数越长，说明主机号比特数越短，也就意味着该子网 内可分配的主机数量越少，即子网中可能存在的主机数量越少，这一规则 的目的是尽量缩小范围，所以根据这条记录判断的转发目标就会更加准确。</p>
+</blockquote>
+<blockquote>
+<p>然而，有时候路由表中会存在网络号长度相同的多条记录，例如考虑 到路由器或网线的故障而设置的备用路由就属于这种情况。这时，需要根 据跃点计数的值来进行判断。跃点计数越小说明该路由越近，因此应选择 跃点计数较小的记录。</p>
+</blockquote>
+</li>
+<li><p>如果在路由表中无法找到匹配的记录，路由器会丢弃这个包，并通过 ICMP消息告知发送方。</p>
+<blockquote>
+<p>这里的处理方式和交换机不同，原因在于网络规模的大小。交换机连接的网络最多也就是几千台设备的规模，这个规模并不大。路由器工作的网络环境就是互联网，它的规模是远远大于以太网的。如果使用广播，就会产生大量的网络包，造成网络拥塞。</p>
+</blockquote>
+<p>可是实际上，路由表都都会有一个兜底的路由，称为默认路由。路由器在找不到匹配路由时，会选择默认路由。</p>
+<p>比如图中最后一行，子网掩码设置为 0.0.0.0，那么无论任何地址都能匹配到这一条记录，这样就不会发生不知道要转发到哪里的问题了。</p>
+</li>
+</ol>
+<h3 id="通过分片功能拆分大网络包"><a href="#通过分片功能拆分大网络包" class="headerlink" title="通过分片功能拆分大网络包"></a>通过分片功能拆分大网络包</h3><ul>
+<li><p>路由器的端口并不只有以太网一种，也可以支持其他局域网或专线通 信技术。不同的线路和局域网类型各自能传输的最大包长度也不同，因此 输出端口的最大包长度可能会小于输入端口。</p>
+</li>
+<li><p>遇到这种情况，可以使用 IP 协议中定义的分片功能对包进行拆分，缩短每个包的长度。</p>
+<blockquote>
+<ul>
+<li>需要注意的是，这里说的分片和 TCP 对数据进行拆分的机制是不同的。</li>
+<li>TCP 拆分数据的操作是在将数据装到包里之前进行的，换句话说，拆分好的一个数据块正好装进一个包里。</li>
+<li>从 IP 分片 的角度来看，这样一个包其实是一个未拆分的整体，也就是说，<strong>分片是对一个完整的包再进行拆分的过程</strong>。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<ol>
+<li><p>首先，我们需要知道输出端口的 MTU，看看这个包能不能不分片直接发送。但在此之前还需要看一下 IP 头部中的标志字段，确认是否可以分片。如果查询标志字段发现不能分片，那么就只能丢弃这个包，并通过 ICMP 消息通知发送方。</p>
+<blockquote>
+<p>一般来说都是可以分片的，但下面两种情况不能分片：</p>
+<ol>
+<li>发送方应用程序 等设置了不允许分片；</li>
+<li>这个包已经是经过分片后的包。</li>
+</ol>
+</blockquote>
+</li>
+<li><p>在分片中，<strong>TCP 头部及其后面的部分都是可分片的数据</strong>，</p>
+<p>尽管 TCP 头部不属于用户数据，但从 IP 来看也是 TCP 请求传输的数据的一部分。数据被拆分后，每一份数据前面会加上 IP 头部，其大部分内容都和原 本的 IP 头部一模一样，但其中有部分字段需要更新，这些字段用于记录分 片相关的信息。</p>
+<p><img src="/images/image-20211009121619642.png" alt="image-20211009121619642"></p>
+</li>
+<li><p>在路由器更新 TTL 和分片的过程中，IP 头部的内容发生了改变，因此必须重新计算校验和。（但是因为和以太网以及通信线路本身的错误校验机制相比，IP 校验和的可靠性很低，因此大多数路由器都不去校验这个值，就当它不存在一样。）</p>
+</li>
+</ol>
+<h3 id="路由器与交换机的关系"><a href="#路由器与交换机的关系" class="headerlink" title="路由器与交换机的关系"></a>路由器与交换机的关系</h3><ul>
+<li><p>给包加上 MAC 头部并 发送，从本质上说是将 IP 包装进以太网包的数据部分中，委托以太网去传 输这些数据。IP 协议本身没有传输包的功能，因此包的实际传输要委托以 太网来进行。</p>
+</li>
+<li><p>路由器是基于 IP 设计的，而交换机是基于以太网设计的，因此 IP 与以太网的关系也就是路由器与交换机的关系。换句话说，路由器将包的传输工作委托给交换机来进行。</p>
+<blockquote>
+<p>当然，这里讲的内容只适用于原原本本实现 IP 和以太网机制的纯粹的路由器和交换机，实际的路由器有内置交 换机功能的，比如用于连接互联网的家用路由器就属于这一种，对于这种 路由器，上面内容可能就不适用了。</p>
+</blockquote>
+</li>
+<li><p>从包的转发目标也可以看出路由器和交换机之间的委托关系。IP 并不是委托以太网将包传输到最终目的地，而是传输到下一个路由器。在创建 MAC 头部时，也是从 IP 的路由表中查找出下一个路由器的 IP 地址，并通过 ARP 查询出 MAC 地址，然后将 MAC 地址写入 MAC 头部中的，这表示 IP 对以太网的委托只是将包传输到下一个路由器就行了。当包到达下一个路由器后，下一个路由器又会重新委托以太网将包传输到再下一个路由器。随着这一过程反复执行，包就会最终到达 IP 的目的地，也就是 通信的对象。</p>
+</li>
+<li><p>简单来说，IP（路由器）负责将包发送给通信对象这一整体过程，而其中将包传输到下一个路由器的过程则是由以太网（交换机）来负责的。</p>
+</li>
+</ul>
+<h3 id="路由器的地址转换和包过滤功能"><a href="#路由器的地址转换和包过滤功能" class="headerlink" title="路由器的地址转换和包过滤功能"></a>路由器的地址转换和包过滤功能</h3><p>私有地址的范围</p>
+<ul>
+<li>10.0.0.0 ～ 10.255.255.255</li>
+<li>172.16.0.0 ～ 172.31.255.255</li>
+<li>192.168.0.0 ～ 192.168.255.255</li>
+</ul>
+<p><img src="/images/image-20211009141116577.png" alt="image-20211009141116577"></p>
+<h4 id="地址转换的基本原理"><a href="#地址转换的基本原理" class="headerlink" title="地址转换的基本原理"></a>地址转换的基本原理</h4><p>地址转换的基本原理是在转发网络包时对 IP 头部中的 IP 地址和端口号进行改写</p>
+<p><img src="/images/image-20211009141344930.png" alt="image-20211009141344930"></p>
+<ul>
+<li>假设现在要访问 Web 服务器</li>
+<li>首先，TCP 连接操作的第一个包被转发到互联网时，会像上图这样，将发送方 IP 地址从私有地址改写成公有地址。这里使用的公有地址是地址转换设备的互联网接入端口的地址。与此同时，端口号也需要进行改写，地址转换设备会随机选择一个空闲的端口。</li>
+<li>然后，改写前的私有地址和端口号，以及改写后的公有地址和端口号，会作为一组相对应的记录保 存在地址转换设备内部的一张表中。</li>
+<li>改写发送方 IP 地址和端口号之后，包就被发往互联网，最终到达服务器，然后服务器会返回一个包。服务器返回的包的接收包是原始包的发送方，因此返回的包的接收方就是改写后的公有地址和端口号。这个公有地址其实是地址转换设备的地址，因此这个返回包就会到达地址转换设备。</li>
+<li>接下来，地址转换设备会从地址对应表中通过公有地址和端口号找到相对应的私有地址和端口号，并改写接收方信息，然后将包发给公司内网，这样包就能够到达原始的发送方了。</li>
+<li>在后面的包收发过程中，地址转换设备需要根据对应表查找私有地址 和公有地址的对应关系，再改写地址和端口号之后进行转发。当数据收发结束，进入断开阶段，访问互联网的操作全部完成后，对应表中的记录就会被删除。</li>
+</ul>
+<h4 id="路由器的包过滤功能"><a href="#路由器的包过滤功能" class="headerlink" title="路由器的包过滤功能"></a>路由器的包过滤功能</h4><p>包过滤就是在对包进行转发时，根据 MAC 头部、IP 头部、TCP 头部的内容，按照 事先设置好的规则决定是转发这个包，还是丢弃这个包。我们通常说的防火墙设备或软件，大多数都是利用这一机制来防止非法入侵的。</p>
+<h2 id="第4章-接入网、网络运营商-探索接入网和网络运营商"><a href="#第4章-接入网、网络运营商-探索接入网和网络运营商" class="headerlink" title="第4章 接入网、网络运营商(探索接入网和网络运营商)"></a>第4章 接入网、网络运营商(探索接入网和网络运营商)</h2><h3 id="ADSL-接入网的结构和工作方式"><a href="#ADSL-接入网的结构和工作方式" class="headerlink" title="ADSL 接入网的结构和工作方式"></a>ADSL 接入网的结构和工作方式</h3><blockquote>
+<p>ADSL：Asymmetric Digital Subscriber Line，不对称数字用户线。</p>
+<p>它是一种利用架设在电线杆上的金属电话线来进行高速通信的技术，它的上行方向 （用户到互联网）和下行方向（互联网到用户）的通信速率是不对称的。</p>
+</blockquote>
+<p>所谓接入网，就是指连接互联网与家庭、公司网络的通信线路。一般家用的接入网方式包括 ADSL、FTTH、CATV、电话线、ISDN 等，公司则还可能使用专线。</p>
+<blockquote>
+<p>接入网这个词表示的是通信线路的用法，而并不表示通信线路的结构。例 如公司里使用的专线，当它用来连接互联网时就叫作接入网，而用来连接 总公司和分公司时就不叫接入网。</p>
+</blockquote>
+<p>ADSL 接入网的结构（PPPoE 方式）</p>
+<p><img src="/images/image-20211009151002691.png" alt="image-20211009151002691"></p>
+<h4 id="不断改变形态的网络包"><a href="#不断改变形态的网络包" class="headerlink" title="不断改变形态的网络包"></a>不断改变形态的网络包</h4><p><img src="/images/image-20211009151532336.png" alt="image-20211009151532336"></p>
+<ol>
+<li><p>在网络包从用户传输到运营商的过程中，会变换几种不同的形态。</p>
+</li>
+<li><p>首先，客户端生成的网络包（①和②）先经过集线器和交换机到达互联网接入路由器（③），并在此从以太网包中取出 IP 包并判断转发目标（④），这一部分和以太网路由器的工作方式是一样的。</p>
+</li>
+<li><p>接下来，包发送的操作也很类似。如果互联网接入路由器和 ADSL Modem 之间是通过以太网连接的，那么就会按照以太网的规则执行包发送的操作，发送信号本身的过程跟之前是一样的， 但以太网的头部会有一些差异。网络包会加上 MAC 头部、PPPoE 头部、PPP 头部总共 3 种头部（⑤），然后发送给ADSL Modem，</p>
+</li>
+<li><p>互联网接入路由器将包发送出去之后，包就到达了 ADSL Modem （⑥），然后 ADSL Modem 会把包拆分成很多小格子（⑦），每一个小格子称为一个信元。</p>
+<blockquote>
+<ul>
+<li>信元是一个非常小的数据块，开头是有 5 个字节的头部，后面是 48 个字节的数据，用于一种叫作 ATM 的通信技术。可以将信元理解为一种更小一号的包，原理上跟 TCP/IP 将应用程序的数据拆分成块装进一个个包的过程是一样的</li>
+<li>ATM：Asynchronous Transfer Mode，异步传输。它是在以电话线为载体的 传统电话技术基础上扩展出来的一种通信方式。它的数据传输是以“信 元”为单位来进行的，这和以包为单位传输数据的 TCP/IP 很像，但这种方式并不适用于计算机通信。</li>
+<li>其实之所以要将包拆分成信元，原因是这样的。当初开发 ADSL 技术时，通信业比较看好 ATM 技术，各运营商也在 ATM 相关的设备上投入了很多资金。在这样的情况下，如果使用信元来传输数据，就比较容易和其他设备进行整合，可以降低开发投入和设备投入。如果不是出于这样的原因，其实并不需要将包拆分成信元，实际上也有一些 ADSL 运营商使用的 ADSL Modem 是不进行数据拆分的。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>将网络包拆分成信元之后，接下来就要将这些信元转换成信号了 （⑧）。</p>
+</li>
+<li><p>信号通过电话线到达电话局之后，会经过配线盘、分离器到达 DSLAM（⑨）。在这里，电信号会被还原成数字信息——信元（⑩）。DSLAM 通过读取信号波形，根据振幅和相位判断对应的比特值，将信号 还原成数字信息，这一过程和用户端的 ADSL Modem 在接收数据时的过程是一样的。</p>
+</li>
+<li><p>信元从 DSLAM 出来之后，会到达一个叫作 BAS 的包转发设备 （⑪）。BAS 和 DSLAM 一样，都具有 ATM 接口，可以接收 ATM 信元，还可以将接收到的 ATM 信元还原成原始的包（⑫）。</p>
+</li>
+<li><p>到这里， BAS 的接收工作就完成了，接下来，它会将收到的包前面的 MAC 头部和 PPPoE 头部丢弃，取出 PPP 头部以及后面的数据（⑬）。MAC 头部和 PPPoE 头部的作用是将包送达 BAS 的接口，当接口完成接收工作后，它们就完成了使命，可以被丢弃了。具有以太网接口的路由器在接收到包之后也会丢弃其中的 MAC 头部，道理是一样的。</p>
+</li>
+<li><p>接下来，BAS 会在包的前面加上隧道专用头部，并发送到隧道的出口（⑭）。</p>
+</li>
+<li><p>然后，网络包会到达隧道出口的隧道专用路由器（⑮），在这里隧道头部会被去掉，IP 包会被取出（⑯），并被转发到互联网内部（⑰）。</p>
+</li>
+</ol>
+<h3 id="光纤接入网（FTTH）"><a href="#光纤接入网（FTTH）" class="headerlink" title="光纤接入网（FTTH）"></a>光纤接入网（FTTH）</h3><p>再来介绍另一种接入网技术，它的名字叫 FTTH，是一 种基于光纤的接入网技术。</p>
+<p>数字信息并不能一下子变成光信号，需要先将数字信息转换成电信号，然后再将电信号转换成光信号。这里的电信号非常简单，1 用高电压表示，0 用低电压表示。将这样的电信号输 入 LED、激光二极管等光源后，这些光源就会根据信号电压的变化发光， 高电压发光亮，低电压发光暗。这样的光信号在光纤中传导之后，就可以 通过光纤到达接收端。接收端有可以感应光线的光敏元件，光敏元件可以 根据光的亮度产生不同的电压。当光信号照射到上面时，光亮的时候就产生高电压，光暗的时候就产生低电压，这样就将光信号转换成了电信号。 最后再将电信号转换成数字信息，我们就接收到数据了。</p>
+<p><img src="/images/image-20211009181011177.png" alt="image-20211009181011177"></p>
+<h2 id="第5章-防火墙、缓存服务器"><a href="#第5章-防火墙、缓存服务器" class="headerlink" title="第5章 防火墙、缓存服务器"></a>第5章 防火墙、缓存服务器</h2><h3 id="防火墙的结构和原理"><a href="#防火墙的结构和原理" class="headerlink" title="防火墙的结构和原理"></a>防火墙的结构和原理</h3><ul>
+<li>防火墙可分为<code>包过滤</code>、<code>应用层网关</code>、<code>电路层网关</code>等几种方式。</li>
+<li>但出于性能、 价格、易用性等因素，现在最为普及的是包过滤方式。</li>
+</ul>
+<h4 id="包过滤的规则"><a href="#包过滤的规则" class="headerlink" title="包过滤的规则"></a>包过滤的规则</h4><p>检查网络包头部：</p>
+<p><img src="/images/image-20211011105952737.png" alt="image-20211011105952737"></p>
+<p><img src="/images/image-20211011110022971.png" alt="image-20211011110022971"></p>
+<p><img src="/images/image-20211011110052167.png" alt="image-20211011110052167"></p>
+<p>示例：</p>
+<ul>
+<li><p>假设我们的网络如图所示，将开放给外网的服务器和公司内网分开部署，Web 服务器所在的网络可以从外网直接访问。现在我们希望允许从互联网访问 Web 服务器（①），但禁止 Web 服务器访问互联网（②）。 </p>
+<blockquote>
+<p>以前很少禁止 Web 服务器访问互联网，但现在出现了一些寄生在服务器中感染其他服务器的恶意软件，如果阻止 Web 服务器访问互联网，就可以防止其他服务器被感染。</p>
+<p>要实现这样的要求，应该如何设置包过滤的规则呢？我们就用这个例子来看一看包过滤的具体思路。</p>
+</blockquote>
+</li>
+<li><p>在设置包过滤规则时，首先要观察包是如何流动的。通过接收方 IP 地址和发送方 IP 地址，我们可以判断出包的起点和终点。在①的例子中，包从互联网流向 Web 服务器，从互联网发送过来的包其起点是不确定的，但终点是确定的，即 Web 服务器。因此，我们可以按此来设定规则，允许符合规则的包通过。也就是说，允许起点（发送方 IP 地址）为任意，终点（接收方 IP 地址）为 Web 服务器 IP 地址的包通过（表的第 1 行）。如果可以确定发送方 IP 地址，也可以将其加入规则，但这个例子中 起点是不确定的，因此可以不将发送方 IP 地址设为判断条件。</p>
+</li>
+<li><p>因为收到包之后，Web 服务器需要通过确认应答机制通知发送方数据已经正常收到，这需要 Web 服务器向互联网发送包。在 Web 服务器发往互联网的包中，我们可以<strong>将起点（发送方 IP 地址）为 Web 服务器地址的包设置为允许通过</strong>（图中表的第 3 行）。像这样，我们可以先根据接收方和发送方地址判断包的流向，并设置是允许还是阻止。</p>
+</li>
+</ul>
+<p><img src="/images/image-20211011110447272.png" alt="image-20211011110447272"></p>
+<ul>
+<li><p><strong>通过端口号限定应用程序</strong></p>
+<p>当我们要限定某个应用程序时，可以在判断条件中加上 TCP 头部或者 UDP 头部中的端口号。</p>
+</li>
+<li><p><strong>通过控制位判断连接方向</strong></p>
+<p>Web 使用的 TCP 协议是双向收发网络包的，因此如果单纯地阻止从 Web 服务器发往互联网的包，则 从互联网访问 Web 服务器的操作也会受到影响而无法进行。我们必须要根据访问的方向来进行判断。这里就需要用到 TCP 头部中的控制位。</p>
+<p>TCP 在执行连接操作时需要收发 3 个包，其中第一个包的 TCP 控制位中 SYN 为 1，而 ACK 为 0。其他的包中这些值都不同，因此只要按照这个规则就能够过滤到 TCP 连接的第一个包。</p>
+<ul>
+<li>如果这第一个包是从 Web 服务器发往互联网的，那么我们就阻止它 （表中的第 2 行）。这样设置之后，当然也不会收到对方返回的第二个响应包，TCP 连接操作就失败了。也就是说，只要以 Web 服务器为起点访问互联网，其连接操作必然会失败，这样一来，我们就阻止了 Web 服务 器对互联网的访问。</li>
+<li>那么，从互联网访问 Web 服务器会不会受影响呢？从互联网访问 Web 服务器时，第一个包是接收方为 Web 服务器，符合图表中的第 1 行， 因此允许通过。第二个包的发送方是 Web 服务器，但 TCP 控制位的规则 与第二行不匹配 A，因此符合第三行的规则，允许通过。随后的所有包要么 符合第一行，要么符合第三行，因此从互联网访问 Web 服务器的所有包都会被允许通过。</li>
+</ul>
+</li>
+</ul>
+<h3 id="透明代理和正向代理的区别"><a href="#透明代理和正向代理的区别" class="headerlink" title="透明代理和正向代理的区别"></a>透明代理和正向代理的区别</h3><ul>
+<li>正向代理(forward proxy)，看名字就知道是转发代理。客户端将请求转发给正代服务器，正向代理服务器再负责转发给服务端，响应时服务端先响应给正向代理服务器，正向代理服务器再转发给对应的客户端。也就是说，正向代理可以但不限于为局域网内客户端做代理，它扮演的角色类似于NAT。</li>
+<li>透明代理其实也叫做内网代理(inline proxy)、拦截代理(intercepting proxy)以及强制代理(force proxy)。透明代理和正向代理的行为很相似，但细节上有所不同。透明代理将拦截客户端发送的请求，拦截后自己代为访问服务端，获取响应结果后再由透明代理交给客户端。一般公司内的上网行为管理软件就是透明代理。</li>
+</ul>
+<p>正向代理和透明代理的区别，细分起来还是有不少的，但主要几点：</p>
+<ul>
+<li>正向代理时，客户端明确指明请求要交给正向代理服务，也就是说要设置代理。而透明代理对客户端是透明的，客户端不知道更不用设置透明代理，但是客户端发出去的请求都会被透明代理拦截。</li>
+<li>正向代理为了实现某些额外的需求，有可能会修改请求报文，但按照RFC文档的要求，透明代理不会修改请求报文。</li>
+<li>正向代理可以内网也可以外网，但透明代理都是内网。</li>
+</ul>
+<h3 id="CDN如何找到最近的缓存服务器"><a href="#CDN如何找到最近的缓存服务器" class="headerlink" title="CDN如何找到最近的缓存服务器"></a>CDN如何找到最近的缓存服务器</h3><h4 id="使用DNS服务器"><a href="#使用DNS服务器" class="headerlink" title="使用DNS服务器"></a>使用DNS服务器</h4><p>第一个方法是像负载均衡一样用 DNS 服务器来分配访问。也就是说，我们可以在 DNS 服务器返回 Web 服务器 IP 地址时，对返回的内容进行一些加工，使其能够返回距离客户端最近的缓存服务器的 IP 地址。</p>
+<p>最大的难点就是：怎样判断客户端与CDN缓存服务器之间的距离呢？</p>
+<p><img src="/images/image-20211011172021293.png" alt="image-20211011172021293"></p>
+<ol>
+<li>首先，作为准备，需要事先从缓存服务器部署地点的路由器收集路由信息。例如，在图中，一共有 4 台缓存服 务器，在这 4 台服务器的部署地点又分别有 4 台路由器，则我们需要分别获取这 4 台路由器的路由表，并将 4 张路由表集中到 DNS 服务器上。 </li>
+<li>接下来，DNS 服务器根据路由表查询从本机到 DNS 查询消息的发送方，也就是客户端 DNS 服务器的路由信息。例如，根据路由器 A 的路由表，可以查出路由器 A 到客户端 DNS 服务器的路由。通过互联网内部的路由表中的路由信息可以知道先通过运营商 X，然后通过运营商 Y， 最后到达运营商 Z 这样的信息，通过这样的信息可以大致估算出距离。</li>
+<li>依次查询所有路由器的路由表之后，我们就可以通过比较找出哪一台路由器距离客户端 DNS 服务器最近。提供路由表的路由器位于缓存服务器的位置，而客户端 DNS 服务器也应该和客户端在同一位置，这样就等于估算出 了缓存服务器与客户端之间的距离，从而能够判断出哪台缓存服务器距离 客户端最近了。</li>
+<li>实际上，客户端 DNS 服务器不一定和客户端在同一位置， 因此可能无法得出准确的距离，但依然可以达到相当的精度。</li>
+</ol>
+<h4 id="使用Location字段"><a href="#使用Location字段" class="headerlink" title="使用Location字段"></a>使用Location字段</h4><p>还有另一个让客户端访问最近的缓存服务器的方法。HTTP 规格中定 义了很多头部字段，其中有一个叫作 Location 的字段。当 Web 服务器数据 转移到其他服务器时可以使用这个字段，它的意思是“您要访问的数据在 另一台服务器上，请访问那台服务器吧。”这种将客户端访问引导到另一台 Web 服务器的操作称为<code>重定向</code>，通过这种方法也可以将访问目标分配到最近的缓存服务器。</p>
+<p><img src="/images/image-20211011172956523.png" alt="image-20211011172956523"></p>
+<ol>
+<li>首先需要将重定向服务器注册到 Web 服务器端的 DNS 服务器上。这样一来，客户端会将 HTTP 请求消息发送到重定向服务器上。</li>
+<li>重定向服务器和刚才一种方法中的 DNS 服务器一样，收集了来自各个路由器的路由信息，并根据这些信息找到最近 的缓存服务器，然后将缓存服务器的地址放到 Location 字段中返回响应。</li>
+</ol>
+<blockquote>
+<p>这种方法的缺点在于增加了 HTTP 消息的交互次数，相应的开销也比较大，但它也有优点。对 DNS 服务器进行扩展的方法是估算客户端 DNS 服务 器到缓存服务器之间的距离，因此精度较差；相对而言，重定向的方法是根据 客户端发送来的 HTTP 消息的发送方 IP 地址来估算距离的，因此精度较高。</p>
+</blockquote>
+<h2 id="第6章-Web服务器"><a href="#第6章-Web服务器" class="headerlink" title="第6章 Web服务器"></a>第6章 Web服务器</h2><h3 id="服务器程序的通信操作"><a href="#服务器程序的通信操作" class="headerlink" title="服务器程序的通信操作"></a>服务器程序的通信操作</h3><p><img src="/images/image-20211011181024013.png" alt="image-20211011181024013"></p>
+<p>注意这里的accept：</p>
+<ul>
+<li>一旦客户端的包到达，就会返回响应包并开始接受连接操作。接下来，协议栈会给等待连接的套接字复制一个副本，然后将连接对象等控制信息写入新的套接字中。</li>
+<li>在复制出一个 新的套接字之后，原来那个处于等待连接状态的套接字会怎么样呢？其实 它还会以等待连接的状态继续存在，当再次调用 accept，客户端连接包到达时，它又可以再次执行接受连接操作。接受新的连接之后，和刚才一样， 协议栈会为这个等待连接的套接字复制一个新的副本，然后让客户端连接 到这个新的副本套接字上。像这样每次为新的连接创建新的套接字就是这 一步操作的一个关键点。如果不创建新副本，而是直接让客户端连接到等 待连接的套接字上，那么就没有套接字在等待连接了，这时如果有其他客户端发起连接就会遇到问题。为了避免出现这样的情况，协议栈采用了这 种创建套接字的新副本，并让客户端连接到这个新副本上的方法。</li>
+<li>此外，创建新套接字时端口号也是一个关键点。端口号是用来识别套接字的，因此我们以前说不同的套接字应该对应不同的端口号，但如果这样做，这里就会出现问题。因为在接受连接的时候，新创建的套接字副本 就必须和原来的等待连接的套接字具有不同的端口号才行。这样一来，比 如客户端本来想要连接 80 端口上的套接字，结果从另一个端口号返回了 包，这样一来客户端就无法判断这个包到底是要连接的那个对象返回的， 还是其他程序返回的。因此，<strong>新创建的套接字副本必须和原来的等待连接 的套接字具有相同的端口号</strong>。</li>
+<li>所以很容易出现：在服务器端，有多个已连接的套接字对应同一个端口号。</li>
+</ul>
+<p>使用描述符来指代套接字的原因</p>
+<ol>
+<li>等待连接的套接字中没有客户端 IP 地址和端口号</li>
+<li>使用描述符这一种信息比较简单</li>
+</ol>
+<h3 id="服务器的工作过程"><a href="#服务器的工作过程" class="headerlink" title="服务器的工作过程"></a>服务器的工作过程</h3><p><img src="/images/image-20211011182634555.png" alt="image-20211011182634555"></p>
+<h3 id="Web-服务器的访问控制"><a href="#Web-服务器的访问控制" class="headerlink" title="Web 服务器的访问控制"></a>Web 服务器的访问控制</h3><p>Web 服务器的访问控制规则主要有以下 3 种。</p>
+<ul>
+<li>客户端 IP 地址</li>
+<li>客户端域名</li>
+<li>用户名和密码</li>
+</ul>
+<h2 id="附录-网络包的旅程"><a href="#附录-网络包的旅程" class="headerlink" title="附录 网络包的旅程"></a>附录 网络包的旅程</h2><p><img src="/images/image-20211011190124260.png" alt="image-20211011190124260"></p>
+<p><img src="/images/image-20211011190326706.png" alt="image-20211011190326706"></p>
+<p>对物理层和链路层不太兴趣，直接跳过了242-273</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
