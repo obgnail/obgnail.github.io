@@ -1,0 +1,424 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第一章-基础知识&quot;&gt;&lt;a href=&quot;#第一章-基础知识&quot; class=&quot;headerlink&quot; title=&quot;第一章 基础知识&quot;&gt;&lt;/a&gt;第一章 基础知识&lt;/h1&gt;&lt;h2 id=&quot;机器语言&quot;&gt;&lt;a href=&quot;#机器语言&quot; class=&quot;headerlink&quot; title=&quot;机器语言&quot;&gt;&lt;/a&gt;机器语言&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;机器语言是&lt;code&gt;机器指令&lt;/code&gt;的集合。&lt;/li&gt;
+&lt;li&gt;机器指令展开来讲就是一台机器可以正确执行的命令。电子计算机的机器指令是一列二进制数字。计算机将其转变成一列高低电平，以使计算机的电子器件受到驱动，进行运算。&lt;/li&gt;
+&lt;li&gt;每一种微处理器，由于硬件设计和内部结构的不同，就需要用不同的电平脉冲来控制，使他工作。所以每一种微处理器都有自己的机器指令集，也就是机器语言。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;早期的程序设计均使用机器语言。程序员们将用0、1数字编成的程序代码打在纸带或卡片上。1打孔，0不打孔。再将程序通过纸带机或卡片机输入计算机进行运算。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>汇编语言（第四版） | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Assembly-Language/" rel="tag">Assembly Language</a></div><div class="post-time">2021-11-16</div></div></div><div class="container post-header"><h1>汇编语言（第四版）</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">第一章 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E8%AF%AD%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">机器语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%9A%84%E7%BB%84%E6%88%90"><span class="toc-number">1.1.1.</span> <span class="toc-text">汇编语言的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E5%92%8C%E6%95%B0%E6%8D%AE"><span class="toc-number">1.1.2.</span> <span class="toc-text">指令和数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU%E5%AF%B9%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E8%AF%BB%E5%86%99"><span class="toc-number">1.1.3.</span> <span class="toc-text">CPU对存储器的读写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BA%BF"><span class="toc-number">1.1.4.</span> <span class="toc-text">总线</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E6%80%BB%E7%BA%BF"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">地址总线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%80%BB%E7%BA%BF"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">数据总线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E6%80%BB%E7%BA%BF"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">控制总线</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="toc-number">1.1.5.</span> <span class="toc-text">内存地址空间</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PC%E6%9C%BA%E4%B8%AD%E5%90%84%E7%B1%BB%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E9%80%BB%E8%BE%91%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.1.5.1.</span> <span class="toc-text">PC机中各类存储器的逻辑连接</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">第二章 寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">通用寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mov%E3%80%81add"><span class="toc-number">2.2.</span> <span class="toc-text">mov、add</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF16%E4%BD%8D%E7%9A%84CPU"><span class="toc-number">2.3.</span> <span class="toc-text">什么是16位的CPU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8086CPU%E7%BB%99%E5%87%BA%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">8086CPU给出物理地址的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80-%E6%AE%B5%E5%9C%B0%E5%9D%80x16-%E5%81%8F%E7%A7%BB%E5%9C%B0%E5%9D%80%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%90%AB%E4%B9%89"><span class="toc-number">2.4.1.</span> <span class="toc-text">物理地址 &#x3D; 段地址x16 + 偏移地址的本质含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AE%B5%E5%9C%B0%E5%9D%80%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AB%E6%AE%B5%E5%9C%B0%E5%9D%80%EF%BC%9F"><span class="toc-number">2.4.2.</span> <span class="toc-text">段地址为什么叫段地址？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">2.5.</span> <span class="toc-text">段寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CS%E3%80%81IP%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">2.5.1.</span> <span class="toc-text">CS、IP段寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU%E8%AF%BB%E5%8F%96%E6%89%A7%E8%A1%8C%E4%B8%80%E6%9D%A1%E6%8C%87%E4%BB%A4%E7%9A%84%E5%85%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">2.5.2.</span> <span class="toc-text">CPU读取执行一条指令的全流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU%E6%A0%B9%E6%8D%AE%E4%BB%80%E4%B9%88%E5%B0%86%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E4%BF%A1%E6%81%AF%E7%9C%8B%E4%BD%9C%E6%8C%87%E4%BB%A4%EF%BC%9F"><span class="toc-number">2.5.3.</span> <span class="toc-text">CPU根据什么将内存中的信息看作指令？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jmp%EF%BC%9A%E4%BF%AE%E6%94%B9CS%E3%80%81IP%E7%9A%84%E6%8C%87%E4%BB%A4"><span class="toc-number">2.5.4.</span> <span class="toc-text">jmp：修改CS、IP的指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%AE%B5"><span class="toc-number">2.6.</span> <span class="toc-text">代码段</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%88%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">第三章 寄存器（内存访问）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E5%8D%95%E5%85%83"><span class="toc-number">3.0.1.</span> <span class="toc-text">字单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DS%E5%92%8C-address"><span class="toc-number">3.0.2.</span> <span class="toc-text">DS和[address]</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DS%E7%A4%BA%E4%BE%8B%E4%B8%80"><span class="toc-number">3.0.2.1.</span> <span class="toc-text">DS示例一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DS%E7%A4%BA%E4%BE%8B%E4%BA%8C"><span class="toc-number">3.0.2.2.</span> <span class="toc-text">DS示例二</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%AF%E5%8A%A0%E6%95%B0%E6%8D%AE%E6%AE%B5"><span class="toc-number">3.0.2.3.</span> <span class="toc-text">累加数据段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU%E6%8F%90%E4%BE%9B%E7%9A%84%E6%A0%88%E6%9C%BA%E5%88%B6"><span class="toc-number">3.0.3.</span> <span class="toc-text">CPU提供的栈机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E7%A9%BA%E7%8A%B6%E6%80%81SP%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">3.0.3.1.</span> <span class="toc-text">栈空状态SP为多少</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E9%A1%B6%E8%B6%8A%E7%95%8C%E9%97%AE%E9%A2%98"><span class="toc-number">3.0.3.2.</span> <span class="toc-text">栈顶越界问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#push%E3%80%81pop%E6%8C%87%E4%BB%A4"><span class="toc-number">3.0.3.3.</span> <span class="toc-text">push、pop指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E6%AE%B5"><span class="toc-number">3.0.3.4.</span> <span class="toc-text">栈段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AE%B5%E7%9A%84%E7%BB%BC%E8%BF%B0"><span class="toc-number">3.0.4.</span> <span class="toc-text">段的综述</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F"><span class="toc-number">4.</span> <span class="toc-text">第四章 第一个程序</span></a></li></ol></details></div><div class="container post-content"><h1 id="第一章-基础知识"><a href="#第一章-基础知识" class="headerlink" title="第一章 基础知识"></a>第一章 基础知识</h1><h2 id="机器语言"><a href="#机器语言" class="headerlink" title="机器语言"></a>机器语言</h2><ul>
+<li>机器语言是<code>机器指令</code>的集合。</li>
+<li>机器指令展开来讲就是一台机器可以正确执行的命令。电子计算机的机器指令是一列二进制数字。计算机将其转变成一列高低电平，以使计算机的电子器件受到驱动，进行运算。</li>
+<li>每一种微处理器，由于硬件设计和内部结构的不同，就需要用不同的电平脉冲来控制，使他工作。所以每一种微处理器都有自己的机器指令集，也就是机器语言。</li>
+</ul>
+<p>早期的程序设计均使用机器语言。程序员们将用0、1数字编成的程序代码打在纸带或卡片上。1打孔，0不打孔。再将程序通过纸带机或卡片机输入计算机进行运算。</p>
+<p>应用8086CPU完成运算s=768+12288-1280，机器码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">101110000000000000000011</span><br><span class="line">000001010000000000110000</span><br><span class="line">001011010000000000000101</span><br></pre></td></tr></table></figure>
+
+
+
+<p>汇编语言的主体是汇编指令。汇编指令和机器指令的差别在于指令的表示方法上。<strong>汇编指令是机器指令便于记忆的书写格式</strong>。</p>
+<p>例如：机器指令1000100111011000表示把寄存器BX的内容送到AX中。汇编指令则写成<code>mov ax bx</code>。这样的写法与人类语言接近，便于阅读和记忆。</p>
+<p>此后，程序员们就用汇编指令编写源程序。可是，计算机能读懂的只有机器指令，那如何让计算机执行程序员用汇编指令编写的程序呢？这时，就需要有一个能够将汇编指令转换成机器指令的翻译程序，这样的程序我们称其为<code>编译器</code>。</p>
+<p>程序员用汇编语言写出源程序，再用汇编编译器将其编译为机器码，由计算机最终执行。</p>
+<p><img src="/images/image-20211112161024210.png" alt="image-20211112161024210"></p>
+<h3 id="汇编语言的组成"><a href="#汇编语言的组成" class="headerlink" title="汇编语言的组成"></a>汇编语言的组成</h3><p>汇编语言由以下3类指令组成。</p>
+<ul>
+<li><code>汇编指令</code>：机器码的助记符，有对应的机器码。</li>
+<li><code>伪指令</code>：没有对应的机器码，由编译器执行，计算机并不执行。</li>
+<li><code>其他符号</code>：如+、-、*、/等，由编译器识别，没有对应的机器码。</li>
+</ul>
+<p>汇编语言的核心是汇编指令，它决定了汇编语言的特性。</p>
+<h3 id="指令和数据"><a href="#指令和数据" class="headerlink" title="指令和数据"></a>指令和数据</h3><p>指令和数据是应用上的概念。在内存或磁盘上，指令和数据没有任何区别，<strong>都是二进制信息</strong>。CPU在工作的时候把有的信息看作指令，有的信息看作数据，为同样的信息赋予了不同的意义。就像围棋的棋子，在棋盒里的时候没有任何区别，在对弈的时候就有了不同的意义。</p>
+<p>例如，内存中的二进制信息1000100111011000，计算机可以把它看作大小为89D8H的数据来处理，也可以将其看作指令 <code>mov ax bx</code>来执行。</p>
+<h3 id="CPU对存储器的读写"><a href="#CPU对存储器的读写" class="headerlink" title="CPU对存储器的读写"></a>CPU对存储器的读写</h3><p>存储器分成<code>内存储器</code>(内存)和<code>外存储器</code>(外存，硬盘)。</p>
+<ul>
+<li>CPU要从内存中读数据，首先要指定存储单元的地址。也就是说它要先确定它要读取哪一个存储单元中的数据。</li>
+<li>在一台微机中，不只有存储器这一种器件。CPU在读写数据时还要指明，它要对哪一个器件进行操作，进行哪种操作，是从中读岀数据，还是向里面写入数据。</li>
+</ul>
+<p>可见，CPU要想进行数据的读写，必须和外部器件(标准的说法是芯片)进行下面3类信息的交互。</p>
+<ul>
+<li>地址信息：存储单元的地址</li>
+<li>控制信息：器件的选择，读或写的命令</li>
+<li>数据信息：读或写的数据</li>
+</ul>
+<p>那么CPU是通过什么将地址、数据和控制信息传到存储器芯片中的呢？</p>
+<p>电子计算机能处理、传输的信息都是电信号，电信号当然要用导线传送。在计算机中专门有连接CPU和其他芯片的导线，通常称为<code>总线</code>。</p>
+<blockquote>
+<p>总线从物理上来讲，就是一根根导线的集合。根据传送信息的不同，总线从逻辑上又分为3类：</p>
+<ul>
+<li><code>地址总线</code></li>
+<li><code>控制总线</code></li>
+<li><code>数据总线</code></li>
+</ul>
+</blockquote>
+<p>CPU从3号单元中读取数据的过程：</p>
+<ol>
+<li>CPU通过地址线将地址信息3发出。</li>
+<li>CPU通过控制线发出内存读命令，选中存储器芯片，并通知它，将要从中读取数据。</li>
+<li>储存器将3号单元中的数据数据8通过数据线送入CPU。</li>
+</ol>
+<p>写操作 与 读操作 类似。如向3号单元写入数据26：</p>
+<ol>
+<li>CPU通过地址线将地址信息3发出。</li>
+<li>CPU通过控制线发出内存写命令，选中存储器芯片，并通知它，要向其中写入数据。</li>
+<li>CPU通过数据线将数据26送入内存的3号单元中。</li>
+</ol>
+<p><img src="/images/image-20211112185327032.png" alt="image-20211112185327032"></p>
+<h3 id="总线"><a href="#总线" class="headerlink" title="总线"></a>总线</h3><p>每一个CPU芯片都有许多管脚，这些管脚和总线相连。也可以说，这些管脚引出总线。一个CPU可以引出3种总线的宽度标志了这个CPU的不同方面的性能：</p>
+<ul>
+<li>地址总线的宽度决定了CPU的寻址能力；</li>
+<li>数据总线的宽度决定了CPU与其他器件进行数据传送时的一次数据传送量：</li>
+<li>控制总线的宽度决定了CPU对系统中其他器件的控制能力。</li>
+</ul>
+<h4 id="地址总线"><a href="#地址总线" class="headerlink" title="地址总线"></a>地址总线</h4><p><strong>CPU是通过地址总线来指定存储器单元的</strong>。所以，地址总线上能传送多少个不同的信息，CPU就可以对多少个存储单元进行寻址。</p>
+<p>下图为一个具有10根地址线的CPU向内存发出地址信息11的时候，10根地址线上传送的二进制信息(<code>1101</code>)。</p>
+<p><img src="/images/image-20211114092629490.png" alt="image-20211114092629490"></p>
+<blockquote>
+<p>也就是说：</p>
+<ul>
+<li>一条地址线一次传递一个二进制位。</li>
+<li>一个CPU有N条地址线，那么这个CPU一次能发送/读取N bit数据。</li>
+<li>一个CPU有N条地址线，那么这个CPU最多可以寻找2^N个内存单元。</li>
+</ul>
+</blockquote>
+<h4 id="数据总线"><a href="#数据总线" class="headerlink" title="数据总线"></a>数据总线</h4><p>CPU与内存或其他器件之间的数据传送是通过数据总线来进行的。</p>
+<p>数据总线的宽度决定了CPU和外界的数据传送速度。8根数据总线一次可传送一个8位二进制数据（即一个字节）。16根数据总线一次可传送两个字节。</p>
+<p>下图为8086CPU写入数据89D8H时，数据总线上的数据传送情况</p>
+<p><img src="/images/image-20211114094647096.png" alt="image-20211114094647096"></p>
+<h4 id="控制总线"><a href="#控制总线" class="headerlink" title="控制总线"></a>控制总线</h4><p>CPU对外部器件的控制是通过控制总线来进行的。</p>
+<p>在这里控制总线是个总称，控制总线是一些不同控制线的集合。<strong>有多少根控制总线，就意味着CPU提供了对外部器件的多少种控制</strong>。所以，控制总线的宽度决定了CPU对外部器件的控制能力。</p>
+<blockquote>
+<p>前面所讲的内存读或写命令是由几根控制线综合发出的，其中有一根称为“读信号输出”的控制线负责由CPU向外传送读信号，CPU向该控制线上输出低电平表示将要读取数据：有一根称为“写信号输出”的控制线则负责传送写信号。</p>
+</blockquote>
+<h3 id="内存地址空间"><a href="#内存地址空间" class="headerlink" title="内存地址空间"></a>内存地址空间</h3><p>一个CPU的地址总线宽度为10，那么可以寻址2的10次方共计1024个内存单元，这1024个可寻到的内存单元就构成这个CPU的内存地址空间。</p>
+<h4 id="PC机中各类存储器的逻辑连接"><a href="#PC机中各类存储器的逻辑连接" class="headerlink" title="PC机中各类存储器的逻辑连接"></a>PC机中各类存储器的逻辑连接</h4><p><img src="/images/image-20211114100358072.png" alt="image-20211114100358072"></p>
+<p>存储器在物理上是独立的器件，但是有两点相同：</p>
+<ul>
+<li>都和CPU的总线相连。</li>
+<li>CPU对它们进行读或写的时候都通过控制线发出内存读写命令</li>
+</ul>
+<p>这也就是说，<strong>CPU在操控它们的时候，将各类存储器看作是一个逻辑存储器，把它们都当作内存来对待</strong>，把它们总的看作一个由若干存储单元组成的逻辑存储器，这个逻辑存储器就是我们所说的内存地址空间。</p>
+<p><img src="/images/image-20211115110615698.png" alt="image-20211115110615698"></p>
+<p>不同的计算机系统的内存地址空间的分配情况是不同的。下图展示了8086PC机内存地址空间分配的基本情况。</p>
+<p><img src="/images/image-20211115111718699.png" alt="image-20211115111718699"></p>
+<h1 id="第二章-寄存器"><a href="#第二章-寄存器" class="headerlink" title="第二章 寄存器"></a>第二章 寄存器</h1><ul>
+<li>一个典型的CPU由运算器、控制器、寄存器等器件构成。<ul>
+<li><code>运算器</code>进行信息处理。</li>
+<li><code>寄存器</code>进行信息存储。</li>
+<li><code>控制器</code>控制各种器件进行工作。</li>
+</ul>
+</li>
+<li>这些器件靠内部总线相连。前一章所说的总线，是外部总线。</li>
+<li>内部总线实现CPU内部各个器件之间的联系，外部总线实现CPU和主板上其他器件的联系。</li>
+</ul>
+<ul>
+<li><strong>寄存器是CPU中程序员可以用指令读写的部件</strong>。程序员通过改变各种寄存器中的内容来实现对CPU的控制。</li>
+<li>不同的CPU，寄存器的个数、结构是不相同的。8086CPU有14个寄存器，每个寄存器有一个名称。这些寄存器是:AX、BX、CX、DX、SIDI、SP、BP、IP、CS、SS、DS、ES、PSW。</li>
+</ul>
+<h2 id="通用寄存器"><a href="#通用寄存器" class="headerlink" title="通用寄存器"></a>通用寄存器</h2><p>8086CPU的所有寄存器都是16位的。可以存放两个字节。AX，BX，CX，DX这4个寄存器通常用来存放一般性的数据，被称为<code>通用寄存器</code>。</p>
+<p><img src="/images/image-20211115112705320.png" alt="image-20211115112705320"></p>
+<p>8086CPU的上一代CPU的寄存器都是8位的，为了保证兼容，4个通用寄存器都可以分成可独立使用分的8位寄存器来用。</p>
+<p>出于对兼容性的考虑，8086PU可以一次性处理以下两种尺寸的数据。</p>
+<ul>
+<li><code>字节</code>：记为 byte，一个字节由8个bt组成，可以存在8位寄存器中。</li>
+<li><code>字</code>：记为word，一个字由两个字节组成，这两个字节分别称为这个字的高位字节和低位字节</li>
+</ul>
+<p><img src="/images/image-20211115113125290.png" alt="image-20211115113125290"></p>
+<h2 id="mov、add"><a href="#mov、add" class="headerlink" title="mov、add"></a>mov、add</h2><ul>
+<li>mov被称为<code>传送指令</code></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>汇编指令</th>
+<th>控制CPU完成的操作</th>
+<th>用高级语言的语法描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mov ax，18</td>
+<td>将18送入寄存器AX</td>
+<td>AX=18</td>
+</tr>
+<tr>
+<td>add ax，8</td>
+<td>将寄存器AX中的数值加上8</td>
+<td>AX=AX+8</td>
+</tr>
+<tr>
+<td>mov ax，bx</td>
+<td>将寄存器BX中的数据送入寄存器AX</td>
+<td>AX=BX</td>
+</tr>
+<tr>
+<td>add ax，bx</td>
+<td>将AX和BX中的数值相加，结果存于AX中</td>
+<td>AX=AX+BX</td>
+</tr>
+</tbody></table>
+<h2 id="什么是16位的CPU"><a href="#什么是16位的CPU" class="headerlink" title="什么是16位的CPU"></a>什么是16位的CPU</h2><p>16位结构，16位机，字长位16位，表示相同的意思。16位CPU具有下面的结构特性：</p>
+<ul>
+<li>运算器一次最多处理16位的数据</li>
+<li>寄存器的最大宽度为16位</li>
+<li>寄存器和运算器之间的通路为16位。</li>
+</ul>
+<blockquote>
+<p>内存单元的地址在送上地址总线之前，必须在CPU中处理、传输、暂时存放，</p>
+<p>这也就是说，16位CPU，<strong>能一次性处理、传输、暂时存储16位的地址</strong>。</p>
+</blockquote>
+<h2 id="8086CPU给出物理地址的方法"><a href="#8086CPU给出物理地址的方法" class="headerlink" title="8086CPU给出物理地址的方法"></a>8086CPU给出物理地址的方法</h2><ul>
+<li>8086CPU有20位地址总线，可以传送20位地址，达到1MB寻址能力。8086CPU又是16位结构，在内部一次性处理、传输、暂时存储的地址为16位。</li>
+<li>从8086CPU的内部结构来看，如果将地址从内部简单地发出，那么它只能送出16位的地址，表现出的寻址能力只有64KB。</li>
+<li>8086CPU采用一种在内部用两个16位地址合成的方法来形成一个20位的物理地址。</li>
+</ul>
+<p><img src="/images/image-20211115121612793.png" alt="image-20211115121612793"></p>
+<p>如图所示，当8086CPU要读写内存时：</p>
+<ul>
+<li>CPU中的相关部件提供两个16位的地址，一个称为段地址，另一个称为偏移地址</li>
+<li>段地址和偏移地址通过内部总线送入一个称为地址加法器的部件</li>
+<li>地址加法器将两个16位地址合成为一个20位的物理地址</li>
+<li>地址加法器通过内部总线将20位物理地址送入输入输出控制电路</li>
+<li>输入输出控制电路将20位物理地址送上地址总线;</li>
+<li>20位物理地址被地址总线传送到存储器</li>
+</ul>
+<p>地址加法器采用<code>物理地址 = 段地址x16 + 偏移地址</code>的方法合成物理地址。</p>
+<p>例如，8086CPU要访问地址为123C8H的内存单元，此时，地址加法器的工作过程</p>
+<p><img src="/images/image-20211115122043995.png" alt="image-20211115122043995"></p>
+<h3 id="物理地址-段地址x16-偏移地址的本质含义"><a href="#物理地址-段地址x16-偏移地址的本质含义" class="headerlink" title="物理地址 = 段地址x16 + 偏移地址的本质含义"></a><code>物理地址 = 段地址x16 + 偏移地址</code>的本质含义</h3><p><code>段地址×16+偏移地址=物理地址</code>的本质含义是：</p>
+<ul>
+<li>CPU在访问内存时，用一个基础地址(段地址×16)和一个相对于基础地址的偏移地址相加，给出内存单元的物理地址。</li>
+<li>更一般地说，8086CPU的这种寻址功能是“基础地址+偏移地址=物理地址”寻址模式的一种具体实现方案。8086CPU中，段地址×16可看作是基础地址。</li>
+</ul>
+<blockquote>
+<p>使用比喻说明“基础地址+偏移地址=物理地址”的思想。</p>
+<p><img src="/images/image-20211115141224487.png" alt="image-20211115141224487"></p>
+<p>你要去图书馆，问我那里的地址，我可以用两种方式告诉你图书馆的地址</p>
+<ul>
+<li>从学校走2826m到图书馆。这2826m可以认为是图书馆的物理地址。这种方法是直接给出物理地址2826m</li>
+<li>从学校走2000m到体育馆，从体育馆再走826m到图书馆。第一个距离200m是相对于起点的基础地址，第二个距离826m是相对于基础地址的偏移地址(以基础地址为起点的地址)。这种方式是用基础地址和偏移地址相加来得到物理地址的。</li>
+</ul>
+<p>现在再加一些限制条件，比如只能通过纸条进行通信。你问我图书馆的地址，我只能将它写在纸上告诉你。显然必须有一张容纳4位数的纸条才能写下2826这个数据。</p>
+<p><img src="/images/image-20211115142201297.png" alt="image-20211115142201297"></p>
+<p>但是现在没有能容纳4位数的纸条，仅有两张可以容纳3位数的纸条。这样我们就需要使用下面的方式来传递数据：</p>
+<p><img src="/images/image-20211115142320650.png" alt="image-20211115142320650"></p>
+<p>在第一张纸上写上200（段地址），在第二张纸上写上826（偏移地址）。然后我们约定，当你得到这两张纸后，做这样的运算：<code>200 * 10 + 826 = 2826</code>。</p>
+<p>8086CPU就是这样一个只能提供两张3位数纸条的CPU。</p>
+</blockquote>
+<h3 id="段地址为什么叫段地址？"><a href="#段地址为什么叫段地址？" class="headerlink" title="段地址为什么叫段地址？"></a>段地址为什么叫段地址？</h3><p>因为8086CPU使用<code>基础地址(段地址x16) + 偏移地址 = 物理地址</code>的方式给出内存单元的物理地址，使得我们可以用分段的方式来管理内存。</p>
+<p>段地址和偏移地址都为16位。所以可以得出下面的公式：(x表示段地址，y表示偏移地址)</p>
+<ul>
+<li>16x + y = 2^20</li>
+<li>0 &lt;= y &lt;= 2^16</li>
+</ul>
+<p>也就是说，<strong>如果给定一个段地址，仅通过变化偏移地址来进行寻址，最多可以定位2^16个内存单元</strong>。我们就可以把这2^16的范围称之为<code>一段</code>。</p>
+<p>例如：地址10000H～100FFH的内存单元组成一个段。该段的起始地址位10000H，段地址为10000H/16=1000H，大小为100H。</p>
+<p>我们也可以认为地址10000H～1007FH、10080H～100FFH的内存单元组成两个段，他们的起始地址为10000H和10080H，段地址为100H和1008H，大小都为80H。</p>
+<p><img src="/images/image-20211115153550604.png" alt="image-20211115153550604"></p>
+<h2 id="段寄存器"><a href="#段寄存器" class="headerlink" title="段寄存器"></a>段寄存器</h2><ul>
+<li>段地址在8086CPU的段寄存器中存放。</li>
+<li>8086CPU有4个段寄存器：CS，DS，SS，ES。</li>
+</ul>
+<h3 id="CS、IP段寄存器"><a href="#CS、IP段寄存器" class="headerlink" title="CS、IP段寄存器"></a>CS、IP段寄存器</h3><ul>
+<li>CS和IP提供了CPU当前要读取和执行指令的地址。CS为代码段寄存器，IP为指令指针寄存器。</li>
+<li>假设CS中的内容为M，IP的内容为N。CPU就可以从内存<code>M * 16 + N</code>单元开始，读取一条指令并执行。</li>
+</ul>
+<h3 id="CPU读取执行一条指令的全流程"><a href="#CPU读取执行一条指令的全流程" class="headerlink" title="CPU读取执行一条指令的全流程"></a>CPU读取执行一条指令的全流程</h3><p><img src="/images/image-20211115180957601.png" alt="image-20211115180957601"></p>
+<p>情况说明如下：</p>
+<ul>
+<li>当前CS中的内容为2000H，IP中的内容为0000H</li>
+<li>内存20000H-20002H单元存放着可执行的机器码，长度为3Byte，对应的汇编指令为<code>mov ax,0123H</code></li>
+</ul>
+<p>CPU读取执行一条指令的流程如下：</p>
+<ol>
+<li>CS和IP中的内容送入地址加法器。</li>
+<li>地址加法器完成计算，得出物理地址20000H。</li>
+<li>地址加法器见物理地址送入输入输出控制电路。</li>
+<li>输入输出电路见物理地址20000H送上地址总线。</li>
+<li>从内存20000H单元开始存放的机器指令B8 23 01 通过数据总线被送入CPU。</li>
+<li>输入输出控制电路见机器指令B8 23 01 送入指令缓冲器。</li>
+<li>IP中的值自动增加。（读取一条指令后，IP中的值会自动增加，以使CPU可以读取下一条指令。因为当前读入的指令B82301长度为3个字节，所以IP中的值加3，此时CS:IP指向内存单元2000:0003）</li>
+<li>执行控制器执行指令B82301（即 mov ax,0123H）</li>
+<li>指令B82301被执行后，AX中的内容为0123H。</li>
+<li>接下来，CPU将从过年内存单元2000:0003处读取指令，重复上述的流程。</li>
+</ol>
+<blockquote>
+<p>8086CPU的工作过程可以简要总结如下：</p>
+<ol>
+<li>从CS:IP指向的内存单元读取指令，读取的指令进入指令缓冲器；</li>
+<li>IP=IP+所读取指令的长度，从而指向下一条指令；</li>
+<li>执行指令。赚到步骤1，重复这个过程。</li>
+</ol>
+</blockquote>
+<p>在8086CPU刚开启工作时，CS和IP被设置为CS=FFFFH，IP=0000H。即8086CPU机刚启动时，CPU从内存FFFF0H单元中读取指令执行。FFFF0H单元中的指令时8086机开机后执行的第一条指令。</p>
+<h3 id="CPU根据什么将内存中的信息看作指令？"><a href="#CPU根据什么将内存中的信息看作指令？" class="headerlink" title="CPU根据什么将内存中的信息看作指令？"></a>CPU根据什么将内存中的信息看作指令？</h3><p>在内存中，指令和数据没有任何区别，都是二进制信息。CPU时怎么区分二者的？</p>
+<ul>
+<li><strong>CPU将CS：IP指向的内存单元中的内容看作指令。</strong></li>
+<li>在任何时候，CPU都会将CS当作指令的段地址，把IP当作指令的偏移地址，用他们合成指令的物理地址，到内存中读取指令码，执行。</li>
+<li>也就是说，如果内存中的一段信息曾经被CPU执行过的话，那么，它所在的内存单元必然被CS：IP指向过。</li>
+</ul>
+<h3 id="jmp：修改CS、IP的指令"><a href="#jmp：修改CS、IP的指令" class="headerlink" title="jmp：修改CS、IP的指令"></a>jmp：修改CS、IP的指令</h3><ul>
+<li>在CPU中，程序员能用指令读写的部件只有寄存器。因为CPU执行的指令是由CS、IP中的内容决定的，所以可以通过修改寄存器的内容对CPU实现控制。</li>
+<li>mov可以修改AX，BX，CX，DX寄存器，但是不能修改CS、IP寄存器。能修改CS、IP的指令被称为<code>转移指令</code>。<code>jmp</code>是其中一种转移指令</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JMP 1000H</td>
+<td>CS不变，IP变成1000H</td>
+</tr>
+<tr>
+<td>JMP CX</td>
+<td>CS不变，IP变成CX（含义类似于 mov IP,CX）</td>
+</tr>
+<tr>
+<td>JMP 1000H:2000H</td>
+<td>修改CS、IP（含义类似于mov CS,1000H; mov IP,2000H）</td>
+</tr>
+<tr>
+<td>JMP DWORD PTR [SI]</td>
+<td>段间间接转移转移地址在SI所指地址开始的4个单元中</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 模版:</span><br><span class="line">jmp 段地址:偏移地址</span><br><span class="line"></span><br><span class="line"># 执行后，CS=2AE3H，IP=0003H，CPU将从2AE33H处读取指令。</span><br><span class="line">jmp 2AE3:3</span><br><span class="line"></span><br><span class="line"># 执行后，CS=0003H，IP=0B16H，CPU将从00B46H处读取指令。</span><br><span class="line">jmp 3:0B16</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="代码段"><a href="#代码段" class="headerlink" title="代码段"></a>代码段</h2><p>对于8086PC机，可以根据需要，将一组内存单元定义为一个段。我们可以将长度为N（N &lt;= 64KB）的一组代码，存于一组地址连续、起始地址为16的倍数的内存单元中，我们可以认为，这段内存是用来存放代码的，从而定义了一个<code>代码段</code>。</p>
+<p>比如，将：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov ax,0000  ; (B8 00 01)</span><br><span class="line">add ax,0123H ; (05 23 01)</span><br><span class="line">mov bx,ax.   ; (8B D8)</span><br><span class="line">jmp bx       ; (FF E3)</span><br></pre></td></tr></table></figure>
+
+<p>这段长度为10个字节的指令，存放在123B0H<del>123B9H的一组内存单元中，我们就可以认为，123B0H</del>123B9H这段内存是用来存放代码的，是一个代码段，它的段地址为 123BH， 长度为10个字节。如果要让这段代码得到执行，可设CS=123BH、IP=0000H。</p>
+<h1 id="第三章-寄存器（内存访问）"><a href="#第三章-寄存器（内存访问）" class="headerlink" title="第三章 寄存器（内存访问）"></a>第三章 寄存器（内存访问）</h1><h3 id="字单元"><a href="#字单元" class="headerlink" title="字单元"></a>字单元</h3><ul>
+<li><p>8086CPU中，用16位寄存器来存储一个字。高8位存放高位字节，低8位存放低位字节。所以<strong>一个字要用两个地址连续的内存单元来存放</strong>，这个字的<strong>低位字节存放在低地址单元中，高位字节存放在高地址单元中</strong>。这两个字节，就被称为<code>字单元</code>。</p>
+</li>
+<li><p>比如我们从0地址开始存放20000(4E20H)，如图所示</p>
+<p><img src="/images/image-20211116113503481.png" alt="image-20211116113503481"></p>
+</li>
+</ul>
+<h3 id="DS和-address"><a href="#DS和-address" class="headerlink" title="DS和[address]"></a>DS和[address]</h3><ul>
+<li><p>8086CPU中有一个DS寄存器，通常<strong>用来存放要访问数据的段地址</strong>。</p>
+</li>
+<li><p><code>[…]</code>：表示一个内存单元。</p>
+</li>
+<li><p><code>mov al,[0]</code>：将DS寄存器中的内容作为段地址，[]的内存单元的内容作为偏移地址。读取内存中的数据，将其写入al中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mov bx,1000H</span><br><span class="line">mov ds,bx  ; ds是段寄存器，mov ds,1000H是非法的。只能使用一个通用寄存器作为中转</span><br><span class="line"></span><br><span class="line">; 读取10000H:0单元的内容，写入al</span><br><span class="line">mov al,[0] ; 将DS寄存器中的内容作为段地址，[]的内存单元的内容作为偏移地址，传入al</span><br><span class="line"></span><br><span class="line">; 将al的数据传输到10000H:0的内存中。</span><br><span class="line">mov [0],al</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="DS示例一"><a href="#DS示例一" class="headerlink" title="DS示例一"></a>DS示例一</h4><p><img src="/images/image-20211116142555443.png" alt="image-20211116142555443"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mov ax,1000H</span><br><span class="line">mov ds,ax</span><br><span class="line">mov ax,[0]</span><br><span class="line">mov bx,[2]</span><br><span class="line">mov cx,[1]</span><br><span class="line">add bx,[1]</span><br><span class="line">add cx,[2]</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20211116142624357.png" alt="image-20211116142624357"></p>
+<h4 id="DS示例二"><a href="#DS示例二" class="headerlink" title="DS示例二"></a>DS示例二</h4><p><img src="/images/image-20211116144349072.png" alt="image-20211116144349072"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mov ax,1000H</span><br><span class="line">mov ds,ax</span><br><span class="line">mov ax,11316</span><br><span class="line">mov [0],ax</span><br><span class="line">mov bx,[0]</span><br><span class="line">sub bx,[2]</span><br><span class="line">mov [2],bx</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20211116144537772.png" alt="image-20211116144537772"></p>
+<h4 id="累加数据段"><a href="#累加数据段" class="headerlink" title="累加数据段"></a>累加数据段</h4><p>累加数据段中前3个字的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mov ax,123BH </span><br><span class="line">mov ds, ax   ; 将123BH送入ds中，作为数据段的段地址</span><br><span class="line">mov ax,O     ; 用ax存放累加结果</span><br><span class="line">add ax, [0]  ; 将数据段第一个字（偏移地址为0）加到ax中</span><br><span class="line">add ax, [2]  ; 将数据段第二个字（偏移地址为2）加到ax中</span><br><span class="line">add ax, [4]  ; 将数据段第三个字（偏移地址为4）加到ax中</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意，一个字型数据占两个单元，所以偏移地址是 0、2、4。</p>
+</blockquote>
+<h3 id="CPU提供的栈机制"><a href="#CPU提供的栈机制" class="headerlink" title="CPU提供的栈机制"></a>CPU提供的栈机制</h3><ul>
+<li>8086CPU提供相关的指令来以栈的方式访问内存空间。这意味着，在基于8086CPU编程的时候，<strong>可以将一段内存当作栈来使用</strong>。</li>
+<li>8086CPU提供入栈和出栈指令，最基本的两个是PUSH（入栈）和POP（出栈）。</li>
+<li><strong><code>push ax</code>表示将寄存器ax中的数据送入栈中，<code>pop ax</code>表示从栈顶取出数据送入ax。</strong></li>
+<li>8086CPU的入栈和出栈操作都是<strong>以字为单位进行的</strong>。</li>
+</ul>
+<ul>
+<li>8086CPU中，有两个寄存器，段寄存器SS和寄存器SP，<strong>栈顶的段地址存放在<code>SS</code>中，偏移地址存放在<code>SP</code>中</strong>。</li>
+<li><strong>任意时刻，<code>SS：SP</code>指向栈顶元素。</strong></li>
+<li>push指令和pop指令执行时，CPU从SS和SP中得到栈顶的地址。</li>
+</ul>
+<p>举例说明，我们可以将10000H~1000FH这段内存当作栈来使用。</p>
+<p><img src="/images/image-20211116161344067.png" alt="image-20211116161344067"></p>
+<p>push ax的执行，由以下两步完成：</p>
+<ol>
+<li>SP=SP-2，SS：SP指向当前栈顶前面的单元，以当前栈顶前面的单元为新的栈顶； </li>
+<li>将ax中的内容送入SS：SP指向的内存单元处，SS：SP此时指向新栈顶。</li>
+</ol>
+<p><img src="/images/image-20211116162217296.png" alt="image-20211116162217296"></p>
+<blockquote>
+<p>入栈时，栈顶从高地址向低地址方向增长。</p>
+</blockquote>
+<p>pop ax的执行过程和push ax刚好相反，由以下两步完成。</p>
+<ul>
+<li>将SS：SP指向的内存单元处的数据送入ax中；</li>
+<li>SP=SP+2，SS：SP指向当前栈顶下面的单元，以当前栈顶下面的单元为新的栈顶。</li>
+</ul>
+<p><img src="/images/image-20211116163323998.png" alt="image-20211116163323998"></p>
+<blockquote>
+<p>出栈后，SS：SP指向新的栈顶1000EH，pop操作前的栈顶元素，<strong>1000CH处的2266H依然存在</strong>，但是，它已不在栈中。当再次执行push等入栈指令后，SS：SP移至1000CH，并在里面写入新的数据，它将被覆盖。</p>
+</blockquote>
+<p>总结：</p>
+<ul>
+<li>push指令的执行步骤： <ol>
+<li>SP=SP-2；</li>
+<li>向SS：SP指向的字单元中送入数据。 </li>
+</ol>
+</li>
+<li>pop指令的执行步骤： <ol>
+<li>从SS：SP指向的字单元中读取数据； </li>
+<li>SP=SP+2。</li>
+</ol>
+</li>
+</ul>
+<h4 id="栈空状态SP为多少"><a href="#栈空状态SP为多少" class="headerlink" title="栈空状态SP为多少"></a>栈空状态SP为多少</h4><ul>
+<li>将10000H~1000FH这段空间当作栈段，初始状态栈是空的，SS=1000H，栈空间大小为16字节，栈最底部的字单元地址为1000:000E。</li>
+<li>任意时刻，SS：SP指向栈顶，当栈中只有一个元素的时候，SS=1000H，SP=000EH。</li>
+<li>栈为空，就相当于栈中唯一的元素出栈，出栈后，SP=SP+2，SP原来为000EH，加2后SP=10H，所以，当栈为空的时候，SS=1000H，SP=10H。</li>
+</ul>
+<p><img src="/images/image-20211116162650612.png" alt="image-20211116162650612"></p>
+<h4 id="栈顶越界问题"><a href="#栈顶越界问题" class="headerlink" title="栈顶越界问题"></a>栈顶越界问题</h4><ul>
+<li>当栈满的时候再使用push指令入栈，或栈空的时候再使用pop指令出栈，都将发生栈顶超界问题。</li>
+<li>8086CPU<strong>不保证我们对栈的操作不会超界</strong>。</li>
+<li>这也就是说，<strong>8086CPU只知道栈顶在何处（由SS：SP指示），而不知道我们安排的栈空间有多大</strong>。这点就好像CPU只知道当前要执行的指令在何处（由CS：IP指示），而不知道要执行的指令有多少。</li>
+</ul>
+<h4 id="push、pop指令"><a href="#push、pop指令" class="headerlink" title="push、pop指令"></a>push、pop指令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">push 寄存器   ; 将一个寄存器中的数据入栈</span><br><span class="line">pop 寄存器    ; 出栈，用一个寄存器接收出栈的数据</span><br><span class="line">push 内存单元 ; 将一个内存字单元处的字入栈（注意：栈操作都是以字为单位） </span><br><span class="line">pop 内存单元  ; 出栈，用一个内存字单元接收出栈的数据</span><br><span class="line"></span><br><span class="line">; eg:</span><br><span class="line">mov ax,1000H </span><br><span class="line">mov ds,ax     ; 内存单元的段地址要放在ds中</span><br><span class="line">push [0]      ; 将1000：0处的字压入栈中</span><br><span class="line">pop [2]       ; 出栈，出栈的数据送入1000：2处</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mov ax,1000H </span><br><span class="line">mov ss,ax      ; 设置栈的段地址，SS=1000H，不能直接向段寄存器SS中送入数据，所以用ax中转。</span><br><span class="line">mov sp,0010H   ; 设置栈顶的偏移地址，因栈为空，所以sp=0010H。</span><br><span class="line"></span><br><span class="line">push ax </span><br><span class="line">push bx </span><br><span class="line">push ds</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>push、pop实质上就是一种内存传送指令，可以在寄存器和内存之间传送数据，</li>
+<li>与mov指令不同的是，push和pop指令访问的内存单元的地址不是在指令中给出的，而是由SS：SP指出的。</li>
+<li>同时，push和pop指令还要改变SP中的内容。</li>
+</ul>
+</blockquote>
+<h4 id="栈段"><a href="#栈段" class="headerlink" title="栈段"></a>栈段</h4><ul>
+<li>对于8086PC机，在编程时，可以根据需要，将一组内存单元定义为一个段。我们可以将长度为N（N &lt;= 64KB）的一组地址连续、起始地址为16的倍数的内存单元，当作栈空间来用，从而定义了一个<code>栈段</code>。</li>
+<li>比如，我们将10010H~1001FH这段长度为16字节的内存空间当作栈来用，以栈的方式进行访问。这段空间就可以称为个栈段，段地址为1001H，大小为16字节。</li>
+<li>从栈操作指令所完成的功能的角度上来看，push、pop等指令在执行的时候只修改SP，所以栈顶的变化范围是0~FFFFH，从栈空时候的SP=0，一直压栈，直到栈满时SP=0；<strong>如果再次压栈，栈顶将环绕，覆盖了原来栈中的内容</strong>。所以一个栈段的容量最大为64KB。</li>
+</ul>
+<h3 id="段的综述"><a href="#段的综述" class="headerlink" title="段的综述"></a>段的综述</h3><ul>
+<li>我们可以将一段内存定义为一个段，用一个段地址指示段，用偏移地址访问段内的单元。这完全是我们自己的安排。<ul>
+<li>我们可以用一个段存放数据，将它定义为“数据段”；</li>
+<li>我们可以用一个段存放代码，将它定义为“代码段”；</li>
+<li>我们可以用一个段当作栈，将它定义为“栈段”。</li>
+</ul>
+</li>
+<li>我们可以这样安排，但若要让CPU按照我们的安排来访问这些段，就要：<ul>
+<li>对于数据段，将它的段地址放在DS中，用mov、add、sub等访问内存单元的指令时，CPU就将我们定义的数据段中的内容当作数据来访问；</li>
+<li>对于代码段，将它的段地址放在CS中，将段中第一条指令的偏移地址放在IP中，这样CPU就将执行我们定义的代码段中的指令；</li>
+<li>对于栈段，将它的段地址放在SS中，将栈顶单元的偏移地址放在SP中，这样CPU在需要进行栈操作的时候，比如执行push、pop指令等，就将我们定义的栈段当作栈空间来用。</li>
+</ul>
+</li>
+<li>可见，不管我们如何安排，<ul>
+<li>CPU将内存中的某段内容当作代码，是因为CS：IP指向了那里；</li>
+<li>CPU将内存中的某段内存当作栈，是因为SS：SP指向了那里。</li>
+</ul>
+</li>
+</ul>
+<p> 比如我们将10000H~1001FH安排为代码段，并在里面存储如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mov ax,1000H</span><br><span class="line">mov ss,ax</span><br><span class="line">mov sp,0020H  ; 初始化栈顶</span><br><span class="line">mov ax, cs</span><br><span class="line">mov ds, ax    ; 设置数据段段地址</span><br><span class="line">mov ax, [0]</span><br><span class="line">add ax, [2] </span><br><span class="line">mov bx, [4] </span><br><span class="line">add bx, [6] </span><br><span class="line">push ax </span><br><span class="line">push bx </span><br><span class="line">pop ax</span><br><span class="line">pop bx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置CS=1000H，IP=0，这段代码将得到执行。可以看到，在这段代码中，我们又将10000H<del>1001FH安排为栈段和数据段。10000H</del>1001FH这段内存，既是代码段，又是栈段和数据段。</li>
+<li>一段内存，可以既是代码的存储空间，又是数据的存储空间，还可以是栈空间，也可以什么也不是。关键在于CPU中寄存器的设置，即CS、IP，SS、SP，DS的指向。</li>
+</ul>
+<h1 id="第四章-第一个程序"><a href="#第四章-第一个程序" class="headerlink" title="第四章 第一个程序"></a>第四章 第一个程序</h1></div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
