@@ -1,4 +1,136 @@
-<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>2 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Clang/" rel="tag">Clang</a></div><div class="post-time">2021-11-27</div></div></div><div class="container post-header"><h1>2</h1></div><div class="container post-content"></div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;柔性数组&quot;&gt;&lt;a href=&quot;#柔性数组&quot; class=&quot;headerlink&quot; title=&quot;柔性数组&quot;&gt;&lt;/a&gt;柔性数组&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;柔性数组只存在于struct中&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;柔性数组简单来说就是：&lt;strong&gt;结构体的最后一个成员是数组，并且这个数组不给数组大小&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;define&lt;/span&gt; MAXLEN 1024&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;kd_node&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;kd_node&lt;/span&gt; *&lt;span class=&quot;title&quot;&gt;left&lt;/span&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;kd_node&lt;/span&gt; *&lt;span class=&quot;title&quot;&gt;right&lt;/span&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; dim;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; data[MAXLEN]; &lt;span class=&quot;comment&quot;&gt;// 8K&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; kd_node;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;在这段代码中，为了存储数据，申请了长度为1024的unsigned long long型数组。若是数据的长度远远小于&lt;br&gt;MAXLEN，这样的设计，是及其浪费空间的。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>2 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Clang/" rel="tag">Clang</a></div><div class="post-time">2021-11-27</div></div></div><div class="container post-header"><h1>2</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%94%E6%80%A7%E6%95%B0%E7%BB%84"><span class="toc-number">1.</span> <span class="toc-text">柔性数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%94%E6%80%A7%E6%95%B0%E7%BB%84%E6%B0%B8%E8%BF%9C%E4%B8%8D%E5%8F%82%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84size%E8%AE%A1%E7%AE%97"><span class="toc-number">1.1.</span> <span class="toc-text">柔性数组永远不参与结构体的size计算</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="柔性数组"><a href="#柔性数组" class="headerlink" title="柔性数组"></a>柔性数组</h2><ul>
+<li><strong>柔性数组只存在于struct中</strong>。</li>
+<li>柔性数组简单来说就是：<strong>结构体的最后一个成员是数组，并且这个数组不给数组大小</strong>。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXLEN 1024</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">kd_node</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kd_node</span> *<span class="title">left</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kd_node</span> *<span class="title">right</span>;</span></span><br><span class="line">  <span class="keyword">int</span> dim;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> data[MAXLEN]; <span class="comment">// 8K</span></span><br><span class="line">&#125; kd_node;</span><br></pre></td></tr></table></figure>
+
+<p>在这段代码中，为了存储数据，申请了长度为1024的unsigned long long型数组。若是数据的长度远远小于<br>MAXLEN，这样的设计，是及其浪费空间的。</p>
+<p>为了解决浪费空间的问题，就提出了柔性数组：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 数组的大小声明为0，或者不给出大小，称之为柔性数组</span></span><br><span class="line"><span class="comment">// 注意：全局数组和局部数组不能这样定义。</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sd_node</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">  <span class="keyword">int</span> size;</span><br><span class="line">  <span class="comment">// 仅仅是一个待使用的标识符，不占用存储空间,所以struct sd_node的大小不计算成员data。</span></span><br><span class="line">  <span class="comment">// 所以sizeof(struct sd_node)=sizeof(int)+sizeof(int)=8</span></span><br><span class="line">  <span class="keyword">char</span> data[]; </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sd_node</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">  <span class="keyword">int</span> size;</span><br><span class="line">  <span class="keyword">char</span> data[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>用途：长度为0的数组的主要用途是为了<strong>满足长度可变的结构体</strong>。</li>
+<li>用法：在一个结构体的最后，声明一个长度为0的数组，就可以使得这个结构体是可变长的。<strong>对于编译器来说，此时长度为0的数组并不占用空间，因为数组名本身不占空间，它只是一个偏移量</strong>，数组名这个符号本身代表了一个不可修改的地址常量。但对于这个数组的大小，我们可以进行动态分配。</li>
+<li>注意：如果结构体是通过calloc、malloc或realloc等动态分配方式生成，在不需要时要释放相应的空间。</li>
+<li>优点：比起在结构体中声明一个指针变量、再进行动态分配的办法，这种方法效率要高。因为简单。</li>
+<li>缺点：在结构体中，数组为0的数组必须在最后声明，在设计结构体类型有一定限制。</li>
+</ul>
+<blockquote>
+<p>对于编译器而言，数组名仅仅是一个符号，它不会占用任何空间，它在结构体中，只是代表了一个偏移量，代表一个不可修改的地址常量！</p>
+</blockquote>
+<p>使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sd_node</span> *<span class="title">sp</span> =</span> (struct sd_node*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct sd_node)+<span class="number">100</span>); <span class="comment">// 108</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20211127112945207.png" alt="image-20211127112945207"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sd_node</span> *<span class="title">sp</span> =</span> (struct sd_node*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct sd_node)+<span class="number">100</span>); <span class="comment">// 108</span></span><br><span class="line"><span class="keyword">if</span> (<span class="literal">NULL</span> == sp) <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *s = <span class="string">&quot;qweasdzxc&quot;</span>;</span><br><span class="line">sp-&gt;num = <span class="built_in">strlen</span>(s);</span><br><span class="line">sp-&gt;size = <span class="number">20</span>;</span><br><span class="line"><span class="built_in">strcpy</span>(sp-&gt;data, s);</span><br><span class="line"></span><br><span class="line"><span class="built_in">free</span>(sp);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="柔性数组永远不参与结构体的size计算"><a href="#柔性数组永远不参与结构体的size计算" class="headerlink" title="柔性数组永远不参与结构体的size计算"></a>柔性数组永远不参与结构体的size计算</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">da_node</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">  <span class="keyword">int</span> data[];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dk_node</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">  <span class="keyword">int</span> data[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">da_node</span> <span class="title">da</span> =</span> &#123;<span class="number">1</span>，&#123;<span class="number">2</span>，<span class="number">3</span>，<span class="number">4</span>，<span class="number">5</span>，<span class="number">6</span>，<span class="number">7</span>，<span class="number">8</span>&#125;&#125;;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">dk_node</span> <span class="title">dk</span> =</span> &#123;<span class="number">1</span>,&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;&#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>,<span class="keyword">sizeof</span>(da)); <span class="comment">// 4</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>,<span class="keyword">sizeof</span>(dk)); <span class="comment">// 16</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
   $(".fancybox").fancybox();
 });
 </script></body></html>
