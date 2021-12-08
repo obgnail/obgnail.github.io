@@ -1,0 +1,803 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;进制转换的解释&quot;&gt;&lt;a href=&quot;#进制转换的解释&quot; class=&quot;headerlink&quot; title=&quot;进制转换的解释&quot;&gt;&lt;/a&gt;进制转换的解释&lt;/h2&gt;&lt;p&gt;&lt;code&gt;42705.685&lt;/code&gt;其实就是："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>编码——隐匿在计算机软硬件背后的语言 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Organization/" rel="tag">Computer Organization</a></div><div class="post-time">2021-12-08</div></div></div><div class="container post-header"><h1>编码——隐匿在计算机软硬件背后的语言</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">1.</span> <span class="toc-text">进制转换的解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0%E4%B8%8E%E7%94%B5%E8%B7%AF%E7%9A%84%E8%9E%8D%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">布尔代数与电路的融合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%A8"><span class="toc-number">3.</span> <span class="toc-text">门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%97%A8"><span class="toc-number">3.1.</span> <span class="toc-text">与门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%97%A8"><span class="toc-number">3.2.</span> <span class="toc-text">或门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E5%99%A8"><span class="toc-number">3.3.</span> <span class="toc-text">反向器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%9D%9E%E9%97%A8"><span class="toc-number">3.4.</span> <span class="toc-text">或非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%9D%9E%E9%97%A8"><span class="toc-number">3.5.</span> <span class="toc-text">与非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%99%A8"><span class="toc-number">3.6.</span> <span class="toc-text">缓冲器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8A%A0%E6%B3%95%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">二进制加法器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E5%8A%A0%E6%B3%95%E6%8B%86%E5%88%86%E6%88%90%E5%8A%A0%E5%92%8C%E4%BD%8D%E5%92%8C%E8%BF%9B%E4%BD%8D%E4%BD%8D"><span class="toc-number">4.1.</span> <span class="toc-text">将加法拆分成加和位和进位位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8A%E5%8A%A0%E5%99%A8"><span class="toc-number">4.2.</span> <span class="toc-text">半加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%8A%A0%E5%99%A8"><span class="toc-number">4.3.</span> <span class="toc-text">全加器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%87%8F%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">如何实现减法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8%E5%80%9F%E4%BD%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">避免使用借位的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E6%94%AF%E6%8C%81%E5%8A%A0%E6%B3%95%E5%92%8C%E5%87%8F%E6%B3%95%E7%9A%84%E6%9C%BA%E5%99%A8"><span class="toc-number">5.2.</span> <span class="toc-text">同时支持加法和减法的机器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E4%B8%8E%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">反馈与触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%87%E8%8D%A1%E5%99%A8-%E6%97%B6%E9%92%9F"><span class="toc-number">6.1.</span> <span class="toc-text">震荡器(时钟)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="toc-number">6.2.</span> <span class="toc-text">反馈的连接方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#R-S%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.3.</span> <span class="toc-text">R-S触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%B5%E5%B9%B3D%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.4.</span> <span class="toc-text">电平D型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">6.5.</span> <span class="toc-text">锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8%E4%B8%8E%E5%8A%A0%E6%B3%95%E5%99%A8%E7%BB%93%E5%90%88"><span class="toc-number">6.6.</span> <span class="toc-text">锁存器与加法器结合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%85%E9%9B%B6%EF%BC%88Clear%EF%BC%89%E7%9A%84%E8%BE%93%E5%85%A5%E4%BF%A1%E5%8F%B7"><span class="toc-number">6.7.</span> <span class="toc-text">清零（Clear）的输入信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%B9%E6%B2%BF%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.8.</span> <span class="toc-text">边沿触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.9.</span> <span class="toc-text">D 型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#T-%E8%A7%A6%E5%8F%91%E5%99%A8-%E4%B8%8E-%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">6.10.</span> <span class="toc-text">T 触发器 与 计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E7%BB%84%E7%BB%87"><span class="toc-number">7.</span> <span class="toc-text">存储器组织</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E4%BD%8D%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">7.1.</span> <span class="toc-text">八位锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E9%80%891%E9%94%81%E5%AD%98%E5%99%A8-%E4%B8%8E-RAM"><span class="toc-number">7.2.</span> <span class="toc-text">8选1锁存器 与 RAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%85%B1%E4%BA%AB%E5%9C%B0%E5%9D%80%E7%BB%84%E6%88%902%E4%BD%8D%E5%AE%BD%E7%9A%84RAM%E9%98%B5%E5%88%97"><span class="toc-number">7.3.</span> <span class="toc-text">通过共享地址组成2位宽的RAM阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%C3%971-%E7%9A%84RAM%E9%98%B5%E5%88%97"><span class="toc-number">7.4.</span> <span class="toc-text">16×1 的RAM阵列</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">8.</span> <span class="toc-text">自动操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-RAM-%E9%98%B5%E5%88%97%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BE%93%E5%87%BA%E5%88%B0%E7%B4%AF%E5%8A%A0%E5%99%A8"><span class="toc-number">8.1.</span> <span class="toc-text">将 RAM 阵列的数据输出到累加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%8A%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%86%99%E5%9B%9E%E5%88%B0-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.2.</span> <span class="toc-text">把计算结果写回到 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E5%87%8F%E6%93%8D%E4%BD%9C"><span class="toc-number">8.3.</span> <span class="toc-text">支持减操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E4%BD%8D%E7%B4%AF%E5%8A%A0%E5%99%A8%E5%AE%9E%E7%8E%B016%E4%BD%8D%E7%9A%84%E5%8A%A0%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.</span> <span class="toc-text">8位累加器实现16位的加减法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.1.</span> <span class="toc-text">不带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.2.</span> <span class="toc-text">带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-%E4%BD%8D%E6%95%B0%E7%9A%84%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.3.</span> <span class="toc-text">16 位数的减法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E4%B8%AD"><span class="toc-number">8.5.</span> <span class="toc-text">将操作码和操作数组合放于内存中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%94%B5%E8%B7%AF%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.6.</span> <span class="toc-text">将操作码和操作数组合放于内存的电路实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E6%94%BE%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.7.</span> <span class="toc-text">将操作码和操作数放在同一个 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E8%B7%B3%E8%BD%ACJump%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.8.</span> <span class="toc-text">指令跳转Jump及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.9.</span> <span class="toc-text">条件跳转及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E7%A0%81%E4%B8%8E%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80"><span class="toc-number">8.10.</span> <span class="toc-text">机器码与汇编语言</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="进制转换的解释"><a href="#进制转换的解释" class="headerlink" title="进制转换的解释"></a>进制转换的解释</h2><p><code>42705.685</code>其实就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">4*10^4 + </span><br><span class="line">2*10^3 +</span><br><span class="line">7*10^2 +</span><br><span class="line">0*10^1 +</span><br><span class="line">5*10^0 +</span><br><span class="line">6*10^-1 +</span><br><span class="line">8*10^-2 +</span><br><span class="line">5*10^-3 +</span><br></pre></td></tr></table></figure>
+
+<p>也就是说：</p>
+<p><img src="/images/image-20211202150359378.png" alt="image-20211202150359378"></p>
+<p>对于八进制<code>03725</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3*8^3</span><br><span class="line">7*8^2</span><br><span class="line">2*8^1</span><br><span class="line">5*8^0</span><br></pre></td></tr></table></figure>
+
+<p>也就是说：</p>
+<p><img src="/images/image-20211202150551682.png" alt="image-20211202150551682"></p>
+<blockquote>
+<ul>
+<li>对于十进制，把第x位数上的数字y 理解成有y个10^x。</li>
+<li>对于八进制，把第x位数上的数字y 理解成有y个8^x。</li>
+<li>对于二进制，把第x位数上的数字y 理解成有y个2^x。</li>
+</ul>
+</blockquote>
+<p>这就能解释为什么十进制的49等于八进制的61：</p>
+<ul>
+<li>49 = <code>4*10^1 + 9 *10^0</code> = <code>6*8^1 + 1*8^1</code></li>
+<li>上述式子可以解释为：<code>4个10^1 加上 9个10^0</code> 等于 <code>6个8^1 加上 1个8^0</code></li>
+</ul>
+<p>同理，十进制的42，转成八进制是多少？</p>
+<ul>
+<li>解方程：42 = x*8^1 + y8^0</li>
+<li>解得：x=5，y=2。</li>
+<li>所以答案为52</li>
+</ul>
+<h2 id="布尔代数与电路的融合"><a href="#布尔代数与电路的融合" class="headerlink" title="布尔代数与电路的融合"></a>布尔代数与电路的融合</h2><blockquote>
+<p>将布尔代数中的AND和OR和线路中的开关串联及并联关联到一起。</p>
+</blockquote>
+<p>最初当你走进宠物商店的时候，告诉店员：“我想要一只公猫，已绝育的，白色或褐色都可以；或者一只母猫，已绝育的，除了白色任何颜色都可以；或者一只黑猫。”店员会得出以下表达式：</p>
+<p><code>(M × N × (W + T)) + (F × N × (1 - W)) + B</code></p>
+<p><img src="/images/image-20211202203621290.png" alt="image-20211202203621290"></p>
+<h2 id="门"><a href="#门" class="headerlink" title="门"></a>门</h2><h3 id="与门"><a href="#与门" class="headerlink" title="与门"></a>与门</h3><blockquote>
+<p>两个继电器串联形成<code>与门</code>。</p>
+</blockquote>
+<p>上面图中，我们使用了开关表示布尔代数中的false和true。实际上，<strong>开关可以使用继电器来实现</strong>。</p>
+<p><img src="/images/image-20211202214902703.png" alt="image-20211202214902703"></p>
+<p>对于上面这张图，当左上的开关和左下的开关都闭合的时候，灯泡亮起。</p>
+<p><img src="/images/image-20211202215001144.png" alt="image-20211202215001144"></p>
+<blockquote>
+<p>就像两个开关串联一样，这两个继电器也执行了逻辑操作。**只有当两个继电器都被触发的时候灯泡才会亮。这样两个继电器的串联被称为一个<code>与门</code>**。</p>
+</blockquote>
+<p>与门的表示：</p>
+<p><img src="/images/image-20211202215148850.png" alt="image-20211202215148850"></p>
+<p>上面的电路图可以使用如下的图表示：</p>
+<p><img src="/images/image-20211202215437396.png" alt="image-20211202215437396"></p>
+<p>三输入端与门：</p>
+<p><img src="/images/image-20211202215713839.png" alt="image-20211202215713839"></p>
+<h3 id="或门"><a href="#或门" class="headerlink" title="或门"></a>或门</h3><blockquote>
+<p>两个继电器并联形成<code>或门</code>。</p>
+</blockquote>
+<p><img src="/images/image-20211202215946948.png" alt="image-20211202215946948"></p>
+<p><img src="/images/image-20211202220010669.png" alt="image-20211202220010669"></p>
+<h3 id="反向器"><a href="#反向器" class="headerlink" title="反向器"></a>反向器</h3><p>开关闭合，灯泡就会熄灭。以这种方式连接的继电器叫做反向器（inverter）。</p>
+<blockquote>
+<p>双掷继电器就是<code>反向器</code>。</p>
+</blockquote>
+<p><img src="/images/image-20211202220304741.png" alt="image-20211202220304741"></p>
+<p>符号表示：</p>
+<p><img src="/images/image-20211202220457528.png" alt="image-20211202220457528"></p>
+<p>它能将0（低电平）转换为1（高电平），因此被称为反向器：</p>
+<p><img src="/images/image-20211202220537966.png" alt="image-20211202220537966"></p>
+<h3 id="或非门"><a href="#或非门" class="headerlink" title="或非门"></a>或非门</h3><p>和<code>或门</code>正好相反，在或门中，两个输入中有一个为1输出就为1，只有两个输入都为0，输出才为0。</p>
+<p>或非门：<strong>两个输入都为0时，输出为1</strong>。</p>
+<blockquote>
+<p>或非门可以这么理解：一个或门 加一个 反向器</p>
+</blockquote>
+<p><img src="/images/image-20211204100919500.png" alt="image-20211204100919500"></p>
+<p><img src="/images/image-20211203140727670.png" alt="image-20211203140727670"></p>
+<p><img src="/images/image-20211203140745635.png" alt="image-20211203140745635"></p>
+<h3 id="与非门"><a href="#与非门" class="headerlink" title="与非门"></a>与非门</h3><p>和<code>与门</code>恰恰相反。</p>
+<p>与非门：<strong>只有两个输入都为1时，输出为0</strong></p>
+<blockquote>
+<p>与非门可以这么理解：一个与门 加一个 反向器</p>
+</blockquote>
+<p><img src="/images/image-20211204103828458.png" alt="image-20211204103828458"></p>
+<p><img src="/images/image-20211203142025984.png" alt="image-20211203142025984"></p>
+<blockquote>
+<p>总结：</p>
+<p><img src="/images/image-20211203142354933.png" alt="image-20211203142354933"></p>
+</blockquote>
+<h3 id="缓冲器"><a href="#缓冲器" class="headerlink" title="缓冲器"></a>缓冲器</h3><p><img src="/images/image-20211203142503345.png" alt="image-20211203142503345"></p>
+<p><img src="/images/image-20211203142514733.png" alt="image-20211203142514733"></p>
+<p><img src="/images/image-20211203142527731.png" alt="image-20211203142527731"></p>
+<h2 id="二进制加法器"><a href="#二进制加法器" class="headerlink" title="二进制加法器"></a>二进制加法器</h2><h3 id="将加法拆分成加和位和进位位"><a href="#将加法拆分成加和位和进位位" class="headerlink" title="将加法拆分成加和位和进位位"></a>将加法拆分成<code>加和位</code>和<code>进位位</code></h3><p>二进制的加法表</p>
+<table>
+<thead>
+<tr>
+<th align="center">+</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">00</td>
+<td align="center">01</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">01</td>
+<td align="center">10</td>
+</tr>
+</tbody></table>
+<p>一对二进制数相加的结果中具有两个数位，其中一位叫做加法位（sum bit），另一位则叫做进位位（carry bit.例如，1加1等于0，进位为1）。</p>
+<p>下面我们将二进制数加法表分成两个表格。</p>
+<p>第一个是表示加和的。</p>
+<table>
+<thead>
+<tr>
+<th align="center">+加法</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<p>第二个是表示进位的：</p>
+<table>
+<thead>
+<tr>
+<th align="center">+进位</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+<h3 id="半加器"><a href="#半加器" class="headerlink" title="半加器"></a>半加器</h3><p>我们发现进位表和与门的输出是一样的：</p>
+<table>
+<thead>
+<tr>
+<th align="center">AND</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+<p><strong>因此，利用与门可以计算两个二进制数加法的进位。</strong></p>
+<p>对于加法表，很像或门（除了右下角）：</p>
+<table>
+<thead>
+<tr>
+<th align="center">OR</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+<p>也很像与非门（除了左上角）：</p>
+<table>
+<thead>
+<tr>
+<th align="center">NAND</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<p>下面我们将或门和与非门连接到相同的输入上，如下图所示。</p>
+<p><img src="/images/image-20211203151510538.png" alt="image-20211203151510538"></p>
+<p>下表总结了或门和与非门的输出，并将其与我们想要的结果进行对比</p>
+<table>
+<thead>
+<tr>
+<th align="center">输入A</th>
+<th align="center">输入B</th>
+<th align="center">与门输出</th>
+<th align="center">与非门输出</th>
+<th align="center">想要的结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<p>我们想要的是1，那么这种情况只有在或门和与非门的输出都为1时，才会出现。这表明两个输出端可以通过一个与门连接在一起：</p>
+<p><img src="/images/image-20211204092055938.png" alt="image-20211204092055938"></p>
+<ul>
+<li>实际上，这个电路有个专门的名称，叫做<code>异或门</code>，简写为<code>XOR</code>。</li>
+<li>之所以称为异或门是因为若想其输出结果为1，<strong>要么仅让输入A为1，要么仅让输入B为1，两输入端都为</strong><br><strong>则输出为0</strong>。</li>
+</ul>
+<p><img src="/images/image-20211204092557370.png" alt="image-20211204092557370"></p>
+<table>
+<thead>
+<tr>
+<th align="center">XOR</th>
+<th align="center">0</th>
+<th align="center">1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<blockquote>
+<ul>
+<li>同理还有<code>同或门</code>：只有当两个输入相同的时候，其输出才为1。</li>
+<li>同或门的输出和异或门相反，即：<strong>同或门 = 异或门 + 反向器</strong></li>
+</ul>
+</blockquote>
+<p><strong>两个二进制数相加的结果是由异或门的输出给出的，而进位位是由与门的输出给出的</strong>。因此我们可以将与门和异或门连在一起来计算两个二进制数（即A和B）的和。</p>
+<p><img src="/images/image-20211204094155067.png" alt="image-20211204094155067"></p>
+<p>简单表示如下：</p>
+<p><img src="/images/image-20211204094226781.png" alt="image-20211204094226781"></p>
+<blockquote>
+<p>之所以被称为是<code>半加器</code>（HalfAdder），是因为它没有做到将之前一次的加法可能产生的进位位纳入下一次运算。</p>
+</blockquote>
+<h3 id="全加器"><a href="#全加器" class="headerlink" title="全加器"></a>全加器</h3><p>为了对三个二进制数进行加法运算，我们需要将两个半加器和一个或门做如下连接：</p>
+<p><img src="/images/image-20211204095040047.png" alt="image-20211204095040047"></p>
+<blockquote>
+<p>为什么这里使用的是或门，而不是一个半加器？</p>
+<p>半加器当然是可行的。但是如果你了解了所有的可能性之后，你会发现两个半加法器的进位输出是不会同时为1的。或门在这里已经足够，因为或门除了在输入都为1的时候以外，其他情况下结果和异或门结果相同。</p>
+</blockquote>
+<p>以上的图，我们使用<code>全加器</code>符号表示：</p>
+<p><img src="/images/image-20211204100050690.png" alt="image-20211204100050690"></p>
+<p>接着，我们就可以把八个全加器连接起来，制作一个<strong>8位的二进制加法器</strong>：</p>
+<p><img src="/images/image-20211204104929611.png" alt="image-20211204104929611"></p>
+<p>简记为：</p>
+<p><img src="/images/image-20211204105300975.png" alt="image-20211204105300975"></p>
+<p>把两个8位二进制加法器级联起来就可以很容易地扩展出一个16位加法器。</p>
+<p><img src="/images/image-20211204105349984.png" alt="image-20211204105349984"></p>
+<h2 id="如何实现减法"><a href="#如何实现减法" class="headerlink" title="如何实现减法"></a>如何实现减法</h2><h3 id="避免使用借位的方法"><a href="#避免使用借位的方法" class="headerlink" title="避免使用借位的方法"></a>避免使用借位的方法</h3><p>减法的借位非常恶心。<strong>为了避免使用借位</strong>，我们的计算方式如下。eg，计算253-176：</p>
+<ol>
+<li>使用999减去被减数，即999-253，得到823，称之为<code>补数</code></li>
+<li>被减数加上补数，即253+823，得到1076</li>
+<li>将1076加1，再减去1000，即1076+1-1000，得到77，即为结果。</li>
+</ol>
+<blockquote>
+<p>原理：</p>
+<p>253-176</p>
+<ul>
+<li>= 253 - 176 + 1000 - 1000</li>
+<li>= 253 - 176 + (999 + 1) - 1000</li>
+<li>= 253 + (999 - 176) + 1 - 1000</li>
+</ul>
+</blockquote>
+<p>二进制数同理，eg，计算1111 1101 - 1011 0000：</p>
+<ol>
+<li>1111 1111(即255) - 1011 0000 = 0100 1111。(其实此时可以直接<code>按位取反</code>，得出结果。此结果称之为<code>反码</code>)</li>
+<li>反码加上被减数，即 1111 1101 + 0100 1111 = 1 0100 1100</li>
+<li>将上述结果加1，即 1 0100 1100 + 1 = 1 0100 1101</li>
+<li>将上述结果减去1 0000 0000(即256)，即 1 0100 1101 - 1 0000 0000 = 0100 1101</li>
+</ol>
+<h3 id="同时支持加法和减法的机器"><a href="#同时支持加法和减法的机器" class="headerlink" title="同时支持加法和减法的机器"></a>同时支持加法和减法的机器</h3><p>现在我们要做一个同时支持加法和减法的机器：</p>
+<p>加法器中新增的主要部分就是一个用来求8位二进制数对1补数的电路。之前提到，二进制数对1求补数相当于对其每位取反，因此我们计算8位二进制数补数的时候可以简单地应用8个反向器。</p>
+<p><img src="/images/image-20211204114339731.png" alt="image-20211204114339731"></p>
+<p>问题是，该电路只会对输入求反，而我们要的是一台既能做加法又能做减法的机器，因此就要求该电路<strong>当且仅当进行减法运算时才实现反转</strong>。电路可以改造为如下图所示。</p>
+<p><img src="/images/image-20211204114435208.png" alt="image-20211204114435208"></p>
+<blockquote>
+<p>因为使用了异或门，如果“取反”信号是0，则8个异或门输出与输入相同。例如，如果输入是01100001，那么输出也为01100001。如果“取反”信号为1，则输出信号反置。例如，如果输入为01100001，输出则为10011110。</p>
+</blockquote>
+<p>将8个异或门合并起来画成一个器件，称为求补器（One’s Complement）：</p>
+<p><img src="/images/image-20211204114837156.png" alt="image-20211204114837156"></p>
+<p>将一个求补器，一个8位二进制加法器和一个异或门做如下连接。</p>
+<p><img src="/images/image-20211204115136822.png" alt="image-20211204115136822"></p>
+<blockquote>
+<p>注意，这里三个信号都标识为“SUB”，这就是加/减法转换开关。当该信号为0的时候，其进行的是加法运算，为1时进行的则是减法运算。在减法中，输入B（第二排开关）在送入加法器之前，需先通过求补电路进行取反。</p>
+<p>此外，在做减法时，<strong>我们通过设定CI（进位输入）为1来使得结果加1</strong>。而在加法中，求补电路将不起作用，且输入CI为0。</p>
+<p>加法器的SUB信号和CO（进位输出）输出作为异或门的输入来控制表示上溢/下溢的灯泡。如果SUB信号为0（表示进行加法运算），则当加法器CO输出为1时灯亮，意思是加法计算结果大于255。当进行减法运算的时候，<strong>如果减数（输入B）小于被减数（输入A），这时加法器的CO输出为1。这表示减法的最后一步要减去100000000</strong>。也就是说减数要大于被减数，结果为负。上面所示器件现在还不能表示负数。因此，上溢/下溢指示灯仅在加法器的CO输出为0时才会亮起。</p>
+</blockquote>
+<h2 id="反馈与触发器"><a href="#反馈与触发器" class="headerlink" title="反馈与触发器"></a>反馈与触发器</h2><h3 id="震荡器-时钟"><a href="#震荡器-时钟" class="headerlink" title="震荡器(时钟)"></a>震荡器(时钟)</h3><p><img src="/images/image-20211204134551328.png" alt="image-20211204134551328"></p>
+<p>从整个过程来看：开关一且闭合，金属簧片就会上下跳动——电路也会随之连通或断开——声音也就会随之发出。如果金属簧片发出了一种刺耳的声音，这套系统就成为了一个蜂鸣器。如果金属簧片前端是一把小锤子，旁边只要放上一个锣，就构成了一个电铃。</p>
+<p>可以简化为：</p>
+<p><img src="/images/image-20211204135031134.png" alt="image-20211204135031134"></p>
+<blockquote>
+<p>我们要牢牢记住，<strong>反向器在本质上就是一个继电器，而继电器将状态取反以得到另一个状态是需要一点点时间的</strong>。所以，即使输入和输出是相同的，输出也会很快地改变，成为输入的相反状态。</p>
+</blockquote>
+<p>电路的输出是什么呢？要么提供电压，要么不提供电压，在两者之间切换。我们也可以换种方式来表达——输出结果要么是0，要么是1。我们把这种电路称为<code>振荡器</code>（oscillator）。振荡器又被称为<code>时钟</code>，通过震荡进行计数也是一种计时方式。</p>
+<p>当采用0和1的交替序列来表示振荡器的输出时，我们一般使用下面这样的图来形象地描述输出。</p>
+<p><img src="/images/image-20211204135402819.png" alt="image-20211204135402819"></p>
+<h3 id="反馈的连接方式"><a href="#反馈的连接方式" class="headerlink" title="反馈的连接方式"></a>反馈的连接方式</h3><p>下面是一个包含两个或非门、两个开关和一个灯泡的电路：</p>
+<p><img src="/images/image-20211204141159449.png" alt="image-20211204141159449"></p>
+<p>左边或非门的输出是右边或非门的输入而右边或非门的输出是左边或非门的输入。这种连接方式我们称之为<code>反馈</code>（feedback）。</p>
+<ol>
+<li>在初始状态下，电路中只有左边的或非门输出电流，这是因为其两个输入均为0。让我们闭合上面的开关，左边或非门将立刻输出0，右边或非门的输出也会随之变为1，这时灯泡将被点亮。</li>
+<li>奇妙的是，这时一且你关闭上边的开关，灯炮依然闪闪发光。这是因为由于左边或非门的输入中有一个为1，其输出依然是0，因而左边或非门的输出不变，所以灯泡仍然亮着。</li>
+<li>闭合下面的开关。我们会发现右边或非门的输入中有一个立刻变为1，其输出就相应地变为0，灯泡随之熄灭。左边或非门的输出此刻变为1。</li>
+<li>这时你再去断开下面的开关就会发现，灯泡一直处在熄灭状态。</li>
+</ol>
+<p>总结：</p>
+<ul>
+<li>接通上面的开关，灯泡被点亮，断开此开关灯泡仍然亮着。</li>
+<li>接通下面的开关，灯泡被熄灭，断开此开关灯泡仍然不亮。</li>
+</ul>
+<blockquote>
+<p>电路的奇怪之处是：<strong>同样是在两个开关都断开的状态下，灯泡有时亮着，有时却不亮</strong>。</p>
+<p><strong>当两个开关都断开时，电路有两个稳定态，这类电路统称为触发器</strong>（Flip-Flop）。</p>
+</blockquote>
+<p>触发器电路可以保持信息，它可以“记住”某些信息。特别地，它可以记在最近一次是哪个开关先闭合。如果你遇到这样一种触发器，</p>
+<ul>
+<li>如果它的灯泡是亮着的，你就可以推测出最后一次连通的是上面的开关；</li>
+<li>而如果灯泡不亮则可推测出最后一次连通的是下面的开关。</li>
+</ul>
+<blockquote>
+<p>触发器和跷跷板有着很强的相似性。跷跷板也有两个稳定状态，它不会长期停留在不稳定的中间位置。通过观察跷跷板，我们很容易推测出哪边最后一次被压下来。</p>
+</blockquote>
+<h3 id="R-S触发器"><a href="#R-S触发器" class="headerlink" title="R-S触发器"></a>R-S触发器</h3><p>R-S（Reset-Set，复位/置位）触发器：</p>
+<p><img src="/images/image-20211204144318554.png" alt="image-20211204144318554"></p>
+<ul>
+<li>置位：将Q设置为1，将<code>Q反</code>设置为0。</li>
+<li>复位：将Q设置为0，将<code>Q反</code>设置为1。</li>
+</ul>
+<p>R-S触发器可以简化为带有输入和输出标志的小框图：</p>
+<p><img src="/images/image-20211204144951072.png" alt="image-20211204144951072"></p>
+<p>R-S触发器最突出的特点在于，它可以记住哪个输入端的最终状态为1。但是有时候我们需要一种记忆能力更加强大的电路，例如能记住在某个特定时间点上的一个信号是0还是1。</p>
+<h3 id="电平D型触发器"><a href="#电平D型触发器" class="headerlink" title="电平D型触发器"></a>电平D型触发器</h3><p>将电路的两个输入分成：</p>
+<ul>
+<li>数据端</li>
+<li>保持位</li>
+</ul>
+<blockquote>
+<p>保持位的作用就是使当前的状态被“记住”，通常情况下保持位被设置为0，在这种情况下数据端对电路不产生影响。当保持位置1时，数据端的值就会在电路系统中被“记住”。随后保持位又置为0，这时电路已经“记住”了数据端的最后一次输入，而<strong>之后数据端的输入无论如何变化都不会对电路产生影响</strong>。</p>
+</blockquote>
+<p><img src="/images/image-20211206143408967.png" alt="image-20211206143408967"></p>
+<p>上面电路，只要保持位输入为 0，则置位端对于输出结果不会有任何影响。保持位为 0，那么无论复位和置位为什么输出都为 0，传输到后续的电路时对应前面介绍的 R = 0，S = 0，Q 和 Q反保持原有状态。而这也保证了触发器不被外面的数据干扰，继续保持原先保存的那个比特。</p>
+<p>当保持位输入为1时，上面的电路<strong>退化为前面的R-S触发器</strong>。这时由于上面与门的输出和复位端输入相同，而下面与门的输出和置位端输入相同，所以电路系统的功能和普通的R-S触发器是一样的。</p>
+<p><img src="/images/db72ea64-image-20211204144318554.png" alt="image-20211204144318554"></p>
+<p>现在我们干掉置位和复位，使用一个数据端。如下图：</p>
+<p><img src="/images/image-20211206143332288.png" alt="image-20211206143332288"></p>
+<p>可以看出只要保持位为 0，电路输出就丝毫不受输入端的影响。</p>
+<p>当保持位为 1 时，电路反映出数据端输入的值。电路会 “记得” 当保持位最后一次置 1 时数据端输入的值</p>
+<ul>
+<li>数据端设置位1，则<code>Q</code>为1，<code>Q反</code>为0</li>
+<li>数据端设置为0，则<code>Q</code>为0，<code>Q反</code>为1</li>
+</ul>
+<p>当保持位再次回到0，数据端的变化对电路没有影响，电路会保持刚刚的状态。</p>
+<p>这个电路称为<code>电平触发的D型触发器</code>，D（Data）表示数据端输入。所谓电平触发是指<strong>当保持位输入为某一特定电平（本例中为 “1”）时，触发器才保存数据端的输入值</strong>。</p>
+<blockquote>
+<p>D 触发器可以用下列符号来代替：</p>
+<p><img src="/images/image-20211206143259748.png" alt="image-20211206143259748"></p>
+<p>由于 <code>Q反</code>端舍弃不用，这里表示时也可不必画出输出线</p>
+</blockquote>
+<h3 id="锁存器"><a href="#锁存器" class="headerlink" title="锁存器"></a>锁存器</h3><p>上面的保持位输入就可以使用时钟代替，用来指示什么时候保存数据。</p>
+<p><img src="/images/image-20211206143225765.png" alt="image-20211206143225765"></p>
+<p>通常把数据端简写为 D，时钟端简写为 Clk，其功能表如下所示。</p>
+<p><img src="/images/image-20211206143143521.png" alt="image-20211206143143521"></p>
+<p>这个电路也就是所谓的<code>电平触发的 D 型锁存器</code>，它表示电路<strong>锁存住一位数据并保持它</strong>，以便将来使用。这个电路也可以被称为 <code>1 位存储器</code>。</p>
+<p>八位锁存器</p>
+<p><img src="/images/image-20211206143111879.png" alt="image-20211206143111879"></p>
+<p>这个锁存器可以一次保存 8 位数。上面的 8 个输入端依次标记为 D0～D7，下面的 8 个输出端被标记为 Q0～Q7。左边的输入是时钟（Clk），时钟信号通常为 0。当时钟信号为 1 时，D 端输入的 8 位值被送到 Q 端输出。当时钟信号为 0 时，这 8 位值将保持不变，直到时钟信号再次被置 1。</p>
+<h3 id="锁存器与加法器结合"><a href="#锁存器与加法器结合" class="headerlink" title="锁存器与加法器结合"></a>锁存器与加法器结合</h3><p>8 位加法器的 8 个 S 输出端既与灯泡相连，又连接到 8 位锁存器的数据（D）输入端。标记为 “保存”（Save）的开关是锁存器的时钟输入，用来存放加法器的运算结果。</p>
+<p><img src="/images/image-20211206142637448.png" alt="image-20211206142637448"></p>
+<p>标识为 2-1 选择器的方块是让你<strong>用一个开关来选择加法器的 B 端输入是取自第 2 排开关还是取自锁存器的 Q 端输出</strong>。当开关闭合时，就选择了用 8 位锁存器的输出作为 B 端输入。</p>
+<blockquote>
+<p>[了解] 2-1 选择器使用了 8 个如下所示的电路。</p>
+<p><img src="/images/image-20211206143034053.png" alt="image-20211206143034053"></p>
+<p>如果选择端（Select）输入是 1，那么或门的输出和 B 端的输入就是一致的。如果选择端的输入是 0，那么或门的输出则和 A 端输入一致。总结起来如下表所示。</p>
+<p><img src="/images/image-20211206142951989.png" alt="image-20211206142951989"></p>
+</blockquote>
+<h3 id="清零（Clear）的输入信号"><a href="#清零（Clear）的输入信号" class="headerlink" title="清零（Clear）的输入信号"></a>清零（Clear）的输入信号</h3><p>清零信号通常为 0，但当它为 1 时，Q 输出为 0，如下图所示。</p>
+<p><img src="/images/image-20211206142857447.png" alt="image-20211206142857447"></p>
+<p>使用如下：</p>
+<p><img src="/images/image-20211206142520561.png" alt="image-20211206142520561"></p>
+<ol>
+<li>首先按下清零开关，这个操作会使锁存器的输出为 0，并且熄灭了所有的灯泡，同时使 8 位加法器的第 2 行输入全为 0。</li>
+<li>然后，通过开关输入第一个加数，并且闭合 “相加” 开关，这个加数的值就反映在灯泡上。</li>
+<li>再输入第二个加数并再次闭合 “相加” 开关。由开关输入的 8 位操作数加到前面的结果上，所得的和体现到灯泡上。</li>
+<li>反复如此操作，可以连续进行很多次加运算。</li>
+</ol>
+<blockquote>
+<p>通过锁存器能够实现将多个数的相加。例如我们要计算 1 + 2 + 3，初始在 A 端输入 1，由于锁存器清零，所以 B 端输出 0，经过加法器相加得到 1，存入锁存器。之后 A 端输入 2，B 端接通锁存器则 B 端输出 1，通过加法器得到 3，同样结果 3 存入加法器。后续类似，结果通过灯泡的亮灭表示（亮即为 1）。</p>
+</blockquote>
+<h3 id="边沿触发器"><a href="#边沿触发器" class="headerlink" title="边沿触发器"></a>边沿触发器</h3><ul>
+<li>在电平触发器中，当时钟输入为 0 时，数据端输入的任何改变都不会影响输出；</li>
+<li>在边沿触发器中，当时钟输入为 1 时，<strong>数据端输入的改变也不会影响输出</strong>。只有在时钟输入从 0 变到 1 的瞬间，数据端的输入才会影响边沿触发器的输出。也就是<strong>只有时钟端从低到高，或者从高到低变化的瞬间触发</strong>。</li>
+</ul>
+<blockquote>
+<p>示例：如果从 t0 时刻开始，数据端（D）和时钟端（CP）各自出现了下图所示的脉冲，那么，在 t1 时刻，触发器保存的是 0 还是 1？</p>
+<p><img src="/images/image-20211206142134197.png" alt="image-20211206142134197"></p>
+<p>触发器里保存的是比特 “0”。很明显，在时钟端为 1 期间，只要数据端（D）的比特改变了，触发器就会随时触发。也就是说，我们在存储过程中数据不能发生任何变化，否则触发器可能存入的不是我们想要存入的值。</p>
+</blockquote>
+<p>从 0 翻转到 1，或者从 1 翻转到 0，这个变化过程称为 “跳变” 或者 “翻转”。时钟端的跳变需要一个过程，可能是几个纳秒，尽管非常非常短暂，但实际上是存在的。反映在图像上，就是两个边沿，即上升沿和下降沿。</p>
+<p><img src="/images/image-20211206142003000.png" alt="image-20211206142003000"></p>
+<p>所以，边沿触发还分为<code>上升沿触发器</code>和<code>下降沿触发器</code>。</p>
+<h3 id="D-型触发器"><a href="#D-型触发器" class="headerlink" title="D 型触发器"></a>D 型触发器</h3><p>边沿触发的D 型触发器是由两级R-S触发器首尾相连而成的，前一个触发器的输出是后一个触发器的输入：</p>
+<p><img src="/images/image-20211206141835679.png" alt="image-20211206141835679"></p>
+<p>上述是触发器的具体电路，当然我们也可以采用前面介绍过的符号去替代表示：</p>
+<p><img src="/images/image-20211206141750893.png" alt="image-20211206141750893"></p>
+<p><strong>这两个触发器不会同时工作</strong>，因为控制脉冲是右边触发器的时钟输入，通过非门将控制脉冲以相反的结果传入两个触发器，使得触发器得到的时钟端输入保持相反。</p>
+<blockquote>
+<ul>
+<li>如果你想在这个电路里保存一个比特，必须先使控制端为 0。这时，左边的触发器 CP = 1，它可以把任何要保存的比特存入，并立即传送给右边的触发器。但是，右边的触发器不工作。</li>
+<li>现在，如果控制端从 0 跳变到 1，那么一切都颠倒了，左边的触发器拒绝再存入任何比特，右边的触发器被 “激活”，把左边那个触发器的输出保存起来。换句话说，直到这个时候，比特才算是被这个大触发器保存了。</li>
+<li>此后，如果控制端从 1 又回到 0，即下降沿，左边的触发器苏醒过来，但右边的触发器却开始休眠，但它仍有能力维持原先的输出不变。这就是说，控制脉冲的下降沿不会改变这个大触发器的内容。</li>
+<li>一言概之，上面这个二合一的大触发器，不管控制端是 0、1 还是从 1 到 0 的下降沿，它都不能保存比特，除非一种情况，那就是从 0 到 1 的跳变，即上升沿，数据端输入才被保存下来。。</li>
+</ul>
+</blockquote>
+<p>为了便于表示，上升沿 D 触发器的符号如下图所示。</p>
+<p><img src="/images/image-20211206172025699.png" alt="image-20211206172025699"></p>
+<blockquote>
+<p>注意，和普通的 D 触发器不同，它的控制端 CP 旁有一个三角形，表明它是边沿触发的。</p>
+</blockquote>
+<h3 id="T-触发器-与-计数器"><a href="#T-触发器-与-计数器" class="headerlink" title="T 触发器 与 计数器"></a>T 触发器 与 计数器</h3><p>将上升沿 D 触发器进行改造，把振荡器的输出与边沿触发的 D 型触发器的时钟端输入连接，同时把 Q反端输出连接到本身的 D 输入端。电路左侧也即我们前面介绍的振荡器，可以提供 0 和 1 之间变化的输出。</p>
+<p><img src="/images/image-20211206172723461.png" alt="image-20211206172723461"></p>
+<p>分析上述电路，我们采用的是一个上升沿 D 触发器，只在上升沿时才触发。我们假设初始情况为 Q – 1，Q反 – 0，每当振荡器提供上升沿信号时，Clk 变为 1，D 端输出进入触发器，Q 转变为 0，Q反转变为 0，直至下一个上升沿，两者之间的值再一次翻转。</p>
+<p><img src="/images/image-20211206173055602.png" alt="image-20211206173055602"></p>
+<p>结合振荡器的时序图，我们可以得到下图所示的时序图：</p>
+<p><img src="/images/image-20211206173233680.png" alt="image-20211206173233680"></p>
+<blockquote>
+<p>如果这个振荡器的频率是 20Hz，那么 Q 的输出频率是它的一半，即 10Hz，由于这个原因，这种电路称为<code>分频器</code>（frequency divider）。</p>
+<p>上述电路也被叫做 T 触发器，“T” 是英语单词 “Toggle” 的首字母，意思是 “反复”。</p>
+</blockquote>
+<p>当然，分频器的输出可以作为另一个分频器的 Clk 输入，并再一次进行分频。下图即为将三个分频器连接在一起的示意图。</p>
+<p><img src="/images/image-20211206173719666.png" alt="image-20211206173719666"></p>
+<blockquote>
+<p>需要注意的时上述触发器都是上升沿触发器，只在上升沿时触发，因此每次触发都是一次制，不会持续下去。分析上述电路，当振荡器输出上升沿信号时，Clk 转变为 1，Q1 和 Q反的值翻转，但翻转<strong>后续触发器不一定触发</strong>，因为我们用的是上升沿触发器，只有 Q1 从 1 转变为 0（对应着 Q反从 0 转变为 1）时才触发后面的触发器。后续触发器同理，因此后续触发器无法与前面的触发器保持触发的一致，存在滞后，后面的触发器的频率是前面的一半。</p>
+</blockquote>
+<p>上图顶部的 4 个信号变化规律如下图所示。这个电路会重复这一过程周而复始地变化下去。</p>
+<p><img src="/images/image-20211206174806955.png" alt="image-20211206174806955"></p>
+<p>试着给这些信号标上 0 和 1，把这个图顺时针旋转 90°，然后读一读每一行的 4 位数字，它们分别对应了十进制中的 0～15 中的一个数。</p>
+<p><img src="/images/image-20211206175816123.png" alt="image-20211206175816123"></p>
+<p>把 8 个触发器连接在一起，然后放入一个盒子中，构成了一个 8 位计数器。</p>
+<p><img src="/images/image-20211206180043808.png" alt="image-20211206180043808"></p>
+<blockquote>
+<p>这个计数器称为 “8 位行波计数器”，因为每一个触发器的输出都是下一个触发器的时钟输入。变化是在触发器中一级一级地顺序传递的，最后一级触发器的变化必定会有一些延迟，更先进的计数器是 “并行（同步）计数器”，这种计数器的所有输出是在同一时刻改变的。</p>
+</blockquote>
+<blockquote>
+<p>计算振荡器的频率：如果把一个振荡器连接到 8 位计数器的时钟输入端上，那么这个计数器会显示出振荡器经过的循环次数。使用计数器确定振荡器频率的最简单的方法就是把计数器的 8 个输出端分别接到 8 只灯泡上。当所有的输出都是 0 时（即所有灯泡都是熄灭的），启动一个秒表计时；当所有灯泡都点亮时，停止秒表计时。这就是振荡器循环 256 次所需要的时间（00000000~11111111）。</p>
+</blockquote>
+<p>随着触发器功能的增加，它的结构也变得更加复杂，下面给出了一个带预置和清零功能的边沿型 D 触发器。</p>
+<p><img src="/images/image-20211206181424683.png" alt="image-20211206181424683"></p>
+<p>通常情况下，<strong>预置和清零信号输入会覆盖时钟和数据端输入</strong>，且两个输入都为 0，当预置信号为 1 时，Q 变为 1，Q反变为 0。当清零信号为 1，Q 变为 0，Q反变为1（同 R-S 触发器中的 S 和 R 输入端一样，预置和清零信号不能同时为 1）。除此之外，该触发器工作原理是和普通边沿 D 触发器是一样的。</p>
+<p> 电路图符号可以简单地用下图来代替。</p>
+<p><img src="/images/image-20211206181516765.png" alt="image-20211206181516765"></p>
+<p>现在，我们已经懂得如何使用继电器来做加法、减法和计数了。</p>
+<h2 id="存储器组织"><a href="#存储器组织" class="headerlink" title="存储器组织"></a>存储器组织</h2><h3 id="八位锁存器"><a href="#八位锁存器" class="headerlink" title="八位锁存器"></a>八位锁存器</h3><p>前面说的一位锁存器可以存储一位数据</p>
+<p><img src="/images/9d6ab6ce-image-20211206143225765.png" alt="image-20211206143225765"></p>
+<p>为了表达清楚，我们为其重命名：</p>
+<p><img src="/images/image-20211206210754824.png" alt="image-20211206210754824"></p>
+<ul>
+<li>数据输入：data into</li>
+<li>数据输出：data out</li>
+<li>写操作端：write</li>
+</ul>
+<p>简记为：</p>
+<p><img src="/images/image-20211206210822924.png" alt="image-20211206210822924"></p>
+<p>多位锁存器：</p>
+<p><img src="/images/image-20211206211008429.png" alt="image-20211206211008429"></p>
+<p>简记为：</p>
+<p><img src="/images/image-20211206211058957.png" alt="image-20211206211058957"></p>
+<p><img src="/images/image-20211206211117669.png" alt="image-20211206211117669"></p>
+<h3 id="8选1锁存器-与-RAM"><a href="#8选1锁存器-与-RAM" class="headerlink" title="8选1锁存器 与 RAM"></a>8选1锁存器 与 RAM</h3><p>上面的锁存器是一次性存储8位二进制。</p>
+<p>现在希望：通过某种方式连接8个1位锁存器，使自己能狗从一个输入信号端写入数据，还能从一个输出信号端鉴别出数据。</p>
+<p><img src="/images/image-20211206212812990.png" alt="image-20211206212812990"></p>
+<blockquote>
+<p>这里开关的作用为：通过3个开关连通与闭合的排列组合，总共可表示出8个不同的值：000、001、010、011、100、101、110和111，以此对顶部的输入进行8选1操作。</p>
+</blockquote>
+<blockquote>
+<p>8-1选择器如下：</p>
+<p><img src="/images/image-20211206213038222.png" alt="image-20211206213038222"></p>
+</blockquote>
+<p>上面的8选1锁存器的输入端太多，我们可以进行删减：</p>
+<ul>
+<li>将所有的输入信号连接起来</li>
+<li>独立的写入信号，使得能将写入信息发送到任意一个锁存器上。</li>
+</ul>
+<p><img src="/images/image-20211206214634527.png" alt="image-20211206214634527"></p>
+<blockquote>
+<p>3-8译码器（3-to-8 Decoder）：与8-1选择器功能类似，3-8译码器的输出端口共有8个，在任何时刻，译码器只会有一个锁存器的输出为1，其余均为0。每一个输出端的结果都是由S0、S1、S2这三个信号的排列组合决定的。而数据的输出和输入一致，如下图所示。</p>
+<p><img src="/images/image-20211206214035676.png" alt="image-20211206214035676"></p>
+</blockquote>
+<p>将上图用简图表示：</p>
+<p><img src="/images/image-20211206214820529.png" alt="image-20211206214820529"></p>
+<blockquote>
+<ul>
+<li>译码器和选择器具有相同的选择信号，在上图中这三个信号一起被称为<code>地址端口</code>（Address）。地址的作用就像我们平时使用的邮箱号，<strong>长度为三位的地址决定了8个锁存器中的哪一个将被引用</strong>。</li>
+<li>在3-8译码器的输入端，地址起到了决定哪些锁存器可以被写操作端的信号触发来保存数据的作用。</li>
+<li>在输出端，8-1选择器通过地址来选择8个锁存器中的一个，最后将其输出。</li>
+</ul>
+</blockquote>
+<p>这种配置下的锁存器在有的资料中也被称为<code>读/写存储器</code>（read/write memory），但更普遍的叫法是随机访间存储器（Random Access Memory，<code>RAM</code>）。可以认为我们讨论的这种存储器是可存储8个独立比特的RAM，它的简化结构图如下所示：</p>
+<p><img src="/images/image-20211206215530282.png" alt="image-20211206215530282"></p>
+<h3 id="通过共享地址组成2位宽的RAM阵列"><a href="#通过共享地址组成2位宽的RAM阵列" class="headerlink" title="通过共享地址组成2位宽的RAM阵列"></a>通过共享地址组成2位宽的RAM阵列</h3><p><img src="/images/image-20211206220152982.png" alt="image-20211206220152982"></p>
+<p>把这两个 8×1 的 RAM 阵列的地址和输出都分别看成一个整体，这样就得到了一个 8×2 的 RAM 阵列：</p>
+<p><img src="/images/image-20211206220229606.png" alt="image-20211206220229606"></p>
+<p>这个 RAM 阵列<strong>可存储的二进制数依然是 8 个，但每个数的位宽为 2 位</strong>。</p>
+<blockquote>
+<p>分析上述电路结构，<strong>我们可以发现同一个地址对应着两个 8×1 RAM，因此我们针对单个地址操作时，相当于同时操作两个比特位</strong>。而两个 RAM 都有自己的数据输入，因此可以存入不同的数据。</p>
+</blockquote>
+<h3 id="16×1-的RAM阵列"><a href="#16×1-的RAM阵列" class="headerlink" title="16×1 的RAM阵列"></a>16×1 的RAM阵列</h3><p>使用一个 2-1 选择器和一个 1-2 译码器就可以把它们按照单个锁存器连接方式进行集成</p>
+<p><img src="/images/image-20211206222527147.png" alt="image-20211206222527147"></p>
+<p><strong>“选择” 端之所以连接到译码器和选择器，主要作用是在两个 8×1 RAM 阵列中选择一个，本质上它扮演了第 4 根地址线的角色。</strong></p>
+<p>因此这种结构实质上是一种 16×1 的 RAM 阵列，如下图所示。</p>
+<p><img src="/images/image-20211206222747743.png" alt="image-20211206222747743"></p>
+<p>上图所示的 RAM 阵列存储容量为 16 个单位，每个单位占 1 位。</p>
+<p>RAM 阵列的存储容量与其地址输入端的数量有直接的联系。有两个地址输入端时，可以存储 4 个单位的数据；有 3 个地址输入端时，可以存储 8 个单位的数据；有 4 个地址输入端时，可以存储 16 个单位的数据。</p>
+<p>即：<strong>RAM阵列的存储容量 = 2 ^ 地址输入端的个数</strong></p>
+<p>基于上述介绍，我们可以搭建更大规模的 RAM 阵列，如下图所示。这个 RAM 阵列可以存储 8192 个比特的信息。</p>
+<p><img src="/images/image-20211206223606267.png" alt="image-20211206223606267"></p>
+<h2 id="自动操作"><a href="#自动操作" class="headerlink" title="自动操作"></a>自动操作</h2><p>用来累加多个数的锁存器称做<code>累加器</code>（accumulator）。</p>
+<h3 id="将-RAM-阵列的数据输出到累加器"><a href="#将-RAM-阵列的数据输出到累加器" class="headerlink" title="将 RAM 阵列的数据输出到累加器"></a>将 RAM 阵列的数据输出到累加器</h3><blockquote>
+<p><strong>用一个 16 位的计数器控制 RAM 阵列的地址信号</strong>。</p>
+</blockquote>
+<p><img src="/images/image-20211206225611153.png" alt="image-20211206225611153"></p>
+<blockquote>
+<p>要使用它，首先要闭合清零开关，这样做的目的是，清除锁存器中的内容并把 16 位计数器的输出置为 0000h，然后闭合 RAM 控制面板的控制端开关。现在你可以从地址 0000h 开始输入一组你想要相加的 8 位数。如果有 100 个数，那么它们将被存放在 0000h～0063h 的地址空间中。然后闭合 RAM 控制面板的控制端开关（这样控制面板就不再控制 RAM 阵列了），同时断开清零开关。</p>
+</blockquote>
+<p>分析一下它的工作过程：</p>
+<ol>
+<li>当清零开关第一次断开时，RAM 阵列的地址输入是 0000h。RAM 阵列的该地址中存放的 8 位数值是加法器的输入数据。加法器的另一个输入数据为 00h，因为此时锁存器也已经清零了。</li>
+<li>振荡器提供的时钟信号——一个可以在 0，1 之间快速切换的信号。清零开关断开后，当时钟信号由 0 跳变为 1 时，将有两件事同时发生：<ul>
+<li><strong>锁存器保存加法器的计算结果，同时 16 位计数器增 1，指向 RAM 阵列的下一个地址单元</strong>。</li>
+<li>清零开关断开之后，时钟信号第一次从 0 跳变为 1 时，锁存器就将第一个数值保存下来，同时计数器增加为 0001h；</li>
+</ul>
+</li>
+<li>当时钟发生第二次跳变时，锁存器保存之前两个数的求和结果，同时计数器增加为 0002h；按这种方式往复操作。</li>
+</ol>
+<h3 id="把计算结果写回到-RAM-阵列"><a href="#把计算结果写回到-RAM-阵列" class="headerlink" title="把计算结果写回到 RAM 阵列"></a>把计算结果写回到 RAM 阵列</h3><p>将计算结果写回到RAM，能帮助我们进行多次的累加计算，暂存计算结果。</p>
+<p><img src="/images/image-20211206232247576.png" alt="image-20211206232247576"></p>
+<p>例如，我们需要先对三个数进行求和，然后再对两个数进行求和，最后再对三个数进行求和。我们可以把这些数保存在 RAM 阵列中以 0000h 开始的一组空间中，这些数存储在 RAM 阵列中的具体形式如下图所示：</p>
+<p><img src="/images/image-20211207110642727.png" alt="image-20211207110642727"></p>
+<p>我们希望自动加法器能够做四个事：</p>
+<ul>
+<li>进行加法操作，首先它要把一个字节从存储器中传送到累加器中，这个操作称为加载（<strong>Load</strong>）。</li>
+<li>第二个操作把存储器中的一个字节加（<strong>Add</strong>）到累加器的内容中去。</li>
+<li>第三个操作把累加器中的计算结果取出并存放到存储器中。</li>
+<li>另外我们需要用一个方法令自动加法器停（<strong>Halt</strong>）下来。</li>
+</ul>
+<p>要做到上述目标，我们需要用一些数字代码来标识加法器要做的每一项工作：加载、相加、保存和终止。</p>
+<p>存放这些代码的最简单的方法是把它们<strong>存放在一个独立的 RAM 阵列中</strong>。这个 RAM 应该和第一个 RAM 同时被访问。但是这个 RAM 中存放的是不需要求和的数，而是一些数字代码，用来标记自动加法器对第一个 RAM 中指定地址要做的一种操作。这两个 RAM 可以分别被标记为 “数据”（第一个 RAM 阵列）和 “代码”（第二个 RAM 阵列）。其结构如下图所示。</p>
+<p><img src="/images/image-20211207111010167.png" alt="image-20211207111010167"></p>
+<p>需要四个代码来标记新的自动加法器需要做的四个操作：</p>
+<p><img src="/images/image-20211207111123354.png" alt="image-20211207111123354"></p>
+<p>代码 RAM 阵列中存放的每一个代码都对应着数据 RAM 中要被加载或者加到累加器中的数，或者对应需要存回到数据 RAM 中的某个数。以这种方式使用的数字代码常常被称为<code>指令码</code>（instruction code）或<code>操作码</code>（operation code，opcode）。它们<strong>指示电路要执行的某种操作</strong>。</p>
+<p><img src="/images/image-20211207111322990.png" alt="image-20211207111322990"></p>
+<p><strong>以前 8 位加法器的输出是 8 位锁存器的输入，但现在为了执行 Load 指令，数据 RAM 阵列的输出有时也要作为 8 位锁存器的输入</strong>，这种新的变化需要一个 2-1 选择器来实现。改进后的自动加法器如下图所示。</p>
+<p><img src="/images/image-20211207111937958.png" alt="image-20211207111937958"></p>
+<blockquote>
+<ul>
+<li>16 位的计数器为两个 RAM 阵列提供地址输入。</li>
+<li>通常，数据 RAM 阵列的输出传入到 8 位加法器执行加操作。8 位锁存器的输入可以是数据 RAM 阵列的输出（当执行 Load 指令时），也可以是加法器的输出（当执行 Add 指令时），这种情况下就需要 2-1 选择器。</li>
+<li>通常，锁存器电路的输出又流回到加法器中，但是当执行 Save 指令时，它就成为了数据 RAM 阵列的输入数据。</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>上图缺少的是控制所有这些组件的信号，它们统称为<code>控制信号</code>，包括：</p>
+<ul>
+<li>16 位计数器的 “时钟” 输入和 “清零” 输入，</li>
+<li>8 位锁存器的 “时钟” 输入和 “清零” 输入，</li>
+<li>数据 RAM 阵列的 “写”（W）输入，</li>
+<li>2-1 选择器的 “选择”（S）输入。</li>
+</ul>
+</li>
+<li><p>其中的一些信号很明显是基于代码 RAM 阵列的输出。</p>
+<blockquote>
+<p>例如，如果代码 RAM 阵列输出是 Load 指令，那么 2-1 选择器的 “选择” 输入必须是 0（即选择数据 RAM 的输出）。只有当操作码是指令 Store 时，数据 RAM 阵列的 “写”（W）输入必须是 1。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="支持减操作"><a href="#支持减操作" class="headerlink" title="支持减操作"></a>支持减操作</h3><p><img src="/images/image-20211208114421437.png" alt="image-20211208114421437"></p>
+<ul>
+<li>Add 和 Subtract 的代码，其区别仅在于最低有效位，我们称该位为 <code>C0</code>（20h 和 21h）。</li>
+<li><strong>加上反相器实现减法操作</strong>。如果操作码为 21h：<ul>
+<li>数据 RAM 阵列的数据传入加法器之前要取反，加法器进位输入置 1。</li>
+<li>其他与执行 Add 指令所做的操作相同。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/image-20211208114628243.png" alt="image-20211208114628243"></p>
+<blockquote>
+<p>示例：把 56h 和 2Ah 相加，然后再从中减去 38h：</p>
+<p><img src="/images/image-20211208115055145.png" alt="image-20211208115055145"></p>
+<ol>
+<li>Load 操作完成之后，累加器中的值更新为 56h，加法操作完成后累加器中的值为 56h 与 2Ah 的和，即 80h。</li>
+<li>Subtract 操作使数据 RAM 阵列的下一个值（38h）按位取反，得到 C7h。当加法器的进位输入置1时，取反得到 C7h，然后使其与 80h 相加，最后的结果是 48h。</li>
+</ol>
+</blockquote>
+<h3 id="8位累加器实现16位的加减法"><a href="#8位累加器实现16位的加减法" class="headerlink" title="8位累加器实现16位的加减法"></a>8位累加器实现16位的加减法</h3><h4 id="不带进位的加法"><a href="#不带进位的加法" class="headerlink" title="不带进位的加法"></a>不带进位的加法</h4><p>计算<code>76ABH + 232H</code>：</p>
+<ol>
+<li>先处理低字节：<code>ABH + 2CH = D7H</code></li>
+<li>再处理高字节：<code>76H + 23H = 99H</code></li>
+<li>组合高低字节，得到结果：<code>99D7h</code></li>
+</ol>
+<p>如果我们把两个 16 位的数用这种方式保存在存储器中：</p>
+<p><img src="/images/image-20211208120029727.png" alt="image-20211208120029727"></p>
+<p>运算结果 D7h 将被保存到地址 0002h，而结果 99h 将被保存到地址 0005h。</p>
+<h4 id="带进位的加法"><a href="#带进位的加法" class="headerlink" title="带进位的加法"></a>带进位的加法</h4><ul>
+<li>计算76ABh + 236Ch，对两个数的低字节求和时将会产生一个进位。产生的进位必须与两个数的高字节的和再相加。</li>
+<li>需要做的仅仅是<strong>在第一步运算时保存低字节数运算的进位输出，并把它作为下一步高字节数运算的进位输入</strong>。</li>
+<li>采用 1 位锁存器存储进位。该锁存器应该被称为<code>进位锁存器</code>。</li>
+<li>为了使用进位锁存器，还需要另一个操作码，我们称之为 <code>进位加法</code>(Add with Carry)。</li>
+</ul>
+<p>对两个 16 位的数进行加法运算：</p>
+<ol>
+<li>我们仍然使用常规的 Add 指令对两个低字节数进行加法运算。加法器的进位输入是 0，而其进位输出被锁存到进位锁存器中。</li>
+<li>当把两个高字节数相加时，要使用新的 Add with Carry 指令。在这种情况下，两个数相加时要用进位锁存器的输出作为加法器的进位输入。</li>
+</ol>
+<h4 id="16-位数的减法"><a href="#16-位数的减法" class="headerlink" title="16 位数的减法"></a>16 位数的减法</h4><ul>
+<li>如果要进行 16 位数的减法运算，则还需要一个新的指令，称为<code>借位减法</code>。</li>
+<li>通常，Subtract 指令需要将减数取反并且把加法器的进位输入置 1。进位输出通常不是 1，因此应该被忽略。但对 16 位数进行减法运算时，进位输出应该保存在进位锁存器中。在进行第二步的高字节减法运算时，锁存器保存的结果应该作为加法器的进位输入。</li>
+</ul>
+<p><img src="/images/image-20211208122057190.png" alt="image-20211208122057190"></p>
+<p>增加了两个新的操作码之后，我们已经极大地扩展了加法器的功能，它不再局限于 8 位数的加法运算。通过执行进位加法操作，可以对 16 位数、24 位数、32位数，甚至更多位的数进行加法运算。假如要进行两个 32 位数 7A892BCDh 和 65A872FFh 的加法运算，我们仅需要 1 条 Add 指令和 3 条 Add with Carry 指令，如下图所示。</p>
+<p><img src="/images/image-20211208150503449.png" alt="image-20211208150503449"></p>
+<h3 id="将操作码和操作数组合放于内存中"><a href="#将操作码和操作数组合放于内存中" class="headerlink" title="将操作码和操作数组合放于内存中"></a>将操作码和操作数组合放于内存中</h3><p>我们每个操作码在存储器中占 1 个字节。现在除了 Halt 操作码外，我希望每一个指令在存储器中仅占据 3 个字节的空间，其中第一个字节为代码本身，另外的两个字节用来存放 1 个 16 位存储器单元地址。</p>
+<blockquote>
+<ul>
+<li>例如 Load 指令，后两个字节保存的地址用来指明数据 RAM 阵列的一个存储单元，该单元存放的是需要被加载到累加器中的字节。</li>
+<li>对于Add，Subtract，Add with Carry，Subtract with Borrow 指令来说，该地址指明的存储单元所保存的是要从累加器中加上或减去的字节。</li>
+<li>对于 Store 指令来说，该地址指明的是累加器中的内容将要保存到的存储单元地址。</li>
+</ul>
+</blockquote>
+<p>当加法器对两个数进行求和时，为了执行这个操作，需要按下面的方式设置代码 RAM 阵列和数据 RAM 阵列。</p>
+<p><img src="/images/image-20211208152627164.png" alt="image-20211208152627164"></p>
+<p>在改进的自动加法器中，每条指令（除了 Halt 指令）需要 3 个字节：</p>
+<p><img src="/images/image-20211208152656066.png" alt="image-20211208152656066"></p>
+<blockquote>
+<p>每一条指令的代码（除了 Halt 指令）后跟两个字节，用来指明数据 RAM 阵列中 16 位的存储地址。</p>
+</blockquote>
+<p>之前，我们分别保存低字节和高字节的计算结果。76ABh + 232Ch，就计算时高低字节分开存储并计算：</p>
+<p><img src="/images/image-20211208164823371.png" alt="image-20211208164823371"></p>
+<p>现在，我们可以采用一种更加合理的方式来保存这两个操作数及其运算结果：</p>
+<p><img src="/images/image-20211208164902347.png" alt="image-20211208164902347"></p>
+<h3 id="将操作码和操作数组合放于内存的电路实现"><a href="#将操作码和操作数组合放于内存的电路实现" class="headerlink" title="将操作码和操作数组合放于内存的电路实现"></a>将操作码和操作数组合放于内存的电路实现</h3><p>为了实现上述的指令的优化：</p>
+<ul>
+<li>需要把代码 RAM 阵列的数据输出到 3 个 8 位锁存器中。每个锁存器保存该 3 字节指令的一个字节。</li>
+<li>第一个锁存器保存指令代码本身，</li>
+<li>第二个锁存器保存地址的高字节，第三个锁存器保存地址的低字节。第二个和第三个锁存器的输出构成了数据 RAM 阵列的 16 位地址。</li>
+</ul>
+<p><img src="/images/image-20211208170202337.png" alt="image-20211208170202337"></p>
+<ul>
+<li>从存储器中取出指令的过程称为<strong>取指令</strong>（instruction fetch）。</li>
+<li>在我们设计的加法器中，每一条指令的长度是 3 个字节。因为每次从存储器取回一个字节，所以取每条指令需要的时间为 3 个时钟周期（<strong>对应三个锁存器的时钟信号</strong>）。</li>
+<li>此外，一个完整的指令周期需要 4 个时钟周期。这些变化必然使得控制信号更加复杂。</li>
+<li>机器响应指令码做一系列操作的过程称为<strong>执行（execute）指令</strong>。</li>
+</ul>
+<h3 id="将操作码和操作数放在同一个-RAM-阵列"><a href="#将操作码和操作数放在同一个-RAM-阵列" class="headerlink" title="将操作码和操作数放在同一个 RAM 阵列"></a>将操作码和操作数放在同一个 RAM 阵列</h3><p>在前面构建设备的过程中我们使用了两种 RAM 阵列，<strong>一个用来存放指令码，另一个用来存放操作数据</strong>，这种设计使得我们设计的加法器的结构清晰。但现在我们使用 3 个字节长的指令格式，第二个和第三个字节用来指明了操作数的存储地址，因此就没有必要再使用两个独立的 RAM 阵列。操作码和操作数可以存放在同一个 RAM 阵列。</p>
+<p>为了实现这个设计：</p>
+<ul>
+<li>需要一个 <code>2-1 选择器</code>来确定如何对 RAM 阵列寻址。</li>
+<li>用一个 16 位的计数器来计算地址。数据 RAM 阵列的输出仍然连接到 3 个锁存器，分别用来保存指令代码及其对应操作数的 16 位地址，其 16 位的地址输出是 2-1 选择器的第二种输入。地址被锁存后，可以通过选择器将其作为 RAM 阵列的地址输入。</li>
+</ul>
+<p><img src="/images/image-20211208172443215.png" alt="image-20211208172443215"></p>
+<p>通常，指令从 0000h 开始存放，这是因为当计数器复位后从 0000h 位置访问 RAM 阵列。最后的 Halt 指令存放在 000Ch 地址。我们可以把这 3 个操作数及它们的运算结果保存在 RAM 阵列的任何地址。</p>
+<p>下图演示了如何把两个 8 位数相加，然后从结果中再减去一个 8 位数。</p>
+<p><img src="/images/image-20211208172919518.png" alt="image-20211208172919518"></p>
+<h3 id="指令跳转Jump及其实现"><a href="#指令跳转Jump及其实现" class="headerlink" title="指令跳转Jump及其实现"></a>指令跳转Jump及其实现</h3><ul>
+<li>新的指令 Jump（跳转）</li>
+<li>通常情况下自动加法器是以顺序方式对 RAM 阵列寻址的。Jump 指令改变了机器的这种寻址方式，取而代之的是从某个指定的地址开始寻址。这种指令有时也被称作分支（branch）指令或者 <strong>Goto</strong> 指令，即 “转到另一个位置”。</li>
+</ul>
+<p><img src="/images/image-20211208183728534.png" alt="image-20211208183728534"></p>
+<p><img src="/images/image-20211208183752228.png" alt="image-20211208183752228"></p>
+<ul>
+<li>Jump 指令通过作用于 16 位计数器实现其功能。无论何时，只要自动加法器遇到 Jump 指令，<strong>计数器就会被强制输出该 Jump 指令后的 16 位地址</strong>。</li>
+<li>这可以通过 16 位计数器的 D 型边沿触发器的预置（Pre）和清零（Clr）输入来实现。</li>
+</ul>
+<p><img src="/images/image-20211208184312846.png" alt="image-20211208184312846"></p>
+<blockquote>
+<p>在正常的操作下，Pre 和 Clr 端的输入都应该是 0。但是，当 Pre = 1，Q = 1；当 Clr = 1，则 Q = 0。</p>
+</blockquote>
+<blockquote>
+<p>如果你希望向一个触发器<strong>加载一个新的值</strong>（用 A 表示，代表地址），可以像下图所示这样连接。</p>
+<p><img src="/images/image-20211208184459532.png" alt="image-20211208184459532"></p>
+<ul>
+<li>当置位信号为 0，触发器的预置端输入为 0，在复位信号不为 1 的情况下，清零信号也为 0。在这种情况下，触发器就可以独立清零，而不受置位信号的影响。</li>
+<li>当置位信号为 1 时，如果 A 为 1，则清零（Clr）输入为 0，预置（Pre）输入为 1；</li>
+<li>如果 A 为 0，则预置（Pre）输入 0，清零（Clr）输入为 1。</li>
+<li>这就意味着 <strong>Q 端将被设置为与 A 端相同的值</strong>（需要注意，这里的置位和复位不能同时为 1）。</li>
+<li>将 Q 端置为与 A 端相同的值，能够使得我们的计数器从我们传入的数值位开始计数，因为计数器随着振荡器的交替信号逐渐递增。</li>
+</ul>
+</blockquote>
+<p>需要为 16 位计数器的每一位设置一个这样的触发器。一旦加载了某个特定的值，计数器就会从该值开始计数。</p>
+<p>这对我们之前设计的电路改动并不大，从 RAM 阵列锁存得到的 16 位地址既可以作为 2-1 选择器（它允许该地址作为 RAM 阵列的地址输入）的输入，也可以作为 16 位计数器置位信号的输入。</p>
+<p><img src="/images/image-20211208185730911.png" alt="image-20211208185730911"></p>
+<h3 id="条件跳转及其实现"><a href="#条件跳转及其实现" class="headerlink" title="条件跳转及其实现"></a>条件跳转及其实现</h3><p>通过一个例子做引子：怎样让自动加法器进行两个 8 位数的乘法运算？例如，我们如何利用自动加法器得到像 A7h（167）与 1Ch（28）相乘这种简单运算的结果呢？</p>
+<p><img src="/images/image-20211208204821844.png" alt="image-20211208204821844"></p>
+<blockquote>
+<p>乘法运算可以转换为加法，例如 4 × 3 = 4 + 4 + 4。除法也可以进行转换，例如 13 ÷ 4 即为 13 - 4 = 9 -》9 - 4 = 5 -》5 - 4 = 1，那么可知 13 ÷ 4 = 3···1</p>
+</blockquote>
+<p>需要将乘法转换为加法，因此上述计算即为把 28 个 A7h 累加：</p>
+<p><img src="/images/image-20211208205609704.png" alt="image-20211208205609704"></p>
+<p>要想实现多次相加，让这个过程重复执行所需要的次数，这种指令就是条件跳转指令。</p>
+<p>要实现条件跳转，要增加一个与进位锁存器类似的 1 位锁存器。该锁存器被称为<code>零锁存器</code>（Zero latch），这是因为<strong>只有当 8 位加法器的输出全部为 0 时，它锁存的值才是 1</strong>。</p>
+<blockquote>
+<p><code>进位锁存器</code>即为我们在介绍用 8 位累加器计算 16 位二进制数的计算时，将 16 位数分成高低字节分别计算，并利用一个锁存器将低字节的进位输出保存作为高字节的进位输入。</p>
+</blockquote>
+<p><img src="/images/image-20211208202017260.png" alt="image-20211208202017260"></p>
+<p>有了进位锁存器和零锁存器以后，我们可以为指令表新增 4 条指令。</p>
+<p><img src="/images/image-20211208202937299.png" alt="image-20211208202937299"></p>
+<ul>
+<li>非零转移指令（Jump If Not Zero）<strong>只有在零锁存器的输出为 0 时才会跳转到指定的地址</strong>。换言之，如果上一步的加法、减法、进位加法、或者借位减法等运算的结果为 0 时，将不会发生跳转。</li>
+<li>为了实现这个设计，只需要在常规跳转命令的控制信号之上再加一个控制信号：如果指令是 Jump If Not Zero，那么只有当零标志位是 0 时，16 位计数器才被触发。</li>
+</ul>
+<p>上面的乘法的实现：下图中 0012h 地址之后的指令即两个数相乘所用到的上表中的所有指令。</p>
+<p><img src="/images/image-20211208203225323.png" alt="image-20211208203225323"></p>
+<blockquote>
+<ul>
+<li>地址 1003h 处的字节通过 Load 指令载入到累加器，该字节是 1Ch。把这个数和 001Eh 地址的字节相加后。FFh 与 1Ch 相加的结果与从 1Ch 中减去 1 的结果相同，都是 1Bh。</li>
+<li>因为 1Bh 不等于 0，所以零标志位是 0，1Bh 这个结果会存回到 1003h 地址。下一条要执行的指令是 Jump If Not Zero，零标志位没有置为 1，因此发生跳转。接下来要执行的一条指令位于 0000h 地址。</li>
+<li>当执行到第 28 次循环时，1004h 和 1005h 地址保存的 16 位数等于 A7h 和 1Ch 的乘积。1003h 地址保存的值是 1，它和 FFh 相加的结果是 0，因此零标志位被置位。Jump If Not Zero 指令不会再跳转，相反，下一条要执行的指令即 Halt 指令。这样，我们就完成了全部的工作。</li>
+</ul>
+<p> 不难发现，这里的控制次数是通过每次相加后，1003h 位的被乘数减 1。</p>
+</blockquote>
+<blockquote>
+<p>FFh 与 1Ch 相加的结果与从 1Ch 中减去 1 的结果相同：因为我们这里的计算存在进位，但我们会对计算结果的进位舍弃，保存的是进位后的数。以 53 + 99 为例：53 + 99 = 152，舍弃百分位得到结果 52，也即 53 + 99 - 100 = 52，相当于减去 1。而在 16 进制中，FFh 就相当于十进制中的 99，也即在减法实现部分我们介绍的补数，单个位置能取到的最大数。只要加数（53）大于等于 1，都能实现计算结果减 1 的效果。</p>
+</blockquote>
+<h3 id="机器码与汇编语言"><a href="#机器码与汇编语言" class="headerlink" title="机器码与汇编语言"></a>机器码与汇编语言</h3><p>能够被处理器响应的操作码（比如 Load 指令和 Store 指令的代码 10h 和 11h），称做机器码（machine codes），或机器语言（machine language）。</p>
+<p>一直以来，我们都在使用很长的短语来引用机器所执行的指令，比如 Add withCarry 指令。通常而言，机器码都分配了对应的简短助记符，这些助记符都用大写字母表示，包括 2 个或 3 个字符。下面是一系列上述计算机大致能够识别的机器码的助记符。</p>
+<p><img src="/images/image-20211208211440168.png" alt="image-20211208211440168"></p>
+<p>当这些助记符与另外一对短语结合使用时，其作用更加突出。例如，对于这样一条长语句 “把 1003h 地址处的字节加载到累加器”，我们可以用如下简洁的句子替代：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOD  A,  [1003h]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>位于助记符右侧的 A 和 [1003h] 称为参数（argument），它们是这个 Load 指令的操作对象。</li>
+<li>参数由两部分组成，左边的操作数称为目标（destination）操作数（A 代表累加器），右边的操作数称为源（source）操作数。</li>
+<li>方括号 “[]” 表明要加载到累加器的不是 1003h 这个数值，而是位于存储器地址 1003h 的数值。</li>
+</ul>
+<p>类似的，指令 “把 001Eh 地址的字节加到累加器”：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD A,  [0010Eh]</span><br></pre></td></tr></table></figure>
+
+<p>“如果零标志位不是 1 则跳转到 0000h 地址处” 这个冗长的语句可以简明地表示为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JNZ  0000h</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面给出的语句其实就是汇编语言（assembly language）。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
