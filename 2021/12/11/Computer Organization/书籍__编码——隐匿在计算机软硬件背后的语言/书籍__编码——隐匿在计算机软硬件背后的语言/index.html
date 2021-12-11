@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;进制转换的解释&quot;&gt;&lt;a href=&quot;#进制转换的解释&quot; class=&quot;headerlink&quot; title=&quot;进制转换的解释&quot;&gt;&lt;/a&gt;进制转换的解释&lt;/h2&gt;&lt;p&gt;&lt;code&gt;42705.685&lt;/code&gt;其实就是："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>编码——隐匿在计算机软硬件背后的语言 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Organization/" rel="tag">Computer Organization</a></div><div class="post-time">2021-12-08</div></div></div><div class="container post-header"><h1>编码——隐匿在计算机软硬件背后的语言</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">1.</span> <span class="toc-text">进制转换的解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0%E4%B8%8E%E7%94%B5%E8%B7%AF%E7%9A%84%E8%9E%8D%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">布尔代数与电路的融合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%A8"><span class="toc-number">3.</span> <span class="toc-text">门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%97%A8"><span class="toc-number">3.1.</span> <span class="toc-text">与门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%97%A8"><span class="toc-number">3.2.</span> <span class="toc-text">或门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E5%99%A8"><span class="toc-number">3.3.</span> <span class="toc-text">反向器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%9D%9E%E9%97%A8"><span class="toc-number">3.4.</span> <span class="toc-text">或非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%9D%9E%E9%97%A8"><span class="toc-number">3.5.</span> <span class="toc-text">与非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%99%A8"><span class="toc-number">3.6.</span> <span class="toc-text">缓冲器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8A%A0%E6%B3%95%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">二进制加法器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E5%8A%A0%E6%B3%95%E6%8B%86%E5%88%86%E6%88%90%E5%8A%A0%E5%92%8C%E4%BD%8D%E5%92%8C%E8%BF%9B%E4%BD%8D%E4%BD%8D"><span class="toc-number">4.1.</span> <span class="toc-text">将加法拆分成加和位和进位位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8A%E5%8A%A0%E5%99%A8"><span class="toc-number">4.2.</span> <span class="toc-text">半加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%8A%A0%E5%99%A8"><span class="toc-number">4.3.</span> <span class="toc-text">全加器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%87%8F%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">如何实现减法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8%E5%80%9F%E4%BD%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">避免使用借位的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E6%94%AF%E6%8C%81%E5%8A%A0%E6%B3%95%E5%92%8C%E5%87%8F%E6%B3%95%E7%9A%84%E6%9C%BA%E5%99%A8"><span class="toc-number">5.2.</span> <span class="toc-text">同时支持加法和减法的机器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E4%B8%8E%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">反馈与触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%87%E8%8D%A1%E5%99%A8-%E6%97%B6%E9%92%9F"><span class="toc-number">6.1.</span> <span class="toc-text">震荡器(时钟)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="toc-number">6.2.</span> <span class="toc-text">反馈的连接方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#R-S%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.3.</span> <span class="toc-text">R-S触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%B5%E5%B9%B3D%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.4.</span> <span class="toc-text">电平D型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">6.5.</span> <span class="toc-text">锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8%E4%B8%8E%E5%8A%A0%E6%B3%95%E5%99%A8%E7%BB%93%E5%90%88"><span class="toc-number">6.6.</span> <span class="toc-text">锁存器与加法器结合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%85%E9%9B%B6%EF%BC%88Clear%EF%BC%89%E7%9A%84%E8%BE%93%E5%85%A5%E4%BF%A1%E5%8F%B7"><span class="toc-number">6.7.</span> <span class="toc-text">清零（Clear）的输入信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%B9%E6%B2%BF%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.8.</span> <span class="toc-text">边沿触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.9.</span> <span class="toc-text">D 型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#T-%E8%A7%A6%E5%8F%91%E5%99%A8-%E4%B8%8E-%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">6.10.</span> <span class="toc-text">T 触发器 与 计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E7%BB%84%E7%BB%87"><span class="toc-number">7.</span> <span class="toc-text">存储器组织</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E4%BD%8D%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">7.1.</span> <span class="toc-text">八位锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E9%80%891%E9%94%81%E5%AD%98%E5%99%A8-%E4%B8%8E-RAM"><span class="toc-number">7.2.</span> <span class="toc-text">8选1锁存器 与 RAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%85%B1%E4%BA%AB%E5%9C%B0%E5%9D%80%E7%BB%84%E6%88%902%E4%BD%8D%E5%AE%BD%E7%9A%84RAM%E9%98%B5%E5%88%97"><span class="toc-number">7.3.</span> <span class="toc-text">通过共享地址组成2位宽的RAM阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%C3%971-%E7%9A%84RAM%E9%98%B5%E5%88%97"><span class="toc-number">7.4.</span> <span class="toc-text">16×1 的RAM阵列</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">8.</span> <span class="toc-text">自动操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-RAM-%E9%98%B5%E5%88%97%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BE%93%E5%87%BA%E5%88%B0%E7%B4%AF%E5%8A%A0%E5%99%A8"><span class="toc-number">8.1.</span> <span class="toc-text">将 RAM 阵列的数据输出到累加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%8A%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%86%99%E5%9B%9E%E5%88%B0-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.2.</span> <span class="toc-text">把计算结果写回到 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E5%87%8F%E6%93%8D%E4%BD%9C"><span class="toc-number">8.3.</span> <span class="toc-text">支持减操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E4%BD%8D%E7%B4%AF%E5%8A%A0%E5%99%A8%E5%AE%9E%E7%8E%B016%E4%BD%8D%E7%9A%84%E5%8A%A0%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.</span> <span class="toc-text">8位累加器实现16位的加减法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.1.</span> <span class="toc-text">不带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.2.</span> <span class="toc-text">带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-%E4%BD%8D%E6%95%B0%E7%9A%84%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.3.</span> <span class="toc-text">16 位数的减法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E4%B8%AD"><span class="toc-number">8.5.</span> <span class="toc-text">将操作码和操作数组合放于内存中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%94%B5%E8%B7%AF%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.6.</span> <span class="toc-text">将操作码和操作数组合放于内存的电路实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E6%94%BE%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.7.</span> <span class="toc-text">将操作码和操作数放在同一个 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E8%B7%B3%E8%BD%ACJump%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.8.</span> <span class="toc-text">指令跳转Jump及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.9.</span> <span class="toc-text">条件跳转及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E7%A0%81%E4%B8%8E%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80"><span class="toc-number">8.10.</span> <span class="toc-text">机器码与汇编语言</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="进制转换的解释"><a href="#进制转换的解释" class="headerlink" title="进制转换的解释"></a>进制转换的解释</h2><p><code>42705.685</code>其实就是：</p>
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;进制转换的解释&quot;&gt;&lt;a href=&quot;#进制转换的解释&quot; class=&quot;headerlink&quot; title=&quot;进制转换的解释&quot;&gt;&lt;/a&gt;进制转换的解释&lt;/h2&gt;&lt;p&gt;&lt;code&gt;42705.685&lt;/code&gt;其实就是："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>编码——隐匿在计算机软硬件背后的语言 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Organization/" rel="tag">Computer Organization</a></div><div class="post-time">2021-12-11</div></div></div><div class="container post-header"><h1>编码——隐匿在计算机软硬件背后的语言</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">1.</span> <span class="toc-text">进制转换的解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0%E4%B8%8E%E7%94%B5%E8%B7%AF%E7%9A%84%E8%9E%8D%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">布尔代数与电路的融合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%A8"><span class="toc-number">3.</span> <span class="toc-text">门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%97%A8"><span class="toc-number">3.1.</span> <span class="toc-text">与门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%97%A8"><span class="toc-number">3.2.</span> <span class="toc-text">或门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E5%99%A8"><span class="toc-number">3.3.</span> <span class="toc-text">反向器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%96%E9%9D%9E%E9%97%A8"><span class="toc-number">3.4.</span> <span class="toc-text">或非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E9%9D%9E%E9%97%A8"><span class="toc-number">3.5.</span> <span class="toc-text">与非门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%99%A8"><span class="toc-number">3.6.</span> <span class="toc-text">缓冲器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8A%A0%E6%B3%95%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">二进制加法器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E5%8A%A0%E6%B3%95%E6%8B%86%E5%88%86%E6%88%90%E5%8A%A0%E5%92%8C%E4%BD%8D%E5%92%8C%E8%BF%9B%E4%BD%8D%E4%BD%8D"><span class="toc-number">4.1.</span> <span class="toc-text">将加法拆分成加和位和进位位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8A%E5%8A%A0%E5%99%A8"><span class="toc-number">4.2.</span> <span class="toc-text">半加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%8A%A0%E5%99%A8"><span class="toc-number">4.3.</span> <span class="toc-text">全加器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%87%8F%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">如何实现减法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8%E5%80%9F%E4%BD%8D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">避免使用借位的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E6%94%AF%E6%8C%81%E5%8A%A0%E6%B3%95%E5%92%8C%E5%87%8F%E6%B3%95%E7%9A%84%E6%9C%BA%E5%99%A8"><span class="toc-number">5.2.</span> <span class="toc-text">同时支持加法和减法的机器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E4%B8%8E%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">反馈与触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%87%E8%8D%A1%E5%99%A8-%E6%97%B6%E9%92%9F"><span class="toc-number">6.1.</span> <span class="toc-text">震荡器(时钟)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="toc-number">6.2.</span> <span class="toc-text">反馈的连接方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#R-S%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.3.</span> <span class="toc-text">R-S触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%B5%E5%B9%B3D%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.4.</span> <span class="toc-text">电平D型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">6.5.</span> <span class="toc-text">锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E4%BD%8D%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">6.6.</span> <span class="toc-text">八位锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E5%AD%98%E5%99%A8%E4%B8%8E%E5%8A%A0%E6%B3%95%E5%99%A8%E7%BB%93%E5%90%88%E5%AE%9E%E7%8E%B0%E7%B4%AF%E5%8A%A0"><span class="toc-number">6.7.</span> <span class="toc-text">锁存器与加法器结合实现累加</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%85%E9%9B%B6%EF%BC%88Clear%EF%BC%89%E7%9A%84%E8%BE%93%E5%85%A5%E4%BF%A1%E5%8F%B7"><span class="toc-number">6.8.</span> <span class="toc-text">清零（Clear）的输入信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%A6%E6%B8%85%E9%9B%B6%E4%BF%A1%E5%8F%B7%E7%9A%84%E6%89%8B%E5%8A%A8%E7%B4%AF%E5%8A%A0%E5%99%A8"><span class="toc-number">6.9.</span> <span class="toc-text">带清零信号的手动累加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%B9%E6%B2%BF%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.10.</span> <span class="toc-text">边沿触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-%E5%9E%8B%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.11.</span> <span class="toc-text">D 型触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#T-%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.12.</span> <span class="toc-text">T 触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#T%E8%A7%A6%E5%8F%91%E5%99%A8%E6%9E%84%E6%88%90%E7%9A%84%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">6.13.</span> <span class="toc-text">T触发器构成的计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%A6%E9%A2%84%E7%BD%AE%E5%92%8C%E6%B8%85%E9%9B%B6%E5%8A%9F%E8%83%BD%E7%9A%84%E8%BE%B9%E6%B2%BF%E5%9E%8B-D-%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">6.14.</span> <span class="toc-text">带预置和清零功能的边沿型 D 触发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E7%BB%84%E7%BB%87"><span class="toc-number">7.</span> <span class="toc-text">存储器组织</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E4%BD%8D%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">7.1.</span> <span class="toc-text">8位锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E9%80%891%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">7.2.</span> <span class="toc-text">8选1锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%C3%971-RAM"><span class="toc-number">7.3.</span> <span class="toc-text">8×1 RAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%C3%972-RAM"><span class="toc-number">7.4.</span> <span class="toc-text">8×2 RAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%C3%971-RAM"><span class="toc-number">7.5.</span> <span class="toc-text">16×1 RAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1024%C3%978-RAM"><span class="toc-number">7.6.</span> <span class="toc-text">1024×8 RAM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">8.</span> <span class="toc-text">自动操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86-RAM-%E9%98%B5%E5%88%97%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BE%93%E5%87%BA%E5%88%B0%E7%B4%AF%E5%8A%A0%E5%99%A8"><span class="toc-number">8.1.</span> <span class="toc-text">将 RAM 阵列的数据输出到累加器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%8A%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%86%99%E5%9B%9E%E5%88%B0-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.2.</span> <span class="toc-text">把计算结果写回到 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E5%87%8F%E6%93%8D%E4%BD%9C"><span class="toc-number">8.3.</span> <span class="toc-text">支持减操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E4%BD%8D%E7%B4%AF%E5%8A%A0%E5%99%A8%E5%AE%9E%E7%8E%B016%E4%BD%8D%E7%9A%84%E5%8A%A0%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.</span> <span class="toc-text">8位累加器实现16位的加减法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.1.</span> <span class="toc-text">不带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E8%BF%9B%E4%BD%8D%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="toc-number">8.4.2.</span> <span class="toc-text">带进位的加法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-%E4%BD%8D%E6%95%B0%E7%9A%84%E5%87%8F%E6%B3%95"><span class="toc-number">8.4.3.</span> <span class="toc-text">16 位数的减法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E4%B8%AD"><span class="toc-number">8.5.</span> <span class="toc-text">将操作码和操作数组合放于内存中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84%E5%90%88%E6%94%BE%E4%BA%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%94%B5%E8%B7%AF%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.6.</span> <span class="toc-text">将操作码和操作数组合放于内存的电路实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%93%8D%E4%BD%9C%E7%A0%81%E5%92%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E6%94%BE%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA-RAM-%E9%98%B5%E5%88%97"><span class="toc-number">8.7.</span> <span class="toc-text">将操作码和操作数放在同一个 RAM 阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E8%B7%B3%E8%BD%ACJump%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.8.</span> <span class="toc-text">指令跳转Jump及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">8.9.</span> <span class="toc-text">条件跳转及其实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E7%A0%81%E4%B8%8E%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80"><span class="toc-number">8.10.</span> <span class="toc-text">机器码与汇编语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E7%A7%8D%E5%85%B8%E5%9E%8B%E7%9A%84%E5%BE%AE%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">9.</span> <span class="toc-text">两种典型的微处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E5%A4%84%E7%90%86%E5%99%A8%E7%AE%80%E4%BB%8B"><span class="toc-number">9.1.</span> <span class="toc-text">8080处理器简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080MOV%E6%93%8D%E4%BD%9C%E7%A0%81%E7%9A%84%E4%BD%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">9.2.</span> <span class="toc-text">8080MOV操作码的位模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080MVI%E6%93%8D%E4%BD%9C%E7%A0%81%E7%9A%84%E4%BD%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">9.3.</span> <span class="toc-text">8080MVI操作码的位模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E9%AB%98%E4%BD%8D%E7%9A%84ADC%E6%8C%87%E4%BB%A4"><span class="toc-number">9.4.</span> <span class="toc-text">8080高位的ADC指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E7%9A%84%E6%A0%87%E5%BF%97%E4%BD%8D"><span class="toc-number">9.5.</span> <span class="toc-text">8080的标志位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E8%AE%BF%E9%97%AE%E9%A1%BA%E5%BA%8F%E5%AF%B9%E5%AD%98%E5%82%A8%E5%99%A8%E5%88%86%E7%B1%BB"><span class="toc-number">9.6.</span> <span class="toc-text">根据访问顺序对存储器分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E4%B8%AD%E7%9A%84%E5%90%8E%E8%BF%9B%E5%85%88%E5%87%BA%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">9.7.</span> <span class="toc-text">8080中的后进先出存储器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E7%9A%84CALL%E6%8C%87%E4%BB%A4"><span class="toc-number">9.8.</span> <span class="toc-text">8080的CALL指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8E%E5%A4%96%E5%9B%B4%E8%AE%BE%E5%A4%87%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="toc-number">9.9.</span> <span class="toc-text">8080处理器与外围设备的通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Motorola-6800%E5%BE%AE%E5%A4%84%E7%90%86%E5%99%A8%E7%AE%80%E4%BB%8B"><span class="toc-number">9.10.</span> <span class="toc-text">Motorola 6800微处理器简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%8F%90%E9%AB%98%E8%BF%90%E8%A1%8C%E9%80%9F%E5%BA%A6%E7%9A%84%E6%8A%80%E6%9C%AF"><span class="toc-number">9.11.</span> <span class="toc-text">处理器提高运行速度的技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BA%BF"><span class="toc-number">10.</span> <span class="toc-text">总线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E4%B8%AD%E6%96%AD%E4%BF%A1%E5%8F%B7"><span class="toc-number">10.1.</span> <span class="toc-text">处理中断信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E8%8A%AF%E7%89%87"><span class="toc-number">10.2.</span> <span class="toc-text">存储器芯片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%82%A8%E5%AD%98%E4%BD%93"><span class="toc-number">10.3.</span> <span class="toc-text">储存体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4KB%E5%AD%98%E5%82%A8%E5%99%A8%E6%9D%BF%E7%9A%84%E5%9C%B0%E5%9D%80%E4%BF%A1%E5%8F%B7%E5%88%92%E5%88%86"><span class="toc-number">10.4.</span> <span class="toc-text">4KB存储器板的地址信号划分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8080%E5%A4%84%E7%90%86%E5%99%A8%E5%AF%B9%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E5%88%92%E5%88%86"><span class="toc-number">10.5.</span> <span class="toc-text">8080处理器对存储空间的划分</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%AF%94%E8%BE%83%E5%99%A8%E6%9D%A5%E9%80%89%E6%8B%A9%E5%82%A8%E5%AD%98%E5%99%A8%E6%9D%BF"><span class="toc-number">10.5.1.</span> <span class="toc-text">使用比较器来选择储存器板</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%AD%98%E5%82%A8%E5%99%A8%E6%9D%BF%E4%B8%AD%E7%9A%84%E5%82%A8%E5%AD%98%E4%BD%93"><span class="toc-number">10.5.2.</span> <span class="toc-text">选择存储器板中的储存体</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">11.</span> <span class="toc-text">操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E7%82%B9%E6%95%B0%E5%92%8C%E6%B5%AE%E7%82%B9%E6%95%B0"><span class="toc-number">12.</span> <span class="toc-text">定点数和浮点数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%AE%E7%82%B9%E6%95%B0%E4%B8%BA%E4%BD%95%E5%8F%AB%E6%B5%AE%E7%82%B9%E6%95%B0"><span class="toc-number">12.1.</span> <span class="toc-text">浮点数为何叫浮点数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%AE%E7%82%B9%E6%95%B0%E5%86%85%E5%AD%98%E8%A1%A8%E7%A4%BA"><span class="toc-number">12.2.</span> <span class="toc-text">浮点数内存表示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E7%B2%BE%E5%BA%A6%E6%A0%BC%E5%BC%8F"><span class="toc-number">12.2.1.</span> <span class="toc-text">单精度格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8C%E7%B2%BE%E5%BA%A6%E6%A0%BC%E5%BC%8F"><span class="toc-number">12.2.2.</span> <span class="toc-text">双精度格式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E4%BA%8E%E6%B5%AE%E7%82%B9%E6%95%B0%E8%BF%90%E7%AE%97%E7%9A%84%E5%87%BD%E6%95%B0%E9%9B%86"><span class="toc-number">12.3.</span> <span class="toc-text">用于浮点数运算的函数集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E4%B8%8E%E4%BD%8E%E7%BA%A7%E8%AF%AD%E8%A8%80"><span class="toc-number">13.</span> <span class="toc-text">高级语言与低级语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">13.1.</span> <span class="toc-text">汇编器的工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E6%8C%87%E9%92%88%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number">13.2.</span> <span class="toc-text">C语言指针的本质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BD%95C%E8%AF%AD%E8%A8%80%E6%AF%94%E5%85%B6%E4%BB%96%E7%B1%BBALGOL%E8%AF%AD%E8%A8%80%E9%80%9F%E5%BA%A6%E5%BF%AB"><span class="toc-number">13.3.</span> <span class="toc-text">为何C语言比其他类ALGOL语言速度快</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E5%BD%A2%E5%8C%96%E9%9D%A9%E5%91%BD"><span class="toc-number">14.</span> <span class="toc-text">图形化革命</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E4%BC%9A%E6%9C%89%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">14.1.</span> <span class="toc-text">为什么高级语言会有关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E8%B4%A8"><span class="toc-number">14.2.</span> <span class="toc-text">面向对象的实质</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="进制转换的解释"><a href="#进制转换的解释" class="headerlink" title="进制转换的解释"></a>进制转换的解释</h2><p><code>42705.685</code>其实就是：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">4*10^4 + </span><br><span class="line">2*10^3 +</span><br><span class="line">7*10^2 +</span><br><span class="line">0*10^1 +</span><br><span class="line">5*10^0 +</span><br><span class="line">6*10^-1 +</span><br><span class="line">8*10^-2 +</span><br><span class="line">5*10^-3 +</span><br></pre></td></tr></table></figure>
 
 <p>也就是说：</p>
@@ -380,8 +380,8 @@
 <h3 id="R-S触发器"><a href="#R-S触发器" class="headerlink" title="R-S触发器"></a>R-S触发器</h3><p>R-S（Reset-Set，复位/置位）触发器：</p>
 <p><img src="/images/image-20211204144318554.png" alt="image-20211204144318554"></p>
 <ul>
-<li>置位：将Q设置为1，将<code>Q反</code>设置为0。</li>
-<li>复位：将Q设置为0，将<code>Q反</code>设置为1。</li>
+<li>置位为1：将Q设置为1，将<code>Q反</code>设置为0。</li>
+<li>复位为1：将Q设置为0，将<code>Q反</code>设置为1。</li>
 </ul>
 <p>R-S触发器可以简化为带有输入和输出标志的小框图：</p>
 <p><img src="/images/image-20211204144951072.png" alt="image-20211204144951072"></p>
@@ -418,22 +418,23 @@
 <p>通常把数据端简写为 D，时钟端简写为 Clk，其功能表如下所示。</p>
 <p><img src="/images/image-20211206143143521.png" alt="image-20211206143143521"></p>
 <p>这个电路也就是所谓的<code>电平触发的 D 型锁存器</code>，它表示电路<strong>锁存住一位数据并保持它</strong>，以便将来使用。这个电路也可以被称为 <code>1 位存储器</code>。</p>
-<p>八位锁存器</p>
-<p><img src="/images/image-20211206143111879.png" alt="image-20211206143111879"></p>
-<p>这个锁存器可以一次保存 8 位数。上面的 8 个输入端依次标记为 D0～D7，下面的 8 个输出端被标记为 Q0～Q7。左边的输入是时钟（Clk），时钟信号通常为 0。当时钟信号为 1 时，D 端输入的 8 位值被送到 Q 端输出。当时钟信号为 0 时，这 8 位值将保持不变，直到时钟信号再次被置 1。</p>
-<h3 id="锁存器与加法器结合"><a href="#锁存器与加法器结合" class="headerlink" title="锁存器与加法器结合"></a>锁存器与加法器结合</h3><p>8 位加法器的 8 个 S 输出端既与灯泡相连，又连接到 8 位锁存器的数据（D）输入端。标记为 “保存”（Save）的开关是锁存器的时钟输入，用来存放加法器的运算结果。</p>
+<h3 id="八位锁存器"><a href="#八位锁存器" class="headerlink" title="八位锁存器"></a>八位锁存器</h3><p><img src="/images/image-20211206143111879.png" alt="image-20211206143111879"></p>
+<ul>
+<li>锁存器可以一次保存 8 位数。上面的 8 个输入端依次标记为 D0～D7，下面的 8 个输出端被标记为 Q0～Q7。</li>
+<li>左边的输入是时钟（Clk），时钟信号通常为 0。当时钟信号为 1 时，D 端输入的 8 位值被送到 Q 端输出。当时钟信号为 0 时，这 8 位值将保持不变，直到时钟信号再次被置 1。</li>
+</ul>
+<h3 id="锁存器与加法器结合实现累加"><a href="#锁存器与加法器结合实现累加" class="headerlink" title="锁存器与加法器结合实现累加"></a>锁存器与加法器结合实现累加</h3><p>8 位加法器的 8 个 S 输出端既与灯泡相连，又连接到 8 位锁存器的数据（D）输入端。标记为 “保存”（Save）的开关是锁存器的时钟输入，用来存放加法器的运算结果。</p>
 <p><img src="/images/image-20211206142637448.png" alt="image-20211206142637448"></p>
 <p>标识为 2-1 选择器的方块是让你<strong>用一个开关来选择加法器的 B 端输入是取自第 2 排开关还是取自锁存器的 Q 端输出</strong>。当开关闭合时，就选择了用 8 位锁存器的输出作为 B 端输入。</p>
 <blockquote>
-<p>[了解] 2-1 选择器使用了 8 个如下所示的电路。</p>
+<p>2-1 选择器使用了 8 个如下所示的电路。</p>
 <p><img src="/images/image-20211206143034053.png" alt="image-20211206143034053"></p>
 <p>如果选择端（Select）输入是 1，那么或门的输出和 B 端的输入就是一致的。如果选择端的输入是 0，那么或门的输出则和 A 端输入一致。总结起来如下表所示。</p>
 <p><img src="/images/image-20211206142951989.png" alt="image-20211206142951989"></p>
 </blockquote>
 <h3 id="清零（Clear）的输入信号"><a href="#清零（Clear）的输入信号" class="headerlink" title="清零（Clear）的输入信号"></a>清零（Clear）的输入信号</h3><p>清零信号通常为 0，但当它为 1 时，Q 输出为 0，如下图所示。</p>
 <p><img src="/images/image-20211206142857447.png" alt="image-20211206142857447"></p>
-<p>使用如下：</p>
-<p><img src="/images/image-20211206142520561.png" alt="image-20211206142520561"></p>
+<h3 id="带清零信号的手动累加器"><a href="#带清零信号的手动累加器" class="headerlink" title="带清零信号的手动累加器"></a>带清零信号的手动累加器</h3><p><img src="/images/image-20211206142520561.png" alt="image-20211206142520561"></p>
 <ol>
 <li>首先按下清零开关，这个操作会使锁存器的输出为 0，并且熄灭了所有的灯泡，同时使 8 位加法器的第 2 行输入全为 0。</li>
 <li>然后，通过开关输入第一个加数，并且闭合 “相加” 开关，这个加数的值就反映在灯泡上。</li>
@@ -465,7 +466,7 @@
 <li>如果你想在这个电路里保存一个比特，必须先使控制端为 0。这时，左边的触发器 CP = 1，它可以把任何要保存的比特存入，并立即传送给右边的触发器。但是，右边的触发器不工作。</li>
 <li>现在，如果控制端从 0 跳变到 1，那么一切都颠倒了，左边的触发器拒绝再存入任何比特，右边的触发器被 “激活”，把左边那个触发器的输出保存起来。换句话说，直到这个时候，比特才算是被这个大触发器保存了。</li>
 <li>此后，如果控制端从 1 又回到 0，即下降沿，左边的触发器苏醒过来，但右边的触发器却开始休眠，但它仍有能力维持原先的输出不变。这就是说，控制脉冲的下降沿不会改变这个大触发器的内容。</li>
-<li>一言概之，上面这个二合一的大触发器，不管控制端是 0、1 还是从 1 到 0 的下降沿，它都不能保存比特，除非一种情况，那就是从 0 到 1 的跳变，即上升沿，数据端输入才被保存下来。。</li>
+<li>一言概之，上面这个二合一的大触发器，不管控制端是 0、1 还是从 1 到 0 的下降沿，它都不能保存比特，除非一种情况，那就是<strong>从 0 到 1 的跳变，即上升沿，数据端输入才被保存下来</strong>。</li>
 </ul>
 </blockquote>
 <p>为了便于表示，上升沿 D 触发器的符号如下图所示。</p>
@@ -473,9 +474,13 @@
 <blockquote>
 <p>注意，和普通的 D 触发器不同，它的控制端 CP 旁有一个三角形，表明它是边沿触发的。</p>
 </blockquote>
-<h3 id="T-触发器-与-计数器"><a href="#T-触发器-与-计数器" class="headerlink" title="T 触发器 与 计数器"></a>T 触发器 与 计数器</h3><p>将上升沿 D 触发器进行改造，把振荡器的输出与边沿触发的 D 型触发器的时钟端输入连接，同时把 Q反端输出连接到本身的 D 输入端。电路左侧也即我们前面介绍的振荡器，可以提供 0 和 1 之间变化的输出。</p>
+<h3 id="T-触发器"><a href="#T-触发器" class="headerlink" title="T 触发器"></a>T 触发器</h3><p>将上升沿 D 触发器进行改造，把振荡器的输出与边沿触发的 D 型触发器的时钟端输入连接，同时把 Q反端输出连接到本身的 D 输入端。电路左侧也即我们前面介绍的振荡器，可以提供 0 和 1 之间变化的输出。</p>
 <p><img src="/images/image-20211206172723461.png" alt="image-20211206172723461"></p>
-<p>分析上述电路，我们采用的是一个上升沿 D 触发器，只在上升沿时才触发。我们假设初始情况为 Q – 1，Q反 – 0，每当振荡器提供上升沿信号时，Clk 变为 1，D 端输出进入触发器，Q 转变为 0，Q反转变为 0，直至下一个上升沿，两者之间的值再一次翻转。</p>
+<p>分析上述电路，我们采用的是一个上升沿 D 触发器，只在上升沿时才触发。</p>
+<ol>
+<li>假设初始情况为 Q – 1，Q反 – 0，</li>
+<li>每当振荡器提供上升沿信号时，Clk 变为 1，D 端输出进入触发器，Q 转变为 0，Q反转变为 0，直至下一个上升沿，两者之间的值再一次翻转。</li>
+</ol>
 <p><img src="/images/image-20211206173055602.png" alt="image-20211206173055602"></p>
 <p>结合振荡器的时序图，我们可以得到下图所示的时序图：</p>
 <p><img src="/images/image-20211206173233680.png" alt="image-20211206173233680"></p>
@@ -483,30 +488,35 @@
 <p>如果这个振荡器的频率是 20Hz，那么 Q 的输出频率是它的一半，即 10Hz，由于这个原因，这种电路称为<code>分频器</code>（frequency divider）。</p>
 <p>上述电路也被叫做 T 触发器，“T” 是英语单词 “Toggle” 的首字母，意思是 “反复”。</p>
 </blockquote>
-<p>当然，分频器的输出可以作为另一个分频器的 Clk 输入，并再一次进行分频。下图即为将三个分频器连接在一起的示意图。</p>
+<h3 id="T触发器构成的计数器"><a href="#T触发器构成的计数器" class="headerlink" title="T触发器构成的计数器"></a>T触发器构成的计数器</h3><p>分频器的输出可以作为另一个分频器的 Clk 输入，并再一次进行分频。下图即为将三个分频器连接在一起的示意图。</p>
 <p><img src="/images/image-20211206173719666.png" alt="image-20211206173719666"></p>
 <blockquote>
-<p>需要注意的时上述触发器都是上升沿触发器，只在上升沿时触发，因此每次触发都是一次制，不会持续下去。分析上述电路，当振荡器输出上升沿信号时，Clk 转变为 1，Q1 和 Q反的值翻转，但翻转<strong>后续触发器不一定触发</strong>，因为我们用的是上升沿触发器，只有 Q1 从 1 转变为 0（对应着 Q反从 0 转变为 1）时才触发后面的触发器。后续触发器同理，因此后续触发器无法与前面的触发器保持触发的一致，存在滞后，后面的触发器的频率是前面的一半。</p>
+<ul>
+<li>注意：上述触发器都是上升沿触发器，只在上升沿时触发，因此每次触发都是一次制，不会持续下去。</li>
+<li>分析上述电路，当振荡器输出上升沿信号时，Clk 转变为 1，Q1 和 Q反的值翻转，但翻转<strong>后续触发器不一定触发</strong>，因为我们用的是上升沿触发器，只有 Q1 从 1 转变为 0（对应着 Q反从 0 转变为 1）时才触发后面的触发器。后续触发器同理，因此后续触发器无法与前面的触发器保持触发的一致，<strong>存在滞后</strong>，后面的触发器的频率是前面的一半。</li>
+</ul>
 </blockquote>
 <p>上图顶部的 4 个信号变化规律如下图所示。这个电路会重复这一过程周而复始地变化下去。</p>
 <p><img src="/images/image-20211206174806955.png" alt="image-20211206174806955"></p>
-<p>试着给这些信号标上 0 和 1，把这个图顺时针旋转 90°，然后读一读每一行的 4 位数字，它们分别对应了十进制中的 0～15 中的一个数。</p>
+<p>试着给这些信号标上 0 和 1，接着把这个图顺时针旋转 90°，然后读一读每一行的 4 位数字，它们分别对应了十进制中的 0～15 中的一个数。</p>
 <p><img src="/images/image-20211206175816123.png" alt="image-20211206175816123"></p>
 <p>把 8 个触发器连接在一起，然后放入一个盒子中，构成了一个 8 位计数器。</p>
 <p><img src="/images/image-20211206180043808.png" alt="image-20211206180043808"></p>
-<blockquote>
-<p>这个计数器称为 “8 位行波计数器”，因为每一个触发器的输出都是下一个触发器的时钟输入。变化是在触发器中一级一级地顺序传递的，最后一级触发器的变化必定会有一些延迟，更先进的计数器是 “并行（同步）计数器”，这种计数器的所有输出是在同一时刻改变的。</p>
-</blockquote>
+<p>这个计数器称为<code>8 位行波计数器</code>，因为每一个<strong>触发器的输出都是下一个触发器的时钟输入</strong>。变化是在触发器中一级一级地顺序传递的，最后一级触发器的变化必定会有一些延迟，更先进的计数器是 “并行（同步）计数器”，这种计数器的所有输出是在同一时刻改变的。</p>
 <blockquote>
 <p>计算振荡器的频率：如果把一个振荡器连接到 8 位计数器的时钟输入端上，那么这个计数器会显示出振荡器经过的循环次数。使用计数器确定振荡器频率的最简单的方法就是把计数器的 8 个输出端分别接到 8 只灯泡上。当所有的输出都是 0 时（即所有灯泡都是熄灭的），启动一个秒表计时；当所有灯泡都点亮时，停止秒表计时。这就是振荡器循环 256 次所需要的时间（00000000~11111111）。</p>
 </blockquote>
-<p>随着触发器功能的增加，它的结构也变得更加复杂，下面给出了一个带预置和清零功能的边沿型 D 触发器。</p>
+<h3 id="带预置和清零功能的边沿型-D-触发器"><a href="#带预置和清零功能的边沿型-D-触发器" class="headerlink" title="带预置和清零功能的边沿型 D 触发器"></a>带预置和清零功能的边沿型 D 触发器</h3><p>随着触发器功能的增加，它的结构也变得更加复杂，下面给出了一个带预置和清零功能的边沿型 D 触发器。</p>
 <p><img src="/images/image-20211206181424683.png" alt="image-20211206181424683"></p>
-<p>通常情况下，<strong>预置和清零信号输入会覆盖时钟和数据端输入</strong>，且两个输入都为 0，当预置信号为 1 时，Q 变为 1，Q反变为 0。当清零信号为 1，Q 变为 0，Q反变为1（同 R-S 触发器中的 S 和 R 输入端一样，预置和清零信号不能同时为 1）。除此之外，该触发器工作原理是和普通边沿 D 触发器是一样的。</p>
+<ul>
+<li>通常情况下，<strong>预置和清零信号输入会覆盖时钟和数据端输入</strong>，且两个输入都为 0，当预置信号为 1 时，Q 变为 1，Q反变为 0。</li>
+<li>当清零信号为 1，Q 变为 0，Q反变为1（同 R-S 触发器中的 S 和 R 输入端一样，预置和清零信号不能同时为 1）。</li>
+<li>除此之外，该触发器工作原理是和普通边沿 D 触发器是一样的。</li>
+</ul>
 <p> 电路图符号可以简单地用下图来代替。</p>
 <p><img src="/images/image-20211206181516765.png" alt="image-20211206181516765"></p>
 <p>现在，我们已经懂得如何使用继电器来做加法、减法和计数了。</p>
-<h2 id="存储器组织"><a href="#存储器组织" class="headerlink" title="存储器组织"></a>存储器组织</h2><h3 id="八位锁存器"><a href="#八位锁存器" class="headerlink" title="八位锁存器"></a>八位锁存器</h3><p>前面说的一位锁存器可以存储一位数据</p>
+<h2 id="存储器组织"><a href="#存储器组织" class="headerlink" title="存储器组织"></a>存储器组织</h2><h3 id="8位锁存器"><a href="#8位锁存器" class="headerlink" title="8位锁存器"></a>8位锁存器</h3><p>前面说的一位锁存器可以存储一位数据</p>
 <p><img src="/images/9d6ab6ce-image-20211206143225765.png" alt="image-20211206143225765"></p>
 <p>为了表达清楚，我们为其重命名：</p>
 <p><img src="/images/image-20211206210754824.png" alt="image-20211206210754824"></p>
@@ -517,13 +527,12 @@
 </ul>
 <p>简记为：</p>
 <p><img src="/images/image-20211206210822924.png" alt="image-20211206210822924"></p>
-<p>多位锁存器：</p>
+<p>8位锁存器：</p>
 <p><img src="/images/image-20211206211008429.png" alt="image-20211206211008429"></p>
 <p>简记为：</p>
 <p><img src="/images/image-20211206211058957.png" alt="image-20211206211058957"></p>
 <p><img src="/images/image-20211206211117669.png" alt="image-20211206211117669"></p>
-<h3 id="8选1锁存器-与-RAM"><a href="#8选1锁存器-与-RAM" class="headerlink" title="8选1锁存器 与 RAM"></a>8选1锁存器 与 RAM</h3><p>上面的锁存器是一次性存储8位二进制。</p>
-<p>现在希望：通过某种方式连接8个1位锁存器，使自己能狗从一个输入信号端写入数据，还能从一个输出信号端鉴别出数据。</p>
+<h3 id="8选1锁存器"><a href="#8选1锁存器" class="headerlink" title="8选1锁存器"></a>8选1锁存器</h3><p>上面的锁存器是一次性存储8位二进制。现在希望：<strong>通过某种方式连接8个1位锁存器，使之能够从一个输入信号端写入数据，还能从一个输出信号端鉴别出数据</strong>。</p>
 <p><img src="/images/image-20211206212812990.png" alt="image-20211206212812990"></p>
 <blockquote>
 <p>这里开关的作用为：通过3个开关连通与闭合的排列组合，总共可表示出8个不同的值：000、001、010、011、100、101、110和111，以此对顶部的输入进行8选1操作。</p>
@@ -539,7 +548,7 @@
 </ul>
 <p><img src="/images/image-20211206214634527.png" alt="image-20211206214634527"></p>
 <blockquote>
-<p>3-8译码器（3-to-8 Decoder）：与8-1选择器功能类似，3-8译码器的输出端口共有8个，在任何时刻，译码器只会有一个锁存器的输出为1，其余均为0。每一个输出端的结果都是由S0、S1、S2这三个信号的排列组合决定的。而数据的输出和输入一致，如下图所示。</p>
+<p><code>3-8译码器</code>（3-to-8 Decoder）：与8-1选择器功能类似，3-8译码器的输出端口共有8个，在任何时刻，译码器只会有一个锁存器的输出为1，其余均为0。每一个输出端的结果都是由S0、S1、S2这三个信号的排列组合决定的。而数据的输出和输入一致，如下图所示。</p>
 <p><img src="/images/image-20211206214035676.png" alt="image-20211206214035676"></p>
 </blockquote>
 <p>将上图用简图表示：</p>
@@ -551,16 +560,17 @@
 <li>在输出端，8-1选择器通过地址来选择8个锁存器中的一个，最后将其输出。</li>
 </ul>
 </blockquote>
-<p>这种配置下的锁存器在有的资料中也被称为<code>读/写存储器</code>（read/write memory），但更普遍的叫法是随机访间存储器（Random Access Memory，<code>RAM</code>）。可以认为我们讨论的这种存储器是可存储8个独立比特的RAM，它的简化结构图如下所示：</p>
+<h3 id="8×1-RAM"><a href="#8×1-RAM" class="headerlink" title="8×1 RAM"></a>8×1 RAM</h3><p>上述配置下的锁存器在有的资料中也被称为<code>读/写存储器</code>（read/write memory），但更普遍的叫法是随机访间存储器（Random Access Memory，<code>RAM</code>）。可以认为我们讨论的这种存储器是可存储8个独立比特的RAM，它的简化结构图如下所示：</p>
 <p><img src="/images/image-20211206215530282.png" alt="image-20211206215530282"></p>
-<h3 id="通过共享地址组成2位宽的RAM阵列"><a href="#通过共享地址组成2位宽的RAM阵列" class="headerlink" title="通过共享地址组成2位宽的RAM阵列"></a>通过共享地址组成2位宽的RAM阵列</h3><p><img src="/images/image-20211206220152982.png" alt="image-20211206220152982"></p>
+<h3 id="8×2-RAM"><a href="#8×2-RAM" class="headerlink" title="8×2 RAM"></a>8×2 RAM</h3><p>通过共享地址组成2位宽的RAM阵列：</p>
+<p><img src="/images/image-20211206220152982.png" alt="image-20211206220152982"></p>
 <p>把这两个 8×1 的 RAM 阵列的地址和输出都分别看成一个整体，这样就得到了一个 8×2 的 RAM 阵列：</p>
 <p><img src="/images/image-20211206220229606.png" alt="image-20211206220229606"></p>
 <p>这个 RAM 阵列<strong>可存储的二进制数依然是 8 个，但每个数的位宽为 2 位</strong>。</p>
 <blockquote>
 <p>分析上述电路结构，<strong>我们可以发现同一个地址对应着两个 8×1 RAM，因此我们针对单个地址操作时，相当于同时操作两个比特位</strong>。而两个 RAM 都有自己的数据输入，因此可以存入不同的数据。</p>
 </blockquote>
-<h3 id="16×1-的RAM阵列"><a href="#16×1-的RAM阵列" class="headerlink" title="16×1 的RAM阵列"></a>16×1 的RAM阵列</h3><p>使用一个 2-1 选择器和一个 1-2 译码器就可以把它们按照单个锁存器连接方式进行集成</p>
+<h3 id="16×1-RAM"><a href="#16×1-RAM" class="headerlink" title="16×1 RAM"></a>16×1 RAM</h3><p>使用一个 2-1 选择器和一个 1-2 译码器就可以把它们按照单个锁存器连接方式进行集成。</p>
 <p><img src="/images/image-20211206222527147.png" alt="image-20211206222527147"></p>
 <p><strong>“选择” 端之所以连接到译码器和选择器，主要作用是在两个 8×1 RAM 阵列中选择一个，本质上它扮演了第 4 根地址线的角色。</strong></p>
 <p>因此这种结构实质上是一种 16×1 的 RAM 阵列，如下图所示。</p>
@@ -568,7 +578,24 @@
 <p>上图所示的 RAM 阵列存储容量为 16 个单位，每个单位占 1 位。</p>
 <p>RAM 阵列的存储容量与其地址输入端的数量有直接的联系。有两个地址输入端时，可以存储 4 个单位的数据；有 3 个地址输入端时，可以存储 8 个单位的数据；有 4 个地址输入端时，可以存储 16 个单位的数据。</p>
 <p>即：<strong>RAM阵列的存储容量 = 2 ^ 地址输入端的个数</strong></p>
-<p>基于上述介绍，我们可以搭建更大规模的 RAM 阵列，如下图所示。这个 RAM 阵列可以存储 8192 个比特的信息。</p>
+<h3 id="1024×8-RAM"><a href="#1024×8-RAM" class="headerlink" title="1024×8 RAM"></a>1024×8 RAM</h3><p>对比一下8×1，8×2，16×1 RAM：</p>
+<p><img src="/images/7d7007af-image-20211206215530282.png" alt="image-20211206215530282"></p>
+<p><img src="/images/02e0091a-image-20211206220229606.png" alt="image-20211206220229606"></p>
+<p><img src="/images/0ec2fabe-image-20211206222747743.png" alt="image-20211206222747743"></p>
+<ul>
+<li><code>基于共享地址的拓展方式</code>：保持地址线数量不变，同一个地址能存储更多的bit数</li>
+<li><code>基于增加地址线的拓展方式</code>：保持同一个地址的bit数不变，增加地址线数量</li>
+</ul>
+<p>所以：</p>
+<ul>
+<li>8×1 RAM：有<code>log8</code>条地址线，每个地址线能储存<code>1</code>个bit。</li>
+<li>8×2 RAM：有<code>log8</code>条地址线，每个地址线能储存<code>2</code>个bit。</li>
+<li>16×1 RAM：有<code>log16</code>条地址线，每个地址线能储存<code>1</code>个bit。</li>
+</ul>
+<blockquote>
+<p>现代计算机中，1byte=8bit。因此，<strong>现代计算机的每条地址线都被设计成储存8bit</strong>。</p>
+</blockquote>
+<p>我们可以搭建更大规模的 RAM 阵列。下图这个 RAM 阵列可以存储 1024×8=8192 个比特的信息。</p>
 <p><img src="/images/image-20211206223606267.png" alt="image-20211206223606267"></p>
 <h2 id="自动操作"><a href="#自动操作" class="headerlink" title="自动操作"></a>自动操作</h2><p>用来累加多个数的锁存器称做<code>累加器</code>（accumulator）。</p>
 <h3 id="将-RAM-阵列的数据输出到累加器"><a href="#将-RAM-阵列的数据输出到累加器" class="headerlink" title="将 RAM 阵列的数据输出到累加器"></a>将 RAM 阵列的数据输出到累加器</h3><blockquote>
@@ -797,6 +824,366 @@
 
 
 <p>上面给出的语句其实就是汇编语言（assembly language）。</p>
+<h2 id="两种典型的微处理器"><a href="#两种典型的微处理器" class="headerlink" title="两种典型的微处理器"></a>两种典型的微处理器</h2><p>寄存器是计算机必不可少的部件吗？</p>
+<p>从理论上讲，这些寄存器不是必需的，前面搭建的计算机也没有用到它们，但在实际应用中使用它们将带来很大的方便。很多计算机程序都同时用到多个数据，将这些数据存放在寄存器比存放在存储器更便于访问，因为程序访问内存的次数越少其执行速度就越快。</p>
+<h3 id="8080处理器简介"><a href="#8080处理器简介" class="headerlink" title="8080处理器简介"></a>8080处理器简介</h3><ul>
+<li>在前面设计的计算机中，所有的指令（除了HLT指令）都是3个字节长，包括1字节的操作码和2字节的地址。</li>
+<li>在8080中，指令的长度可以是1字节、2字节，或者3字节。<ul>
+<li>有些指令使8080从存储器的一个特定地址读取字节到微处理器，</li>
+<li>有些指令使8080将一个字节从微处理器写入存储器的特定地址；</li>
+<li>还有些指令使8080在其内部执行而不需要访问RAM。</li>
+</ul>
+</li>
+</ul>
+<p>8080处理器：</p>
+<ul>
+<li>拥有16条地址线。因为没有使用<code>基础地址+偏移地址</code>的方式，所以能访问2^16=64KB的内存。</li>
+<li>每条指令的操作码为8位，拥有244条指令。</li>
+<li>拥有6个8位和1个16位的寄存器。HL寄存器为H和L两个寄存器组合而成，因此为16位。<code>HL通常用来存放内存地址</code>。</li>
+</ul>
+<blockquote>
+<p>当8080以最高速度2MHz运行时，每个时钟周期是500ns（1÷2,000,000=0.000000500s）。前面的计算机的所有指令都需要4个时钟周期，8080的每条指令需要4<del>18个时钟周期，这就意味着每条指令的执行时间为2</del>9μs。</p>
+</blockquote>
+<h3 id="8080MOV操作码的位模式"><a href="#8080MOV操作码的位模式" class="headerlink" title="8080MOV操作码的位模式"></a>8080MOV操作码的位模式</h3><p>众所周知，8080中，Load指令占3字节：</p>
+<ul>
+<li>第一个字节是操作码，</li>
+<li>其后的两个字节是要Load到处理器的操作数的16位地址（立即数）。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LDA A，[aaaa]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>不同于8086，8080的MOV指令的功能<code>仅限于</code><strong>把一个寄存器的内容转移到另一个寄存器</strong>。这就造成了8080中的MOV指令只需占一个字节。</p>
+<ul>
+<li>其<code>位模式</code>为：01dddsss</li>
+<li>ddd表示三位目标寄存器的代码，sss表示三位源寄存器的代码</li>
+<li>eg：寄存器L的代码为101，寄存器E的代码为011。因此<code>MOV L, E</code>对应的操作码为01+101+011，即01101011，即6Bh。</li>
+</ul>
+<p>我们可以猜测8080内部可能是这样的：<strong>标记为sss的3位用于8-1数据选择器，标记为ddd的3位用来控制3-8译码器，以此确定哪一个寄存器锁存了值。</strong></p>
+<h3 id="8080MVI操作码的位模式"><a href="#8080MVI操作码的位模式" class="headerlink" title="8080MVI操作码的位模式"></a>8080MVI操作码的位模式</h3><p>mvi：move immediate。传送立即数。</p>
+<p>8086中的mov指令的源操作数代码，支持立即数，寄存器和内存地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov a, 3737h</span><br><span class="line">mov a, b</span><br><span class="line">mov a, [3737h]</span><br></pre></td></tr></table></figure>
+
+<p>但是因为8080内存地址为16位，而寄存器只有8位，所以mvi是不支持转移内存地址的。</p>
+<p>mvi指令是双字节指令，第一个字节位操作码，第二个是立即数。</p>
+<table>
+<thead>
+<tr>
+<th>操作码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>06</td>
+<td>MVI B, xx</td>
+</tr>
+<tr>
+<td>0E</td>
+<td>MVI C, xx</td>
+</tr>
+<tr>
+<td>16</td>
+<td>MVI D, xx</td>
+</tr>
+<tr>
+<td>1E</td>
+<td>MVI E, xx</td>
+</tr>
+<tr>
+<td>26</td>
+<td>MVI H, xx</td>
+</tr>
+<tr>
+<td>2E</td>
+<td>MVI L, xx</td>
+</tr>
+<tr>
+<td>36</td>
+<td>MVI [HL], xx</td>
+</tr>
+<tr>
+<td>3E</td>
+<td>MVI A, xx</td>
+</tr>
+</tbody></table>
+<p>所以指令<code>MVI E, 37h</code>对应的操作码为：<code>1E37h</code>。</p>
+<p>LXI指令：LXI是 Load Extended Immediate I的缩写，即加载扩展的立即数。将把操作码后的两个字节保存到16位寄存器对中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LXI BC, 527AH</span><br><span class="line"></span><br><span class="line">; 上述命令等价于：</span><br><span class="line">MVI B, 52H</span><br><span class="line">MVI C, 7AH</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="8080高位的ADC指令"><a href="#8080高位的ADC指令" class="headerlink" title="8080高位的ADC指令"></a>8080高位的ADC指令</h3><ul>
+<li>加法：ADD</li>
+<li>进位加法：ADC</li>
+<li>减法：SUB</li>
+<li>借位减法：SBB</li>
+</ul>
+<p><strong>在8080中，使用ADC指令和SBB指令可以对16位数、24位数、32位数甚至更高位的数进行加法减法运算</strong>。</p>
+<p>假设现在<code>寄存器对</code>BC和DE各自保存了一个16位的数，我们要把两个数相加，并且把结果保存在<code>寄存器对</code>BC，具体做法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MOV A, C  ; 低字节操作</span><br><span class="line">MOV A, E</span><br><span class="line">MOV C, A</span><br><span class="line">MOV A, B  ; 高字节操作</span><br><span class="line">MOV A, D</span><br><span class="line">MOV B, A </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="8080的标志位"><a href="#8080的标志位" class="headerlink" title="8080的标志位"></a>8080的标志位</h3><p>一般一个简单的ALU会有三个标志位：</p>
+<ul>
+<li>溢出标志位</li>
+<li>零标志位</li>
+<li>负数标志位</li>
+</ul>
+<p><img src="/images/1580877210170.png" alt="1580877210170"></p>
+<p>但是8080中，有5个标志位：</p>
+<ul>
+<li>CF：进位标志。当ADD和ADC运算产生进位或者SUB和SBB运算不发生借位时，CF置1。</li>
+<li>ZF：零标志。如果运算结果为0，ZF置1。</li>
+<li>SF：符号标志。运算结果最高有效位位1，SF置1，表示运算结果为负数。</li>
+<li>PF：奇偶标志。如果运算结果中1的位数是偶数，PF置1，表示运算结果具有偶数性，反之为0。</li>
+<li>AF：辅助标志。运算结果的低4位 向 高4位 有进位时，AF置1。</li>
+</ul>
+<blockquote>
+<p>因为ALU是<code>算术逻辑单元</code>，所以只有运算相关的指令能影响标志位(特殊指令除外)。所以LDA、SDA、MOV都不会影响标志位，ADD、SUB、ADC、SBB会影响标志位。</p>
+</blockquote>
+<p>8080中，有一个专门的8位寄存器用来存放所有的标志位，该寄存器称为<code>程序状态字</code>(PSW)。</p>
+<p>8080有5个标志位，其中有4个可用于条件跳转指令。8080支持9种不同的跳转指令，包括了非条件跳转指令，还包含根据ZF（ Zero Flag）、CF（ Carry Flag）、PF（ Parity Flag）以及SF（ Sign Flag）是否为1而跳转的条件跳转指令。</p>
+<h3 id="根据访问顺序对存储器分类"><a href="#根据访问顺序对存储器分类" class="headerlink" title="根据访问顺序对存储器分类"></a>根据访问顺序对存储器分类</h3><ul>
+<li><p>随机访问储存器：RAM。只要提供存储器地址，微处理器可以用非常简便的方式访问存储器的任意存储单元。</p>
+</li>
+<li><p>顺序访问存储器：SAM。数据存储设备按顺序读取存储的数据。</p>
+<blockquote>
+<ul>
+<li>例如DVD，CD，磁带甚至<strong>硬盘</strong>(这也能解释为什么机械硬盘需要使用转针转到指定位置才能读取出数据)。</li>
+<li>与随机存取存储器相比，顺序存储器的主要优点是通常便宜得多。 在既定价格和既定物理尺寸限制的情况下，这也有可能获得更多数据容量。 顺序访问存储器也更常用于物理存储形式，这种形式不易受到物理损坏的影响，包括电涌或功率损耗。</li>
+<li>在日常项目开发中在设计存储时，一定要考虑顺序和随机，优化其性能达到最高。例如，当前大多数数据库使用的都是传统的机械磁盘。因此整个系统设计要尽可能顺序I/O，避免昂贵的寻道时间和旋转延迟的开销。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>后进先出存储器：栈。常用于汇编中的PUSH和POP指令，用来临时存放数据。</p>
+</li>
+</ul>
+<h3 id="8080中的后进先出存储器"><a href="#8080中的后进先出存储器" class="headerlink" title="8080中的后进先出存储器"></a>8080中的后进先出存储器</h3><ul>
+<li>8080的后进先出存储器(即栈)是怎么实现的呢？<strong>栈其实就是一段普通的RAM存储空间，只是这段空间相对独立不另作他用</strong>。</li>
+<li>和8086一样，使用<code>栈指针寄存器</code>(SP, Stack Pointer)<strong>对这段存储空间寻址</strong>。</li>
+</ul>
+<blockquote>
+<p>8080连接的是一个64KB的存储器，在使用栈时，一般把栈指针初始化为0000h。当执行第一条PUSH指令时，堆栈指针会减1变为 FFFFh，即存储器的最后一个的存储单元。这时，堆栈的初始位置将会是存储器的最高地址，因为<strong>程序的代码通常从0000h开始存放</strong>，因此两者将保持非常远的距离。</p>
+</blockquote>
+<h3 id="8080的CALL指令"><a href="#8080的CALL指令" class="headerlink" title="8080的CALL指令"></a>8080的CALL指令</h3><ul>
+<li>Call（调用）指令：和Jump指令类似。执行Call指令后，<strong>程序计数器（ Program Counter，PC）会加载一个新的地址，而处理器会把原来的地址保存到堆栈</strong>。</li>
+<li>这种策略使Call指令有效地记录了“从何处跳转”（ where it jumped from），即<strong>保存了跳转之前的相关信息</strong>。堆栈中保存的地址可以使处理器最后返回到转移之前的位置。</li>
+<li>用于返回的指令称为 Return（返回）。 Return指令从堆栈中弹出两个字节，并把它们加载到PC中，这样就完成了返回到跳转点的工作。</li>
+<li>对于任何处理器来说，Call和 Return指令都非常重要。在它们的帮助下，程序员可以在程序中使用子程序（ subroutine），子程序是一段频繁使用的完成特定功能的代码。对于汇编语言来说，子程序是其基本的组成部分。</li>
+</ul>
+<h3 id="8080处理器与外围设备的通信"><a href="#8080处理器与外围设备的通信" class="headerlink" title="8080处理器与外围设备的通信"></a>8080处理器与外围设备的通信</h3><ul>
+<li><p>除存储器外，与微处理器连接的所有设备都可以称为外围设备</p>
+</li>
+<li><p><strong>外围设备配备了与存储器类似的接口</strong>，微处理器通过与某种外围设备对应的特定地址（即接口）对其进行读写操作。在某些微处理器中，外围设备实际上占用了一些通常用来寻址存储器的地址，这种结构称作内存映像 I/O。</p>
+</li>
+<li><p>在8080中，除了常规的65536个地址外，另外增加了256个地址专门用来访问输入/输出设备，它们被称作I/O端口（I/ O ports）</p>
+</li>
+<li><p>I/O的访问方式与存储器的访问方式不同，两者的区分由8228系统控制芯片的<strong>锁存信号</strong>来标识。</p>
+</li>
+<li><p>OUT（输出）指令<strong>把累加器中的内容写入到紧跟该指令后的字节所寻址的端口</strong>（port）。IN（输入）指令把一个字节从端口读入到累加器。它们的格式如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>操作码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>D3</td>
+<td>OUT PP</td>
+</tr>
+<tr>
+<td>DB</td>
+<td>IN PP</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>外围设备有时侯需要获得处理器的注意。</p>
+<blockquote>
+<p>例如，当你按下键盘的某个键时，处理器应该马上注意到这个事件。</p>
+<p>这个过程由一个称为<code>中断</code>（ Interrupt）的机制实现，这是由外围设备产生的信号，连接至8080的INT输入端。当8080复位后，就不再响应中断。程序必须执行EI（ Enable Interrupt）指令来允许中断，然后执行DI（ Disable Interrupts）禁止中断。</p>
+</blockquote>
+</li>
+<li><p>8080的INTE输出信号用来指明何时允许中断。当外围设备需要中断微处理器的当前工作时:</p>
+<ol>
+<li>外围设备需要把8080的INT输入信号置为1。</li>
+<li>8080通过从存储器中取出指令来响应该中断，同时控制信号指明有中断发生。</li>
+</ol>
+</li>
+</ul>
+<h3 id="Motorola-6800微处理器简介"><a href="#Motorola-6800微处理器简介" class="headerlink" title="Motorola 6800微处理器简介"></a>Motorola 6800微处理器简介</h3><ul>
+<li>6800有一个16位的程序计数器PC、一个16位的堆栈指针SP、一个8位的状态寄存器（用来保存标志位），以及两个8位的累加器A、B。</li>
+<li>A和B都可以用做累加器（而不是把B作为普通的寄存器），因为A和B的功能完全相同，任何用A做的工作都可以用B实现。</li>
+<li>与8080不同，6800没有设置其他的8位寄存器。</li>
+</ul>
+<p>6800处理器和8080处理器的LDA指令：</p>
+<ul>
+<li>操作码不同：8080的操作码是3Ah，而6800的操作码是B6h。</li>
+<li>地址的处理方式不同：8080假设低字节在前，高字节在后；而6800假设高字节在前，低字节在后。这就是所谓的<code>大端储存</code>和<code>小端存储</code></li>
+</ul>
+<h3 id="处理器提高运行速度的技术"><a href="#处理器提高运行速度的技术" class="headerlink" title="处理器提高运行速度的技术"></a>处理器提高运行速度的技术</h3><ul>
+<li>现代处理器使用多种技术来提高其运行速度。其中一种就是流水线技术（pipelining），即<strong>处理器在执行一条指令的同时读取下一条指令</strong>，尽管 Jump 指令在一定程度上会改变这种流程。</li>
+<li>现代处理器还包括一个 Cache（高速缓冲存储器），它是一个<strong>设置在处理器内部，访问速度非常快的RAM阵列</strong>，用来存放处理器最近要执行的指令。由于计算机程序经常执行一些小的指令循环，使用 Cache 可以避免反复加载这些指令。</li>
+</ul>
+<h2 id="总线"><a href="#总线" class="headerlink" title="总线"></a>总线</h2><ul>
+<li>计算机中各部件按照功能被分别安装在两个或更多的电路板上。这些电路板之间通过<code>总线</code>（bus）通信。</li>
+<li>总线就是数字信号的集合，而这些信号被提供给计算机上的每块电路板。</li>
+<li>通常把这些信号划分为如下四类。<ul>
+<li><strong>地址信号</strong>。这些信号是由微处理器产生，通常用来<strong>对 RAM 进行寻址操作</strong>，当然也可以用来对连接到计算机的其他设备进行寻址操作。</li>
+<li><strong>数据输出信号</strong>。这些信号也是由微处理器产生的，用来<strong>把数据写入到 RAM 或其他设备</strong>。</li>
+<li><strong>数据输入信号</strong>。这些信号是由计算机的其他部分提供的，并由微处理器读取。通常情况下，数据输入信号由 RAM 输出，这就解释了微处理器是怎样从内存中读取内容的。其实，其他部件也可以<strong>给微处理器提供数据输入信号</strong>。</li>
+<li><strong>控制信号</strong>。控制信号是多种多样的，通常与计算机内所用的特定的微处理器相对应。控制信号可以产生于微处理器，也可以由与微处理器通信的其他设备产生。比如，当微处理器要<strong>把一些数据写入到特定内存单元</strong>时，它所使用的信号就是控制信号。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>总线还可以为计算机上不同电路板供电。</p>
+</blockquote>
+<h3 id="处理中断信号"><a href="#处理中断信号" class="headerlink" title="处理中断信号"></a>处理中断信号</h3><ol>
+<li>当某按键按下时，键盘可能就会产生个中断信号。</li>
+<li>8080的电路板上有一个被称为 Intel 8214优先级中断控制单元的芯片，就是专门用来处理中断的。当中断发生时，这个芯片会产生一个中断信号并送给8080处理器。</li>
+<li>8080处理器识别出这个中断后，此芯片就会提供一个RST（ Restart，重启）指令，在这条指令的作用下，微处理器会把当前程序计数器的值保存下来，并依据中断类型，跳转到地址0000、0008h、0010h、0018h、0020h、0028h、0030h或0038h处执行。</li>
+</ol>
+<h3 id="存储器芯片"><a href="#存储器芯片" class="headerlink" title="存储器芯片"></a>存储器芯片</h3><ul>
+<li>RAM 阵列有地址输入、数据输入，以及数据输出信号，另外还有一个<strong>用来把数据写入存储器的控制信号</strong>。</li>
+<li>RAM 阵列能存放的数据的数量 是 地址输入信号个数的2次幂。</li>
+</ul>
+<p>20 世纪 70 年代中期，2102 是用于家用计算机的一款流行的存储器芯片。其管脚分布如下图所示。</p>
+<p><img src="/images/image-20211210154920506.png" alt="image-20211210154920506"></p>
+<ul>
+<li>存储容量可以达到 1024 位，这个数值可以根据地址信号（A0～A9）、数据输出（DO）和数据输入（DI）信号（输入和输出复用一个信号线）的数目计算出来。</li>
+<li>访问时间（read access time，指<strong>从芯片接收到地址信息到输出有效数据所需的时间</strong>）各有差异，从 350 ns～1000 ns 不等。</li>
+<li>当需要从存储器中读取数据时，<code>R/W反</code>信号置 1；当向芯片中写入数据的时候，这个信号要置 0，而且至少要持续 170～550 ns 的时间，这是由所使用的 2102 芯片的型号决定的。</li>
+<li><code>CS反</code>信号称为<code>片选信号</code>。该信号置 1 时，存储器芯片不被选中，也就是说，此时存储器不会响应<code>R/W反</code>信号。</li>
+</ul>
+<h3 id="储存体"><a href="#储存体" class="headerlink" title="储存体"></a>储存体</h3><p>下图是我们在前面制造的RAM阵列：</p>
+<p><img src="/images/f31b5cd9-image-20211206223606267.png" alt="image-20211206223606267"></p>
+<p>下图是8个2102芯片组成的阵列：</p>
+<p><img src="/images/image-20211210162253933.png" alt="image-20211210162253933"></p>
+<p>这是一个1024x8位的RAM阵列，或者说是容量为1KB的RAM。</p>
+<ul>
+<li><p>一块S-100板就能容纳64个1KB的RAM。这样一来，就提供了一个8KB的存储空间。</p>
+</li>
+<li><p>但一般我们不这么做，更合适的方法是用 32 个芯片组成一个 4 KB 的存储器。</p>
+</li>
+<li><p>这种为了<strong>存储完整的字节</strong>，而连接在一起的芯片的集合，称为<code>存储体</code>（bank）。</p>
+<blockquote>
+<p>也就是说，一般一个存储体大小为1字节。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="4KB存储器板的地址信号划分"><a href="#4KB存储器板的地址信号划分" class="headerlink" title="4KB存储器板的地址信号划分"></a>4KB存储器板的地址信号划分</h3><p>一个包含4个存储体，大小为4KB的存储器板，则存储器板上的 16 位地址信号就有如下所示的功能：</p>
+<p><img src="/images/image-20211210164751248.png" alt="image-20211210164751248"></p>
+<ul>
+<li><p>A0～A9 直接与 RAM 芯片相连接；</p>
+<blockquote>
+<p>4KB存储器板分成了4个存储体，每个存储体的大小为1KB。所以需要10条地址线(2^10=1KB)</p>
+</blockquote>
+</li>
+<li><p>A10 和 A11 用来选择 4 个存储体中要被寻址的那一个；</p>
+</li>
+<li><p>A12～A15 确定哪些地址申请用这块存储器板，换言之，就是<strong>这块存储器板响应哪些地址</strong>。</p>
+</li>
+</ul>
+<h3 id="8080处理器对存储空间的划分"><a href="#8080处理器对存储空间的划分" class="headerlink" title="8080处理器对存储空间的划分"></a>8080处理器对存储空间的划分</h3><ul>
+<li>有 16 位地址的 8 位微处理器，可用来寻址 64 KB 的存储空间。</li>
+<li>8080使用上述的<code>4KB存储器板</code>。所以 64 KB 被划分成 16 个不同的区域，每个区域的大小是 4 KB。</li>
+<li>这 16 个区域使用上述的<code>A12 - A15</code>的地址信号划分，划分情况为：0000h～0FFFh、1000h～1FFFh、…、F000h～FFFFh。</li>
+</ul>
+<h4 id="使用比较器来选择储存器板"><a href="#使用比较器来选择储存器板" class="headerlink" title="使用比较器来选择储存器板"></a>使用比较器来选择储存器板</h4><p>上面说了，64KB被划分成16个4K存储器板，使用A12～A15来索引。</p>
+<p>比较器（comparator）的电路中，你可以把这个开关和总线上地址信号的高4位连接起来：</p>
+<p><img src="/images/image-20211210172554954.png" alt="image-20211210172554954"></p>
+<p>如果把 A13 和 A15 对应的开关闭合，则四个异或（XOR）门的输出都是 0，或非（NOR）门的输出为 1。</p>
+<h4 id="选择存储器板中的储存体"><a href="#选择存储器板中的储存体" class="headerlink" title="选择存储器板中的储存体"></a>选择存储器板中的储存体</h4><p>上述已经选择了存储器板，接下来我们把 Equal 信号和一个 2-4 译码器联合起来使用，就能为四个存储体中的每一个都产生一个<code>CS反</code>信号，便于对存储体进行选择：</p>
+<p><img src="/images/image-20211211100928612.png" alt="image-20211211100928612"></p>
+<p>例如，若想选择第三个存储体，把 A10、A11 分别置 0 和 1 就可以了。</p>
+<h2 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h2><ul>
+<li>半导体存储器，在掉电的时候，所有的内容都会清零。<strong>在首次上电的时候，它将处于随机且不可预测的状态</strong>。</li>
+<li>在开机的时候，RAM有可能包含随机字节。而处理器会将这些随机字节解释为机器代码并执行。</li>
+<li>所以，当处理器首次上电的时候，需要<strong>从特定的内存地址开始执行</strong>机器代码。一般这个地址为0000h。</li>
+<li>一台设计精良的计算机<strong>在启动的时候，将会有一条机器代码指令被载入到该内存地址中</strong>，这个指令也就是计算机执行的第一条指令</li>
+</ul>
+<h2 id="定点数和浮点数"><a href="#定点数和浮点数" class="headerlink" title="定点数和浮点数"></a>定点数和浮点数</h2><h3 id="浮点数为何叫浮点数"><a href="#浮点数为何叫浮点数" class="headerlink" title="浮点数为何叫浮点数"></a>浮点数为何叫浮点数</h3><ul>
+<li><p>因为存在一种存储格式名为<code>定点格式</code>。</p>
+</li>
+<li><p><code>定点格式</code>：所谓的“定点”，指的是小数点的位置是固定的，总是在特定的位置。</p>
+</li>
+<li><p>比如说BCD编码。</p>
+<ul>
+<li><p>该编码经常用于处理美元和美分的钱款，因此只需要两位小数。</p>
+</li>
+<li><p>因此，我们<strong>将小数点的位置固定在两位小数之前</strong>。</p>
+</li>
+<li><p>eg：<code>-4,325,120.25</code>使用BCD编码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">																	小数点位置                         </span><br><span class="line">                                       |</span><br><span class="line">0001 0100 0011 0010 0101 0001 0010 0000 0010 0101</span><br><span class="line">  |    |    |    |    |    |    |    |    |    |</span><br><span class="line">符号位	 4    3    2    5    1    2    0    2    5</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="浮点数内存表示"><a href="#浮点数内存表示" class="headerlink" title="浮点数内存表示"></a>浮点数内存表示</h3><p>IEEE 浮点数标准定义了两种基本的格式：</p>
+<ul>
+<li>以 4 个字节表示的单精度格式</li>
+<li>以 8 个字节表示的双精度格式。</li>
+</ul>
+<h4 id="单精度格式"><a href="#单精度格式" class="headerlink" title="单精度格式"></a>单精度格式</h4><p>它的 4 个字节可以分为三个部分：</p>
+<ul>
+<li>1 位：符号位（0 代表正数，1 代表负数）</li>
+<li>8 位：指数（注意<strong>包含了符号位</strong>，所以<code>e-127</code>就可以体现指数的正负）</li>
+<li>23 位：有效数</li>
+</ul>
+<p><img src="/images/image-20211211121423532.png" alt="image-20211211121423532"></p>
+<p>那么对于一个特定的数，可以用 s（符号位），e（指数）以及 f（有效数）来描述它：</p>
+<p><img src="/images/image-20211211122014812.png" alt="image-20211211122014812"></p>
+<p>特殊的：</p>
+<ul>
+<li>e = 0, f = 0：该数为0</li>
+<li>e = 255, f = 0：该数被解释为无穷大或无穷小，这取决于符号位s的值。</li>
+<li>e = 255, f != 0：该数被解释为<code>不是一个数</code>，NAN(not a number)，用来表示位置的数或者非法操作的结果。</li>
+</ul>
+<h4 id="双精度格式"><a href="#双精度格式" class="headerlink" title="双精度格式"></a>双精度格式</h4><p><img src="/images/image-20211211132004309.png" alt="image-20211211132004309"></p>
+<p>双精度浮点数的指数偏移量是 1023，或十六进制的 3FFh，因此以该格式存储的数可以表示为：</p>
+<p><img src="/images/image-20211211132035354.png" alt="image-20211211132035354"></p>
+<p>上面提到的关于单精度浮点格式下的 0，无穷大（小）和 NaN 的判断规则同样适用于双精度浮点格式。</p>
+<h3 id="用于浮点数运算的函数集"><a href="#用于浮点数运算的函数集" class="headerlink" title="用于浮点数运算的函数集"></a>用于浮点数运算的函数集</h3><ul>
+<li>上面介绍了浮点数的一种在内存中的存储方式。如果你决定闭门造车，完全独立地开发一台计算机，则必须要独立编写用于浮点数加、减、乘、除运算的函数集。</li>
+<li><strong>关于浮点数的运算就可以分解成许多小的关于整数的加、减、乘、除运算</strong>，这样就能将问题大大简化。</li>
+</ul>
+<p>eg：</p>
+<ul>
+<li><p>计算**(1.1101 × 2^5) + (1.0010 × 2^2)**，需要对有效数相加：为了能使它们的有效位匹配，需要利用指数来确定对其如何移位。两个数的指数部分的不同决定了第二个必须相对于第一个数右移。实际上我们要做的整数加法应该是 1110 1000 + 0001 0010</p>
+</li>
+<li><p>两个浮点数的乘法意味着要把有效数当成整数相乘，并且把指数部分相加。为了使结果规范化，一般需要对指数调整一到两次。</p>
+</li>
+</ul>
+<h2 id="高级语言与低级语言"><a href="#高级语言与低级语言" class="headerlink" title="高级语言与低级语言"></a>高级语言与低级语言</h2><h3 id="汇编器的工作原理"><a href="#汇编器的工作原理" class="headerlink" title="汇编器的工作原理"></a>汇编器的工作原理</h3><p>有如下8080处理器的asm文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">      ORG 0100h</span><br><span class="line">      LXI DE, Text</span><br><span class="line">      MVI c, 9</span><br><span class="line">      CALL 5</span><br><span class="line">      RET</span><br><span class="line">Text: DB &#x27;Hello!$&#x27;</span><br><span class="line">			END</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>第一条语句ORG（origin），它不与任何8080指令对应，其功能是用来指明下面语句的地址从0100h地址处开始。该地址是CP/M将程序装入内存的起始地址。</p>
+</blockquote>
+<p>将其放入<code>汇编器</code>，得到机器码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">11 09 01 0E 09 CD 05 00 C9 48 65 6C 6C 6F 21 24</span><br><span class="line">-------- ----- -------- -- -------------- -- --</span><br><span class="line">LXI			 MVI   CALL    RET    HELLO       !  $</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开始的3个字节是LXI指令，</li>
+<li>其后的两个字节是MVI指令，</li>
+<li>接下来的三个字节是CALL指令，</li>
+<li>紧随其后的一个字节是RET指令，</li>
+<li>最后的7个字节是ASCI码，包括5个字母“Hello”，感叹号“!”以及美元符号“s”</li>
+</ul>
+<p>从宏观的角度来看，汇编器是非常简单的，因为<strong>构成汇编语言的助记符和机器码之问是一一对应的</strong>。汇编器拥有一张包括所有助记符及其参数的表，它逐行读取汇编语言程序，把每一行都分解成为助记符和参数，然后把这些短小的单词和字符与表中的内容匹配。通过这种匹配的过程，每一个语句都会找到与其对应的机器码指令。</p>
+<p>第一个编写汇编器的人需要手工对程序汇编。如果要为机器写一个新的汇编器（或者对其修改），则可以使用汇编语言编写该程序，然后<strong>使用原有的汇编器对其汇编</strong>。一旦新的汇编器通过了汇编，则它也就可以对自身进行汇编。</p>
+<h3 id="C语言指针的本质"><a href="#C语言指针的本质" class="headerlink" title="C语言指针的本质"></a>C语言指针的本质</h3><p>指针本质是数字化描述的内存地址。</p>
+<h3 id="为何C语言比其他类ALGOL语言速度快"><a href="#为何C语言比其他类ALGOL语言速度快" class="headerlink" title="为何C语言比其他类ALGOL语言速度快"></a>为何C语言比其他类ALGOL语言速度快</h3><p>因为<strong>C的操作集 更接近 通用处理器的指令集</strong>。</p>
+<h2 id="图形化革命"><a href="#图形化革命" class="headerlink" title="图形化革命"></a>图形化革命</h2><h3 id="为什么高级语言会有关键字"><a href="#为什么高级语言会有关键字" class="headerlink" title="为什么高级语言会有关键字"></a>为什么高级语言会有关键字</h3><ul>
+<li>高级程序设计语言会自然而然地区分出代码（比如以set、for、if这样的关键词开头的语句）和数据，即变量所代表的数字。</li>
+<li>这种区分毫无疑问<strong>来自于冯·诺依曼计算机的体系结构</strong>。在这样一种体系结构中，只有两种元素，一种是机器码，一种是机器码所操作的数据。</li>
+</ul>
+<h3 id="面向对象的实质"><a href="#面向对象的实质" class="headerlink" title="面向对象的实质"></a>面向对象的实质</h3><ul>
+<li>在面向对象的程序设计中，和冯·诺依曼计算机的体系结构所不同的是，<strong>对象（object）实际上是代码和数据的组合</strong>。</li>
+<li>在对象内部，与其相关联的代码决定了数据存在的意义，要理解数据的存储方式首先需要理解代码。对象如果需要与其他对象通信，则通过发送或接收消息（message）来实现这一过程，比如一个对象可以通过给另一个对象发送指令来获得相应信息。</li>
+</ul>
+<p>FIN</p>
 </div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
   $(".fancybox").fancybox();
 });
