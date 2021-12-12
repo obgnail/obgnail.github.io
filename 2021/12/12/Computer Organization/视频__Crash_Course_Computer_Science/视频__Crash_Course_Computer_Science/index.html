@@ -1,0 +1,281 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Crash-Course-Computer-Science&quot;&gt;&lt;a href=&quot;#Crash-Course-Computer-Science&quot; class=&quot;headerlink&quot; title=&quot;Crash Course Computer Science&quot;&gt;&lt;/a&gt;Crash Course Computer Science&lt;/h1&gt;&lt;p&gt;地址："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Crash_Course_Computer_Science | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Organization/" rel="tag">Computer Organization</a></div><div class="post-time">2021-12-12</div></div></div><div class="container post-header"><h1>Crash_Course_Computer_Science</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Crash-Course-Computer-Science"><span class="toc-number">1.</span> <span class="toc-text">Crash Course Computer Science</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E6%88%96%E9%97%A8%E7%94%B5%E8%B7%AF-XOR"><span class="toc-number">1.1.</span> <span class="toc-text">异或门电路(XOR)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%AE%E7%82%B9%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">浮点数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E9%80%BB%E8%BE%91%E5%8D%95%E5%85%83-ALU"><span class="toc-number">1.3.</span> <span class="toc-text">算术逻辑单元(ALU)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E5%8D%95%E5%85%83"><span class="toc-number">1.3.1.</span> <span class="toc-text">算术单元</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98"><span class="toc-number">1.4.</span> <span class="toc-text">寄存器和内存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AND-OR-%E9%94%81%E5%AD%98%E5%99%A8-%E5%AD%981%E4%BD%8D"><span class="toc-number">1.4.1.</span> <span class="toc-text">AND-OR 锁存器(存1位)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E9%9B%86%E6%88%90%E9%94%81%E5%AD%98%E5%99%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">使用矩阵集成锁存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAM"><span class="toc-number">1.4.4.</span> <span class="toc-text">RAM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">1.5.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU-%E7%9A%84%E9%98%B6%E6%AE%B5"><span class="toc-number">1.5.1.</span> <span class="toc-text">CPU 的阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C%EF%BC%9AADD%E6%8C%87%E4%BB%A4"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">示例二：ADD指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%89%EF%BC%9AJUMP%E6%8C%87%E4%BB%A4"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">示例三：JUMP指令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%92%9F"><span class="toc-number">1.5.2.</span> <span class="toc-text">时钟</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E5%8D%87CPU%E6%80%A7%E8%83%BD%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.6.</span> <span class="toc-text">提升CPU性能的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98"><span class="toc-number">1.6.1.</span> <span class="toc-text">缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">1.6.2.</span> <span class="toc-text">指令流水线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%85%E6%A0%87%E9%87%8F%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">1.6.3.</span> <span class="toc-text">超标量处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%A0%B8%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">1.6.4.</span> <span class="toc-text">多核处理器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%AF%E8%AF%BA%E4%BE%9D%E6%9B%BC%E7%BB%93%E6%9E%84"><span class="toc-number">1.7.</span> <span class="toc-text">冯诺依曼结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-%E4%B8%8E-%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-number">1.8.</span> <span class="toc-text">虚拟内存 与 动态内存分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.9.</span> <span class="toc-text">文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6-%E4%B8%8E-%E5%B9%B3%E9%9D%A2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.9.1.</span> <span class="toc-text">目录文件 与 平面文件系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%A2%8E%E7%89%87"><span class="toc-number">1.9.2.</span> <span class="toc-text">文件碎片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B1%82%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.9.3.</span> <span class="toc-text">分层文件系统</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h1 id="Crash-Course-Computer-Science"><a href="#Crash-Course-Computer-Science" class="headerlink" title="Crash Course Computer Science"></a>Crash Course Computer Science</h1><p>地址：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av21376839">bilibli - Crash Course Computer Science</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/1c7/Crash-Course-Computer-Science-Chinese">github - Crash-Course-Computer-Science-Chinese</a></li>
+</ul>
+<h2 id="异或门电路-XOR"><a href="#异或门电路-XOR" class="headerlink" title="异或门电路(XOR)"></a>异或门电路(XOR)</h2><p><img src="/images/1580873233986.png" alt="1580873233986"></p>
+<h2 id="浮点数"><a href="#浮点数" class="headerlink" title="浮点数"></a>浮点数</h2><p>浮点数<code>floating point numbers</code> : 因为小数点可以在数字间浮动</p>
+<p>类似科学计数法的方法，来存十进制值</p>
+<blockquote>
+<p>625.9 可以写成 0.6259×10 ^ 3</p>
+<ul>
+<li>.6259 叫 “有效位数” , 3 是指数</li>
+<li>在 32 位浮点数中 , 第 1 位表示数字的正负 , 接下来 8 位存指数 , 剩下 23 位存有效位数</li>
+</ul>
+</blockquote>
+<h2 id="算术逻辑单元-ALU"><a href="#算术逻辑单元-ALU" class="headerlink" title="算术逻辑单元(ALU)"></a>算术逻辑单元(ALU)</h2><p>数字的计算是由<code>算术逻辑单元</code>(Arithmetic and Logic Unit , ALU)处理</p>
+<ul>
+<li>ALU 就是 计算机里负责运算的组件 , 基本其他所有部件都用到了它</li>
+<li>ALU 就是 由<code>布尔逻辑门</code>组成的</li>
+<li>ALU 有 2 个单元，1 个算术单元和 1 个逻辑单元 .<ul>
+<li> <code>算术单元</code>，它负责计算机里的所有数字操作</li>
+<li><code>逻辑单元</code> ，它负责执行逻辑操作 , 比如AND，OR 和 NOT 操作</li>
+</ul>
+</li>
+</ul>
+<h3 id="算术单元"><a href="#算术单元" class="headerlink" title="算术单元"></a>算术单元</h3><p>1+1=0 , 0+0=0 , 1+0=1 , 0+1=1 , 这刚好就是<code>异或</code>的算法 ,  XOR 用作 1 位加法器</p>
+<p><img src="/images/1580874965947.png" alt="1580874965947"></p>
+<p><img src="/images/1580875017163.png" alt="1580875017163"></p>
+<p>上面的逻辑图其实很好理解 , <strong>XOR解决<code>总和</code>问题 , AND解决<code>进位</code>问题</strong>(只有A和B都为1的时候 , carry才为1)</p>
+<p>将其抽象为：</p>
+<p><img src="/images/1580875211035.png" alt="1580875211035"></p>
+<p>上面的为什么叫<code>半加器</code> ? 因为他只是计算了<code>总和</code>和<code>进位</code> , 半加器 输出了进位 , 意味着，我们算下一列的时候 , 还有之后的每一列，我们得加 3 个位在一起，并不是 2 个</p>
+<p><img src="/images/1580875381019.png" alt="1580875381019"></p>
+<p>如此得出<code>全加器</code>：</p>
+<p><img src="/images/1580875472222.png" alt="1580875472222"></p>
+<p>进而得出<code>八位加法器</code></p>
+<p><img src="/images/1580875821774.png" alt="1580875821774"></p>
+<p><strong>如果第 9 位有进位，代表着 2 个数字的和太大了，超过了 8 位</strong> , 这就是<code>溢出</code></p>
+<ul>
+<li><p> 同理 , 也可以作出<code>8位减法器</code> . </p>
+</li>
+<li><p>简单的 ALU 没有乘法和除法 , 而是把乘法用多次加法来实现 . 笔记本和手机有专门做乘法的算术单元</p>
+</li>
+<li><p>最后我们将ALU 抽象层一个<code>V</code>符号 </p>
+<ul>
+<li>flag标志 : 是否溢出 , 是否相等 , 是否小于</li>
+</ul>
+<p><img src="/images/d5a9d2ec-1580877210170.png" alt="1580877210170"></p>
+</li>
+</ul>
+<h2 id="寄存器和内存"><a href="#寄存器和内存" class="headerlink" title="寄存器和内存"></a>寄存器和内存</h2><p>计算机必须给内存中每一个位置，做一个 “标记” , 这个标记叫 “位址”, 目的是为了方便存取数据</p>
+<h3 id="AND-OR-锁存器-存1位"><a href="#AND-OR-锁存器-存1位" class="headerlink" title="AND-OR 锁存器(存1位)"></a>AND-OR 锁存器(存1位)</h3><p><img src="/images/1580877640585.png" alt="1580877640585"></p>
+<p>当A是1的时候 , 就会导致整条电路都是1 :</p>
+<p><img src="/images/1580877672138.png" alt="1580877672138"></p>
+<p>最后断开A电路 :</p>
+<p><img src="/images/1580877702107.png" alt="1580877702107"></p>
+<p>此时 , 不管A是0还是1 , 上面的电路都是1</p>
+<p>同理 , 不管A是0还是1 , 下面的电路都是0</p>
+<p><img src="/images/1580877888555.png" alt="1580877888555"></p>
+<p>所以我们得到能存储0和1的电路了</p>
+<p><img src="/images/1580878006476.png" alt="1580878006476"></p>
+<p>进而得到<code>AND-OR 锁存器</code></p>
+<p><img src="/images/1580878148934.png" alt="1580878148934"></p>
+<ul>
+<li><code>设置</code>输入1, 输出就会变成1 , 对应<code>设置1操作</code></li>
+<li><code>复位</code>输入0, 输出就会变成0 , 对应<code>设置0操作</code></li>
+<li>如果<code>设置</code>和<code>复位</code>都是 0，电路会输出最后放入的内容 , 对应<code>读取操作</code></li>
+</ul>
+<blockquote>
+<p>也就是说，它存住了 1 bit 的信息</p>
+</blockquote>
+<p>为了更容易用，我们希望只有一条输入线 , 将它设为 0 或 1 来存储值</p>
+<p>需要一根线来”启用”内存 , 启用时允许写入，没启用时就 “锁定” ,不允许写入 , 这条线叫 <code>允许写入线</code></p>
+<p><img src="/images/1580879453956.png" alt="1580879453956"></p>
+<p>所以我们抽象得到</p>
+<p><img src="/images/1580879604122.png" alt="1580879604122"></p>
+<ul>
+<li>当<code>允许写入线</code> 是关闭的，不管数据输入是什么 , 内容都不会变化</li>
+<li><code>允许写入线</code> 输入 1, “打开” 门 , 往 “数据线” 放 1，1 就能存起来了</li>
+<li>然后关掉  “允许写入线” ，输出会保持 1 , 现在不管给 “数据线” 什么值 , 输出都不会变 ,值就存起来了</li>
+</ul>
+<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>一组AND-OR 锁存器叫 <code>寄存器</code> , <strong>寄存器能存一个数字，这个数字有多少位，叫<code>位宽</code></strong> , </p>
+<p>我们所说的64位处理器指的就是<code>64 位宽的寄存器</code></p>
+<p>存储8位的值 :</p>
+<ol>
+<li>写入寄存器前，要先启用里面所有锁存器 , 我们可以用一根线连接所有 “允许输入线”, 把它设为 1 , </li>
+<li>然后用 8 条数据线发数据，</li>
+<li>然后将 “允许写入线” 设回 0</li>
+</ol>
+<h3 id="使用矩阵集成锁存器"><a href="#使用矩阵集成锁存器" class="headerlink" title="使用矩阵集成锁存器"></a>使用矩阵集成锁存器</h3><p>现在问题就是<strong>电线太多了</strong>。64 位寄存器要 64 根数据线，64 根连到输出端 . 1 根线启用所有锁存器 , 加起来 129 条线。</p>
+<p>解决方法是<code>矩阵</code></p>
+<p><img src="/images/1580880314332.png" alt="1580880314332"></p>
+<p>对于 <code>256 位</code>(32字节)的存储 , 只要 35 条线</p>
+<ul>
+<li>1条”数据线”, </li>
+<li>1条”允许写入线”, </li>
+<li>1条”允许读取线”</li>
+<li>16行16列的线用于选择锁存器</li>
+</ul>
+<p>为了能定位每个锁存器 , 我们用8位地址来索引 , 4位行 , 4位列</p>
+<blockquote>
+<p>多路复用器 : 解码8位地址 , 定位到单个锁存器</p>
+</blockquote>
+<p><img src="/images/1580882391559.png" alt="1580882391559"></p>
+<p>组合256为内存+多路复用器 , 最后得到更高一级的抽象</p>
+<p><img src="/images/1580880669347.png" alt="1580880669347"></p>
+<p>输入一个 8 位地址：4 位代表列，4 位代表行</p>
+<p>“允许写入线” 和 “允许读取线”</p>
+<p>还需要一条数据线，用于读/写数据</p>
+<h3 id="RAM"><a href="#RAM" class="headerlink" title="RAM"></a>RAM</h3><p>把上述的存储器并排放置 , 一行8个：</p>
+<p><img src="/images/1580881321616.png" alt="1580881321616"></p>
+<p>为了存一个 8 位数字，我们同时给 8 个 256 位内存一样的地址 , 每个地址存 1 位 , 意味着这里总共能存 <strong>256 个字节</strong></p>
+<p>所以最后抽象为<strong>256个地址</strong> , 每个地址能读写8位值：</p>
+<p><img src="/images/1580882235943.png" alt="1580882235943"></p>
+<h2 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h2><p>程序由一个个操作组成 , 这些操作叫<code>指令</code>(<code>Instruction</code>) , 因为**它们”指示”计算机要做 **</p>
+<ul>
+<li>数学指令，比如加/减 , CPU 会让 ALU 进行数学运算</li>
+<li>内存指令，CPU 会和内存通信，然后读/写值</li>
+</ul>
+<p>众所周知，冯诺依曼结构的计算机指令和数据是一起放在内存里的。指令后面跟着就是指令所需要的数据。</p>
+<p>我们可以给 CPU 支持的所有指令，分配一个 ID。如LDAD_A指令对应就是0010，而0010就是所谓的<code>机器码</code>。<strong>每个机器码都有对应的电路去识别</strong>。</p>
+<p><img src="/images/1580883640648.png" alt="1580883640648"></p>
+<p>CPU有六个八位寄存器 :</p>
+<ul>
+<li>四个<code>临时寄存器</code> : 存储临时数据和操作数据</li>
+<li><code>指令地址寄存器</code> : 追踪程序运行到哪里了 , 顾名思义，存当前指令的内存地址。</li>
+<li><code>指令寄存器</code> : 负责从RAM中拿到指令。</li>
+</ul>
+<h3 id="CPU-的阶段"><a href="#CPU-的阶段" class="headerlink" title="CPU 的阶段"></a>CPU 的阶段</h3><p><strong>CPU 和 RAM 之间用 “地址线”  “数据线” 和 “允许读/写线” 进行通信</strong>。</p>
+<p><img src="/images/image-20211212102252616.png" alt="image-20211212102252616"></p>
+<ol>
+<li><code>取指令阶段</code>：<ol>
+<li>当启动计算机时，所有寄存器被设置为 0。</li>
+<li><code>指令地址寄存器</code>连到 RAM，因为寄存器被设置为0，所以指令地址寄存器会拿取内存中地址为0的数据，将其复制存储到<code>指令寄存器</code>。</li>
+<li>如上图，此时指令寄存器的数据就是0010 1110</li>
+</ol>
+</li>
+<li><code>解码阶段</code>：<ol>
+<li>指令寄存器的内存0010 1110。前4位为操作码，后4位为数据。</li>
+<li>每个机器码都有对应的逻辑电路去解码识别。此时0010对应的就是LOAD_A指令，也就是说，<code>0010 1110</code> 被解释位要把<strong>地址为1110的内存数据</strong>放入寄存器 A 中。</li>
+</ol>
+</li>
+<li><code>执行阶段</code>：<ol>
+<li>CPU打开 RAM 的 “允许读取线”, 把地址 1110 传过去，同时启用寄存器 A 的 “允许写入线”</li>
+<li>地址 1110 的内存数据为 0000 0011，之后 RAM 就会传值给寄存器A。如此寄存器 A 就存储了 0000 0011</li>
+<li>指令地址寄存器+1，”执行阶段”就此结束。</li>
+</ol>
+</li>
+</ol>
+<h4 id="示例二：ADD指令"><a href="#示例二：ADD指令" class="headerlink" title="示例二：ADD指令"></a>示例二：ADD指令</h4><ul>
+<li>有些指令如ADD需要用到ALU，但只是最后的执行阶段有所不同。</li>
+<li>比如说上述的1000 0100指令，此时1000被解释为ADD指令，01代表寄存器B，00代表寄存器A。也就是说，1000 0100指令对应的汇编为<code>ADD B,A</code>。</li>
+<li>此时就会使用ALU，将寄存器BA的值相加，结果传给CPU，最后CPU断开ALU，将结果传给寄存器B。</li>
+</ul>
+<blockquote>
+<p>注意：不能将ALU的结果直接传给寄存器B，必须先传给CPU，让CPU断开ALU的电，才能加结果传给寄存器B。原因很简单，如果不断开ALU，那么寄存器B的新值会重新进入 ALU ，不断和自己相加。</p>
+</blockquote>
+<h4 id="示例三：JUMP指令"><a href="#示例三：JUMP指令" class="headerlink" title="示例三：JUMP指令"></a>示例三：JUMP指令</h4><p><strong>JUMP 在底层的实现方式是把指令后 4 位代表的内存地址的值覆盖掉 “指令地址寄存器” 里的值</strong>。</p>
+<h3 id="时钟"><a href="#时钟" class="headerlink" title="时钟"></a>时钟</h3><ul>
+<li>“时钟” 来负责管理 CPU 的节奏。</li>
+<li>时钟以精确的间隔触发电信号，控制单元会用这个信号，推进 CPU 的内部操作，确保一切按步骤进行。</li>
+<li>节奏不能太快，因为就算是电也要一定时间来传输。</li>
+<li>CPU “取指令→解码→执行” 的速度叫 “时钟速度”</li>
+<li>你可能听过有人会把计算机超频，意思是修改时钟速度，加快 CPU 的速度。</li>
+</ul>
+<h2 id="提升CPU性能的方法"><a href="#提升CPU性能的方法" class="headerlink" title="提升CPU性能的方法"></a>提升CPU性能的方法</h2><h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
+<li>超高的时钟速度带来另一个问题，RAM 成了瓶颈。RAM 是 CPU 之外的独立组件，意味着数据要用线来传递，叫”总线”。CPU 每秒可以处理上亿条指令，RAM 还需要时间找地址取数据，配置，输出数据，一条”从内存读数据”的指令可能要多个时钟周期。所以很容易出现CPU 空等数据的情况。</li>
+<li>解决延迟的方法之一是给 CPU 加一点 RAM - 叫<code>缓存</code>，因为处理器里空间不大，所以缓存一般只有 KB 或 MB。因为缓存离 CPU 近, 一个时钟周期就能给数据 ，所以 CPU 不用空等！</li>
+<li>CPU 从 RAM 拿数据时 RAM <strong>不用传一个，可以传一批</strong>。</li>
+<li>缓存可以当临时空间，存一些中间值，适合长/复杂的运算。因为中间数据不是直接存到 RAM，而是存在缓存，这也导致<strong>缓存和 RAM 不一致</strong>的问题。</li>
+<li>这种不一致必须记录下来，之后要同步。因此缓存里每块空间有一个特殊标记叫<code>脏位</code>(dirty bit)。</li>
+<li><strong>同步一般发生在当缓存满了而 CPU 又要缓存时</strong>，在清理缓存腾出空间之前，会先检查 “脏位”，如果是”脏”的, 在加载新内容之前, 会把数据写回 RAM。</li>
+</ul>
+<h3 id="指令流水线"><a href="#指令流水线" class="headerlink" title="指令流水线"></a>指令流水线</h3><p>执行一条指令需要三个步骤<code>获取指令 - 解码 - 执行</code>，<strong>在串行情况下，CPU执行一条指令需要3个时钟周期</strong>。    </p>
+<p><img src="/images/image-20211212111932972.png" alt="image-20211212111932972"></p>
+<p>但因为每个阶段用的是 CPU 的不同部分，可以将<code>获取指令 - 解码 - 执行</code>的步骤从串行改成并行，使用流水线的话，每个时钟周期可以执行1个指令。</p>
+<p><img src="/images/image-20211212112342156.png" alt="image-20211212112342156"></p>
+<p>但是这样也出现一些问题：</p>
+<p><code>指令依赖关系问题</code>：</p>
+<ul>
+<li>举个例子，你在读某个数据，而正在执行的指令会改这个数据，也就是说拿的是旧数据。</li>
+<li>因此流水线处理器要先弄清数据依赖性，必要时停止流水线，避免出问题。</li>
+<li>高端 CPU，比如笔记本和手机里那种，会更进一步，动态排序有依赖关系的指令，最小化流水线的停工时间，这叫<code>乱序执行</code>。</li>
+<li>这种电路非常复杂，但因为非常高效，几乎所有现代处理器都有流水线。</li>
+</ul>
+<p><code>条件跳转问题</code>：</p>
+<ul>
+<li>比如 JUMP 指令会改变程序的执行流。</li>
+<li>简单的流水线处理器，看到 JUMP 指令会停一会儿，等待条件值确定下来，一旦 JUMP 的结果出了，处理器就继续流水线。</li>
+<li>因为空等会造成延迟，所以高端处理器会用一些技巧，可以把 JUMP 想成是 “岔路口”，高端 CPU 会猜哪条路的可能性大一些，然后提前把指令放进流水线，这叫<code>推测执行</code>。当 JUMP 的结果出了，如果 CPU 猜对了，流水线已经塞满正确指令，可以马上运行，如果 CPU 猜错了，就要<strong>清空流水线，就像走错路掉头</strong>。</li>
+<li>为了尽可能减少清空流水线的次数，CPU 厂商开发了复杂的方法，来猜测哪条分支更有可能，叫<code>分支预测</code>，现代 CPU 的正确率超过 90%。</li>
+</ul>
+<h3 id="超标量处理器"><a href="#超标量处理器" class="headerlink" title="超标量处理器"></a>超标量处理器</h3><ul>
+<li><p>使用了指令流水线，CPU一个时钟周期可以执行一个指令。但是还是不够。即便有流水线设计，<strong>在指令执行阶段，处理器里有些区域还是可能会空闲</strong>。比如，执行一个 “从内存取值” 指令期间，ALU 会闲置，所以一次性处理多条指令（取指令+解码） 会更好。</p>
+</li>
+<li><p>超标量处理器：一个时钟周期完成多个指令。如果多条指令<strong>需要使用 CPU 的不同部分，就多条同时执行</strong>。</p>
+</li>
+<li><p>我们可以加多几个相同的电路执行出现频次很高的指令。举例，很多 CPU 有四个, 八个甚至更多，完全相同的ALU，可以同时执行多个数学运算。</p>
+<p><img src="/images/image-20211212114647605.png" alt="image-20211212114647605"></p>
+</li>
+</ul>
+<h3 id="多核处理器"><a href="#多核处理器" class="headerlink" title="多核处理器"></a>多核处理器</h3><ul>
+<li>上面说的都是优化 1 个指令流的吞吐量，另一个提升性能的方法是<strong>同时运行多个指令流</strong>，用多核处理器。</li>
+<li>意思是一个 CPU 芯片里，有多个独立处理单元，很像是有多个独立 CPU。但因为它们整合紧密，可以共享一些资源，比如缓存，使得多核可以合作运算。</li>
+<li>但多核不够时，可以用多个 CPU</li>
+</ul>
+<h2 id="冯诺依曼结构"><a href="#冯诺依曼结构" class="headerlink" title="冯诺依曼结构"></a>冯诺依曼结构</h2><ul>
+<li>把程序存于内存，使得程序易于修改、方便 CPU 快速读取，这类机器叫<code>存储程序计算机</code>。</li>
+<li>如果内存足够，不仅可以储存要运行的程序，还可以存程序需要的数据，包括程序运行时产生的新数据。</li>
+<li>程序和数据都存在一个地方，叫<code>冯诺依曼结构</code>。</li>
+<li>冯诺依曼计算机的标志是，<ul>
+<li>一个处理器(有算术逻辑单元)</li>
+<li>数据寄存器</li>
+<li>指令寄存器</li>
+<li>指令地址寄存器</li>
+<li>内存（负责存数据和指令)</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>第一款取得商业成功的家用计算机是 Altair 8800，为了给 8800 编程，你要拨动面板上的开关，输入二进制操作码，然后按 “存储键” 把值存入内存，然后会到下一个内存位置，你可以再次拨开关，写下一个指令，重复这样做。把整个程序都写入内存之后，可以推动开关，回到内存地址0，然后按运行按钮，程序开始运行。</p>
+</blockquote>
+<h2 id="虚拟内存-与-动态内存分配"><a href="#虚拟内存-与-动态内存分配" class="headerlink" title="虚拟内存 与 动态内存分配"></a>虚拟内存 与 动态内存分配</h2><ul>
+<li>多个程序可以同时运行，在单个 CPU 上共享时间，操作系统的这种能力叫<code>多任务处理</code>。</li>
+<li>同时运行多个程序有个问题，每个程序都会占一些内存，当切换到另一个程序时，我们不能丢失数据。解决办法是，给每个程序分配专属内存块。举个例子，假设计算机一共有 10000 个内存位置，程序 A 分配到内存地址 0 到 999，而程序 B 分配到内存地址 1000 到 1999，以此类推。如果一个程序请求更多内存，操作系统会决定是否同意，如果同意，分配哪些内存块。</li>
+<li>这种灵活性很好，但带来一个奇怪的后果，程序 A 可能会<strong>分配到非连续的内存块</strong>，比如内存地址 0 到 999，以及 2000 到 2999，也就是说程序可能会分配到内存中数十个地方。程序员来说很难跟踪。</li>
+<li>为了隐藏这种复杂性，操作系统会把内存地址进行 “虚拟化”，这叫<code>虚拟内存</code>，程序可以假定内存总是从地址0开始。而<strong>实际物理位置被操作系统隐藏和抽象</strong>了，<strong>操作系统会自动处理虚拟内存和物理内存之间的映射</strong>。</li>
+<li>这种机制使程序的内存大小可以灵活增减，叫<code>动态内存分配</code>。对程序来说，内存看起来是连续的，它简化了一切，为操作系统同时运行多个程序，提供了极大的灵活性。</li>
+</ul>
+<h2 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h2><h3 id="目录文件-与-平面文件系统"><a href="#目录文件-与-平面文件系统" class="headerlink" title="目录文件 与 平面文件系统"></a>目录文件 与 平面文件系统</h3><ul>
+<li><p>虽然硬件可能是磁带，磁鼓，磁盘或集成电路，通过软硬件抽象后，都可以看成一排能存数据的桶，数据从头存到尾，直到占满。</p>
+</li>
+<li><p>为了在这个桶里存多个文件，需要一个特殊文件，记录其他文件的位置，称为<code>目录文件</code>，这个文件经常存在最开头。</p>
+</li>
+<li><p>目录文件里，储存存所有文件的信息，其中最重要的就是文件起始位置和长度。</p>
+<p><img src="/images/image-20211212152730073.png" alt="image-20211212152730073"></p>
+</li>
+<li><p>如果要添加文件，删除文件，更改文件名等，必须更新目录文件。</p>
+</li>
+<li><p>文件系统专门负责管理文件，刚刚的例子叫<code>平面文件系统</code>，因为文件都在同一个目录。</p>
+</li>
+<li><p>因为文件的大小随时会改变，为了防止前面的文件数据覆盖掉后面的文件数据，现代文件系统会做两件事：</p>
+<ul>
+<li><p><strong>把空间划分成一块块</strong>，导致有一些 “预留空间” 可以方便改动。</p>
+<blockquote>
+<p>这同时也方便管理，用这样的方案，目录文件只需记录文件在哪些块里。</p>
+</blockquote>
+</li>
+<li><p><strong>拆分文件，存在多个块里</strong></p>
+<p>假如给 todo.txt 加了些内容，导致文件太大存不进一块里，为了防止覆盖掉隔壁的块，所以文件系统会分配一个没使用的块，容纳额外的数据。此时目录文件会记录该文件占据了多个块</p>
+<p><img src="/images/image-20211212154136544.png" alt="image-20211212154136544"></p>
+</li>
+</ul>
+</li>
+<li><p>假设想删掉 carrie.bmp ，只需要在目录文件删掉那条记录，让一块空间变成了可用，注意这里<strong>没有擦除数据，只是把记录删了</strong>，之后某个时候，那些块会被新数据覆盖，但在此之前，数据还在原处。</p>
+</li>
+</ul>
+<h3 id="文件碎片"><a href="#文件碎片" class="headerlink" title="文件碎片"></a>文件碎片</h3><ul>
+<li>一个文件如果多次修改，就有可能出现数据存储在多个块里，而且顺序都是乱的。这叫<strong>碎片</strong>。</li>
+<li>碎片是增/删/改文件导致的，不可避免。如果碎片太多，很可能出现先读块1, 然后快进到块5，然后往回转到块2的情况，来回转个半天。这时就需要<code>碎片整理</code>。</li>
+<li>碎片整理其实就是<strong>把数据来回移动，排列成正确的顺序</strong>。比如整理后， todo.txt 在 1 2 3，方便读取。</li>
+</ul>
+<h3 id="分层文件系统"><a href="#分层文件系统" class="headerlink" title="分层文件系统"></a>分层文件系统</h3><ul>
+<li><p>在分层文件系统中，目录文件不仅要指向文件, 还要指向目录。简单来讲就是**为每个目录创建一个<code>目录文件</code>**。</p>
+</li>
+<li><p>比如music目录下存在beat.mp3、believe.wav、royals.mp3、magic.aiff、brearhe.mp3五个文件。于是创建如下的分层文件系统：</p>
+<p><img src="/images/image-20211212155300059.png" alt="image-20211212155300059"></p>
+</li>
+<li><p>使用这种方法，也让我们可以轻松移动文件。</p>
+<p>如果想把 theme.wav 从根目录移到音乐目录，不用移动任何数据块，只需要改两个目录文件，一个文件里删一条记录，另一个文件里加一条记录。此时 theme.wav 依然在块5。</p>
+<p><img src="/images/image-20211212155724605.png" alt="image-20211212155724605"></p>
+</li>
+</ul>
+<blockquote>
+<p>文件系统使我们不必关心，文件在磁带或磁盘的具体位置，整理和访问文件更加方便，更直观操纵数据。</p>
+</blockquote>
+<p>其他部分都很简单，就不赘述了。FIN。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
