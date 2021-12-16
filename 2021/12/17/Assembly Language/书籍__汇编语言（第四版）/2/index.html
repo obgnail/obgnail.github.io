@@ -1,0 +1,251 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第十四章-端口&quot;&gt;&lt;a href=&quot;#第十四章-端口&quot; class=&quot;headerlink&quot; title=&quot;第十四章 端口&quot;&gt;&lt;/a&gt;第十四章 端口&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;我们前面讲过，各种存储器都和CPU的地址线、数据线、控制线相连。CPU在操控它们的时候，把它们都当作内存来对待，把它们总地看做一个由若干存储单元组成的逻辑存储器，这个逻辑存储器我们称其为&lt;code&gt;内存地址空间&lt;/code&gt;。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>2 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Assembly-Language/" rel="tag">Assembly Language</a></div><div class="post-time">2021-12-17</div></div></div><div class="container post-header"><h1>2</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0-%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.</span> <span class="toc-text">第十四章 端口</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E7%9A%84%E8%AF%BB%E5%86%99"><span class="toc-number">1.1.</span> <span class="toc-text">端口的读写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%86%85%E5%AD%98%E5%92%8C%E8%AE%BF%E9%97%AE%E7%AB%AF%E5%8F%A3%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">访问内存和访问端口的流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMOS-RAM%E8%8A%AF%E7%89%87"><span class="toc-number">1.2.</span> <span class="toc-text">CMOS RAM芯片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shl%E5%92%8Cshr%E6%8C%87%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">shl和shr指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMOS-RAM%E4%B8%AD%E5%AD%98%E5%82%A8%E7%9A%84%E6%97%B6%E9%97%B4%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.</span> <span class="toc-text">CMOS RAM中存储的时间信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AB%A0-%E5%A4%96%E4%B8%AD%E6%96%AD"><span class="toc-number">2.</span> <span class="toc-text">第十五章 外中断</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E8%8A%AF%E7%89%87%E5%92%8C%E7%AB%AF%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">接口芯片和端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E4%B8%AD%E6%96%AD%E4%BF%A1%E6%81%AF"><span class="toc-number">2.2.</span> <span class="toc-text">外中断信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E5%B1%8F%E8%94%BD%E4%B8%AD%E6%96%AD"><span class="toc-number">2.2.1.</span> <span class="toc-text">可屏蔽中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E5%B1%8F%E8%94%BD%E4%B8%AD%E6%96%AD"><span class="toc-number">2.2.2.</span> <span class="toc-text">不可屏蔽中断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PC%E6%9C%BA%E9%94%AE%E7%9B%98%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">PC机键盘的处理过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="toc-number">2.3.1.</span> <span class="toc-text">键盘输入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%8F%919%E5%8F%B7%E4%B8%AD%E6%96%AD"><span class="toc-number">2.3.2.</span> <span class="toc-text">引发9号中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cint9%E4%B8%AD%E6%96%AD%E4%BE%8B%E7%A8%8B"><span class="toc-number">2.3.3.</span> <span class="toc-text">执行int9中断例程</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h1 id="第十四章-端口"><a href="#第十四章-端口" class="headerlink" title="第十四章 端口"></a>第十四章 端口</h1><ul>
+<li><p>我们前面讲过，各种存储器都和CPU的地址线、数据线、控制线相连。CPU在操控它们的时候，把它们都当作内存来对待，把它们总地看做一个由若干存储单元组成的逻辑存储器，这个逻辑存储器我们称其为<code>内存地址空间</code>。</p>
+<p><img src="/images/image-20211115110615698.png" alt="image-20211115110615698"></p>
+</li>
+<li><p>在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。</p>
+<ul>
+<li>各种接口卡(比如，网卡、显卡)上的接口芯片，它们控制接口卡进行工作；</li>
+<li>主板上的接口芯片，CPU通过它们对部分外设进行访问；</li>
+<li>其他芯片，用来存储相关的系统信息，或进行相关的输入输出处理。</li>
+</ul>
+</li>
+<li><p>在这些芯片中，都有一组可以<strong>由CPU读写的寄存器</strong>。这些寄存器，它们在物理上可能处于不同的芯片中，但是它们有两点相同：</p>
+<ul>
+<li>都和CPU的总线相连，当然这种连接是通过它们所在的芯片进行的；</li>
+<li>CPU对它们进行读或写的时候都通过<code>控制线</code>向它们所在的芯片发出端口读写命令。</li>
+</ul>
+</li>
+<li><p>可见，从CPU的角度，将这些寄存器都当作端口，对它们<strong>进行统一编址</strong>，从而建立了一个统一的端口地址空间。每一个端口在地址空间中都有一个地址。</p>
+</li>
+<li><p>CPU可以直接读写以下3个地方的数据：</p>
+<ul>
+<li>CPU内部的寄存器</li>
+<li>内存单元</li>
+<li>端口</li>
+</ul>
+</li>
+</ul>
+<h2 id="端口的读写"><a href="#端口的读写" class="headerlink" title="端口的读写"></a>端口的读写</h2><ul>
+<li>在访问端口的时候，CPU<strong>通过端口地址来定位端口</strong>。因为端口所在的芯片和CPU通过总线相连，所以端口地址和内存地址一样，都是通过地址总线来传送。</li>
+<li>CPU最多可以定位64KB个不同的端口，所有端口地址的范围为0~65535。</li>
+<li>端口的读写指令只有两条：<code>in</code>和<code>out</code>，分别用于从端口读取数据和向端口写入数据。</li>
+</ul>
+<h3 id="访问内存和访问端口的流程"><a href="#访问内存和访问端口的流程" class="headerlink" title="访问内存和访问端口的流程"></a>访问内存和访问端口的流程</h3><p>访问内存：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov ax, ds:[8] ; 假设执行前(ds)=0</span><br></pre></td></tr></table></figure>
+
+<p>执行时与总线相关的操作流程：</p>
+<ol>
+<li>CPU通过地址线将地址信息8发出</li>
+<li>CPU通过控制线发出内存读命令，选中存储器芯片，并通知它将要从中读取数据</li>
+<li>存储器将8号单元中的数据通过数据线送入CPU</li>
+</ol>
+<p>访问端口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">in al,60h ; 从60h号端口读入一个字节</span><br></pre></td></tr></table></figure>
+
+<p>执行时与总线相关的操作流程：</p>
+<ol>
+<li>CPU通过地址线将地址信息60h发出</li>
+<li>CPU通过控制线发出端口读命令，选中端口所在的芯片，并通知它将要从中读取数据</li>
+<li>端口所在的芯片将60h端口中的数据通过数据线送入CPU</li>
+</ol>
+<p>注意，在in和out指令中，<strong>只能</strong>使用<code>ax</code>或<code>al</code>来存放从端口中读入的数据或要发送到端口中的数据。访问8位端口时用<code>al</code>，访问16位端口时用<code>ax</code>。</p>
+<p>对0~255以内的端口进行读写时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in al, 20h         ; 从2011端口读入一个字节</span><br><span class="line">out 20h, al        ; 向20打端口写入一个字节</span><br></pre></td></tr></table></figure>
+
+<p>对256~65535的端口进行读写时，端口号放在dx中:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov dx, 3f8h       ; 将端口号3f8h送入dx</span><br><span class="line">in al, dx          ; 从3f8h端口读入一个字节</span><br><span class="line">out dx, al         ; 向3f8h端口写入一个字节</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="CMOS-RAM芯片"><a href="#CMOS-RAM芯片" class="headerlink" title="CMOS RAM芯片"></a>CMOS RAM芯片</h2><p>PC机中，有一个CMOS RAM芯片，一般简称为CMOS。此芯片的特征如下：</p>
+<ul>
+<li>包含一个实时钟和一个有128个存储单元的RAM存储器(早期的计算机为64个字节)。</li>
+<li>该芯片靠电池供电。所以，关机后其内部的实时钟仍可正常工作，RAM中的信息不丢失。</li>
+<li>128个字节的RAM中，内部实时钟占用0~0dh单元来保存时间信息，其余大部分单元用于保存系统配置信息，供系统启动时BIOS程序读取。BIOS也提供了相关的程序，使我们可以在开机的时候配置CMOS RAM中的系统信息。</li>
+<li>该芯片内部有两个端口，端口地址为70h和71h。CPU通过这两个端口来读写CMOS RAM。</li>
+<li>70h为<code>地址端口</code>，存放要访问的CMOS RAM单元的地址；71h为<code>数据端口</code>，存放从选定的CMOS RAM单元中读取的数据，或要写入到其中的数据。</li>
+<li>可见CPU对CMOS RAM的读写分两步进行，例如，读CMOS RAM的2号单元：<ol>
+<li>将2送入端口70h；</li>
+<li>从端口71h读出2号单元的内容。</li>
+</ol>
+</li>
+</ul>
+<p>读取CMOS RAM的 2号单元的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">start:  </span><br><span class="line">				mov al, 2</span><br><span class="line">        out 70H,al  ;将2送入端口70H   </span><br><span class="line">        in  al,71H  ;从端口71H读出2号单元的内容</span><br><span class="line">        </span><br><span class="line">        mov ax,4c00H</span><br><span class="line">        int 21H</span><br><span class="line">code ends</span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+
+
+
+<p>向CMOS RAM的2号单元写入0：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">start:  </span><br><span class="line">				mov al,2    </span><br><span class="line">        out 70h,al  ;要访问的CMOS RAM单元地址为 (al)=2</span><br><span class="line">        mov al,0</span><br><span class="line">        out 71H,al  ;写入数据到选定的CMOS RAM单元地址</span><br><span class="line"></span><br><span class="line">        mov ax,4c00H</span><br><span class="line">        int 21H</span><br><span class="line">code ends</span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="shl和shr指令"><a href="#shl和shr指令" class="headerlink" title="shl和shr指令"></a>shl和shr指令</h2><ul>
+<li>shl和shr是逻辑移位指令。shl是逻辑左移指令，shr是逻辑右移指令。</li>
+<li>shl是逻辑左移指令，它的功能为：<ol>
+<li>将一个寄存器或内存单元中的数据向左移位</li>
+<li>将最后移出的一位写入CF中</li>
+<li>最低位用0补充</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov al,01001000b</span><br><span class="line">shl al,1      ; 将al中的数据左移一位。执行后(al)=1001 0000b，CF=0。</span><br><span class="line">shl al,1      ; 将al中的数据左移一位。执行后(al)=0010 0000b，CF=1。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果移动位数大于1时，必须将移动位数放在<code>cl</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov al,01010001b</span><br><span class="line">mov cl,3</span><br><span class="line">shl al,cl ; 执行后(al)=10001000b，因为最后移出的一位是0，所以CF=0。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>编程，用加法和移位指令计算（ax） = （ax) * 10<br>提示：（ax）* 10 = （ax）* 2 + （ax）* 8。即：乘以2即左移一位，乘以8即左移三位</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">start:</span><br><span class="line">	mov ax,10</span><br><span class="line">	mov bx,ax</span><br><span class="line">	shl ax,1</span><br><span class="line">	mov cl,3</span><br><span class="line">	shl bx,cl</span><br><span class="line">	add ax,bx</span><br><span class="line">mov ax,4c00h</span><br><span class="line">int 21h</span><br><span class="line">code ends</span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="CMOS-RAM中存储的时间信息"><a href="#CMOS-RAM中存储的时间信息" class="headerlink" title="CMOS RAM中存储的时间信息"></a>CMOS RAM中存储的时间信息</h2><blockquote>
+<p>BCD码是以4位二进制数表示十进制数码的编码方法，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>十进制数码</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对应的BCD码</td>
+<td>0000</td>
+<td>0001</td>
+<td>0010</td>
+<td>0011</td>
+<td>0100</td>
+<td>0101</td>
+<td>0110</td>
+<td>0111</td>
+<td>1000</td>
+<td>1001</td>
+</tr>
+</tbody></table>
+<p>比如，数值26用BCD码表示为：0010 0110。</p>
+<p>可见<strong>一个字节可表示两个BCD码</strong>。也就是说，一个字节的BCD码可以表示<code>两位的十进制数</code>，高4位的BCD码表示十位，低4位的BCD码表示个位。比如，00010100b表示14。</p>
+</blockquote>
+<ul>
+<li>在CMOS RAM中，存放着当前的时间：年、月、日、时、分、秒。</li>
+<li>这6个信息的长度都为1个字节，存放单元为：<code>秒：0  分：2  时：4   日：7  月：8  年：9</code>。这些数据以BCD码的方式存放。</li>
+</ul>
+<p>编程，在屏幕中间显示当前的月份。</p>
+<blockquote>
+<p>分析：</p>
+<ol>
+<li>需要从CMOS RAM的8号单元读出当前月份的BCD码。</li>
+<li>将用BCD码表示的月份以十进制的形式显示到屏幕上。</li>
+</ol>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line"></span><br><span class="line">code segment</span><br><span class="line"></span><br><span class="line">start:  mov al,8    ; 首先要向地址端口70h写入要访问的单元的地址</span><br><span class="line">        out 70h,al</span><br><span class="line">        in al,71h   ; 从数据端口71h中取得指定单元中的数据</span><br><span class="line"></span><br><span class="line">        mov ah,al   ; al中为从CMOS RAM的8号单元中读出的数据</span><br><span class="line">        mov cl,4</span><br><span class="line">        shr ah,cl   ; ah中为月份的十位数码值</span><br><span class="line">        and al,00001111b ; al中为月份的个位数码值</span><br><span class="line"></span><br><span class="line">        add ah,30h</span><br><span class="line">        add al,30h</span><br><span class="line"></span><br><span class="line">        mov bx,0b800h</span><br><span class="line">        mov es,bx</span><br><span class="line">        mov byte ptr es:[160*12+40*2],ah        ;显示月份的十位数码</span><br><span class="line">        mov byte ptr es:[160*12+40*2+2],al      ;接着显示月份的个位数码</span><br><span class="line"></span><br><span class="line">        mov ax,4c00h</span><br><span class="line">        int 21h</span><br><span class="line"></span><br><span class="line">code ends</span><br><span class="line"></span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+
+
+
+<p>编程，以<code>年/月/日 时：分：秒</code>的格式，显示当前的日期、时间。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line"> </span><br><span class="line">data segment</span><br><span class="line">        db 9,8,7,4,2,0 ;存放顺序读取的CMOS端口</span><br><span class="line">        db &#x27;00/00/00 00:00:00&#x27;,&#x27;$&#x27;       ;存放预先设置的时间字符串格式</span><br><span class="line">data ends</span><br><span class="line"> </span><br><span class="line">stack segment</span><br><span class="line">        db 32 dup (0)</span><br><span class="line">stack ends</span><br><span class="line"> </span><br><span class="line">code segment</span><br><span class="line">start:  mov ax,data</span><br><span class="line">        mov ds,ax    </span><br><span class="line"> </span><br><span class="line">        mov ax,stack</span><br><span class="line">        mov ss,ax</span><br><span class="line">        mov sp,10h</span><br><span class="line"> </span><br><span class="line">        mov bx,6</span><br><span class="line">        mov si,0</span><br><span class="line"> </span><br><span class="line">        mov cx,6</span><br><span class="line"> </span><br><span class="line">    s:  call parse</span><br><span class="line">        inc si</span><br><span class="line">        add bx,3</span><br><span class="line">        loop s</span><br><span class="line"></span><br><span class="line">			  ; 设置光标位置</span><br><span class="line">        mov ah,2</span><br><span class="line">        mov bh,0</span><br><span class="line">        mov dh,5</span><br><span class="line">        mov dl,0</span><br><span class="line">        int 10h</span><br><span class="line"> </span><br><span class="line">				; 显示字符串</span><br><span class="line">        mov dx,6</span><br><span class="line">        mov ah,9</span><br><span class="line">        int 21h</span><br><span class="line"> </span><br><span class="line">        mov ax,4c00h</span><br><span class="line">        int 21h</span><br><span class="line"></span><br><span class="line">				;这个函数是解析CMOS中读出的数据，是书中的示例</span><br><span class="line"> parse: mov al,[si]</span><br><span class="line">        out 70h,al</span><br><span class="line">        in al,71h</span><br><span class="line">        push cx</span><br><span class="line"> </span><br><span class="line">        mov cl,4</span><br><span class="line">        mov ah,al</span><br><span class="line">        and ah,00001111b</span><br><span class="line">        and al,11110000b</span><br><span class="line">        shr al,cl</span><br><span class="line"> </span><br><span class="line">        add ah,30h</span><br><span class="line">        add al,30h</span><br><span class="line"> </span><br><span class="line">        mov [bx],ax</span><br><span class="line">        pop cx</span><br><span class="line">        ret</span><br><span class="line">code ends</span><br><span class="line"> </span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="第十五章-外中断"><a href="#第十五章-外中断" class="headerlink" title="第十五章 外中断"></a>第十五章 外中断</h1><ul>
+<li>CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出。也就是说，<strong>CPU除了有运算能力外，还要有I/O能力</strong>。<ul>
+<li>比如，我们按下键盘上的一个键，CPU最终要能够处理这个键。</li>
+<li>在使用文本编辑器时，按下a键后，可以看到屏幕上出现“a”，是CPU将从键盘上输入的键所对应的字符送到显示器上的。</li>
+</ul>
+</li>
+<li>要及时处理外设的输入，显然需要解决两个问题：<ul>
+<li>外设的输入随时可能发生，CPU如何得知？</li>
+<li>CPU从何处得到外设的输入？</li>
+</ul>
+</li>
+</ul>
+<h2 id="接口芯片和端口"><a href="#接口芯片和端口" class="headerlink" title="接口芯片和端口"></a>接口芯片和端口</h2><ul>
+<li><strong>CPU通过端口和外部设备进行联系</strong>。</li>
+<li>PC系统的接口卡和主板上，装有各种接口芯片。这些外设接口芯片的内部有若干寄存器，CPU将这些寄存器当作端口来访问。</li>
+<li>外设的输入不直接送入内存和CPU，而是送入相关的接口芯片的端口中；CPU向外设的输出也不是直接送入外设，而是先送入端口中，再由相关的芯片送到外设。</li>
+<li>CPU向外设输出控制命令，这些控制命令也是先送到相关芯片的端口中，然后再由相关的芯片根据命令对外设实施控制。</li>
+</ul>
+<h2 id="外中断信息"><a href="#外中断信息" class="headerlink" title="外中断信息"></a>外中断信息</h2><ul>
+<li>外设随时都可能发生需要CPU及时处理的事件，CPU如何及时得知并进行处理？</li>
+<li>CPU提供<code>中断机制</code>来满足这种需要。当CPU外部有需要处理的事情发生的时候，比如说外设的输入到达，相关芯片将向CPU发出相应的中断信息。CPU在执行完当前指令后，可以检测到发送过来的中断信息，引发中断过程，处理外设的输入。</li>
+<li>外中断源一共有两类：<ul>
+<li>可屏蔽中断</li>
+<li>不可屏蔽中断</li>
+</ul>
+</li>
+</ul>
+<h3 id="可屏蔽中断"><a href="#可屏蔽中断" class="headerlink" title="可屏蔽中断"></a>可屏蔽中断</h3><ul>
+<li>可屏蔽中断：<strong>CPU可以不响应的外中断</strong>。</li>
+<li>CPU是否响应可屏蔽中断，要看标志寄存器的IF位的设置。当CPU检测到可屏蔽中断信息时，<ul>
+<li>如果IF=1，则CPU在执行完当前指令后响应中断，引发中断过程；</li>
+<li>如果IF=0，则不响应可屏蔽中断。</li>
+</ul>
+</li>
+</ul>
+<p>可屏蔽中断所引发的中断过程，除在第1步的实现上有所不同外，基本上和内中断的中断过程相同。：</p>
+<ol>
+<li>取中断类型码n；</li>
+<li>标志寄存器入栈，IF=0，TF=0；</li>
+<li>CS、IP入栈；</li>
+<li><code>(IP)=(n*4)，(CS)=(n*4+2)</code></li>
+</ol>
+<blockquote>
+<p>因为可屏蔽中断信息来自于CPU外部，中断类型码是通过数据总线送入CPU的；而内中断的中断类型码是在CPU内部产生的。</p>
+</blockquote>
+<blockquote>
+<p>为什么中断过程中将IF置为0？</p>
+<p>原因就是：<strong>在进入中断处理程序后，禁止其他的可屏蔽中断</strong>。</p>
+</blockquote>
+<p>如果在中断处理程序中需要处理可屏蔽中断，可以用指令将IF置1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sti ; 设置 IF=1；</span><br><span class="line">cli ; 设置 IF=0。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="不可屏蔽中断"><a href="#不可屏蔽中断" class="headerlink" title="不可屏蔽中断"></a>不可屏蔽中断</h3><ul>
+<li>不可屏蔽中断：<strong>CPU必须响应的外中断</strong>。</li>
+<li>当CPU检测到不可屏蔽中断信息时，则在执行完当前指令后，立即响应引发中断过程。</li>
+<li>几乎所有由外设引发的外中断，都是可屏蔽中断。不可屏蔽中断是在系统中有必须处理的<strong>紧急情况发生时</strong>用来通知CPU的中断信息。</li>
+</ul>
+<p>对于8086CPU，<strong>不可屏蔽中断的中断类型码固定为2</strong>，所以中断过程中不需要取中断类型码。进而不可屏蔽中断的中断过程为：</p>
+<ol>
+<li>标志寄存器入栈，IF=0，TF=0；</li>
+<li>CS、IP入栈；</li>
+<li>(IP)=(8)，(CS)=(0AH)。</li>
+</ol>
+<h2 id="PC机键盘的处理过程"><a href="#PC机键盘的处理过程" class="headerlink" title="PC机键盘的处理过程"></a>PC机键盘的处理过程</h2><h3 id="键盘输入"><a href="#键盘输入" class="headerlink" title="键盘输入"></a>键盘输入</h3><ol>
+<li>键盘上的每一个键相当于一个开关，键盘中有一个芯片对键盘上的每一个键的开关状态进行扫描。</li>
+<li>按下一个键时，开关接通该芯片就产生一个扫描码，扫描码说明了按下的键在键盘上的位置。</li>
+<li>扫描码被送入主板上的相关接口芯片的寄存器中，该寄存器的端口地址为60h。</li>
+<li>松开按下的键时，也产生一个扫描码，扫描码说明了松开的键在键盘上的位置。松开按键时产生的扫描码也被送入60h端口中。</li>
+</ol>
+<ul>
+<li>一般将按下一个键时产生的扫描码称为<code>通码</code>，松开一个键产生的扫描码称为<code>断码</code>。</li>
+<li>扫描码长度为<code>一个字节</code>，通码的第7位为0，断码的第7位为1，即：<strong>断码=通码+80h</strong></li>
+<li>比如，g键的通码为22h，断码为a2h。</li>
+</ul>
+<h3 id="引发9号中断"><a href="#引发9号中断" class="headerlink" title="引发9号中断"></a>引发9号中断</h3><p>键盘的输入到达60h端口时，相关的芯片就会<strong>向CPU发出中断类型码为9的可屏蔽中断信息</strong>。</p>
+<p>CPU检测到该中断信息后，如果IF=1，则响应中断，引发中断过程转去执行int9中断例程。 </p>
+<h3 id="执行int9中断例程"><a href="#执行int9中断例程" class="headerlink" title="执行int9中断例程"></a>执行int9中断例程</h3><p>BIOS提供了int 9中断例程，用来进行基本的键盘输入处理，主要的工作如下：</p>
+<ol>
+<li>读出60h端口中的扫描码；</li>
+<li>如果是字符键的扫描码，将该扫描码和它所对应的字符码（即ASCII码）送入内存中的BIOS键盘缓冲区；如果是控制键（比如Ctrl）和切换键（比如CapsLock）的扫描码，则将其转变为状态字节（用二进制位记录控制键和切换键状态的字节）写入内存中存储状态字节的单元；</li>
+<li>对键盘系统进行相关的控制，比如说向相关芯片发出应答信息。</li>
+</ol>
+<p>BIOS键盘缓冲区是系统启动后，BIOS用于存放int 9中断例程所接收的键盘输入的内存区。该内存区可以存储15个键盘输入，因为int 9中断例程除了接收扫描码外，还要产生和扫描码对应的字符码，所以在BIOS键盘缓冲区中，一个键盘输入用一个字单元存放，高位字节存放扫描码，低位字节存放字符码。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
