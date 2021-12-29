@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&gt;
+&lt;li&gt;Yarn 对你的代码来说是一个包管理器。它可以让你使用并分享 全世界开发者的（例如 JavaScript）代码。&lt;/li&gt;
+&lt;li&gt;Yarn 能够快速、安全、 并可靠地完成这些工作，所以你不用有任何担心。&lt;/li&gt;
+&lt;li&gt;代码通过 &lt;strong&gt;包（package）&lt;/strong&gt; (或者称为 &lt;strong&gt;模块（module）&lt;/strong&gt;) 的方式来共享。 一个包里包含所有需要共享的代码，以及描述包信息的文件，称为 &lt;code&gt;package.json&lt;/code&gt; 。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; 以下是一些你需要的最常用的命令："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>yarn官方文档 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Yarn/" rel="tag">Yarn</a></div><div class="post-time">2020-07-22</div></div></div><div class="container post-header"><h1>yarn官方文档</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#scripts"><span class="toc-number">1.</span> <span class="toc-text">scripts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dependencies"><span class="toc-number">2.</span> <span class="toc-text">dependencies</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#devDependencies"><span class="toc-number">3.</span> <span class="toc-text">devDependencies</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#peerDependencies"><span class="toc-number">4.</span> <span class="toc-text">peerDependencies</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#resolutions"><span class="toc-number">5.</span> <span class="toc-text">resolutions</span></a></li></ol></details></div><div class="container post-content"><ul>
+<li>Yarn 对你的代码来说是一个包管理器。它可以让你使用并分享 全世界开发者的（例如 JavaScript）代码。</li>
+<li>Yarn 能够快速、安全、 并可靠地完成这些工作，所以你不用有任何担心。</li>
+<li>代码通过 <strong>包（package）</strong> (或者称为 <strong>模块（module）</strong>) 的方式来共享。 一个包里包含所有需要共享的代码，以及描述包信息的文件，称为 <code>package.json</code> 。</li>
+</ul>
+<p> 以下是一些你需要的最常用的命令：</p>
+<p><strong>初始化一个新项目</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn init</span><br></pre></td></tr></table></figure>
+
+<p><strong>添加依赖包</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn add [package]</span><br><span class="line">yarn add [package]@[version]</span><br><span class="line">yarn add [package]@[tag]</span><br></pre></td></tr></table></figure>
+
+<p><strong>将依赖项添加到不同依赖项类别中</strong></p>
+<p>分别添加到 <code>devDependencies</code>、<code>peerDependencies</code> 和 <code>optionalDependencies</code> 类别中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn add [package] --dev</span><br><span class="line">yarn add [package] --peer</span><br><span class="line">yarn add [package] --optional</span><br></pre></td></tr></table></figure>
+
+<p><strong>升级依赖包</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn upgrade [package]</span><br><span class="line">yarn upgrade [package]@[version]</span><br><span class="line">yarn upgrade [package]@[tag]</span><br></pre></td></tr></table></figure>
+
+<p><strong>移除依赖包</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn remove [package]</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装项目的全部依赖</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn install</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="scripts"><a href="#scripts" class="headerlink" title="scripts"></a><code>scripts</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;build-project&quot;</span>: <span class="string">&quot;node build-project.js&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>脚本是自动化与软件包相关的任务的好方法，例如简单的构建过程或开发工具。在该<code>&quot;scripts&quot;</code>字段中，您可以定义各种脚本，以方式运行<code>yarn run &lt;script&gt;</code>。例如，<code>build-project</code>上面的脚本可以通过调用<code>yarn run build-project</code>并运行<code>node build-project.js</code>。</p>
+<p>该<code>start</code>脚本值默认为<code>node server.js</code>。</p>
+<h3 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a><code>dependencies</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;package-1&quot;</span>: <span class="string">&quot;^3.1.4&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些是软件包开发和生产中都需要的依赖项。</p>
+<blockquote>
+<p>您可以指定一个确切的版本，一个最低版本（例如<code>&gt;=</code>）或一系列版本（例如<code>&gt;= ... &lt;</code>）。</p>
+</blockquote>
+<h3 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a><code>devDependencies</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;devDependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;package-2&quot;</span>: <span class="string">&quot;^0.4.2&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些是仅在开发软件包时需要的软件包，而不会在生产环境中安装。</p>
+<h3 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a><code>peerDependencies</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;peerDependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;package-3&quot;</span>: <span class="string">&quot;^2.7.18&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>声明程序包与其他程序包版本的兼容性。</p>
+<h3 id="resolutions"><a href="#resolutions" class="headerlink" title="resolutions"></a><code>resolutions</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;resolutions&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;transitive-package-1&quot;</span>: <span class="string">&quot;0.0.29&quot;</span>,</span><br><span class="line">    <span class="string">&quot;transitive-package-2&quot;</span>: <span class="string">&quot;file:./local-forks/transitive-package-2&quot;</span>,</span><br><span class="line">    <span class="string">&quot;dependencies-package-1/transitive-package-3&quot;</span>: <span class="string">&quot;^2.1.1&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重写特定嵌套依赖项的版本</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;计算机系统抽象层&quot;&gt;&lt;a href=&quot;#计算机系统抽象层&quot; class=&quot;headerlink&quot; title=&quot;计算机系统抽象层&quot;&gt;&lt;/a&gt;计算机系统抽象层&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/images/image-20211219100743320.png&quot; alt=&quot;image-20211219100743320&quot;&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>计算机系统基础 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Operating-System/" rel="tag">Operating System</a></div><div class="post-time">2021-12-19</div></div></div><div class="container post-header"><h1>计算机系统基础</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%8A%BD%E8%B1%A1%E5%B1%82"><span class="toc-number">1.</span> <span class="toc-text">计算机系统抽象层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%AF-%E8%AF%BA%E4%BE%9D%E6%9B%BC%E7%BB%93%E6%9E%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">冯.诺依曼结构计算机模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E7%BC%96%E8%AF%91%E5%85%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E4%BA%A7%E7%89%A9"><span class="toc-number">3.</span> <span class="toc-text">C语言编译全流程及中间产物</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80Hello%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-number">4.</span> <span class="toc-text">C语言Hello程序的数据流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%EF%BC%88ISA%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">指令集体系结构（ISA）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A5%E7%A0%81%E7%9A%84%E5%AE%9E%E8%B4%A8"><span class="toc-number">6.</span> <span class="toc-text">补码的实质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#32%E4%BD%8D%E6%B5%AE%E7%82%B9%E6%95%B0%E7%9A%84%E8%A1%A8%E7%A4%BA%E8%8C%83%E5%9B%B4"><span class="toc-number">7.</span> <span class="toc-text">32位浮点数的表示范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GB2312-80%E5%AD%97%E7%AC%A6%E9%9B%86"><span class="toc-number">8.</span> <span class="toc-text">GB2312-80字符集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E5%92%8C%E5%AD%97%E9%95%BF%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8D%E5%90%8C"><span class="toc-number">9.</span> <span class="toc-text">字和字长的概念不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E7%9A%84%E5%A4%A7%E5%B0%8F%E7%AB%AF%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">10.</span> <span class="toc-text">检测内存的大小端存储方式</span></a></li></ol></details></div><div class="container post-content"><h2 id="计算机系统抽象层"><a href="#计算机系统抽象层" class="headerlink" title="计算机系统抽象层"></a>计算机系统抽象层</h2><p><img src="/images/image-20211219100743320.png" alt="image-20211219100743320"></p>
+<p><img src="/images/image-20211219121311474.png" alt="image-20211219121311474"></p>
+<ul>
+<li><code>操作系统/虚拟机</code>：包括操作系统，编译和链接等</li>
+<li><code>指令集体系结构(ISA)</code>：包括指令系统，机器码，汇编语言等</li>
+<li><code>微体系结构及硬件</code>：包括CPU的通用结构，层次结构存储系统等</li>
+</ul>
+<h2 id="冯-诺依曼结构计算机模型"><a href="#冯-诺依曼结构计算机模型" class="headerlink" title="冯.诺依曼结构计算机模型"></a>冯.诺依曼结构计算机模型</h2><p><img src="/images/image-20211219102027077.png" alt="image-20211219102027077"></p>
+<p><img src="/images/image-20211219105020766.png" alt="image-20211219105020766"></p>
+<h2 id="C语言编译全流程及中间产物"><a href="#C语言编译全流程及中间产物" class="headerlink" title="C语言编译全流程及中间产物"></a>C语言编译全流程及中间产物</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hello.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;hello, world\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20211219110610510.png" alt="image-20211219110610510"></p>
+<p>我们把各种语言处理程序（如编译、汇编链接）和运行时系统（如库函数，调试、优化等功能）合称为<code>语言处理系统</code>。</p>
+<h2 id="C语言Hello程序的数据流"><a href="#C语言Hello程序的数据流" class="headerlink" title="C语言Hello程序的数据流"></a>C语言Hello程序的数据流</h2><p>在shell里执行<code>./hello</code>时，数据流如下：</p>
+<p><img src="/images/image-20211219111214305.png" alt="image-20211219111214305"></p>
+<h2 id="指令集体系结构（ISA）"><a href="#指令集体系结构（ISA）" class="headerlink" title="指令集体系结构（ISA）"></a>指令集体系结构（ISA）</h2><ul>
+<li>ISA：Instruction Set Architecture，即<code>指令集体系结构</code>，有时简称为指令系统。</li>
+<li>ISA 是一种规约（Specification），它<strong>规定了如何使用硬件</strong>。</li>
+<li><strong>ISA 是计算机组成的抽象</strong><ul>
+<li>不同 ISA 规定的指令集不同，如 IA-32、MIPS、ARM 等。</li>
+<li>计算机组成必须能够实现 ISA 规定的功能，如提供 GPR 、标志、运算电路等。</li>
+<li>同一种 ISA 可以由不同的计算机组成，如乘法指令可用 ALU 或乘法器实现。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/image-20211219113040513.png" alt="image-20211219113040513"></p>
+<h2 id="补码的实质"><a href="#补码的实质" class="headerlink" title="补码的实质"></a>补码的实质</h2><ul>
+<li><p>补码的实质实际上是<code>模运算</code>。<strong>在一个模运算系统中，一个数与它除以“模”后的余数等价</strong>。</p>
+</li>
+<li><p>eg：时钟是一种<code>模12系统</code>。现在钟表时针指向10点，要将它拨向6点，有两种拨法：</p>
+<ul>
+<li>顺拨8格：10 + 8 = 18 ≡ 6</li>
+<li>倒拨4格：10 - 4 = 6</li>
+</ul>
+<p>也就是：<code>10 - 4 ≡ 10 + 8</code>；<code>-4 ≡ 8</code>。此时可以称<strong>8是<code>-4对模12</code>的补码</strong>(即：-4的模12补码等于8)</p>
+</li>
+<li><p>**一个负数的补码 等于 <code>模 减去 该负数的绝对值</code>**。</p>
+<blockquote>
+<p>eg：上述中，模为12，负数为-4。所以负数-4的的补码为 12 - | -4 | = 8。 </p>
+</blockquote>
+</li>
+<li><p><strong>对于某一确定的模，某数减去小于模的另一数，总可以用该数加上另一数负数的补码来代替</strong>。</p>
+<blockquote>
+<p>eg：模为12，某数取10，另一数取4。</p>
+<p>所以，另一数负数为-4，另一数负数的补码为8，即：<code>10 - 4 ≡ 10 + 8</code></p>
+</blockquote>
+</li>
+<li><p>观察<code>10 - 4 ≡ 10 + 8</code>，发现减法竟然可以使用加法来进行代替。也即是说：<strong>补码实现了加法和减法的统一</strong>。</p>
+</li>
+</ul>
+<p>运算器只有有限位，假设为n位，则运算结果只能保留低n位，故可看成是个只有n档的二进制算盘，因此，其模为2^n。</p>
+<p><img src="/images/image-20211219143838121.png" alt="image-20211219143838121"></p>
+<p>求：负数的补码</p>
+<ul>
+<li>法一：对应的正数，按位取反，然后加一。</li>
+<li>法二：从右向左遇到第一个1前面的数按位取反。</li>
+</ul>
+<blockquote>
+<p>eg：123 = 0111 1011B，求 -123</p>
+<ul>
+<li>法一：1000 0100 + 1 = 1000 0101</li>
+<li>法二：1000 0101</li>
+</ul>
+</blockquote>
+<h2 id="32位浮点数的表示范围"><a href="#32位浮点数的表示范围" class="headerlink" title="32位浮点数的表示范围"></a>32位浮点数的表示范围</h2><p><img src="/images/image-20211219152353682.png" alt="image-20211219152353682"></p>
+<p><img src="/images/image-20211219152255281.png" alt="image-20211219152255281"></p>
+<h2 id="GB2312-80字符集"><a href="#GB2312-80字符集" class="headerlink" title="GB2312-80字符集"></a>GB2312-80字符集</h2><ul>
+<li>由三部分组成<ol>
+<li>字母、数字和各种符号，包括英文、俄文、日文平假名与片假名、罗马字母、汉语拼音等共687个</li>
+<li>一级常用汉字，共3755个，按汉语拼音排列</li>
+<li>二级常用汉字，共3008个，不太常用，按偏旁部首排列</li>
+</ol>
+</li>
+<li>汉字的区位码<ol>
+<li>码表由94行、94列组成，行号为区号，列号为位号，各占7位位号在右</li>
+<li>指出汉字在码表中的位置，共14位，区号在左、</li>
+</ol>
+</li>
+<li>汉字的国标码<ol>
+<li>每个汉字的区号和位号各自加上32(20H)，得到其<code>国标码</code></li>
+<li>国标码中区号和位号各占7位。在计算机内部，为方便处理与存储，前面添一个0，构成一个字节</li>
+</ol>
+</li>
+<li>可在GB2312国标码的基础上产生<code>汉字内码</code>：<strong>为与ASCII码区别</strong>，将国标码的两个字节的第一位置“1”后得到一种汉字内码（可以有不同的编码方案）</li>
+</ul>
+<h2 id="字和字长的概念不同"><a href="#字和字长的概念不同" class="headerlink" title="字和字长的概念不同"></a><code>字</code>和<code>字长</code>的概念不同</h2><ul>
+<li><p><code>字长</code>：指数据通路的宽度。等于 CPU 内部总线的宽度、运算器的位数、通用寄存器的宽度（这些部件的宽度都是一样的）</p>
+<blockquote>
+<p><code>数据通路</code>：指 CPU 内部数据流经的路径以及路径上的部件，主要是 CPU 内部进行数据运算、存储和传送的部件，这些部件的宽度基本上要一致，才能相互匹配。</p>
+</blockquote>
+</li>
+<li><p><code>字</code>：表示被处理信息的单位，用来度量数据类型的宽度。</p>
+</li>
+</ul>
+<h2 id="检测内存的大小端存储方式"><a href="#检测内存的大小端存储方式" class="headerlink" title="检测内存的大小端存储方式"></a>检测内存的大小端存储方式</h2><p><img src="/images/image-20211219160803391.png" alt="image-20211219160803391"></p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

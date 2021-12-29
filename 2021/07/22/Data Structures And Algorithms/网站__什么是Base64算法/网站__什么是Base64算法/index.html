@@ -1,0 +1,199 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;什么是Base64&quot;&gt;&lt;a href=&quot;#什么是Base64&quot; class=&quot;headerlink&quot; title=&quot;什么是Base64&quot;&gt;&lt;/a&gt;什么是Base64&lt;/h2&gt;&lt;p&gt;Base64是一种编码算法。为什么叫Base64呢？因为这种算法只是支持64个可打印字符。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>什么是Base64算法 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Data-Structures-And-Algorithms/" rel="tag">Data Structures And Algorithms</a></div><div class="post-time">2021-07-22</div></div></div><div class="container post-header"><h1>什么是Base64算法</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFBase64"><span class="toc-number">1.</span> <span class="toc-text">什么是Base64</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8Base64"><span class="toc-number">2.</span> <span class="toc-text">为什么使用Base64</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base64%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">Base64的原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base64%E9%9D%9E%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">Base64非加密算法</span></a></li></ol></details></div><div class="container post-content"><h2 id="什么是Base64"><a href="#什么是Base64" class="headerlink" title="什么是Base64"></a>什么是Base64</h2><p>Base64是一种编码算法。为什么叫Base64呢？因为这种算法只是支持64个可打印字符。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Value</th>
+<th align="center">Char</th>
+<th align="center">Value</th>
+<th align="center">Char</th>
+<th align="center">Value</th>
+<th align="center">Char</th>
+<th align="center">Value</th>
+<th align="center">Char</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center"><code>A</code></td>
+<td align="center">16</td>
+<td align="center"><code>Q</code></td>
+<td align="center">32</td>
+<td align="center"><code>g</code></td>
+<td align="center">48</td>
+<td align="center"><code>w</code></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center"><code>B</code></td>
+<td align="center">17</td>
+<td align="center"><code>R</code></td>
+<td align="center">33</td>
+<td align="center"><code>h</code></td>
+<td align="center">49</td>
+<td align="center"><code>x</code></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center"><code>C</code></td>
+<td align="center">18</td>
+<td align="center"><code>S</code></td>
+<td align="center">34</td>
+<td align="center"><code>i</code></td>
+<td align="center">50</td>
+<td align="center"><code>y</code></td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center"><code>D</code></td>
+<td align="center">19</td>
+<td align="center"><code>T</code></td>
+<td align="center">35</td>
+<td align="center"><code>j</code></td>
+<td align="center">51</td>
+<td align="center"><code>z</code></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center"><code>E</code></td>
+<td align="center">20</td>
+<td align="center"><code>U</code></td>
+<td align="center">36</td>
+<td align="center"><code>k</code></td>
+<td align="center">52</td>
+<td align="center"><code>0</code></td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center"><code>F</code></td>
+<td align="center">21</td>
+<td align="center"><code>V</code></td>
+<td align="center">37</td>
+<td align="center"><code>l</code></td>
+<td align="center">53</td>
+<td align="center"><code>1</code></td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center"><code>G</code></td>
+<td align="center">22</td>
+<td align="center"><code>W</code></td>
+<td align="center">38</td>
+<td align="center"><code>m</code></td>
+<td align="center">54</td>
+<td align="center"><code>2</code></td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center"><code>H</code></td>
+<td align="center">23</td>
+<td align="center"><code>X</code></td>
+<td align="center">39</td>
+<td align="center"><code>n</code></td>
+<td align="center">55</td>
+<td align="center"><code>3</code></td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center"><code>I</code></td>
+<td align="center">24</td>
+<td align="center"><code>Y</code></td>
+<td align="center">40</td>
+<td align="center"><code>o</code></td>
+<td align="center">56</td>
+<td align="center"><code>4</code></td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center"><code>J</code></td>
+<td align="center">25</td>
+<td align="center"><code>Z</code></td>
+<td align="center">41</td>
+<td align="center"><code>p</code></td>
+<td align="center">57</td>
+<td align="center"><code>5</code></td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center"><code>K</code></td>
+<td align="center">26</td>
+<td align="center"><code>a</code></td>
+<td align="center">42</td>
+<td align="center"><code>q</code></td>
+<td align="center">58</td>
+<td align="center"><code>6</code></td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="center"><code>L</code></td>
+<td align="center">27</td>
+<td align="center"><code>b</code></td>
+<td align="center">43</td>
+<td align="center"><code>r</code></td>
+<td align="center">59</td>
+<td align="center"><code>7</code></td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center"><code>M</code></td>
+<td align="center">28</td>
+<td align="center"><code>c</code></td>
+<td align="center">44</td>
+<td align="center"><code>s</code></td>
+<td align="center">60</td>
+<td align="center"><code>8</code></td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center"><code>N</code></td>
+<td align="center">29</td>
+<td align="center"><code>d</code></td>
+<td align="center">45</td>
+<td align="center"><code>t</code></td>
+<td align="center">61</td>
+<td align="center"><code>9</code></td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="center"><code>O</code></td>
+<td align="center">30</td>
+<td align="center"><code>e</code></td>
+<td align="center">46</td>
+<td align="center"><code>u</code></td>
+<td align="center">62</td>
+<td align="center"><code>+</code></td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="center"><code>P</code></td>
+<td align="center">31</td>
+<td align="center"><code>f</code></td>
+<td align="center">47</td>
+<td align="center"><code>v</code></td>
+<td align="center">63</td>
+<td align="center"><code>/</code></td>
+</tr>
+</tbody></table>
+<h2 id="为什么使用Base64"><a href="#为什么使用Base64" class="headerlink" title="为什么使用Base64"></a>为什么使用Base64</h2><ul>
+<li>ASCII码范围是0-127，其中0-31和127这33个字符属于<code>控制字符</code>，剩下的32-126这95个字符属于<code>可打印字符</code>。</li>
+<li>早期的一些传输协议，例如传输邮件的SMTP协议，只能传输可打印的ASCII字符。导致原本8bit字节码(范围0-255)超过了可用的范围。比如当邮件输出图片资源的时候，某个byte值是10111011B，对应的十进制187不属于ASCII码范围，因此无法被传输。</li>
+<li>这个时候Base64编码应运而生了，他利用6bit字符表达了原本8bit字符。</li>
+<li>Base64可以把原本ASCII码的控制字符甚至ASCII码以外的字符都转换成可打印的6bit字符。</li>
+</ul>
+<h2 id="Base64的原理"><a href="#Base64的原理" class="headerlink" title="Base64的原理"></a>Base64的原理</h2><p>既然单一字符的位数有限，我们可以增加字符的数量。8和6的最小公倍数是24，这就意味着我们可以<strong>使用4个Base64字符来表示8个传统的8bit字符</strong>。</p>
+<p><img src="/images/1572424580-281cd16206cbee2.png" alt="1572424580-281cd16206cbee2"></p>
+<p>如上表，三个8bit字符串可以每6bit分成一组，每一组bit对应一个十进制的index，每一个index值又对应了Base64的字符。最终，8bit的字符串<code>Man</code>编码成了Base64的<code>TWFu</code>。</p>
+<blockquote>
+<p>如果原本的8bit字符串长度不是3的倍数，比如长度13，多余的那一个字符怎么编码呢？</p>
+<ul>
+<li>多余的8bit中，前6bit作为一个Base64字符，剩下的2bit作为第二个Base64字符的前两位，后面的四位补0即可。至于第三第四个Base64字符，没有匹配的8bit字符，则使用<code>=</code>字符填充(padding)。</li>
+<li>如下图把8bit的<code>M</code>编码成Base64的<code>TQ==</code></li>
+</ul>
+<p><img src="/images/1572424582-be78133d1b2201f.png" alt="1572424582-be78133d1b2201f"></p>
+</blockquote>
+<p>解码也是同样的道理，四个6bit字符串可以分成三个8bit。</p>
+<p>相比于8bit的字符编码，Base64编码会多占用三分之一的字节长度，以此为代价实现了更好的兼容性。</p>
+<h2 id="Base64非加密算法"><a href="#Base64非加密算法" class="headerlink" title="Base64非加密算法"></a>Base64非加密算法</h2><p>因为Base64只是一种编码算法，而非加密算法。任何人都可以将Base64的编码结果解码成唯一的原文。所以不能用来对重要信息做加密。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

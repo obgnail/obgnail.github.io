@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;GTID&quot;&gt;&lt;a href=&quot;#GTID&quot; class=&quot;headerlink&quot; title=&quot;GTID&quot;&gt;&lt;/a&gt;GTID&lt;/h2&gt;&lt;p&gt;&lt;code&gt;GTID&lt;/code&gt;(Global Transaction ID)：是对于一个已提交事务的编号，并且是一个全局唯一的编号。GTID是事务提交时创建分配的唯一标识符，&lt;strong&gt;所有事务均与GTID一一映射&lt;/strong&gt;。这个标识不仅在主库上是唯一的，在MySQL集群内也是唯一的。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>MySQL GTID简介 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/MySQL/" rel="tag">MySQL</a></div><div class="post-time">2021-12-22</div></div></div><div class="container post-header"><h1>MySQL GTID简介</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GTID"><span class="toc-number">1.</span> <span class="toc-text">GTID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89GTID"><span class="toc-number">2.</span> <span class="toc-text">为什么要有GTID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GTID%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">GTID的优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GTID%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">GTID的缺点</span></a></li></ol></details></div><div class="container post-content"><h2 id="GTID"><a href="#GTID" class="headerlink" title="GTID"></a>GTID</h2><p><code>GTID</code>(Global Transaction ID)：是对于一个已提交事务的编号，并且是一个全局唯一的编号。GTID是事务提交时创建分配的唯一标识符，<strong>所有事务均与GTID一一映射</strong>。这个标识不仅在主库上是唯一的，在MySQL集群内也是唯一的。</p>
+<p>从MySQL 5.6.5 开始新增了一种基于 GTID 的复制方式。通过 GTID 保证了每个在主库上提交的事务在集群中有一个唯一的ID。这种方式强化了数据库的主备一致性，故障恢复以及容错能力。</p>
+<blockquote>
+<p><strong>GTID = server_uuid:transaction_id</strong>：</p>
+<ul>
+<li>eg：3E11FA47-71CA-11E1-9E33-C80AA9429562:1</li>
+<li>GTID实际上是由UUID+TID组成的。其中UUID是一个MySQL实例的唯一标识。TID代表了该实例上已经提交的事务数量，并且随着事务提交单调递增，最初由google实现，官方MySQL在5.6才加入该功能。</li>
+</ul>
+</blockquote>
+<h2 id="为什么要有GTID"><a href="#为什么要有GTID" class="headerlink" title="为什么要有GTID"></a>为什么要有GTID</h2><p>在主从复制中，尤其是半同步复制中， 由于 Master 的dump进程一边要发送binlog给Slave，一边要等待Slave的ACK消息，这个过程是串行的，即前一个事物的ACK没有收到消息，那么后一个事物只能排队候着； 这样将会极大地影响性能；有了GTID后，SLAVE就直接可以通过数据流获得GTID信息，而且可以同步；</p>
+<p>另外，主从故障切换中，如果一台MASTER down，需要提取拥有最新日志的SLAVE做MASTER，这个是很好判断，而有了GTID，就只要以GTID为准即可方便判断；而有了GTID后，SLAVE就不需要一直保存这bin-log 的文件名和Position了；只要启用MASTER_AUTO_POSITION即可。</p>
+<p>当MASTER crash的时候，GTID有助于保证数据一致性，因为每个事物都对应唯一GTID，如果在恢复的时候某事物被重复提交，SLAVE会直接忽略；</p>
+<p>从架构设计的角度，GTID是一种很好的分布式ID实践方式，通常来说，分布式ID有两个基本要求：</p>
+<ul>
+<li>全局唯一性</li>
+<li>趋势递增</li>
+</ul>
+<p>这个ID因为是全局唯一，所以在分布式环境中很容易识别，因为趋势递增，所以ID是具有相应的趋势规律，在必要的时候方便进行顺序提取，行业内适用较多的是基于Twitter的ID生成算法snowflake,所以换一个角度来理解GTID，其实是一种优雅的分布式设计。</p>
+<h2 id="GTID的优点"><a href="#GTID的优点" class="headerlink" title="GTID的优点"></a>GTID的优点</h2><ol>
+<li>根据GTID可以知道事务最初是在哪个实例上提交的</li>
+<li>GTID的存在方便了Replication的Failover</li>
+</ol>
+<h2 id="GTID的缺点"><a href="#GTID的缺点" class="headerlink" title="GTID的缺点"></a>GTID的缺点</h2><ol>
+<li>GTID 模式实例和非GTID模式实例是不能进行复制的，要求非常严格，要么都是GTID，要么都不是。</li>
+<li>gtid_mode 是只读的，要改变状态必须：<ol>
+<li>关闭实例</li>
+<li>修改配置文件</li>
+<li>重启实例</li>
+</ol>
+</li>
+<li>更新非事务引擎表，在同一事务中更新事务表与非事务表将导致多个GTIDs分配给同一事务</li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Features&quot;&gt;&lt;a href=&quot;#Features&quot; class=&quot;headerlink&quot; title=&quot;Features&quot;&gt;&lt;/a&gt;Features&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Concurrent &lt;/li&gt;
+&lt;li&gt;Fit for vertical communities&lt;/li&gt;
+&lt;li&gt;Flexible, Modular&lt;/li&gt;
+&lt;li&gt;Native Go implementation&lt;/li&gt;
+&lt;li&gt;Can be expanded to an individualized crawler easily&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;Requirements&quot;&gt;&lt;a href=&quot;#Requirements&quot; class=&quot;headerlink&quot; title=&quot;Requirements&quot;&gt;&lt;/a&gt;Requirements&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Go 1.2 or higher&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;Documentation&quot;&gt;&lt;a href=&quot;#Documentation&quot; class=&quot;headerlink&quot; title=&quot;Documentation&quot;&gt;&lt;/a&gt;Documentation&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/hu17889/go_spider/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3&quot;&gt;中文文档&lt;/a&gt; &amp;amp;&amp;amp; &lt;a href=&quot;https://github.com/hu17889/go_spider/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E&quot;&gt;常见问题&lt;/a&gt;."><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>readme_example | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Project-Document-Specification/" rel="tag">Project Document Specification</a></div><div class="post-time">2021-08-30</div></div></div><div class="container post-header"><h1>readme_example</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Features"><span class="toc-number">1.</span> <span class="toc-text">Features</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Requirements"><span class="toc-number">2.</span> <span class="toc-text">Requirements</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Documentation"><span class="toc-number">3.</span> <span class="toc-text">Documentation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InstallationInstallation"><span class="toc-number">4.</span> <span class="toc-text">InstallationInstallation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Use-example"><span class="toc-number">5.</span> <span class="toc-text">Use example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Make-your-spider"><span class="toc-number">6.</span> <span class="toc-text">Make your spider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Extensions"><span class="toc-number">7.</span> <span class="toc-text">Extensions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Modulers"><span class="toc-number">8.</span> <span class="toc-text">Modulers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spider"><span class="toc-number">8.1.</span> <span class="toc-text">Spider</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Downloader"><span class="toc-number">8.2.</span> <span class="toc-text">Downloader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PageProcesser"><span class="toc-number">8.3.</span> <span class="toc-text">PageProcesser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Page"><span class="toc-number">8.4.</span> <span class="toc-text">Page</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scheduler"><span class="toc-number">8.5.</span> <span class="toc-text">Scheduler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pipeline"><span class="toc-number">8.6.</span> <span class="toc-text">Pipeline</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Request"><span class="toc-number">8.7.</span> <span class="toc-text">Request</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><ul>
+<li>Concurrent </li>
+<li>Fit for vertical communities</li>
+<li>Flexible, Modular</li>
+<li>Native Go implementation</li>
+<li>Can be expanded to an individualized crawler easily</li>
+</ul>
+<h2 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h2><ul>
+<li>Go 1.2 or higher</li>
+</ul>
+<h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation"></a>Documentation</h2><p><a target="_blank" rel="noopener" href="https://github.com/hu17889/go_spider/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3">中文文档</a> &amp;&amp; <a target="_blank" rel="noopener" href="https://github.com/hu17889/go_spider/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E">常见问题</a>.</p>
+<h2 id="InstallationInstallation"><a href="#InstallationInstallation" class="headerlink" title="InstallationInstallation"></a>InstallationInstallation</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/hu17889/go_spider</span><br><span class="line">go get github.com/PuerkitoBio/goquery</span><br><span class="line">go get github.com/bitly/go-simplejson</span><br><span class="line">go get golang.org/x/net/html/charset</span><br></pre></td></tr></table></figure>
+
+<p>This project is based on <a target="_blank" rel="noopener" href="https://github.com/bitly/go-simplejson/blob/master/simplejson.go">simplejson</a>, <a target="_blank" rel="noopener" href="https://github.com/PuerkitoBio/goquery">goquery</a>.</p>
+<p>You can download packages from <a target="_blank" rel="noopener" href="http://gopm.io/">http://gopm.io/</a> in China.</p>
+<h2 id="Use-example"><a href="#Use-example" class="headerlink" title="Use example"></a>Use example</h2><p>Here is an example for crawling github content. You can have a try of the crawl process.</p>
+<ul>
+<li><code>go install github.com/hu17889/go_spider/example/github_repo_page_processor</code></li>
+<li><code>./bin/github_repo_page_processor</code></li>
+</ul>
+<p>More examples here: <a target="_blank" rel="noopener" href="https://github.com/hu17889/go_spider/tree/master/example">examples</a>.</p>
+<h2 id="Make-your-spider"><a href="#Make-your-spider" class="headerlink" title="Make your spider"></a>Make your spider</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Spider input:</span></span><br><span class="line"><span class="comment">//  PageProcesser ;</span></span><br><span class="line"><span class="comment">//  Task name used in Pipeline for record;</span></span><br><span class="line">spider.NewSpider(NewMyPageProcesser(), <span class="string">&quot;TaskName&quot;</span>).</span><br><span class="line">    AddUrl(<span class="string">&quot;https://github.com/hu17889?tab=repositories&quot;</span>, <span class="string">&quot;html&quot;</span>). <span class="comment">// Start url, html is the responce type (&quot;html&quot; or &quot;json&quot;)</span></span><br><span class="line">    AddPipeline(pipeline.NewPipelineConsole()).                    <span class="comment">// Print result on screen</span></span><br><span class="line">    SetThreadnum(<span class="number">3</span>).                                               <span class="comment">// Crawl request by three Coroutines</span></span><br><span class="line">    Run()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Use default modules </p>
+</li>
+<li><p>Downloader：HttpDownloader</p>
+</li>
+<li><p>Scheduler：QueueScheduler</p>
+</li>
+<li><p>Pipeline：PipelineConsole，PipelineFile</p>
+</li>
+<li><p>Use your modules</p>
+</li>
+</ul>
+<p>Just copy the default modules and modify it!</p>
+<p>If you make a Downloader module, you can use it by <code>Spider.SetDownloader(your_downloader)</code>.</p>
+<p>If you make a Pipeline module, you can use it by <code>Spider.AddPipeline(your_pipeline)</code>.</p>
+<p>If you make a Scheduler module, you can use it by <code>Spider.SetScheduler(your_scheduler)</code>.</p>
+<h2 id="Extensions"><a href="#Extensions" class="headerlink" title="Extensions"></a>Extensions</h2><p>Extensions folder include modulers or other tools someone sharing. You can push your code without bugs.</p>
+<h2 id="Modulers"><a href="#Modulers" class="headerlink" title="Modulers"></a>Modulers</h2><h3 id="Spider"><a href="#Spider" class="headerlink" title="Spider"></a>Spider</h3><p><strong>Summary:</strong> Crawler initialization, concurrent management, default moduler, moduler management, config setting.</p>
+<p><strong>Functions:</strong> </p>
+<ul>
+<li>Clawler startup functions: Get, GetAll, Run</li>
+<li>Add request: AddUrl, AddUrls, AddRequest, AddRequests</li>
+<li>Set main moduler: AddPipeline(could have several pipeline modulers), SetScheduler, SetDownloader</li>
+<li>Set config: SetExitWhenComplete, SetThreadnum(concurrent number), SetSleepTime(sleep time after one crawl)</li>
+<li>Monitor: OpenFileLog, OpenFileLogDefault(open file log function, logged by <strong>mlog</strong> package), CloseFileLog, OpenStrace(open tracing info printed on screen by stderr), CloseStrace</li>
+</ul>
+<h3 id="Downloader"><a href="#Downloader" class="headerlink" title="Downloader"></a>Downloader</h3><p><strong>Summary:</strong> Spider gets a Request in Scheduler that has url to be crawled. Then Downloader downloads the result(html, json, jsonp, text) of the Request. The result is saved in Page for parsing in PageProcesser.<br>Html parsing is based on <strong>goquery</strong> package. Json parsing is based on <strong>simplejson</strong> package. Jsonp will be conversed to json. Text form represents plain text content without parser. </p>
+<p><strong>Functions:</strong></p>
+<ul>
+<li>Download: download content of the crawl objective. Result contains data body, header, cookies and request info.</li>
+</ul>
+<h3 id="PageProcesser"><a href="#PageProcesser" class="headerlink" title="PageProcesser"></a>PageProcesser</h3><p><strong>Summary:</strong> The PageProcesser moduler only parse results. The moduler gets results(key-value pairs) and urls to be crawled next step.<br>These key-value pairs will be saved in PageItems and urls will be pushed in Scheduler.</p>
+<p><strong>Functions:</strong></p>
+<ul>
+<li>Process: parse the objective crawled.</li>
+</ul>
+<h3 id="Page"><a href="#Page" class="headerlink" title="Page"></a>Page</h3><p><strong>Summary:</strong> save information of request.</p>
+<p><strong>Functions:</strong> </p>
+<ul>
+<li>Get result: GetJson, GetHtmlParser, GetBodyStr(plain text)</li>
+<li>Get information of objective: GetRequest, GetCookies, GetHeader</li>
+<li>Get Status of crawl process: IsSucc(Download success or not), Errormsg(Get error info in Downloader)</li>
+<li>Set config:SetSkip, GetSkip(if skip is true, do not output result in Pipeline), AddTargetRequest, AddTargetRequests(Save urls to be crawled next stage), AddTargetRequestWithParams, AddTargetRequestsWithParams, AddField(Save key-value pairs after parsing)</li>
+</ul>
+<h3 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h3><p><strong>Summary:</strong> The Scheduler moduler is a Request queue. Urls parsed in PageProcesser will be pushed in the queue.</p>
+<p><strong>Functions:</strong></p>
+<ul>
+<li>Push</li>
+<li>Poll</li>
+<li>Count</li>
+</ul>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p><strong>Summary:</strong> The Pipeline moduler will output the result and save wherever you want. Default moduler is PipelineConsole(Output to stdout) and PipelineFile(Output to file)</p>
+<p><strong>Functions:</strong></p>
+<ul>
+<li>Process</li>
+</ul>
+<h3 id="Request"><a href="#Request" class="headerlink" title="Request"></a>Request</h3><p><strong>Summary:</strong> The Request moduler has config for http request like url, header and cookies.</p>
+<p><strong>Functions:</strong></p>
+<ul>
+<li>Process</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

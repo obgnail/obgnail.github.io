@@ -1,0 +1,288 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&lt;h2 id=&quot;Iris介绍&quot;&gt;&lt;a href=&quot;#Iris介绍&quot; class=&quot;headerlink&quot; title=&quot;Iris介绍&quot;&gt;&lt;/a&gt;Iris介绍&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Iris&lt;/code&gt;以简单而强大的&lt;code&gt;api&lt;/code&gt;而闻名。 除了&lt;code&gt;Iris&lt;/code&gt;为您提供的低级访问权限。 &lt;code&gt;Iris&lt;/code&gt;同样擅长&lt;code&gt;MVC&lt;/code&gt;。 它是唯一一个拥有&lt;code&gt;MVC&lt;/code&gt;架构模式丰富支持的&lt;code&gt;Go Web&lt;/code&gt;框架，性能成本接近于零。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Iris&lt;/code&gt;为您提供构建面向服务的应用程序的结构。 用&lt;code&gt;Iris&lt;/code&gt;构建微服务很容易。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;Iris-框架的特性&quot;&gt;&lt;a href=&quot;#Iris-框架的特性&quot; class=&quot;headerlink&quot; title=&quot;Iris 框架的特性&quot;&gt;&lt;/a&gt;Iris 框架的特性&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;专注于高性能&lt;/li&gt;
+&lt;li&gt;简单流畅的API&lt;/li&gt;
+&lt;li&gt;高扩展性&lt;/li&gt;
+&lt;li&gt;强大的路由和中间件生态系统&lt;ul&gt;
+&lt;li&gt;使用iris独特的表达主义路径解释器构建RESTful API&lt;/li&gt;
+&lt;li&gt;动态路径参数化或通配符路由与静态路由不冲突&lt;/li&gt;
+&lt;li&gt;使用重定向选项从URL中删除尾部斜杠&lt;/li&gt;
+&lt;li&gt;使用虚拟主机和子域名变得容易&lt;/li&gt;
+&lt;li&gt;分组API和静态或甚至动态子域名&lt;/li&gt;
+&lt;li&gt;net / http和negroni-like处理程序通过iris.FromStd兼容&lt;/li&gt;
+&lt;li&gt;针对任意Http请求错误 定义处理函数&lt;/li&gt;
+&lt;li&gt;支持事务和回滚&lt;/li&gt;
+&lt;li&gt;支持响应缓存&lt;/li&gt;
+&lt;li&gt;使用简单的函数嵌入资源并与go-bindata 保持兼容&lt;/li&gt;
+&lt;li&gt;mvc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;上下文&lt;ul&gt;
+&lt;li&gt;高度可扩展的试图渲染(目前支持markdown,json,xml，jsonp等等)&lt;/li&gt;
+&lt;li&gt;正文绑定器和发送HTTP响应的便捷功能&lt;/li&gt;
+&lt;li&gt;限制请求正文&lt;/li&gt;
+&lt;li&gt;提供静态资源或嵌入式资产&lt;/li&gt;
+&lt;li&gt;本地化i18N&lt;/li&gt;
+&lt;li&gt;压缩（Gzip是内置的）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;身份验证&lt;ul&gt;
+&lt;li&gt;Basic Authentication&lt;/li&gt;
+&lt;li&gt;OAuth, OAuth2 (支持27个以上的热门网站)&lt;/li&gt;
+&lt;li&gt;JWT *服务器&lt;/li&gt;
+&lt;li&gt;通过TLS提供服务时，自动安装和提供来自&lt;a href=&quot;https://letsencrypt.org的证书/&quot;&gt;https://letsencrypt.org的证书&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;默认为关闭状态&lt;/li&gt;
+&lt;li&gt;在关闭，错误或中断事件时注册&lt;/li&gt;
+&lt;li&gt;连接多个服务器，完全兼容 net/http#Server&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;视图系统.支持五种模板隐隐 完全兼容 html/template&lt;/li&gt;
+&lt;li&gt;Websocket库，其API类似于socket.io [如果你愿意，你仍然可以使用你最喜欢的]&lt;/li&gt;
+&lt;li&gt;热重启&lt;/li&gt;
+&lt;li&gt;Typescript集成 + Web IDE&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;入门使用&quot;&gt;&lt;a href=&quot;#入门使用&quot; class=&quot;headerlink&quot; title=&quot;入门使用&quot;&gt;&lt;/a&gt;入门使用&lt;/h2&gt;&lt;figure class=&quot;highlight jsx&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;go get -u github.com/kataras/iris&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;package&lt;/span&gt; main&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&amp;quot;github.com/kataras/iris&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;comment&quot;&gt;// 创建app结构体对象&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  app := iris.New()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  app.Get(&lt;span class=&quot;string&quot;&gt;&amp;quot;/&amp;quot;&lt;/span&gt;, &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(ctx iris.Context)&lt;/span&gt;&lt;/span&gt;&amp;#123;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;comment&quot;&gt;// 端口监听&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  app.Run(iris.Addr(&lt;span class=&quot;string&quot;&gt;&amp;quot;:8080&amp;quot;&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;package&lt;/span&gt; main&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; (&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&amp;quot;github.com/kataras/iris&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&amp;quot;github.com/kataras/iris/middleware/logger&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&amp;quot;github.com/kataras/iris/middleware/recover&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app := iris.New()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Use(&lt;span class=&quot;built_in&quot;&gt;recover&lt;/span&gt;.New())&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Use(logger.New())&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Method:   GET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Resource: http://localhost:8080&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Handle(&lt;span class=&quot;string&quot;&gt;&amp;quot;GET&amp;quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;quot;/&amp;quot;&lt;/span&gt;, &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(ctx iris.Context)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        ctx.HTML(&lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;lt;h1&amp;gt;Welcome&amp;lt;/h1&amp;gt;&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// same as app.Handle(&amp;quot;GET&amp;quot;, &amp;quot;/ping&amp;quot;, [...])&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Method:   GET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Resource: http://localhost:8080/ping&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Get(&lt;span class=&quot;string&quot;&gt;&amp;quot;/ping&amp;quot;&lt;/span&gt;, &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(ctx iris.Context)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        ctx.WriteString(&lt;span class=&quot;string&quot;&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Method:   GET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Resource: http://localhost:8080/hello&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Get(&lt;span class=&quot;string&quot;&gt;&amp;quot;/hello&amp;quot;&lt;/span&gt;, &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(ctx iris.Context)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        ctx.JSON(iris.Map&amp;#123;&lt;span class=&quot;string&quot;&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&amp;quot;Hello Iris!&amp;quot;&lt;/span&gt;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// http://localhost:8080&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// http://localhost:8080/ping&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// http://localhost:8080/hello&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    app.Run(iris.Addr(&lt;span class=&quot;string&quot;&gt;&amp;quot;:8080&amp;quot;&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>iris中文文档 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Iris/" rel="tag">Iris</a></div><div class="post-time">2020-10-16</div></div></div><div class="container post-header"><h1>iris中文文档</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Iris%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Iris介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Iris-%E6%A1%86%E6%9E%B6%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">Iris 框架的特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">入门使用</span></a></li></ol></details></div><div class="container post-content"><h2 id="Iris介绍"><a href="#Iris介绍" class="headerlink" title="Iris介绍"></a>Iris介绍</h2><ul>
+<li><code>Iris</code>以简单而强大的<code>api</code>而闻名。 除了<code>Iris</code>为您提供的低级访问权限。 <code>Iris</code>同样擅长<code>MVC</code>。 它是唯一一个拥有<code>MVC</code>架构模式丰富支持的<code>Go Web</code>框架，性能成本接近于零。</li>
+<li><code>Iris</code>为您提供构建面向服务的应用程序的结构。 用<code>Iris</code>构建微服务很容易。</li>
+</ul>
+<h2 id="Iris-框架的特性"><a href="#Iris-框架的特性" class="headerlink" title="Iris 框架的特性"></a>Iris 框架的特性</h2><ul>
+<li>专注于高性能</li>
+<li>简单流畅的API</li>
+<li>高扩展性</li>
+<li>强大的路由和中间件生态系统<ul>
+<li>使用iris独特的表达主义路径解释器构建RESTful API</li>
+<li>动态路径参数化或通配符路由与静态路由不冲突</li>
+<li>使用重定向选项从URL中删除尾部斜杠</li>
+<li>使用虚拟主机和子域名变得容易</li>
+<li>分组API和静态或甚至动态子域名</li>
+<li>net / http和negroni-like处理程序通过iris.FromStd兼容</li>
+<li>针对任意Http请求错误 定义处理函数</li>
+<li>支持事务和回滚</li>
+<li>支持响应缓存</li>
+<li>使用简单的函数嵌入资源并与go-bindata 保持兼容</li>
+<li>mvc</li>
+</ul>
+</li>
+<li>上下文<ul>
+<li>高度可扩展的试图渲染(目前支持markdown,json,xml，jsonp等等)</li>
+<li>正文绑定器和发送HTTP响应的便捷功能</li>
+<li>限制请求正文</li>
+<li>提供静态资源或嵌入式资产</li>
+<li>本地化i18N</li>
+<li>压缩（Gzip是内置的）</li>
+</ul>
+</li>
+<li>身份验证<ul>
+<li>Basic Authentication</li>
+<li>OAuth, OAuth2 (支持27个以上的热门网站)</li>
+<li>JWT *服务器</li>
+<li>通过TLS提供服务时，自动安装和提供来自<a target="_blank" rel="noopener" href="https://letsencrypt.org的证书/">https://letsencrypt.org的证书</a></li>
+<li>默认为关闭状态</li>
+<li>在关闭，错误或中断事件时注册</li>
+<li>连接多个服务器，完全兼容 net/http#Server</li>
+</ul>
+</li>
+<li>视图系统.支持五种模板隐隐 完全兼容 html/template</li>
+<li>Websocket库，其API类似于socket.io [如果你愿意，你仍然可以使用你最喜欢的]</li>
+<li>热重启</li>
+<li>Typescript集成 + Web IDE</li>
+</ul>
+<h2 id="入门使用"><a href="#入门使用" class="headerlink" title="入门使用"></a>入门使用</h2><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/kataras/iris</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/kataras/iris&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 创建app结构体对象</span></span><br><span class="line">  app := iris.New()</span><br><span class="line">  app.Get(<span class="string">&quot;/&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(ctx iris.Context)</span></span>&#123;&#125;)</span><br><span class="line">  <span class="comment">// 端口监听</span></span><br><span class="line">  app.Run(iris.Addr(<span class="string">&quot;:8080&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;github.com/kataras/iris&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/kataras/iris/middleware/logger&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/kataras/iris/middleware/recover&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    app := iris.New()</span><br><span class="line">    app.Use(<span class="built_in">recover</span>.New())</span><br><span class="line">    app.Use(logger.New())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Method:   GET</span></span><br><span class="line">    <span class="comment">// Resource: http://localhost:8080</span></span><br><span class="line">    app.Handle(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(ctx iris.Context)</span></span> &#123;</span><br><span class="line">        ctx.HTML(<span class="string">&quot;&lt;h1&gt;Welcome&lt;/h1&gt;&quot;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// same as app.Handle(&quot;GET&quot;, &quot;/ping&quot;, [...])</span></span><br><span class="line">    <span class="comment">// Method:   GET</span></span><br><span class="line">    <span class="comment">// Resource: http://localhost:8080/ping</span></span><br><span class="line">    app.Get(<span class="string">&quot;/ping&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(ctx iris.Context)</span></span> &#123;</span><br><span class="line">        ctx.WriteString(<span class="string">&quot;pong&quot;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Method:   GET</span></span><br><span class="line">    <span class="comment">// Resource: http://localhost:8080/hello</span></span><br><span class="line">    app.Get(<span class="string">&quot;/hello&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(ctx iris.Context)</span></span> &#123;</span><br><span class="line">        ctx.JSON(iris.Map&#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;Hello Iris!&quot;</span>&#125;)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// http://localhost:8080</span></span><br><span class="line">    <span class="comment">// http://localhost:8080/ping</span></span><br><span class="line">    <span class="comment">// http://localhost:8080/hello</span></span><br><span class="line">    app.Run(iris.Addr(<span class="string">&quot;:8080&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

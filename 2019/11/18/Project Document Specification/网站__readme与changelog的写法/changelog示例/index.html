@@ -1,0 +1,141 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="&gt;
+&lt;li&gt;&lt;code&gt;Added&lt;/code&gt; 新添加的功能。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Changed&lt;/code&gt; 对现有功能的变更。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Deprecated&lt;/code&gt; 已经不建议使用，准备很快移除的功能。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Removed&lt;/code&gt; 已经移除的功能。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Fixed&lt;/code&gt; 对bug的修复&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Security&lt;/code&gt; 对安全的改进&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;版本格式：主版本号.次版本号.修订号，版本号递增规则如下："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>changelog示例 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Project-Document-Specification/" rel="tag">Project Document Specification</a></div><div class="post-time">2019-11-18</div></div></div><div class="container post-header"><h1>changelog示例</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Changelog"><span class="toc-number">1.</span> <span class="toc-text">Changelog</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Unreleased"><span class="toc-number">1.1.</span> <span class="toc-text">Unreleased</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-0-0-2017-06-20"><span class="toc-number">1.2.</span> <span class="toc-text">1.0.0 - 2017-06-20</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added"><span class="toc-number">1.2.1.</span> <span class="toc-text">Added</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed"><span class="toc-number">1.2.2.</span> <span class="toc-text">Changed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Removed"><span class="toc-number">1.2.3.</span> <span class="toc-text">Removed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-3-0-2015-12-03"><span class="toc-number">1.3.</span> <span class="toc-text">0.3.0 - 2015-12-03</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">Added</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-2-0-2015-10-06"><span class="toc-number">1.4.</span> <span class="toc-text">0.2.0 - 2015-10-06</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">Changed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-1-0-2015-10-06"><span class="toc-number">1.5.</span> <span class="toc-text">0.1.0 - 2015-10-06</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-2"><span class="toc-number">1.5.1.</span> <span class="toc-text">Added</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed-2"><span class="toc-number">1.5.2.</span> <span class="toc-text">Changed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-8-2015-02-17"><span class="toc-number">1.6.</span> <span class="toc-text">0.0.8 - 2015-02-17</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed-3"><span class="toc-number">1.6.1.</span> <span class="toc-text">Changed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed"><span class="toc-number">1.6.2.</span> <span class="toc-text">Fixed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-7-2015-02-16"><span class="toc-number">1.7.</span> <span class="toc-text">0.0.7 - 2015-02-16</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-3"><span class="toc-number">1.7.1.</span> <span class="toc-text">Added</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed-4"><span class="toc-number">1.7.2.</span> <span class="toc-text">Changed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-1"><span class="toc-number">1.7.3.</span> <span class="toc-text">Fixed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-6-2014-12-12"><span class="toc-number">1.8.</span> <span class="toc-text">0.0.6 - 2014-12-12</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-4"><span class="toc-number">1.8.1.</span> <span class="toc-text">Added</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-5-2014-08-09"><span class="toc-number">1.9.</span> <span class="toc-text">0.0.5 - 2014-08-09</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-5"><span class="toc-number">1.9.1.</span> <span class="toc-text">Added</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-4-2014-08-09"><span class="toc-number">1.10.</span> <span class="toc-text">0.0.4 - 2014-08-09</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-6"><span class="toc-number">1.10.1.</span> <span class="toc-text">Added</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Changed-5"><span class="toc-number">1.10.2.</span> <span class="toc-text">Changed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Removed-1"><span class="toc-number">1.10.3.</span> <span class="toc-text">Removed</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-3-2014-08-09"><span class="toc-number">1.11.</span> <span class="toc-text">0.0.3 - 2014-08-09</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-7"><span class="toc-number">1.11.1.</span> <span class="toc-text">Added</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-2-2014-07-10"><span class="toc-number">1.12.</span> <span class="toc-text">0.0.2 - 2014-07-10</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-8"><span class="toc-number">1.12.1.</span> <span class="toc-text">Added</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-0-1-2014-05-31"><span class="toc-number">1.13.</span> <span class="toc-text">0.0.1 - 2014-05-31</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Added-9"><span class="toc-number">1.13.1.</span> <span class="toc-text">Added</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><ul>
+<li><code>Added</code> 新添加的功能。</li>
+<li><code>Changed</code> 对现有功能的变更。</li>
+<li><code>Deprecated</code> 已经不建议使用，准备很快移除的功能。</li>
+<li><code>Removed</code> 已经移除的功能。</li>
+<li><code>Fixed</code> 对bug的修复</li>
+<li><code>Security</code> 对安全的改进</li>
+</ul>
+<p>版本格式：主版本号.次版本号.修订号，版本号递增规则如下：</p>
+<ol>
+<li>主版本号：当你做了不兼容的 API 修改，</li>
+<li>次版本号：当你做了向下兼容的功能性新增，</li>
+<li>修订号：当你做了向下兼容的问题修正。</li>
+</ol>
+<ul>
+<li>必须（MUST）采用 X.Y.Z 的格式</li>
+<li>禁止（MUST NOT）在数字前方补零。</li>
+<li>主版本号为零（0.y.z）的软件处于开发初始阶段，一切都可能随时被改变。</li>
+<li>1.0.0 的版本号用于界定公共 API 的形成。这一版本之后所有的版本号更新都基于公共 API 及其修改内容。</li>
+<li>修订号 Z（x.y.Z <code>|</code> x &gt; 0）必须（MUST）在只做了向下兼容的修正时才递增。这里的修正指的是针对不正确结果而进行的内部修改。</li>
+<li>次版本号 Y（x.Y.z <code>|</code> x &gt; 0）必须（MUST）在有向下兼容的新功能出现时递增。在任何公共 API 的功能被标记为弃用时也必须（MUST）递增。也可以（MAY）在内部程序有大量新功能或改进被加入时递增，其中可以（MAY）包括修订级别的改变。每当次版本号递增时，修订号必须（MUST）归零。</li>
+<li>主版本号 X（X.y.z <code>|</code> X &gt; 0）必须（MUST）在有任何不兼容的修改被加入公共 API 时递增。其中可以（MAY）包括次版本号及修订级别的改变。每当主版本号递增时，次版本号和修订号必须（MUST）归零。</li>
+</ul>
+<h1 id="Changelog"><a href="#Changelog" class="headerlink" title="Changelog"></a>Changelog</h1><p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a target="_blank" rel="noopener" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,<br>and this project adheres to <a target="_blank" rel="noopener" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="Unreleased"><a href="#Unreleased" class="headerlink" title="Unreleased"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD">Unreleased</a></h2><h2 id="1-0-0-2017-06-20"><a href="#1-0-0-2017-06-20" class="headerlink" title="1.0.0 - 2017-06-20"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.3.0...v1.0.0">1.0.0</a> - 2017-06-20</h2><h3 id="Added"><a href="#Added" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>New visual identity by <a target="_blank" rel="noopener" href="https://github.com/tylerfortune8">@tylerfortune8</a>.</li>
+<li>Version navigation.</li>
+<li>Links to latest released version in previous versions.</li>
+<li>“Why keep a changelog?” section.</li>
+<li>“Who needs a changelog?” section.</li>
+<li>“How do I make a changelog?” section.</li>
+<li>“Frequently Asked Questions” section.</li>
+<li>New “Guiding Principles” sub-section to “How do I make a changelog?”.</li>
+<li>Simplified and Traditional Chinese translations from <a target="_blank" rel="noopener" href="https://github.com/tianshuo">@tianshuo</a>.</li>
+<li>German translation from <a target="_blank" rel="noopener" href="https://github.com/mpbzh">@mpbzh</a> &amp; <a target="_blank" rel="noopener" href="https://github.com/Art4">@Art4</a>.</li>
+<li>Italian translation from <a target="_blank" rel="noopener" href="https://github.com/azkidenz">@azkidenz</a>.</li>
+<li>Swedish translation from <a target="_blank" rel="noopener" href="https://github.com/magol">@magol</a>.</li>
+<li>Turkish translation from <a target="_blank" rel="noopener" href="https://github.com/karalamalar">@karalamalar</a>.</li>
+<li>French translation from <a target="_blank" rel="noopener" href="https://github.com/zapashcanon">@zapashcanon</a>.</li>
+<li>Brazilian Portugese translation from <a target="_blank" rel="noopener" href="https://github.com/Webysther">@Webysther</a>.</li>
+<li>Polish translation from <a target="_blank" rel="noopener" href="https://github.com/amielucha">@amielucha</a> &amp; <a target="_blank" rel="noopener" href="https://github.com/m-aciek">@m-aciek</a>.</li>
+<li>Russian translation from <a target="_blank" rel="noopener" href="https://github.com/aishek">@aishek</a>.</li>
+<li>Czech translation from <a target="_blank" rel="noopener" href="https://github.com/h4vry">@h4vry</a>.</li>
+<li>Slovak translation from <a target="_blank" rel="noopener" href="https://github.com/jkostolansky">@jkostolansky</a>.</li>
+<li>Korean translation from <a target="_blank" rel="noopener" href="https://github.com/pierceh89">@pierceh89</a>.</li>
+<li>Croatian translation from <a target="_blank" rel="noopener" href="https://github.com/porx">@porx</a>.</li>
+<li>Persian translation from <a target="_blank" rel="noopener" href="https://github.com/Hameds">@Hameds</a>.</li>
+<li>Ukrainian translation from <a target="_blank" rel="noopener" href="https://github.com/osadchyi-s">@osadchyi-s</a>.</li>
+</ul>
+<h3 id="Changed"><a href="#Changed" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Start using “changelog” over “change log” since it’s the common usage.</li>
+<li>Start versioning based on the current English version at 0.3.0 to help<br>translation authors keep things up-to-date.</li>
+<li>Rewrite “What makes unicorns cry?” section.</li>
+<li>Rewrite “Ignoring Deprecations” sub-section to clarify the ideal<br>scenario.</li>
+<li>Improve “Commit log diffs” sub-section to further argument against<br>them.</li>
+<li>Merge “Why can’t people just use a git log diff?” with “Commit log<br>diffs”</li>
+<li>Fix typos in Simplified Chinese and Traditional Chinese translations.</li>
+<li>Fix typos in Brazilian Portuguese translation.</li>
+<li>Fix typos in Turkish translation.</li>
+<li>Fix typos in Czech translation.</li>
+<li>Fix typos in Swedish translation.</li>
+<li>Improve phrasing in French translation.</li>
+<li>Fix phrasing and spelling in German translation.</li>
+</ul>
+<h3 id="Removed"><a href="#Removed" class="headerlink" title="Removed"></a>Removed</h3><ul>
+<li>Section about “changelog” vs “CHANGELOG”.</li>
+</ul>
+<h2 id="0-3-0-2015-12-03"><a href="#0-3-0-2015-12-03" class="headerlink" title="0.3.0 - 2015-12-03"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...v0.3.0">0.3.0</a> - 2015-12-03</h2><h3 id="Added-1"><a href="#Added-1" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>RU translation from <a target="_blank" rel="noopener" href="https://github.com/aishek">@aishek</a>.</li>
+<li>pt-BR translation from <a target="_blank" rel="noopener" href="https://github.com/tallesl">@tallesl</a>.</li>
+<li>es-ES translation from <a target="_blank" rel="noopener" href="https://github.com/ZeliosAriex">@ZeliosAriex</a>.</li>
+</ul>
+<h2 id="0-2-0-2015-10-06"><a href="#0-2-0-2015-10-06" class="headerlink" title="0.2.0 - 2015-10-06"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0">0.2.0</a> - 2015-10-06</h2><h3 id="Changed-1"><a href="#Changed-1" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Remove exclusionary mentions of “open source” since this project can<br>benefit both “open” and “closed” source projects equally.</li>
+</ul>
+<h2 id="0-1-0-2015-10-06"><a href="#0-1-0-2015-10-06" class="headerlink" title="0.1.0 - 2015-10-06"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.8...v0.1.0">0.1.0</a> - 2015-10-06</h2><h3 id="Added-2"><a href="#Added-2" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>Answer “Should you ever rewrite a change log?”.</li>
+</ul>
+<h3 id="Changed-2"><a href="#Changed-2" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Improve argument against commit logs.</li>
+<li>Start following <a target="_blank" rel="noopener" href="https://semver.org/">SemVer</a> properly.</li>
+</ul>
+<h2 id="0-0-8-2015-02-17"><a href="#0-0-8-2015-02-17" class="headerlink" title="0.0.8 - 2015-02-17"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.7...v0.0.8">0.0.8</a> - 2015-02-17</h2><h3 id="Changed-3"><a href="#Changed-3" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Update year to match in every README example.</li>
+<li>Reluctantly stop making fun of Brits only, since most of the world<br>writes dates in a strange way.</li>
+</ul>
+<h3 id="Fixed"><a href="#Fixed" class="headerlink" title="Fixed"></a>Fixed</h3><ul>
+<li>Fix typos in recent README changes.</li>
+<li>Update outdated unreleased diff link.</li>
+</ul>
+<h2 id="0-0-7-2015-02-16"><a href="#0-0-7-2015-02-16" class="headerlink" title="0.0.7 - 2015-02-16"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.6...v0.0.7">0.0.7</a> - 2015-02-16</h2><h3 id="Added-3"><a href="#Added-3" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>Link, and make it obvious that date format is ISO 8601.</li>
+</ul>
+<h3 id="Changed-4"><a href="#Changed-4" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Clarified the section on “Is there a standard change log format?”.</li>
+</ul>
+<h3 id="Fixed-1"><a href="#Fixed-1" class="headerlink" title="Fixed"></a>Fixed</h3><ul>
+<li>Fix Markdown links to tag comparison URL with footnote-style links.</li>
+</ul>
+<h2 id="0-0-6-2014-12-12"><a href="#0-0-6-2014-12-12" class="headerlink" title="0.0.6 - 2014-12-12"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.5...v0.0.6">0.0.6</a> - 2014-12-12</h2><h3 id="Added-4"><a href="#Added-4" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>README section on “yanked” releases.</li>
+</ul>
+<h2 id="0-0-5-2014-08-09"><a href="#0-0-5-2014-08-09" class="headerlink" title="0.0.5 - 2014-08-09"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.4...v0.0.5">0.0.5</a> - 2014-08-09</h2><h3 id="Added-5"><a href="#Added-5" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>Markdown links to version tags on release headings.</li>
+<li>Unreleased section to gather unreleased changes and encourage note<br>keeping prior to releases.</li>
+</ul>
+<h2 id="0-0-4-2014-08-09"><a href="#0-0-4-2014-08-09" class="headerlink" title="0.0.4 - 2014-08-09"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.3...v0.0.4">0.0.4</a> - 2014-08-09</h2><h3 id="Added-6"><a href="#Added-6" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>Better explanation of the difference between the file (“CHANGELOG”)<br>and its function “the change log”.</li>
+</ul>
+<h3 id="Changed-5"><a href="#Changed-5" class="headerlink" title="Changed"></a>Changed</h3><ul>
+<li>Refer to a “change log” instead of a “CHANGELOG” throughout the site<br>to differentiate between the file and the purpose of the file — the<br>logging of changes.</li>
+</ul>
+<h3 id="Removed-1"><a href="#Removed-1" class="headerlink" title="Removed"></a>Removed</h3><ul>
+<li>Remove empty sections from CHANGELOG, they occupy too much space and<br>create too much noise in the file. People will have to assume that the<br>missing sections were intentionally left out because they contained no<br>notable changes.</li>
+</ul>
+<h2 id="0-0-3-2014-08-09"><a href="#0-0-3-2014-08-09" class="headerlink" title="0.0.3 - 2014-08-09"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.2...v0.0.3">0.0.3</a> - 2014-08-09</h2><h3 id="Added-7"><a href="#Added-7" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>“Why should I care?” section mentioning The Changelog podcast.</li>
+</ul>
+<h2 id="0-0-2-2014-07-10"><a href="#0-0-2-2014-07-10" class="headerlink" title="0.0.2 - 2014-07-10"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2">0.0.2</a> - 2014-07-10</h2><h3 id="Added-8"><a href="#Added-8" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>Explanation of the recommended reverse chronological release ordering.</li>
+</ul>
+<h2 id="0-0-1-2014-05-31"><a href="#0-0-1-2014-05-31" class="headerlink" title="0.0.1 - 2014-05-31"></a><a target="_blank" rel="noopener" href="https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.0.1">0.0.1</a> - 2014-05-31</h2><h3 id="Added-9"><a href="#Added-9" class="headerlink" title="Added"></a>Added</h3><ul>
+<li>This CHANGELOG file to hopefully serve as an evolving example of a<br>standardized open source project CHANGELOG.</li>
+<li>CNAME file to enable GitHub Pages custom domain</li>
+<li>README now contains answers to common questions about CHANGELOGs</li>
+<li>Good examples and basic guidelines, including proper date formatting.</li>
+<li>Counter-examples: “What makes unicorns cry?”</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

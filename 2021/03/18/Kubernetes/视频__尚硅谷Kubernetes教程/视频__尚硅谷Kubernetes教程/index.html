@@ -1,0 +1,248 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;K8S特点&quot;&gt;&lt;a href=&quot;#K8S特点&quot; class=&quot;headerlink&quot; title=&quot;K8S特点&quot;&gt;&lt;/a&gt;K8S特点&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;轻量级 ：消耗资源小&lt;/li&gt;
+&lt;li&gt;开源&lt;/li&gt;
+&lt;li&gt;弹性伸缩&lt;/li&gt;
+&lt;li&gt;负载均衡&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;K8S架构&quot;&gt;&lt;a href=&quot;#K8S架构&quot; class=&quot;headerlink&quot; title=&quot;K8S架构&quot;&gt;&lt;/a&gt;K8S架构&lt;/h2&gt;&lt;h3 id=&quot;borg架构图&quot;&gt;&lt;a href=&quot;#borg架构图&quot; class=&quot;headerlink&quot; title=&quot;borg架构图&quot;&gt;&lt;/a&gt;borg架构图&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/images/image-20210316225127930.png&quot; alt=&quot;image-20210316225127930&quot;&gt;"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>尚硅谷Kubernetes教程 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a></div><div class="post-time">2021-03-18</div></div></div><div class="container post-header"><h1>尚硅谷Kubernetes教程</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#K8S%E7%89%B9%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">K8S特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#K8S%E6%9E%B6%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">K8S架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#borg%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.1.</span> <span class="toc-text">borg架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k8s%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.2.</span> <span class="toc-text">k8s架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E9%80%9A%E8%AE%AF"><span class="toc-number">2.3.</span> <span class="toc-text">组件通讯</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">关键组件简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Etcd"><span class="toc-number">3.1.</span> <span class="toc-text">Etcd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kube-apiserver"><span class="toc-number">3.2.</span> <span class="toc-text">kube-apiserver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller-Manager"><span class="toc-number">3.3.</span> <span class="toc-text">Controller Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kube-controller-manager"><span class="toc-number">3.3.1.</span> <span class="toc-text">kube-controller-manager</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cloud-controller-manager"><span class="toc-number">3.3.2.</span> <span class="toc-text">cloud-controller-manager</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kube-scheduler"><span class="toc-number">3.4.</span> <span class="toc-text">kube-scheduler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kubelet"><span class="toc-number">3.5.</span> <span class="toc-text">Kubelet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-runtime"><span class="toc-number">3.6.</span> <span class="toc-text">Container runtime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kube-proxy"><span class="toc-number">3.7.</span> <span class="toc-text">kube-proxy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pod"><span class="toc-number">4.</span> <span class="toc-text">Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8Pod%E9%87%8C%E7%9A%84%E5%AE%B9%E5%99%A8%EF%BC%8C%E6%97%A2%E5%85%B1%E4%BA%AB%E7%BD%91%E7%BB%9C%EF%BC%8C%E5%8F%88%E5%85%B1%E4%BA%AB%E5%AD%98%E5%82%A8%E5%8D%B7"><span class="toc-number">4.1.</span> <span class="toc-text">在Pod里的容器，既共享网络，又共享存储卷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod%E5%88%86%E7%B1%BB"><span class="toc-number">4.2.</span> <span class="toc-text">Pod分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod%E7%9A%84%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-number">4.3.</span> <span class="toc-text">Pod的控制器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E8%AE%AF%E6%96%B9%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">网络通讯方式</span></a></li></ol></details></div><div class="container post-content"><h2 id="K8S特点"><a href="#K8S特点" class="headerlink" title="K8S特点"></a>K8S特点</h2><ul>
+<li>轻量级 ：消耗资源小</li>
+<li>开源</li>
+<li>弹性伸缩</li>
+<li>负载均衡</li>
+</ul>
+<h2 id="K8S架构"><a href="#K8S架构" class="headerlink" title="K8S架构"></a>K8S架构</h2><h3 id="borg架构图"><a href="#borg架构图" class="headerlink" title="borg架构图"></a>borg架构图</h3><p><img src="/images/image-20210316225127930.png" alt="image-20210316225127930"></p>
+<p>对于高可用集群来说，他的调度器（高可用节点）最好设置为3以上的奇数个。这样的好处就是防止投票的时候出现平票。</p>
+<h3 id="k8s架构图"><a href="#k8s架构图" class="headerlink" title="k8s架构图"></a>k8s架构图</h3><p><img src="/images/3-24.png" alt="3-24"></p>
+<ul>
+<li><p>Kubernetes是一个管理系统。从上面这张图可以看出，其本身的架构为主从分离架构。这个也很正常，<strong>Master节点负责对整个系统的调整和监控，而Node节点负责执行具体的任务</strong>。</p>
+</li>
+<li><p>Node，工作节点，用来从Master接受任务并执行，并且适当的调整自己的状态或者删除过期的负载。</p>
+</li>
+<li><p>Kubelet 是工作节点主要的程序，其会监视已分配给节点的Pod，具体功能包括：</p>
+<ul>
+<li>创建Pod 所需的数据卷</li>
+<li>创建Pod 所需的网络</li>
+<li>下载Pod 所需的Secrets</li>
+<li>启动Pod 之中运行的容器</li>
+<li>定期执行容器健康检查</li>
+<li>上报节点状态</li>
+</ul>
+</li>
+<li><p>Kube-proxy：通过主机上维护网络规则并执行连接转发来实现Kubernetes 服务抽象</p>
+</li>
+<li><p>Docker/Rkt：用于运行容器</p>
+</li>
+</ul>
+<p><img src="/images/image-20210316225905423.png" alt="image-20210316225905423"></p>
+<p>重要组件：</p>
+<ul>
+<li>api server：所有服务访问统一入口</li>
+<li>Replication controller：维持副本期望数目</li>
+<li>scheduler：负责接收任务，选择合适的节点进行分配任务</li>
+<li>etcd：键值对数据库，持久化k8s集群的所有重要信息（部分不重要的信息可能不会储存）</li>
+<li>Kubelet：直接跟容器引擎交互，实现容器的生命周期管理</li>
+<li>Kube-proxy：负责写入规则至 iptables，ipvs。实现服务映射访问</li>
+</ul>
+<p>次要组件：</p>
+<ul>
+<li>coreDNS：可以为集群中的SVC创建一个域名IP的对应关系解析</li>
+<li>DashBoard：可以为k8s集群提供一个B/S结构的GUI</li>
+<li>Ingress controller：官方只能实现4层代理，ingress可以实现七层代理。一般为服务提供外网入口。</li>
+<li>fedetation：提供一个可以跨集群中心多k8s统一管理功能</li>
+<li>prometheus：提供k8s集群的监控能力</li>
+<li>Elk：提供k8s集群日志统一分析接入平台</li>
+</ul>
+<h3 id="组件通讯"><a href="#组件通讯" class="headerlink" title="组件通讯"></a>组件通讯</h3><p><img src="/images/k8s-pod-process.png" alt="k8s pod"></p>
+<p>Kubernetes 多组件之间的通信原理：</p>
+<ul>
+<li>apiserver 负责 etcd 存储的所有操作，且只有 apiserver 才直接操作 etcd 集群</li>
+<li>apiserver 对内（集群中的其他组件）和对外（用户）提供统一的 REST API，其他组件均通过 apiserver 进行通信<ul>
+<li>controller manager、scheduler、kube-proxy 和 kubelet 等均通过 apiserver watch API 监测资源变化情况，并对资源作相应的操作</li>
+<li>所有需要更新资源状态的操作均通过 apiserver 的 REST API 进行</li>
+</ul>
+</li>
+<li>apiserver 也会直接调用 kubelet API（如 logs, exec, attach 等），默认不校验 kubelet 证书，但可以通过 <code>--kubelet-certificate-authority</code> 开启（而 GKE 通过 SSH 隧道保护它们之间的通信）</li>
+<li>用户通过 REST API 创建一个 Pod</li>
+<li>apiserver 将其写入 etcd</li>
+<li>scheduluer 检测到未绑定 Node 的 Pod，开始调度并更新 Pod 的 Node 绑定</li>
+<li>kubelet 检测到有新的 Pod 调度过来，通过 container runtime 运行该 Pod</li>
+<li>kubelet 通过 container runtime 取到 Pod 状态，并更新到 apiserver 中</li>
+</ul>
+<h2 id="关键组件简介"><a href="#关键组件简介" class="headerlink" title="关键组件简介"></a>关键组件简介</h2><h3 id="Etcd"><a href="#Etcd" class="headerlink" title="Etcd"></a>Etcd</h3><p>用于服务发现、共享配置以及一致性保障（如数据库选主、分布式锁等）。</p>
+<p>Etcd主要功能：</p>
+<ul>
+<li>基本的key-value存储</li>
+<li>监听机制</li>
+<li>key的过期及续约机制，用于监控和服务发现</li>
+<li>原子CAS和CAD，用于分布式锁和leader选举</li>
+</ul>
+<h3 id="kube-apiserver"><a href="#kube-apiserver" class="headerlink" title="kube-apiserver"></a>kube-apiserver</h3><p>kube-apiserver 是 Kubernetes 最重要的核心组件之一，主要提供以下的功能：</p>
+<ul>
+<li>提供集群管理的 REST API 接口，包括认证授权、数据校验以及集群状态变更等</li>
+<li>提供其他模块之间的数据交互和通信的枢纽（其他模块通过 API Server 查询或修改数据，只有 API Server 才直接操作 etcd）</li>
+</ul>
+<h3 id="Controller-Manager"><a href="#Controller-Manager" class="headerlink" title="Controller Manager"></a>Controller Manager</h3><p>Controller Manager由kube-controller-manager和cloud-controller-manager组成，是Kubernetes的大脑，它通过apiserver监控整个集群的状态，并确保集群处于预期的工作状态。</p>
+<h4 id="kube-controller-manager"><a href="#kube-controller-manager" class="headerlink" title="kube-controller-manager"></a>kube-controller-manager</h4><p>kube-controller-manager由一系列的控制器组成</p>
+<ul>
+<li>Replication Controller</li>
+<li>Node Controller</li>
+<li>CronJob Controller</li>
+<li>Daemon Controller</li>
+<li>Deployment Controller</li>
+<li>Endpoint Controller</li>
+<li>Garbage Collector</li>
+<li>Namespace Controller</li>
+<li>Job Controller</li>
+<li>Pod AutoScaler</li>
+<li>RelicaSet</li>
+<li>Service Controller</li>
+<li>ServiceAccount Controller</li>
+<li>StatefulSet Controller</li>
+<li>Volume Controller</li>
+<li>Resource quota Controller</li>
+</ul>
+<h4 id="cloud-controller-manager"><a href="#cloud-controller-manager" class="headerlink" title="cloud-controller-manager"></a>cloud-controller-manager</h4><p>在Kubernetes启用Cloud Provider的时候才需要，用来配合云服务提供商的控制，也包括一系列的控制器，如：</p>
+<ul>
+<li>Node Controller</li>
+<li>Route Controller</li>
+<li>Service Controller</li>
+</ul>
+<h3 id="kube-scheduler"><a href="#kube-scheduler" class="headerlink" title="kube-scheduler"></a>kube-scheduler</h3><p>kube-scheduler 负责分配<strong>调度 Pod 到集群内的节点</strong>上，它监听 kube-apiserver，查询还未分配 Node 的 Pod，然后根据调度策略为这些 Pod 分配节点（更新 Pod的 NodeName 字段）。</p>
+<p>调度器需要充分考虑诸多的因素：</p>
+<ul>
+<li>公平调度</li>
+<li>资源高效利用</li>
+<li>QoS</li>
+<li>affinity 和 anti-affinity</li>
+<li>数据本地化（data locality）</li>
+<li>内部负载干扰（inter-workload interference）</li>
+<li>deadlines</li>
+</ul>
+<h3 id="Kubelet"><a href="#Kubelet" class="headerlink" title="Kubelet"></a>Kubelet</h3><p>每个节点上都运行一个 kubelet 服务进程，默认监听 10250 端口，接收并执行 master 发来的指令，管理 Pod 及 Pod 中的容器。每个 kubelet 进程会在 API Server 上注册节点自身信息，定期向 master 节点汇报节点的资源使用情况，并通过 cAdvisor 监控节点和容器的资源。</p>
+<h3 id="Container-runtime"><a href="#Container-runtime" class="headerlink" title="Container runtime"></a>Container runtime</h3><p>容器运行时（Container Runtime）是 Kubernetes 最重要的组件之一，负责真正管理镜像和容器的生命周期。Kubelet 通过 Container Runtime Interface (CRI) 与容器运行时交互，以管理镜像和容器。</p>
+<h3 id="kube-proxy"><a href="#kube-proxy" class="headerlink" title="kube-proxy"></a>kube-proxy</h3><p>每台机器上都运行一个 kube-proxy 服务，它监听 API server 中 service 和 endpoint 的变化情况，并通过 iptables 等来为服务配置负载均衡（仅支持 TCP 和 UDP）。</p>
+<p>kube-proxy 可以直接运行在物理机上，也可以以 static pod 或者 daemonset 的方式运行。</p>
+<p>kube-proxy 当前支持一下几种实现：</p>
+<ul>
+<li>userspace：最早的负载均衡方案，它在用户空间监听一个端口，所有服务通过 iptables 转发到这个端口，然后在其内部负载均衡到实际的 Pod。该方式最主要的问题是效率低，有明显的性能瓶颈。</li>
+<li>iptables：目前推荐的方案，完全以 iptables 规则的方式来实现 service 负载均衡。该方式最主要的问题是在服务多的时候产生太多的 iptables 规则，非增量式更新会引入一定的时延，大规模情况下有明显的性能问题</li>
+<li>ipvs：为解决 iptables 模式的性能问题，v1.8 新增了 ipvs 模式，采用增量式更新，并可以保证 service 更新期间连接保持不断开</li>
+<li>winuserspace：同 userspace，但仅工作在 windows 上。</li>
+</ul>
+<h2 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h2><p>Pod是K8S的基本运行单元。</p>
+<h3 id="在Pod里的容器，既共享网络，又共享存储卷"><a href="#在Pod里的容器，既共享网络，又共享存储卷" class="headerlink" title="在Pod里的容器，既共享网络，又共享存储卷"></a>在Pod里的容器，既共享<code>网络</code>，又共享<code>存储卷</code></h3><p>回忆一下docker容器</p>
+<ul>
+<li><p>如果要在两个容器之间共享网络，我们会将两个容器加入相同的network。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建bridge网络</span></span><br><span class="line">docker network create -d bridge my-bridge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将busybox1容器，busybox2容器 连接到 my-bridge 这个网络上</span></span><br><span class="line">docker network connect my-bridge busybox1</span><br><span class="line">docker network connect my-bridge busybox2</span><br></pre></td></tr></table></figure></li>
+<li><p>如果要在两个容器之间共享储存，我们会将两个容器加入相同的<code>数据卷容器</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个数据卷挂载到/dbdata</span></span><br><span class="line">docker run -it -v /dbdata --name dbdata ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其他容器中使用--volumes-from来挂载dbdata容器中的数据卷.</span></span><br><span class="line"><span class="comment"># 例如创建db1和db2两个容器，并从dbdata容器挂载数据卷</span></span><br><span class="line">docker run -it --volumes-from dbdata --name db1 ubuntu</span><br><span class="line">docker run -it --volumes-from dbdata --name db2 ubuntu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时，容器db1和db2都挂载同一个数据卷到相同的/dbdata目录。三个容器任何一方在该目录下的写入，其他容器都可以看到。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在一个K8S的Pod中，会默认会有一个pause容器，然后用户自定义的容器都会连接到pause容器中。</p>
+<p>也就谁说，在Pod中，相当于将docker容器都加入到了pause这个数据卷容器中，同时又创建一个network，并且将这些容器都加入到这个network中。这就使得pod中的容器既共享<code>网络</code>，又共享<code>存储卷</code>。</p>
+<h3 id="Pod分类"><a href="#Pod分类" class="headerlink" title="Pod分类"></a>Pod分类</h3><ul>
+<li>自主式Pod（不被控制器管理的Pod）</li>
+<li>被控制器管理的Pod</li>
+</ul>
+<h3 id="Pod的控制器"><a href="#Pod的控制器" class="headerlink" title="Pod的控制器"></a>Pod的控制器</h3><p>全部的控制器可回顾：[kube-controller-manager](# kube-controller-manager)，重点讲一下下面几种控制器：</p>
+<ul>
+<li><p><code>ReplicationController</code>：用来确保容器应用的副本数始终保持在用户定义的副本数。即如果有容器异常退出，会自动创建新的Pod来代替，如果异常多出来的容器也会自动回收。新版本的K8S中，建议使用ReplicaSet来取代ReplicationControlle。</p>
+</li>
+<li><p><code>ReplicaSet</code>：跟ReplicationController没有本质不同，只是名字不一样。并且ReplicaSet支持集合式的seelctor。</p>
+</li>
+<li><p><code>Deployment</code>：虽然ReplicaSet可以独立使用，但是还是建议<strong>使用Deployment来自动管理ReplicaSet</strong>，这样就无需担心跟其他机制的不兼容问题（比如ReplicaSet不支持滚动更新(rolling-update)，但Deployment支持）</p>
+<blockquote>
+<p>deployment还支持<code>滚动更新</code>的<code>回滚</code>操作。</p>
+<p>deployment的滚动更新流程：</p>
+<ul>
+<li>当滚动更新的时候，会创建一个RS-1，</li>
+<li>然后在RS-1里创建一个Pod后，同时就会退出RS里的一个Pod。直到RS-1的Pod全部创建完毕，RS的Pod全部退出。</li>
+<li>但是RS并不会被删除，只是被停用。所以当要执行回滚操作的时候，重新启用RS，之后就可以逆向执行上面的操作。</li>
+</ul>
+<p><img src="/images/image-20210317222847034.png" alt="image-20210317222847034"></p>
+</blockquote>
+</li>
+<li><p><code>StatefulSet Controller</code>：是为了解决有状态服务的问题。（对应Deployements和ReplicaSets是为了无状态服务而设计的），其应用场景包括：</p>
+<ul>
+<li>稳定的持久化存储。即Pod重新调度后还是能访问到相同的持久化数据，基于PVC来实现。简单来说就是：如果一个Pod死亡以后，再调度一个新的Pod取代之前的Pod的时候，新的Pod用到的存储还是之前的Pod的存储，并且存储里面的数据也不会丢失。</li>
+<li>稳定的网络标志。即Pod重新调度后其PodName和HostName不变，基于Headless Service（即没有Cluster IP的Service）来实现。</li>
+<li>有序部署。即Pod是有顺序的，在部署或者扩展的时候要依据定义的顺序依次进行（即从0到N-1，在下一个Pod运行之前所有之前的Pod都需都是Running和Ready状态），基于init containers来实现。简单来说就是：只有前面的Pod都处于Running和Ready状态之后，新的Pod才能被创建。</li>
+<li>有序收缩，有序删除（即从N-1到0）</li>
+</ul>
+<blockquote>
+<ul>
+<li><p>什么是<code>有状态服务</code>？</p>
+<p>简单来说，如果一个容器从集群中移出去，之后再移进来，却无法正常工作的服务，就是有状态服务。</p>
+</li>
+<li><p>为什么需要有序部署？</p>
+<p>一个网络服务，必须先启动mysql，再启动Apache，再启动Nginx。既然网络服务有启动顺序，那么我们部署服务的时候也一样要有序部署。删除的时候，一样需要逆序删除。</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>DaemonSet</code>：确保全部（或者部分）Node上运行同一份 Pod 副本。当有的Node加入集群的时候，也会为他们新增一个Pod。当有的Node从集群移除的时候，这些Pod也会被回收。删除DaemonSet将会级联删除它创建的所有Pod。</p>
+<p>简单来说，<strong>DaemonSet 的作用就像是计算机中的守护进程</strong>，它能够运行集群存储、日志收集和监控等『守护进程』，这些服务一般是集群中必备的基础服务。</p>
+<blockquote>
+<ul>
+<li>守护进程是在后台运行<strong>不受终端控制的进程</strong>（如输入、输出等），一般的网络服务都是以守护进程的方式运行。</li>
+<li>守护进程脱离终端的主要原因有两点：<ul>
+<li>用来启动守护进程的终端在启动守护进程之后，需要执行其他任务。</li>
+<li>（如其他用户登录该终端后，以前的守护进程的错误信息不应出现）由终端上的一些键所产生的信号（如中断信号），不应该对以前从该终端上启动的任何守护进程造成影响。</li>
+</ul>
+</li>
+<li>简单理解，守护进程和普通进程区别是指：将后台程序变成一种服务，比如说，用命令行输入启动程序，如果不是守护进程的话，一旦命令行窗口关闭，程序就终止了；而如果启动守护进程，则退出命令行窗口之后，服务一直处于运行状态。</li>
+<li>后台进程和守护进程的区别：<ul>
+<li>守护进程已经完全脱离终端控制台了，而后台程序并未完全脱离终端(在终端未关闭前还是会往终端输出结果)，守护进程在关闭终端控制台时不会受影响，而后台程序会随用户退出而停止。</li>
+<li>守护进程的会话组和当前目录，文件描述符都是独立的。后台运行只是终端进行了一次fork，让程序在后台执行，这些都没改变。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>使用DaemonSet的一些典型用法：</p>
+<ul>
+<li>运行集群存储daemon，例如在每个Node上运行glistered，ceph。</li>
+<li>在每个Node上运行日志收集daemon，例如fluent，logstash。</li>
+<li>在每个Node上运行监控daemon，例如Prometheus Node Exporter</li>
+</ul>
+</blockquote>
+</li>
+<li><p>Job：负责批处理任务，即仅执行一次的任务，他保证批处理任务的一个或多个Pod成功结束。</p>
+</li>
+<li><p>Cron Job管理给予时间的Job，即：</p>
+<ul>
+<li>在给定时间点只运行一次</li>
+<li>周期性的在给定时间点运行</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络通讯方式"><a href="#网络通讯方式" class="headerlink" title="网络通讯方式"></a>网络通讯方式</h2><p>通讯方式：</p>
+<ul>
+<li>同一个Pod内的多个容器之间：localhost</li>
+<li>各个Pod之间的通讯：Overlay Netwrok</li>
+<li>Pod与Service之间的通讯：各个节点的Iptables规则</li>
+</ul>
+<p>Kubernetes的网络模型假定了所有Pod都在一个可以直接连通的扁平的网络空间中，这在GCE（Google Compute Engine）里面是现成的网络模型，Kubernetes假定这个网络已经存在。而在私有云里搭建Kubernetes集群，就不能假定这个网络已经存在了。我们需要自己实现这个网络假设，将不同节点上的Docker容器之间的互相访问先打通，然后运行Kubernetes。</p>
+<blockquote>
+<p>所谓的<code>扁平的网络空间</code>指的是：所有的Pod都可以通过对方的IP来直接访问。</p>
+</blockquote>
+<p>所谓的<code>扁平的网络空间</code>，只是表现是如此，但是实际上并不是这样的，底层有一堆的转换机制在。运用的机制就是Flannel网络规划服务。</p>
+<p>Flannel是CoreOS团队针对Kubernetes设计的一个网络规划服务，简单来说，它的功能是<strong>让集群中的不同节点主机创建的Docker容器都具有全集群唯一的虚拟IP地址</strong>。而且它还能在这些IP地址之间建立一个覆盖网络（Overlay Network），通过这个覆盖网络，将数据包原封不动地传递到目标容器内。</p>
+<p><img src="/images/image-20210318224224668.png" alt="image-20210318224224668"></p>
+<p>web app1-3和backend分别是四个Pod。</p>
+<ul>
+<li><p>web app1里的Apache和mysql要进行通讯，因为两个容器在同一个Pod内，所以使用的是localhost</p>
+</li>
+<li><p>web app2和web app1要进行通讯，因为两个Pod在同一个物理主机上，所以通过docker网桥进行沟通。也就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">web app2</span><br><span class="line">-&gt; 10.1.15.2/24 </span><br><span class="line">-&gt; Docker0 10.1.15.1/24</span><br><span class="line">-&gt; 10.1.15.3/24</span><br><span class="line">web app1</span><br></pre></td></tr></table></figure></li>
+<li><p>Web app2要和backend进行通讯，因为跨了物理主机，所以使用的Overlay Netwrok</p>
+</li>
+</ul>
+<p>在上面流程中，ETCD和Flannel的关系：</p>
+<ul>
+<li>ETCD存储管理Flannel可分配的IP地址段资源（也就是说，在启动之后Flannel会向ETCD插入可以分配的网段）</li>
+<li>Flannel监控ETCD中每个Pod的实际地址，并在内存中建立维护Pod节点路由表</li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

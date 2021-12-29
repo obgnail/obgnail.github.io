@@ -1,0 +1,119 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;必须设置主键&quot;&gt;&lt;a href=&quot;#必须设置主键&quot; class=&quot;headerlink&quot; title=&quot;必须设置主键&quot;&gt;&lt;/a&gt;必须设置主键&lt;/h3&gt;&lt;p&gt;mysql最好是用自增主键，主要是以下两个原因："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>SQL优化建议 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/MySQL/" rel="tag">MySQL</a></div><div class="post-time">2020-04-25</div></div></div><div class="container post-header"><h1>SQL优化建议</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%85%E9%A1%BB%E8%AE%BE%E7%BD%AE%E4%B8%BB%E9%94%AE"><span class="toc-number">1.</span> <span class="toc-text">必须设置主键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE%E6%98%AF%E7%94%A8%E8%87%AA%E5%A2%9E%E8%BF%98%E6%98%AFUUID"><span class="toc-number">2.</span> <span class="toc-text">主键是用自增还是UUID?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%A2%9E%E4%B8%BB%E6%9C%BA%E7%94%A8%E5%AE%8C%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">3.</span> <span class="toc-text">自增主机用完了怎么办?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%8E%A8%E8%8D%90%E6%9C%89%E4%B8%9A%E5%8A%A1%E5%90%AB%E4%B9%89"><span class="toc-number">4.</span> <span class="toc-text">主键为什么不推荐有业务含义?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%A7%E5%B8%81%E5%AD%97%E6%AE%B5%E7%94%A8%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">货币字段用什么类型?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%AD%97%E6%AE%B5%E7%94%A8%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">时间字段用什么类型?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%AD%98%E5%82%A8%E5%9B%BE%E7%89%87%E3%80%81%E9%9F%B3%E9%A2%91%E3%80%81%E8%A7%86%E9%A2%91%E7%AD%89%E5%A4%A7%E5%AE%B9%E9%87%8F%E5%86%85%E5%AE%B9"><span class="toc-number">7.</span> <span class="toc-text">为什么不直接存储图片、音频、视频等大容量内容?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E4%B8%AD%E6%9C%89%E5%A4%A7%E5%AD%97%E6%AE%B5X-%E4%BE%8B%E5%A6%82%EF%BC%9Atext%E7%B1%BB%E5%9E%8B-%EF%BC%8C%E4%B8%94%E5%AD%97%E6%AE%B5X%E4%B8%8D%E4%BC%9A%E7%BB%8F%E5%B8%B8%E6%9B%B4%E6%96%B0%EF%BC%8C%E4%BB%A5%E8%AF%BB%E4%B8%BA%E4%B8%BB%EF%BC%8C%E9%82%A3%E4%B9%88%E6%98%AF%E6%8B%86%E6%88%90%E5%AD%90%E8%A1%A8%E5%A5%BD%EF%BC%9F%E8%BF%98%E6%98%AF%E6%94%BE%E4%B8%80%E8%B5%B7%E5%A5%BD%EF%BC%9F"><span class="toc-number">8.</span> <span class="toc-text">表中有大字段X(例如：text类型)，且字段X不会经常更新，以读为主，那么是拆成子表好？还是放一起好？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E6%AE%B5%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AE%9A%E4%B9%89%E4%B8%BANOT-NULL"><span class="toc-number">9.</span> <span class="toc-text">字段为什么要定义为NOT NULL?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#where%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-number">10.</span> <span class="toc-text">where执行顺序是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E8%AF%A5%E5%9C%A8%E5%93%AA%E4%BA%9B%E5%88%97%E4%B8%8A%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="toc-number">11.</span> <span class="toc-text">应该在哪些列上创建索引?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E5%BA%94%E4%B8%8D%E5%BB%BA%E6%88%96%E5%B0%91%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="toc-number">12.</span> <span class="toc-text">什么情况下应不建或少建索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="toc-number">13.</span> <span class="toc-text">mysql联合索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%80%E5%B7%A6%E5%89%8D%E7%BC%80%E5%8E%9F%E5%88%99%EF%BC%9F"><span class="toc-number">14.</span> <span class="toc-text">什么是最左前缀原则？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL%E6%95%B0%E6%8D%AE%E5%BA%93cpu%E9%A3%99%E5%8D%87%E5%88%B0100-%E7%9A%84%E8%AF%9D%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">15.</span> <span class="toc-text">MySQL数据库cpu飙升到100%的话怎么处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E4%B8%AD%E8%A1%A8%E9%94%81%E5%92%8C%E8%A1%8C%E9%94%81%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">16.</span> <span class="toc-text">mysql中表锁和行锁的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E5%92%8C%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">17.</span> <span class="toc-text">mysql主键索引和普通索引之间的区别是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96-MYSQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">18.</span> <span class="toc-text">优化 MYSQL 数据库的方法</span></a></li></ol></details></div><div class="container post-content"><h3 id="必须设置主键"><a href="#必须设置主键" class="headerlink" title="必须设置主键"></a>必须设置主键</h3><p>mysql最好是用自增主键，主要是以下两个原因：</p>
+<ul>
+<li>如果定义了主键，那么InnoDB会选择主键作为聚集索引、</li>
+<li>如果没有显式定义主键，则innodb 会选择第一个不包含有NULL值的唯一索引作为主键索引、</li>
+<li>如果也没有这样的唯一索引，则innodb 会选择内置6字节长的ROWID作为隐含的聚集索引。</li>
+<li>所以，反正都要生成一个主键，那你还不如自己指定一个主键，提高查询效率！</li>
+</ul>
+<h3 id="主键是用自增还是UUID"><a href="#主键是用自增还是UUID" class="headerlink" title="主键是用自增还是UUID?"></a>主键是用自增还是UUID?</h3><p>最好是用自增主键，主要是以下两个原因：</p>
+<ol>
+<li>如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页。</li>
+<li>如果使用非自增主键（如uuid），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到索引页的随机某个位置，此时MySQL为了将新记录插到合适位置而<strong>移动数据</strong>，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成索引碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</li>
+</ol>
+<h3 id="自增主机用完了怎么办"><a href="#自增主机用完了怎么办" class="headerlink" title="自增主机用完了怎么办?"></a>自增主机用完了怎么办?</h3><p>在mysql中，Int整型的范围（-2147483648~2147483648），约20亿！因此不用考虑自增ID达到最大值这个问题。而且数据达到千万级的时候就应该考虑分库分表了。</p>
+<h3 id="主键为什么不推荐有业务含义"><a href="#主键为什么不推荐有业务含义" class="headerlink" title="主键为什么不推荐有业务含义?"></a>主键为什么不推荐有业务含义?</h3><ul>
+<li>最好是主键是无意义的自增ID，然后另外创建一个业务主键ID，</li>
+<li>因为任何有业务含义的列都有改变的可能性,主键一旦带上了业务含义，那么主键就有可能发生变更。主键一旦发生变更，该数据在磁盘上的存储位置就会发生变更，有可能会引发<strong>页分裂</strong>，产生空间碎片。</li>
+<li>还有就是，带有业务含义的主键，不一定是顺序自增的。<strong>那么就会导致数据的插入顺序，并不能保证后面插入数据的主键一定比前面的数据大。如果出现了，后面插入数据的主键比前面的小，就有可能引发页分裂</strong>，产生空间碎片。</li>
+</ul>
+<h3 id="货币字段用什么类型"><a href="#货币字段用什么类型" class="headerlink" title="货币字段用什么类型?"></a>货币字段用什么类型?</h3><p>货币字段一般都用 Decimal类型，float和double是以二进制存储的，数据大的时候，可能存在误差。</p>
+<h3 id="时间字段用什么类型"><a href="#时间字段用什么类型" class="headerlink" title="时间字段用什么类型?"></a>时间字段用什么类型?</h3><p>这个看具体情况和实际场景，timestamp ，datatime ，bigint 都行！</p>
+<p>timestamp，该类型是四个字节的整数，它能表示的时间范围为1970-01-01 08:00:01到2038-01-19 11:14:07。2038年以后的时间，是无法用timestamp类型存储的。但是它有一个优势，timestamp类型是带有时区信息的。一旦你系统中的时区发生改变，例如你修改了时区，该字段的值会自动变更。这个特性用来做一些国际化大项目，跨时区的应用时，特别注意！</p>
+<p>datetime，占用8个字节，它存储的时间范围为1000-01-01 00:00:00 ~ 9999-12-31 23:59:59。显然，存储时间范围更大。但是它坑的地方在于，它存储的是时间绝对值，不带有时区信息。如果你改变数据库的时区，该项的值不会自己发生变更！</p>
+<p>bigint，也是8个字节，自己维护一个时间戳，查询效率高，不过数据写入，显示都需要做转换。这种存储方式的具有 Timestamp 类型的所具有一些优点，并且使用它的进行日期排序以及对比等操作的效率会更高，跨系统也很方便，毕竟只是存放的数值。缺点也很明显，就是数据的可读性太差了，你无法直观的看到具体时间。</p>
+<h3 id="为什么不直接存储图片、音频、视频等大容量内容"><a href="#为什么不直接存储图片、音频、视频等大容量内容" class="headerlink" title="为什么不直接存储图片、音频、视频等大容量内容?"></a>为什么不直接存储图片、音频、视频等大容量内容?</h3><p>我们在实际应用中，都是文件形式存储的。mysql中，只存文件的存放路径。虽然mysql中blob类型可以用来存放大容量文件，但是，我们在生产中，基本不用！</p>
+<p>主要有如下几个原因：</p>
+<ol>
+<li>Mysql内存临时表不支持TEXT、BLOB这样的大数据类型，如果查询中包含这样的数据，查询效率会非常慢。</li>
+<li>数据库特别大，内存占用高，维护也比较麻烦。</li>
+<li>binlog太大，如果是主从同步的架构，会导致主从同步效率问题！</li>
+</ol>
+<p>因此，不推荐使用blob等类型！</p>
+<h3 id="表中有大字段X-例如：text类型-，且字段X不会经常更新，以读为主，那么是拆成子表好？还是放一起好？"><a href="#表中有大字段X-例如：text类型-，且字段X不会经常更新，以读为主，那么是拆成子表好？还是放一起好？" class="headerlink" title="表中有大字段X(例如：text类型)，且字段X不会经常更新，以读为主，那么是拆成子表好？还是放一起好？"></a>表中有大字段X(例如：text类型)，且字段X不会经常更新，以读为主，那么是拆成子表好？还是放一起好？</h3><ul>
+<li>拆开带来的问题：连接消耗；</li>
+<li>不拆可能带来的问题：查询性能，</li>
+<li>所以要看你的实际情况，如果表数据量比较大，最好还是拆开为好。这样查询速度更快。</li>
+</ul>
+<h3 id="字段为什么要定义为NOT-NULL"><a href="#字段为什么要定义为NOT-NULL" class="headerlink" title="字段为什么要定义为NOT NULL?"></a>字段为什么要定义为NOT NULL?</h3><p>一般情况，都会设置一个默认值，不会出现字段里面有null，又有空的情况。主要有以下几个原因：</p>
+<ol>
+<li>索引性能不好，Mysql难以优化引用可空列查询，它会使索引、索引统计和值更加复杂。可空列需要更多的存储空间，还需要mysql内部进行特殊处理。可空列被索引后，每条记录都需要一个额外的字节，还能导致MYisam 中固定大小的索引变成可变大小的索引。</li>
+<li>如果某列存在null的情况，可能导致count() 等函数执行不对的情况。</li>
+<li>sql 语句写着也麻烦，既要判断是否为空，又要判断是否为null等。</li>
+</ol>
+<h3 id="where执行顺序是怎样的？"><a href="#where执行顺序是怎样的？" class="headerlink" title="where执行顺序是怎样的？"></a>where执行顺序是怎样的？</h3><p>where 条件从左往右执行的，在数据量小的时候不用考虑，但数据量多的时候要考虑条件的先后顺序，此时应遵守一个原则：<strong>排除越多的条件放在第一个</strong>。</p>
+<h3 id="应该在哪些列上创建索引"><a href="#应该在哪些列上创建索引" class="headerlink" title="应该在哪些列上创建索引?"></a>应该在哪些列上创建索引?</h3><ul>
+<li><strong>在经常需要搜索的列上</strong>，可以加快搜索的速度；</li>
+<li>在作为主键的列上，强制该列的唯一性和组织表中数据的排列结构；</li>
+<li><strong>在经常用在连接的列上</strong>，这些列主要是一些外键，可以加快连接的速度；</li>
+<li>在经常需要根据范围进行搜索的列上创建索引，因为索引已经排序，其指定的范围是连续的；</li>
+<li>在经常需要排序的列上创建索引，因为索引已经排序，这样查询可以利用索引的排序，加快排序查询时间；</li>
+<li>在经常使用在WHERE子句中的列上面创建索引，加快条件的判断速度。</li>
+</ul>
+<h3 id="什么情况下应不建或少建索引"><a href="#什么情况下应不建或少建索引" class="headerlink" title="什么情况下应不建或少建索引"></a>什么情况下应不建或少建索引</h3><ul>
+<li>表记录太少</li>
+<li>经常插入、删除、修改的表</li>
+<li>数据重复且分布平均的表字段，假如一个表有10万行记录，有一个字段A只有T和F两种值，且每个值的分布概率大约为50%，那么对这种表A字段建索引一般不会提高数据库的查询速度。</li>
+<li>经常和主字段一块查询但主字段索引值比较多的表字段</li>
+</ul>
+<h3 id="mysql联合索引"><a href="#mysql联合索引" class="headerlink" title="mysql联合索引"></a>mysql联合索引</h3><ul>
+<li>联合索引是两个或更多个列上的索引。</li>
+<li>对于联合索引:Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部分，但只能是最左侧部分。</li>
+<li>例如索引是key index (a,b,c). 可以支持a 、 a,b 、 a,b,c 3种组合进行查找，但不支持 b,c进行查找 .<strong>当最左侧字段是常量引用时，索引就十分有效。</strong></li>
+<li>利用索引中的附加列，您可以缩小搜索的范围，但使用一个具有两列的索引 不同于使用两个单独的索引。复合索引的结构与电话簿类似，人名由姓和名构成，电话簿首先按姓氏对进行排序，然后按名字对有相同姓氏的人进行排序。如果您知 道姓，电话簿将非常有用；如果您知道姓和名，电话簿则更为有用，但如果您只知道名不姓，电话簿将没有用处。</li>
+</ul>
+<h3 id="什么是最左前缀原则？"><a href="#什么是最左前缀原则？" class="headerlink" title="什么是最左前缀原则？"></a>什么是最左前缀原则？</h3><p>最左前缀原则指的是，如果查询的时候查询条件精确匹配<strong>索引的左边连续一列或几列</strong>，则此列就可以被用到。如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from user where name=xx and city=xx ; # 可以命中索引</span><br><span class="line">select * from user where name=xx ; # 可以命中索引</span><br><span class="line">select * from user where city=xx ; # 无法命中索引</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，查询的时候如果两个条件都用上了，但是顺序不同，如 city= xx and name ＝xx，那么现在的查询引擎会自动优化为匹配联合索引的顺序，这样是能够命中索引的。</p>
+<p>由于最左前缀原则，在创建联合索引时，索引字段的顺序需要考虑字段值去重之后的个数，较多的放前面。ORDER BY子句也遵循此规则。</p>
+<h3 id="MySQL数据库cpu飙升到100-的话怎么处理？"><a href="#MySQL数据库cpu飙升到100-的话怎么处理？" class="headerlink" title="MySQL数据库cpu飙升到100%的话怎么处理？"></a>MySQL数据库cpu飙升到100%的话怎么处理？</h3><ol>
+<li>列出所有进程 show processlist 观察所有进程 多秒没有状态变化的(干掉)</li>
+<li>查看慢查询，找出执行时间长的sql；explain分析sql是否走索引，sql优化；</li>
+<li>检查其他子系统是否正常，是否缓存失效引起，需要查看buffer命中率；</li>
+</ol>
+<h3 id="mysql中表锁和行锁的区别"><a href="#mysql中表锁和行锁的区别" class="headerlink" title="mysql中表锁和行锁的区别"></a>mysql中表锁和行锁的区别</h3><p>Mysql有很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁；这些锁统称为悲观锁(Pessimistic Lock)</p>
+<p><strong>行锁</strong></p>
+<p>特点：锁的粒度小，发生锁冲突的概率低、处理并发的能力强；<strong>开销大、加锁慢、会出现死锁</strong></p>
+<p>加锁的方式：自动加锁。对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及数据集加排他锁；对于普通SELECT语句，InnoDB不会加任何锁。</p>
+<p><strong>表锁</strong></p>
+<p>特点：<strong>开销小、加锁快、无死锁</strong>；锁粒度大，发生锁冲突的概率高，高并发下性能低</p>
+<p>加锁的方式：自动加锁。查询操作（SELECT），会自动给涉及的所有表加读锁，更新操作（UPDATE、DELETE、INSERT），会自动给涉及的表加写锁。</p>
+<h3 id="mysql主键索引和普通索引之间的区别是什么"><a href="#mysql主键索引和普通索引之间的区别是什么" class="headerlink" title="mysql主键索引和普通索引之间的区别是什么"></a>mysql主键索引和普通索引之间的区别是什么</h3><p><strong>普通索引</strong></p>
+<p>普通索引是最基本的索引类型，而且它没有唯一性之类的限制。普通索引可以通过以下几种方式创建：</p>
+<ul>
+<li><p>创建索引，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX &lt;索引的名字&gt; ON tablename (列的列表);</span><br></pre></td></tr></table></figure></li>
+<li><p>修改表，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tablename ADD INDEX [索引的名字] (列的列表);</span><br></pre></td></tr></table></figure></li>
+<li><p>创建表的时候指定索引，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tablename ( [...],INDEX[索引的名字] (列的列表) );</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>主键索引</strong></p>
+<p>主键是一种唯一性索引，但它必须指定为“PRIMARY KEY”。主键一般在创建表的时候指定，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tablename ( [...],PRIMARYKEY(列的列表) );</span><br></pre></td></tr></table></figure>
+
+<p>但是，我们也可以通过修改表的方式加入主键，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tablename ADD PRIMARY KEY (列的列表);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>区别</strong></p>
+<ul>
+<li>普通索引是最基本的索引类型，没有任何限制，值可以为空，仅加速查询。普通索引是可以重复的，一个表中可以有多个普通索引。</li>
+<li>主键索引是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值；索引列的所有值都只能出现一次，即必须唯一。</li>
+<li>简单来说：主键索引是加速查询 + 列值唯一（不可以有null）+ 表中只有一个。</li>
+</ul>
+<h3 id="优化-MYSQL-数据库的方法"><a href="#优化-MYSQL-数据库的方法" class="headerlink" title="优化 MYSQL 数据库的方法"></a>优化 MYSQL 数据库的方法</h3><ol>
+<li>选取最适用的字段属性，尽可能减少定义字段长度，尽量把字段设置 NOT NULL, 例如’省份，性别’, 最好设置为 ENUM</li>
+<li><strong>使用连接（JOIN）来代替子查询:</strong></li>
+<li>使用联合 (UNION) 来代替手动创建的临时表</li>
+<li>事务处理:</li>
+<li>锁定表，优化事务处理:</li>
+<li>使用外键，优化锁定表</li>
+<li>建立索引</li>
+<li>优化 sql 语句</li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
