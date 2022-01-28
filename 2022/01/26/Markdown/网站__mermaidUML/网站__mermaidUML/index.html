@@ -1,0 +1,284 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;MERMAID-UML&quot;&gt;&lt;a href=&quot;#MERMAID-UML&quot; class=&quot;headerlink&quot; title=&quot;MERMAID UML&quot;&gt;&lt;/a&gt;MERMAID UML&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://erasin.wang/mermaid/&quot;&gt;MERMAID UML 流程图工具&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://zhuanlan.zhihu.com/p/70261692&quot;&gt;Markdown 进阶技能：用代码画时序图&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;流程图&quot;&gt;&lt;a href=&quot;#流程图&quot; class=&quot;headerlink&quot; title=&quot;流程图&quot;&gt;&lt;/a&gt;流程图&lt;/h2&gt;&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;graph TD;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    A--&amp;gt;B;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    A--&amp;gt;C;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    B--&amp;gt;D;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    C--&amp;gt;D;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;h3 id=&quot;方位&quot;&gt;&lt;a href=&quot;#方位&quot; class=&quot;headerlink&quot; title=&quot;方位&quot;&gt;&lt;/a&gt;方位&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;TB - top bottom&lt;/li&gt;
+&lt;li&gt;BT - bottom top&lt;/li&gt;
+&lt;li&gt;RL - right left&lt;/li&gt;
+&lt;li&gt;LR - left right&lt;/li&gt;
+&lt;li&gt;TD - same as TB&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;节点&quot;&gt;&lt;a href=&quot;#节点&quot; class=&quot;headerlink&quot; title=&quot;节点&quot;&gt;&lt;/a&gt;节点&lt;/h3&gt;&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;graph LR&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id1[This is the text in the box]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id2(This is the text in the box)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id3([This is the text in the box])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id4[(Database)]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id5((This is the text in the circle))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id6&amp;gt;This is the text in the box]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id7&amp;#123;This is the text in the box&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id8&amp;#123;&amp;#123;This is the text in the box&amp;#125;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id9[/This is the text in the box/]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id10[\This is the text in the box\]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id11[/Christmas\]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    id12[\Go shopping/]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;h3 id=&quot;连接&quot;&gt;&lt;a href=&quot;#连接&quot; class=&quot;headerlink&quot; title=&quot;连接&quot;&gt;&lt;/a&gt;连接&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&quot;center&quot;&gt;命令&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;形状&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;添加文本&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A1 –&amp;gt; B1&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;直线箭头&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;–text–&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A2 — B2&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;直线&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;–text—&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A3 -.-&amp;gt; B3&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;虚线箭头&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-.text.-&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A4 -.- B4&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;虚线&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-.text.–&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A5 === B5&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;加粗直线&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;==text===&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;center&quot;&gt;A6 ==&amp;gt; B6&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;加粗直线箭头&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;==text==&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;graph LR;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    A --&amp;gt; B --- C&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    C2 -- TEXT --- D&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    D -- TEXT --&amp;gt; E&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    E2 -.-&amp;gt; F -. TEXT .-&amp;gt; G&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    G2 ==&amp;gt; H == TEXT ==&amp;gt; J&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+&lt;p&gt;使用 &lt;code&gt;&amp;amp;&lt;/code&gt; 符号 连接，来减少重复项"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>mermaidUML | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Markdown/" rel="tag">Markdown</a></div><div class="post-time">2022-01-26</div></div></div><div class="container post-header"><h1>mermaidUML</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MERMAID-UML"><span class="toc-number">1.</span> <span class="toc-text">MERMAID UML</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">1.1.</span> <span class="toc-text">流程图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E4%BD%8D"><span class="toc-number">1.1.1.</span> <span class="toc-text">方位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text">节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.1.3.</span> <span class="toc-text">连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E5%9B%BE"><span class="toc-number">1.1.4.</span> <span class="toc-text">子图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A"><span class="toc-number">1.1.5.</span> <span class="toc-text">事件绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E9%87%8A"><span class="toc-number">1.1.6.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.1.7.</span> <span class="toc-text">样式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="toc-number">1.2.</span> <span class="toc-text">时序图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E4%B8%8E%E8%80%85"><span class="toc-number">1.2.1.</span> <span class="toc-text">参与者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E6%81%AF"><span class="toc-number">1.2.2.</span> <span class="toc-text">消息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BF%80%E6%B4%BB%E6%A1%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">激活框</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.2.4.</span> <span class="toc-text">注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%EF%BC%88loop%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">循环（loop）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%EF%BC%88alt%EF%BC%89"><span class="toc-number">1.2.6.</span> <span class="toc-text">选择（alt）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%EF%BC%88opt%EF%BC%89"><span class="toc-number">1.2.7.</span> <span class="toc-text">可选（opt）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%EF%BC%88Par%EF%BC%89"><span class="toc-number">1.2.8.</span> <span class="toc-text">并行（Par）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%98%E7%89%B9%E5%9B%BE"><span class="toc-number">1.3.</span> <span class="toc-text">甘特图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A5%BC%E7%8A%B6%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text">饼状图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9B%BE"><span class="toc-number">1.5.</span> <span class="toc-text">类图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB"><span class="toc-number">1.5.1.</span> <span class="toc-text">类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E7%9A%84%E6%9D%83%E9%99%90"><span class="toc-number">1.5.2.</span> <span class="toc-text">属性方法的权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.5.3.</span> <span class="toc-text">类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB"><span class="toc-number">1.5.4.</span> <span class="toc-text">关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="toc-number">1.6.</span> <span class="toc-text">状态图</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="MERMAID-UML"><a href="#MERMAID-UML" class="headerlink" title="MERMAID UML"></a>MERMAID UML</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://erasin.wang/mermaid/">MERMAID UML 流程图工具</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/70261692">Markdown 进阶技能：用代码画时序图</a></li>
+</ul>
+<h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TD;</span><br><span class="line">    A--&gt;B;</span><br><span class="line">    A--&gt;C;</span><br><span class="line">    B--&gt;D;</span><br><span class="line">    C--&gt;D;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="方位"><a href="#方位" class="headerlink" title="方位"></a>方位</h3><ul>
+<li>TB - top bottom</li>
+<li>BT - bottom top</li>
+<li>RL - right left</li>
+<li>LR - left right</li>
+<li>TD - same as TB</li>
+</ul>
+<h3 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    id0</span><br><span class="line">    id1[This is the text in the box]</span><br><span class="line">    id2(This is the text in the box)</span><br><span class="line">    id3([This is the text in the box])</span><br><span class="line">    id4[(Database)]</span><br><span class="line">    id5((This is the text in the circle))</span><br><span class="line">    id6&gt;This is the text in the box]</span><br><span class="line">    id7&#123;This is the text in the box&#125;</span><br><span class="line">    id8&#123;&#123;This is the text in the box&#125;&#125;</span><br><span class="line">    id9[/This is the text in the box/]</span><br><span class="line">    id10[\This is the text in the box\]</span><br><span class="line">    id11[/Christmas\]</span><br><span class="line">    id12[\Go shopping/]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h3><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">形状</th>
+<th align="center">添加文本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">A1 –&gt; B1</td>
+<td align="center">直线箭头</td>
+<td align="center">–text–&gt;</td>
+</tr>
+<tr>
+<td align="center">A2 — B2</td>
+<td align="center">直线</td>
+<td align="center">–text—</td>
+</tr>
+<tr>
+<td align="center">A3 -.-&gt; B3</td>
+<td align="center">虚线箭头</td>
+<td align="center">-.text.-&gt;</td>
+</tr>
+<tr>
+<td align="center">A4 -.- B4</td>
+<td align="center">虚线</td>
+<td align="center">-.text.–</td>
+</tr>
+<tr>
+<td align="center">A5 === B5</td>
+<td align="center">加粗直线</td>
+<td align="center">==text===</td>
+</tr>
+<tr>
+<td align="center">A6 ==&gt; B6</td>
+<td align="center">加粗直线箭头</td>
+<td align="center">==text==&gt;</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph LR;</span><br><span class="line">    A --&gt; B --- C</span><br><span class="line">    C2 -- TEXT --- D</span><br><span class="line">    D -- TEXT --&gt; E</span><br><span class="line">    E2 -.-&gt; F -. TEXT .-&gt; G</span><br><span class="line">    G2 ==&gt; H == TEXT ==&gt; J</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用 <code>&amp;</code> 符号 连接，来减少重复项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR;</span><br><span class="line">	A --&gt; B &amp; C --&gt; D</span><br><span class="line">	a &amp; b --&gt; c &amp; d --&gt; e </span><br></pre></td></tr></table></figure>
+
+
+
+<p>转义的字符可以使用 <code>&quot;...&quot;</code> 双引号来处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">id1[&quot;This is the (text) in the box&quot;]</span><br><span class="line">A[&quot;A double quote:#quot;&quot;] --&gt;B[&quot;A dec char:#9829;&quot;]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="子图"><a href="#子图" class="headerlink" title="子图"></a>子图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    c1--&gt;a2</span><br><span class="line">    subgraph one</span><br><span class="line">    a1--&gt;a2</span><br><span class="line">    end</span><br><span class="line">    subgraph two</span><br><span class="line">    b1--&gt;b2</span><br><span class="line">    end</span><br><span class="line">    subgraph three</span><br><span class="line">    c1--&gt;c2</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="事件绑定"><a href="#事件绑定" class="headerlink" title="事件绑定"></a>事件绑定</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR;</span><br><span class="line">    A--&gt;B;</span><br><span class="line">    click B &quot;http://erasin.wang&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><p>注释 <code>%%</code> 开始忽略任何语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    %% this is a comment A -- text --&gt; B&#123;node&#125;</span><br><span class="line">   A -- text --&gt; B -- text2 --&gt; C</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="样式"><a href="#样式" class="headerlink" title="样式"></a>样式</h3><ul>
+<li><code>style node style</code> 节点样式</li>
+<li><code>classDef className style</code>声明类<ul>
+<li><code>class node1,node2 className;</code> 样式附加方式 1</li>
+<li><code>node:::className</code> 直接在流程中附加样式</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>style 描述 svg 样式 </li>
+<li><code>,</code> 来分割</li>
+<li>；fill 填充色， </li>
+<li>stroke 线条 </li>
+<li>stroke-width 线条宽度 </li>
+<li>color 前置色。</li>
+</ul>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    id1(Start)--&gt;id2(Stop)--&gt;id3:::className--&gt;id4</span><br><span class="line">    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</span><br><span class="line">    style id1 fill:#f9f,stroke:#333,stroke-width:4px</span><br><span class="line">    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5, 5</span><br><span class="line">    class id4 className;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Example:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    A[Hard edge] --Link text--&gt; B(Round edge)</span><br><span class="line">    B --&gt; C&#123;Decision&#125;</span><br><span class="line">    C --&gt;|One| D[Result one]</span><br><span class="line">    C --&gt;|Two| E[Result two]</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">graph TB </span><br><span class="line">    A(开始)--&gt;B[遍历每一个原子]</span><br><span class="line">    B--对于某个原子--&gt;C&#123;con=av&#125;</span><br><span class="line">    C--是--&gt;D[所有未配平键bo=1]</span><br><span class="line">    B--对于某个原子--&gt;E&#123;con=1&#125;</span><br><span class="line">    E--是--&gt;F[此连接键bo=av]</span><br><span class="line">    D--&gt;H[&quot;确认bo的链接，原子的con=con-1,av=av-bo&quot;]</span><br><span class="line">    F--&gt;H</span><br><span class="line">    H--&gt;I&#123;未配平原子无法确认bo&#125;</span><br><span class="line">    I--是--&gt;B</span><br><span class="line">    I--否--&gt;J[对某一个连接尝试bo=1]</span><br><span class="line">    J--&gt;B</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h2><h3 id="参与者"><a href="#参与者" class="headerlink" title="参与者"></a>参与者</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant 老板A</span><br><span class="line">    participant 员工A</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h3><ul>
+<li><code>-&gt;&gt;</code> 显示为实线箭头（主动发出消息）</li>
+<li><code>--&gt;&gt;</code> 显示为虚线箭头（响应）</li>
+<li><code>-x</code> 显示为末尾带「X」的实线箭头（异步消息）</li>
+</ul>
+<h3 id="激活框"><a href="#激活框" class="headerlink" title="激活框"></a>激活框</h3><p>从消息接收方的时间线上标记一小段时间，表示对消息进行处理的时间间隔。</p>
+<p>箭头符号后的 <code>+</code> 和 <code>-</code> 的使用方法和效果，它们相当于激活框的开关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    老板B -&gt;&gt; + 员工B : “你们要669！”</span><br><span class="line">    员工B --&gt;&gt; - 老板B : 鼓掌</span><br><span class="line">    </span><br><span class="line">    老板B -&gt;&gt; + 员工B : “悔创本司！”</span><br><span class="line">    员工B --&gt;&gt; - 老板B : 鼓掌</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Note left of 老板A : 对脸不感兴趣</span><br><span class="line">    Note right of 老板B : 对钱不感兴趣</span><br><span class="line">    Note over 老板A,老板B : 对996感兴趣</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="循环（loop）"><a href="#循环（loop）" class="headerlink" title="循环（loop）"></a>循环（loop）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    网友 -&gt;&gt; + X宝 : 网购钟意的商品</span><br><span class="line">    X宝 --&gt;&gt; - 网友 : 下单成功</span><br><span class="line">    </span><br><span class="line">    loop 一天七次</span><br><span class="line">        网友 -&gt;&gt; + X宝 : 查看配送进度</span><br><span class="line">        X宝 --&gt;&gt; - 网友 : 配送中</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="选择（alt）"><a href="#选择（alt）" class="headerlink" title="选择（alt）"></a>选择（alt）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram    </span><br><span class="line">    土豪 -&gt;&gt; 取款机 : 查询余额</span><br><span class="line">    取款机 --&gt;&gt; 土豪 : 余额</span><br><span class="line">    </span><br><span class="line">    alt 余额 &gt; 5000</span><br><span class="line">        土豪 -&gt;&gt; 取款机 : 取上限值 5000 块</span><br><span class="line">    else 5000 &lt; 余额 &lt; 100</span><br><span class="line">        土豪 -&gt;&gt; 取款机 : 有多少取多少</span><br><span class="line">    else 余额 &lt; 100</span><br><span class="line">        土豪 -&gt;&gt; 取款机 : 退卡</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    取款机 --&gt;&gt; 土豪 : 退卡</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="可选（opt）"><a href="#可选（opt）" class="headerlink" title="可选（opt）"></a>可选（opt）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    老板C -&gt;&gt; 员工C : 开始实行996</span><br><span class="line">    </span><br><span class="line">    opt 永不可能</span><br><span class="line">        员工C --&gt;&gt; 老板C : 拒绝</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="并行（Par）"><a href="#并行（Par）" class="headerlink" title="并行（Par）"></a>并行（Par）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    老板C -&gt;&gt; 员工C : 开始实行996</span><br><span class="line">    </span><br><span class="line">    par 并行</span><br><span class="line">        员工C -&gt;&gt; 员工C : 刷微博</span><br><span class="line">    and</span><br><span class="line">        员工C -&gt;&gt; 员工C : 工作</span><br><span class="line">    and</span><br><span class="line">        员工C -&gt;&gt; 员工C : 刷朋友圈</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    员工C --&gt;&gt; 老板C : 9点下班</span><br></pre></td></tr></table></figure>
+
+
+
+<p>example：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant User</span><br><span class="line">    participant CommonServer</span><br><span class="line">    participant ProxyServer</span><br><span class="line">    participant CommonClient</span><br><span class="line">    participant ProxyClient</span><br><span class="line"></span><br><span class="line">    Note over CommonServer, CommonClient: 准备阶段</span><br><span class="line">    CommonServer -&gt;&gt; CommonServer: 监听BindPort</span><br><span class="line">    CommonClient -&gt;&gt; CommonClient: 构建ProxyClient对象</span><br><span class="line">    </span><br><span class="line">    Note over CommonServer, CommonClient: 初始化阶段</span><br><span class="line">    CommonClient -&gt;&gt; + CommonServer: 连接到Common conn，发送所有ProxyClient的信息</span><br><span class="line">    CommonServer -&gt;&gt; CommonServer: 根据ProxyName取出所有的ProxyServer对象，校验</span><br><span class="line">    CommonServer -&gt;&gt; ProxyServer: 通知每个ProxyServer开始监听各自的端口</span><br><span class="line">    ProxyServer -&gt;&gt; ProxyServer: 开启goroutine，监听ProxyConn，等待User连接</span><br><span class="line">    CommonServer -&gt;&gt; CommonServer: 开启goroutine，监听heartbeat</span><br><span class="line">    CommonServer --&gt;&gt; - CommonClient: 告知CommonClient所有ProxyServer的信息，表明Ready，可以进行代理</span><br><span class="line">    CommonClient -&gt;&gt; CommonClient: 存储ProxySever信息</span><br><span class="line">   	par par and loop</span><br><span class="line">   		CommonClient -&gt;&gt; CommonServer: 发送heartbeat</span><br><span class="line">   		CommonServer --&gt;&gt; CommonClient: 响应heartbeat</span><br><span class="line">   	end</span><br><span class="line">    </span><br><span class="line">    Note over User, ProxyClient: 代理阶段</span><br><span class="line">    User -&gt;&gt; + ProxyServer: User连接ProxyServer，希望开始代理</span><br><span class="line">    ProxyServer -&gt;&gt; ProxyServer: 储存UserConn</span><br><span class="line">    ProxyServer -&gt;&gt; CommonServer: 通知CommonServer&lt;br/&gt;将「希望开启代理」的信号传给CommonClient</span><br><span class="line">    CommonServer -&gt;&gt; CommonClient: 告知CommonClient「希望开启代理」</span><br><span class="line">    CommonClient -&gt;&gt; CommonClient: 从存储中找到「希望开启代理」的APP信息</span><br><span class="line">    CommonClient -&gt;&gt; ProxyClient: 开启本地端口</span><br><span class="line">    ProxyClient --&gt;&gt; CommonClient: 返回localConn</span><br><span class="line">    CommonClient -&gt;&gt; ProxyServer: 连接到ProxyServer</span><br><span class="line">    ProxyServer -&gt;&gt; ProxyServer: 1.校验ProxyClientConn和message&lt;br/&gt;2.从存储中找到UserConn</span><br><span class="line">    par</span><br><span class="line">   		ProxyServer -&gt;&gt; ProxyServer: Join ProxyClientConn and UserConn</span><br><span class="line">   	end</span><br><span class="line">		ProxyServer --&gt;&gt; CommonClient: 返回remoteConn</span><br><span class="line">		par</span><br><span class="line">   		CommonClient -&gt;&gt; CommonClient: Join localConn and remoteConn</span><br><span class="line">   	end</span><br><span class="line">    ProxyServer --&gt;&gt; - User: 返回</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="甘特图"><a href="#甘特图" class="headerlink" title="甘特图"></a>甘特图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">gantt</span><br><span class="line">    title 甘特图</span><br><span class="line">    dateFormat  YYYY-MM-DD</span><br><span class="line">    section 章节1</span><br><span class="line">    日志1             :a1, 2014-01-01, 30d</span><br><span class="line">    日志2             :after a1  , 20d</span><br><span class="line">    日志3             :after a1 , 11d</span><br><span class="line">    section 章节2</span><br><span class="line">    起始时间2.1       :2014-01-12  , 12d</span><br><span class="line">    日志2.2 task      : 24d</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="饼状图"><a href="#饼状图" class="headerlink" title="饼状图"></a>饼状图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pie</span><br><span class="line">    title Key elements in Product X</span><br><span class="line">    &quot;Calcium&quot; : 42.96</span><br><span class="line">    &quot;Potassium&quot; : 50.05</span><br><span class="line">    &quot;Magnesium&quot; : 10.01</span><br><span class="line">    &quot;Iron&quot; :  5</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><code>classDiagram</code> 标记开始</p>
+<h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><ul>
+<li><code>class Name&#123;&#125;</code> ：命名类</li>
+<li><code>+Attr</code>： 属性（在括号内）</li>
+<li><code>+Fun()</code>： 函数（在括号内）</li>
+<li><code>class1 &lt;|-- class2</code> 关系隶属</li>
+</ul>
+<h3 id="属性方法的权限"><a href="#属性方法的权限" class="headerlink" title="属性方法的权限"></a>属性方法的权限</h3><ul>
+<li><code>+</code> Public</li>
+<li><code>-</code> Private</li>
+<li><code>#</code> Protected</li>
+<li><code>~</code> Package/Internal</li>
+</ul>
+<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><ul>
+<li><code>&lt;&lt;Interface&gt;&gt;</code> To represent an Interface class</li>
+<li><code>&lt;&lt;abstract&gt;&gt;</code> To represent an abstract class</li>
+<li><code>&lt;&lt;Service&gt;&gt;</code> To represent a service class</li>
+<li><code>&lt;&lt;enumeration&gt;&gt;</code> To represent an enum</li>
+</ul>
+<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">classDiagram</span><br><span class="line">classA --|&gt; classB : Generalization（泛化）</span><br><span class="line">classM ..|&gt; classN : Realization（实现）</span><br><span class="line">classC --* classD : Composition（组合）</span><br><span class="line">classE --o classF : Aggregation（聚合）</span><br><span class="line">classG --&gt; classH : Association（关联,一对多）</span><br><span class="line">classI -- classJ : Association（关联，多对多）</span><br><span class="line">classK ..&gt; classL : Dependency（依赖）</span><br></pre></td></tr></table></figure>
+
+
+
+<p>demo：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">classDiagram</span><br><span class="line">     Animal &lt;|-- Duck : 备注</span><br><span class="line">     Animal -- Fish</span><br><span class="line">     Animal &lt;-- Zebra</span><br><span class="line"></span><br><span class="line">     Animal: +int age</span><br><span class="line">     Animal: +String gender</span><br><span class="line">     Animal: +isMammal(a~b~ c)</span><br><span class="line">     Animal: +mate()</span><br><span class="line"></span><br><span class="line">     class Duck&#123;</span><br><span class="line">         +String beakColor</span><br><span class="line">         +swim()</span><br><span class="line">         +quack()</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     class Fish&#123;</span><br><span class="line">         -int sizeInFeet</span><br><span class="line">         -canEat()</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     class Zebra&#123;</span><br><span class="line">        &lt;&lt;interface&gt;&gt;</span><br><span class="line">         +bool is_wild</span><br><span class="line">         +run()</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="状态图"><a href="#状态图" class="headerlink" title="状态图"></a>状态图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">stateDiagram</span><br><span class="line">    IDLE: &quot;正常状态&quot;</span><br><span class="line">    [*] --&gt; IDLE</span><br><span class="line">    IDLE --&gt; [*]</span><br><span class="line"></span><br><span class="line">    IDLE --&gt; Jump </span><br><span class="line">    Jump --&gt; IDLE</span><br><span class="line">    Moving --&gt; Jump : 走动跳动</span><br><span class="line">    Jump --&gt; Moving</span><br><span class="line"></span><br><span class="line">    IDLE --&gt; Moving</span><br><span class="line">    Moving --&gt; IDLE</span><br><span class="line">    Moving --&gt; Crash</span><br><span class="line">    Crash --&gt; [*]</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

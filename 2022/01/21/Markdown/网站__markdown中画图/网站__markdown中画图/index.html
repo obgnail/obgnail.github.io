@@ -1,0 +1,76 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;Flow&quot;&gt;&lt;a href=&quot;#Flow&quot; class=&quot;headerlink&quot; title=&quot;Flow&quot;&gt;&lt;/a&gt;Flow&lt;/h1&gt;&lt;h2 id=&quot;语法结构&quot;&gt;&lt;a href=&quot;#语法结构&quot; class=&quot;headerlink&quot; title=&quot;语法结构&quot;&gt;&lt;/a&gt;语法结构&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;定义节点&lt;/li&gt;
+&lt;li&gt;连接节点&lt;/li&gt;
+&lt;li&gt;样式调整(可选)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;7种节点&quot;&gt;&lt;a href=&quot;#7种节点&quot; class=&quot;headerlink&quot; title=&quot;7种节点&quot;&gt;&lt;/a&gt;7种节点&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;开始（椭圆形）：start&lt;/li&gt;
+&lt;li&gt;结束（椭圆形）：end&lt;/li&gt;
+&lt;li&gt;操作（矩形）：operation&lt;/li&gt;
+&lt;li&gt;多输出操作（矩形）：parallel&lt;/li&gt;
+&lt;li&gt;条件判断（菱形）：condition&lt;/li&gt;
+&lt;li&gt;输入输出（平行四边形）：inputoutput&lt;/li&gt;
+&lt;li&gt;预处理/子程序（圣旨形）：subroutine&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;节点定义&quot;&gt;&lt;a href=&quot;#节点定义&quot; class=&quot;headerlink&quot; title=&quot;节点定义&quot;&gt;&lt;/a&gt;节点定义&lt;/h2&gt;&lt;p&gt;变量名=&amp;gt;节点标识: 节点显示名"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>markdown中画图 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Markdown/" rel="tag">Markdown</a></div><div class="post-time">2022-01-21</div></div></div><div class="container post-header"><h1>markdown中画图</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Flow"><span class="toc-number">1.</span> <span class="toc-text">Flow</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E7%A7%8D%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.</span> <span class="toc-text">7种节点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E5%AE%9A%E4%B9%89"><span class="toc-number">1.3.</span> <span class="toc-text">节点定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E8%BF%9E%E7%BA%BF"><span class="toc-number">1.4.</span> <span class="toc-text">节点连线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E7%BA%BF%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.5.</span> <span class="toc-text">连线样式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">1.6.</span> <span class="toc-text">关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81"><span class="toc-number">1.7.</span> <span class="toc-text">节点状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%80"><span class="toc-number">1.8.</span> <span class="toc-text">示例一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C"><span class="toc-number">1.9.</span> <span class="toc-text">示例二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%89"><span class="toc-number">1.10.</span> <span class="toc-text">示例三</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sequence"><span class="toc-number">2.</span> <span class="toc-text">sequence</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E5%A4%A7%E5%85%A8%E5%9B%BE"><span class="toc-number">2.1.</span> <span class="toc-text">语法大全图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.2.</span> <span class="toc-text">示例</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="Flow"><a href="#Flow" class="headerlink" title="Flow"></a>Flow</h1><h2 id="语法结构"><a href="#语法结构" class="headerlink" title="语法结构"></a>语法结构</h2><ol>
+<li>定义节点</li>
+<li>连接节点</li>
+<li>样式调整(可选)</li>
+</ol>
+<h2 id="7种节点"><a href="#7种节点" class="headerlink" title="7种节点"></a>7种节点</h2><ul>
+<li>开始（椭圆形）：start</li>
+<li>结束（椭圆形）：end</li>
+<li>操作（矩形）：operation</li>
+<li>多输出操作（矩形）：parallel</li>
+<li>条件判断（菱形）：condition</li>
+<li>输入输出（平行四边形）：inputoutput</li>
+<li>预处理/子程序（圣旨形）：subroutine</li>
+</ul>
+<h2 id="节点定义"><a href="#节点定义" class="headerlink" title="节点定义"></a>节点定义</h2><p>变量名=&gt;节点标识: 节点显示名</p>
+<h2 id="节点连线"><a href="#节点连线" class="headerlink" title="节点连线"></a>节点连线</h2><p>变量名1-&gt;变量名2-&gt;…-&gt;变量名n</p>
+<h2 id="连线样式"><a href="#连线样式" class="headerlink" title="连线样式"></a>连线样式</h2><p>设置变量m和变量n之间连线的样式，具体样式由变量n后面key-value控制，需要两个变量之间有直接连线。语法中的连接符为（@&gt;）。</p>
+<p>变量名m@&gt;变量名n({“key”:”value”})</p>
+<h2 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h2><ul>
+<li>yes/true：condition类型变量连接时，用于分别表示yes条件的流向</li>
+<li>no/false：同上，表示否定条件的流向</li>
+<li>left/right：表示<strong>连线出口在节点位置</strong>（默认下面是出口，如op3），可以跟condition变量一起用：cond(yes,right)</li>
+<li>path1/path2/path3：parallel变量的三个出口路径（默认下面是出口）</li>
+</ul>
+<h2 id="节点状态"><a href="#节点状态" class="headerlink" title="节点状态"></a>节点状态</h2><p>为节点设置不同的状态，可以通过不同的颜色显示，其中状态包括下面6个，含义如英文所示，不过CSDN中好像目前还不支持：</p>
+<ul>
+<li>past</li>
+<li>current</li>
+<li>future</li>
+<li>approved</li>
+<li>rejected</li>
+<li>invalid</li>
+</ul>
+<h2 id="示例一"><a href="#示例一" class="headerlink" title="示例一"></a>示例一</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">e=&gt;end: End</span><br><span class="line">op1=&gt;operation: My Operation</span><br><span class="line">op2=&gt;operation: Stuff|current</span><br><span class="line">sub1=&gt;subroutine: My Subroutine</span><br><span class="line">cond=&gt;condition: Yes or No?</span><br><span class="line">c2=&gt;condition: Good idea</span><br><span class="line">io=&gt;inputoutput: catch something...</span><br><span class="line"></span><br><span class="line">st-&gt;op1(right)-&gt;cond</span><br><span class="line">cond(yes, right)-&gt;c2</span><br><span class="line">cond(no)-&gt;sub1(left)-&gt;op1</span><br><span class="line">c2(yes)-&gt;io-&gt;e</span><br><span class="line">c2(no)-&gt;op2-&gt;e</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="示例二"><a href="#示例二" class="headerlink" title="示例二"></a>示例二</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">e=&gt;end: End</span><br><span class="line">cond=&gt;condition: Option</span><br><span class="line">op1=&gt;operation: solution_1</span><br><span class="line">op2=&gt;operation: solution_2</span><br><span class="line"></span><br><span class="line">st-&gt;cond</span><br><span class="line">cond(yes)-&gt;op1-&gt;e</span><br><span class="line">cond(no)-&gt;op2-&gt;e</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="示例三"><a href="#示例三" class="headerlink" title="示例三"></a>示例三</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">e=&gt;end: End</span><br><span class="line">cloud_type=&gt;condition: server or domain?</span><br><span class="line">req_server=&gt;operation: request server API</span><br><span class="line">req_domain=&gt;operation: request domain API </span><br><span class="line">req_contact=&gt;operation: requst contact API</span><br><span class="line">get_config=&gt;operation: get config</span><br><span class="line">mk_dct=&gt;operation: make cloud contact dict</span><br><span class="line">send_mail=&gt;operation: send mail</span><br><span class="line"></span><br><span class="line">st-&gt;cloud_type</span><br><span class="line">cloud_type(yes, right)-&gt;req_server</span><br><span class="line">cloud_type(no)-&gt;req_domain</span><br><span class="line">req_server-&gt;get_config</span><br><span class="line">req_domain-&gt;get_config</span><br><span class="line">get_config-&gt;req_contact</span><br><span class="line">req_contact-&gt;mk_dct</span><br><span class="line">mk_dct-&gt;send_mail</span><br><span class="line">mk_dct-&gt;e</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="sequence"><a href="#sequence" class="headerlink" title="sequence"></a>sequence</h1><h2 id="语法大全图"><a href="#语法大全图" class="headerlink" title="语法大全图"></a>语法大全图</h2><p><img src="/images/image-20220120195408520.png" alt="image-20220120195408520"></p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">title: Token Valid logic</span><br><span class="line">participant Client as C</span><br><span class="line">participant Server as S</span><br><span class="line">C-&gt;S: 1.login with username and password</span><br><span class="line">S-&gt;C: 2.response with token and something</span><br><span class="line">note left of C: such as Android App、IOS\n App and so on.</span><br><span class="line">note right of S: supply Api Service</span><br><span class="line">C-&gt;S: 3.request data with token</span><br><span class="line">S-&gt;C: 4.response with data</span><br><span class="line">note right of S: if token is valid then return\n the data that Client needed</span><br><span class="line">note over C,S: This is the Token principle</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">title: MarkDown 画sequence图</span><br><span class="line">participant finefine as ff</span><br><span class="line">participant kunkun as kk</span><br><span class="line">ff--&gt;kk: this is kunkun?</span><br><span class="line">kk--&gt;ff: yes!</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
