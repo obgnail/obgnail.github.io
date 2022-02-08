@@ -1,0 +1,259 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第-0-章-实模式和保护模式简介&quot;&gt;&lt;a href=&quot;#第-0-章-实模式和保护模式简介&quot; class=&quot;headerlink&quot; title=&quot;第 0 章 实模式和保护模式简介&quot;&gt;&lt;/a&gt;第 0 章 实模式和保护模式简介&lt;/h1&gt;&lt;h2 id=&quot;CPU-的工作模式&quot;&gt;&lt;a href=&quot;#CPU-的工作模式&quot; class=&quot;headerlink&quot; title=&quot;CPU 的工作模式&quot;&gt;&lt;/a&gt;CPU 的工作模式&lt;/h2&gt;&lt;p&gt;&lt;code&gt;实模式&lt;/code&gt;和&lt;code&gt;保护模式&lt;/code&gt;都是 CPU 的工作模式，而 CPU 的工作模式是指 &lt;strong&gt;CPU 的寻址方式&lt;/strong&gt;、寄存器大小等用来反映 CPU 在该环境下如何工作的概念。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>x86汇编语言：从实模式到保护模式 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Assembly-Language/" rel="tag">Assembly Language</a></div><div class="post-time">2022-02-08</div></div></div><div class="container post-header"><h1>x86汇编语言：从实模式到保护模式</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-0-%E7%AB%A0-%E5%AE%9E%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">第 0 章 实模式和保护模式简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">CPU 的工作模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%A8%A1%E5%BC%8F%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">实模式工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">保护模式工作原理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-1-%E7%AB%A0-%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">第 1 章 十六进制计数法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-2-%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E3%80%81%E5%86%85%E5%AD%98%E5%92%8C%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">第 2 章 处理器、内存和指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E8%BF%9B%E8%A1%8C%E6%95%B0%E5%AD%A6%E8%BF%90%E7%AE%97%E7%9A%84%E7%AE%80%E5%8D%95%E5%8E%9F"><span class="toc-number">3.0.1.</span> <span class="toc-text">处理器进行数学运算的简单原</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E5%AD%97%EF%BC%88double-word%EF%BC%89"><span class="toc-number">3.0.2.</span> <span class="toc-text">双字（double word）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%9A%E5%AD%97%E8%AE%BF%E9%97%AE%E5%86%85%E5%AD%98"><span class="toc-number">3.0.3.</span> <span class="toc-text">处理器多字访问内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8086-%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E6%AE%B5%E6%9C%BA%E5%88%B6"><span class="toc-number">3.0.4.</span> <span class="toc-text">8086 的内存分段机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8086-%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96%E9%98%9F%E5%88%97"><span class="toc-number">3.0.5.</span> <span class="toc-text">8086 指令预取队列</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-3-%E7%AB%A0-%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8C%E6%B1%87%E7%BC%96%E8%BD%AF%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">第 3 章 汇编语言和汇编软件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">第 4 章 虚拟机的安装和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">计算机的启动过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E5%8A%A0%E7%94%B5%E5%92%8C%E5%A4%8D%E4%BD%8D"><span class="toc-number">5.1.1.</span> <span class="toc-text">计算机的加电和复位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%B3%BB%E7%BB%9F"><span class="toc-number">5.1.2.</span> <span class="toc-text">基本输入输出系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AC%E7%9B%98%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">5.2.</span> <span class="toc-text">硬盘及其工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%BC%95%E5%AF%BC%E6%89%87%E5%8C%BA"><span class="toc-number">5.3.</span> <span class="toc-text">主引导扇区</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-%E7%BC%96%E5%86%99%E4%B8%BB%E5%BC%95%E5%AF%BC%E6%89%87%E5%8C%BA%E4%BB%A3%E7%A0%81"><span class="toc-number">6.</span> <span class="toc-text">第 5 章 编写主引导扇区代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F"><span class="toc-number">6.1.</span> <span class="toc-text">计算机启动顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E5%8D%A1%E5%92%8C%E6%98%BE%E5%AD%98"><span class="toc-number">6.2.</span> <span class="toc-text">显卡和显存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%98%BE%E5%AD%98"><span class="toc-number">6.3.</span> <span class="toc-text">访问显存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E6%A0%87%E5%8F%B7%E7%9A%84%E6%B1%87%E7%BC%96%E5%9C%B0%E5%9D%80"><span class="toc-number">6.4.</span> <span class="toc-text">显示标号的汇编地址</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-%E7%9B%B8%E5%90%8C%E7%9A%84%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">7.</span> <span class="toc-text">第 6 章 相同的功能，不同的代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NASM-%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84-%E5%92%8C-%E6%A0%87%E8%AE%B0"><span class="toc-number">7.1.</span> <span class="toc-text">NASM 编译器的$和$$标记</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-7-%E7%AB%A0-%E6%AF%94%E9%AB%98%E6%96%AF%E6%9B%B4%E5%BF%AB%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">8.</span> <span class="toc-text">第 7 章 比高斯更快的计算</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="toc-number">8.1.</span> <span class="toc-text">寻址方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-%E7%A1%AC%E7%9B%98%E5%92%8C%E6%98%BE%E5%8D%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E4%B8%8E%E6%8E%A7%E5%88%B6"><span class="toc-number">9.</span> <span class="toc-text">第 8 章 硬盘和显卡的访问与控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">9.1.</span> <span class="toc-text">用户程序的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E5%A4%B4%E9%83%A8"><span class="toc-number">9.2.</span> <span class="toc-text">用户程序头部</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E7%A8%8B%E5%BA%8F%EF%BC%88%E5%99%A8%EF%BC%89%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">9.3.</span> <span class="toc-text">加载程序（器）的工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%86%B3%E5%AE%9A%E5%8A%A0%E8%BD%BD%E4%BD%8D%E7%BD%AE"><span class="toc-number">9.3.1.</span> <span class="toc-text">初始化和决定加载位置</span></a></li></ol></li></ol></li></ol></details></div><div class="container post-content"><h1 id="第-0-章-实模式和保护模式简介"><a href="#第-0-章-实模式和保护模式简介" class="headerlink" title="第 0 章 实模式和保护模式简介"></a>第 0 章 实模式和保护模式简介</h1><h2 id="CPU-的工作模式"><a href="#CPU-的工作模式" class="headerlink" title="CPU 的工作模式"></a>CPU 的工作模式</h2><p><code>实模式</code>和<code>保护模式</code>都是 CPU 的工作模式，而 CPU 的工作模式是指 <strong>CPU 的寻址方式</strong>、寄存器大小等用来反映 CPU 在该环境下如何工作的概念。</p>
+<h2 id="实模式工作原理"><a href="#实模式工作原理" class="headerlink" title="实模式工作原理"></a>实模式工作原理</h2><ul>
+<li>实模式出现于早期 8088CPU 时期。当时由于 CPU 的性能有限，一共只有 20 位地址线（所以地址空间只有 1MB），以及 8 个 16 位的通用寄存器，以及 4 个 16 位的段寄存器。</li>
+<li>所以为了能够通过这些 16 位的寄存器去构成 20 位的主存地址，必须采取一种特殊的方式。当某个指令想要访问某个内存地址时，它通常需要用下面的这种格式来表示：<code>(段基址：段偏移量)</code>。</li>
+<li>其中第一个字段是段基址，它的值是由<strong>段寄存器</strong>提供的，第二字段是段内偏移量，代表你要访问的这个内存地址距离这个段基址的偏移。它的值就是由通用寄存器来提供的。</li>
+<li>实模式的 “实” 更多地体现在<strong>其地址是真实的物理地址</strong>。</li>
+</ul>
+<h2 id="保护模式工作原理"><a href="#保护模式工作原理" class="headerlink" title="保护模式工作原理"></a>保护模式工作原理</h2><ul>
+<li><p>随着 CPU 的发展，CPU 的地址线的个数也从原来的 20 根变为 32 根，所以可以访问的内存空间也从 1MB 变为现在 4GB，<strong>寄存器的位数也变为 32 位</strong>。所以实模式下的内存地址计算方式就已经不再适合了。所以就引入了现在的保护模式，实现更大空间的，更灵活也<strong>更安全</strong>的内存访问。</p>
+</li>
+<li><p>在保护模式下，CPU 的 32 条地址线全部有效，可寻址高达 4G 字节的物理地址空间；但是我们的内存寻址方式还是得兼容老办法，即 (段基址：段偏移量) 的表示方式。当然此时 CPU 中的通用寄存器都要换成 32 位寄存器 (除了段寄存器) 来保证寄存器能访问所有的 4GB 空间。</p>
+</li>
+<li><p>在保护模式下，地址的表示方式与实模式是一样的，都是<code>段基址 : 段内偏移</code>。不过，保护模式下<code>段</code>的概念发生了根本性的改变。实模式下的段值可以看作是地址的一部分，可直接参与转换计算。而保护模式下的段值（尽管仍然由原来的段寄存器表示）变成了一个索引（准确来说是 16 位的段选择子 / 段标识符 Selector，前 13 位为索引信息，后 3 位是硬件信息），指向了一个数据结构的一个表项（段表项），表项中详细定义了<code>段基址</code>、<code>界限</code>、<code>属性（权限）</code>等内容。这个数据结构是 <code>全局描述符表 (GDT)</code> 。它<strong>存放关于某个运行在内存中的程序的分段信息的，比如某个程序的代码段是从哪里开始，有多大；数据段又是从哪里开始，有多大</strong>。</p>
+</li>
+<li><p>全局描述符表中含有一个个表项，每一个表项称为 <code>段描述符</code>。而段寄存器在保护模式下存放的便是相当于一个数组索引的东西，通过这个索引，可以找到对应的表项。段描述符存放了段基址、段界限、内存段类型属性 (比如是数据段还是代码段，注意<strong>一个段描述符只能用来定义一个内存段</strong>) 等许多属性，段描述符格式具体信息见下图：</p>
+<p><img src="/images/v2-1a08d48367745c2870e8818b7881b373_1440w.jpg" alt="img"></p>
+</li>
+<li><p>其中，段界限表示段边界的扩张最值，即最大扩展多少或最小扩展多少，用 20 位来表示，它的单位可以是字节，也可以是 4KB，这是由 G 位决定的 (G 为 1 时表示单位为 4KB)。实际段界限边界值 =(描述符中的段界限 + 1)*（段界限的单位大小 (即字节或 4KB))-1，如果偏移地址超过了段界限，CPU 会抛出异常。全局描述符表位于内存中，需要用专门的寄存器指向它后， CPU 才知道它在哪里。这个专门的寄存器便是 <code>GDTR</code> (一个 48 位的寄存器), 专门用来存储 GDT 的内存地址及大小。</p>
+</li>
+</ul>
+<blockquote>
+<p>保护模式有着不同的内存访问机制，简单地说就是传统的涉及段的几个寄存器如 CS,DS,ES,SS 等被解释为不同的内容 —— 实模式解释为段寄存器，保护模式解释为段选择子。</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>实模式的缺点：无法支持多任务；程序的安全性无法得到保证。</li>
+<li>在保护模式中，除了内存寻址空间大大提高；提供了硬件对多任务的支持；<strong>物理内存地址也不能直接被程序访问，程序内部的地址 (虚拟地址) 要由操作系统转化为物理地址去访问，程序对此一无所知。</strong></li>
+<li>至此，进程 (程序的运行态) 有了严格的边界，任何其他进程根本没有办法访问不属于自己的物理内存区域，甚至在自己的虚拟地址范围内也不是可以任意访问的，因为有一些虚拟区域已经被放进一些公共系统运行库。这些区域也不能随便修改，若修改就会有出现 linux 中的段错误，或 Windows 中的非法内存访问对话框。</li>
+</ul>
+</blockquote>
+<h1 id="第-1-章-十六进制计数法"><a href="#第-1-章-十六进制计数法" class="headerlink" title="第 1 章 十六进制计数法"></a>第 1 章 十六进制计数法</h1><p>无</p>
+<h1 id="第-2-章-处理器、内存和指令"><a href="#第-2-章-处理器、内存和指令" class="headerlink" title="第 2 章 处理器、内存和指令"></a>第 2 章 处理器、内存和指令</h1><h3 id="处理器进行数学运算的简单原"><a href="#处理器进行数学运算的简单原" class="headerlink" title="处理器进行数学运算的简单原"></a>处理器进行数学运算的简单原</h3><p><img src="/images/image-20220203175006938.png" alt="image-20220203175006938"></p>
+<ul>
+<li>在处理器的底部或者四周，有大量的引脚，可以接受从外面来的电信号，或者向外发出电信号。</li>
+<li>每个引脚都有自己的用处，在往电路板上安装的时候，不能接错。所以，处理器在生产的时候，都会故意缺一个角，这是一个参照标志，可以确保安装的人不会弄错。</li>
+<li>处理器的引脚很多，其中有一部分是用来将参与运算的数字送入处理器内部。有些引脚是复用的，假如现在要进行加法运算，那么我们要重复使用这些引脚，来依次将被加数和加数送入。</li>
+</ul>
+<h3 id="双字（double-word）"><a href="#双字（double-word）" class="headerlink" title="双字（double word）"></a>双字（double word）</h3><p>寄存器数据宽度示意：</p>
+<p><img src="/images/image-20220203175729346.png" alt="image-20220203175729346"></p>
+<ul>
+<li>32 位寄存器可以存放 4 个字节，这称为 1 个双字（double word），各个数位的编号分别是 0～31，其中 0～15 是低字，16～31 是高字。</li>
+<li>同理，还有所谓的<code>四字</code>，<code>八字</code>。</li>
+</ul>
+<h3 id="处理器多字访问内存"><a href="#处理器多字访问内存" class="headerlink" title="处理器多字访问内存"></a>处理器多字访问内存</h3><p>经过精心的设计和安排，处理器能够按字节、字、双字和四字进行访问。换句话说，仅通过单次访问就能处理8 位、16 位、32 位或者64 位的二进制数。</p>
+<blockquote>
+<p>注意，是单次访问，而不是一个一个地取出每个字节，然后加以组合。</p>
+</blockquote>
+<p><img src="/images/image-20220203180323911.png" alt="image-20220203180323911"></p>
+<p>处理器发出字长控制信号，以指示本次访问的字长是 8、16、32 还是 64 。如果字长是 8，而且给出的地址是 0002H，那么，本次访问只会影响到内存的一字节；<strong>如果字长是 16，给出的地址依然是 0002H，那么实际访问的将是地址 0002H 处的一个字</strong>，低 8 位在0002H 中，高 8 位在 0003H 中。</p>
+<blockquote>
+<p>这里可以联系<code>大小端存储</code>知识点，正是因为处理器支持<strong>多字访问内存</strong>，才方便各个硬件厂商使用大端/小端存储。</p>
+</blockquote>
+<h3 id="8086-的内存分段机制"><a href="#8086-的内存分段机制" class="headerlink" title="8086 的内存分段机制"></a>8086 的内存分段机制</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov ax,1000H</span><br><span class="line">mov ds,ax</span><br><span class="line">mov ax,[0]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如上，这里会将<code>1000:0</code>处存放的字型数据送入ax。</li>
+<li>这里其实使用了 8086 的 <code>内存分段机制</code>，也就是：一个内存单元的地址实际上就可以用 <strong>段地址：偏移地址</strong> 来表示。</li>
+<li>8086 的这种分段机制其实就是一种逻辑地址。这是 8086 为了解决 <code>物理地址变动</code> 的问题。</li>
+<li>大多数时候，整个程序（包括代码段和数据段）在内存中的位置并不是我们能够决定的。你所运行的程序，在内存中被加载的位置完全是随机的。所以，我们不能使用绝对内存地址（物理地址）。为了程序能在内存中的任何地方正确执行，就只能在编写程序的时候使用相对地址或者逻辑地址了，当程序加载时，这些相对地址还要根据程序实际被加载的位置重新计算。</li>
+<li>为了在硬件一级提供对“段地址：偏移地址”内存访问模式的支持，处理器至少要提供两个段寄存器，分别是代码段寄存器（Code Segment， CS）和数据段寄存器（Data Segment，DS）。对 CS 内容的改变将导致处理器从新的代码段开始执行。同样，在开始访问内存中的数据之前，也必须首先设置好 DS 寄存器，使之指向数据段。</li>
+<li>当处理器访问内存时，它把指令中指定的内存地址看成是段内的偏移地址，而不是物理地址。这样，一旦处理器遇到一条访问内存的指令，它将把 DS 中的数据段起始地址和指令中提供的段内偏移相加，来得到访问内存所需要的物理地址。</li>
+<li>所以，如果下次要执行程序时，代码段和数据段在内存中的位置就会发生变化，此时<strong>只要把它们的段地址分别传送到 CS 和 DS，就能够正确执行</strong>。</li>
+</ul>
+<h3 id="8086-指令预取队列"><a href="#8086-指令预取队列" class="headerlink" title="8086 指令预取队列"></a>8086 指令预取队列</h3><p>8086 处理器内部组成框图：</p>
+<p><img src="/images/image-20220203193308489.png" alt="image-20220203193308489"></p>
+<ul>
+<li><code>数据暂存器</code>： 其实也是一种寄存器。</li>
+<li>处理器能够自动运行，这是控制器的功劳。为了加快指令执行速度，8086 内部有一个 6 字节的 <code>指令预取队列</code>，在处理器忙着执行那些不需要访问内存的指令时，指令预取部件可以趁机访问内存预取指令。这时，多达 6 个字节的指令流可以排队等待解码和执行。</li>
+</ul>
+<h1 id="第-3-章-汇编语言和汇编软件"><a href="#第-3-章-汇编语言和汇编软件" class="headerlink" title="第 3 章 汇编语言和汇编软件"></a>第 3 章 汇编语言和汇编软件</h1><p>无</p>
+<h1 id="第-4-章-虚拟机的安装和使用"><a href="#第-4-章-虚拟机的安装和使用" class="headerlink" title="第 4 章 虚拟机的安装和使用"></a>第 4 章 虚拟机的安装和使用</h1><p>每种操作系统都对它所管理的程序提出了种种格式上的要求。比如，它要求编译好的程序必须在文件的开始部分包含编译日期，是针对哪种操作系统编译的，程序的版本，第一条指令从哪里开始，数据段从哪里开始、有多长，代码段从哪里开始、有多长等等。</p>
+<h2 id="计算机的启动过程"><a href="#计算机的启动过程" class="headerlink" title="计算机的启动过程"></a>计算机的启动过程</h2><h3 id="计算机的加电和复位"><a href="#计算机的加电和复位" class="headerlink" title="计算机的加电和复位"></a>计算机的加电和复位</h3><p>在处理器众多的引脚中，有一个是 <code>RESET</code>，用于接受复位信号。每当处理器加电，或者 RESET 引脚的电平由低变高时处理器都会执行一个 <code>硬件初始化</code>，以及一个可选的内部自测试（Build-in Self-Test， BIST），然后将内部所有寄存器的内容初始到一个预置的状态。</p>
+<blockquote>
+<ul>
+<li>比如，当你按下主机箱面板上的 RESET 按钮时，就会导致 RESET 引脚电平的变化，从而使计算机热启动。</li>
+<li>对于 8086 来说，复位将使代码段寄存器（CS）的内容为 0xFFFF，其他所有寄存器的内容都为 0x0000，包括指令指针寄存器（IP）。</li>
+</ul>
+</blockquote>
+<h3 id="基本输入输出系统"><a href="#基本输入输出系统" class="headerlink" title="基本输入输出系统"></a>基本输入输出系统</h3><ul>
+<li>8086 有 20 根地址线，但并非全都用来访问 DRAM，也就是内存条。 事实上，这些地址线经过分配，大部分（00000-9FFFF）用于访问 DRAM，剩余的部分（F0000-FFFFF）给了只读存储器 ROM 和外围的板卡。</li>
+<li>8086 中，ROM 占据着整个内存空间顶端的 64KB，物理地址范围是 0xF0000～0xFFFFF，里面固化了开机时要执行的指令；DRAM 占据着较低端的 640KB，地址范围是 0x00000～0x9FFFF；中间还有一部分，分给了其他外围设备。</li>
+<li>8086 加电或者复位时，CS=0xFFFF，IP=0x0000，所以它取的第一条指令位于物理地址 0xFFFF0，正好位于 ROM 中，那里固化了开机时需要执行的指令。0xFFFF0 离 1MB 内存的顶端（0xFFFFF）只有16 个字节的长度，一旦 IP 寄存器的值超过 0x000F，那么，它与 CS 一起形成的物理地址将溢出，这将回绕到内存的最低端。所以，<strong>ROM 中位于物理地址 0xFFFF0 的地方，通常是一个跳转指令</strong>。</li>
+</ul>
+<h2 id="硬盘及其工作原理"><a href="#硬盘及其工作原理" class="headerlink" title="硬盘及其工作原理"></a>硬盘及其工作原理</h2><p>硬盘的结构示意图：</p>
+<p><img src="/images/image-20220208113801033.png" alt="image-20220208113801033"></p>
+<ul>
+<li><p>每个盘片都有两个磁头（Head），上面一个，下面一个，所以经常用磁头来指代盘面。</p>
+</li>
+<li><p>磁头都有编号，第 1 个盘片，上面的磁头编号为 0， 下面的磁头编号为 1；第 2 个盘片，上面的磁头编号为 2，下面的磁头编 号为 3，以此类推。</p>
+</li>
+<li><p>磁道，或者柱面，也要编号。编号是从盘面<strong>最边缘的那条磁道开始，向着圆心的方向</strong>，从 0 开始编号。</p>
+<blockquote>
+<p>为了加速数据在硬盘上的读写，尽量不移动磁头。这样，当 0 面的磁道不足以容纳要写入的数据时，应当把剩余的部分写在 1 面的同一磁道上。如果还写不下，那就继续把剩余的部分写在 2 面 的同一磁道上。换句话说，<strong>在硬盘上，数据的访问是以柱面来组织的</strong>。</p>
+</blockquote>
+</li>
+<li><p>每条磁道能够划分为几个扇区，每个扇区都有一个编号，与磁头和磁道不同，<strong>扇区的编号是从 1 开始的</strong>。</p>
+<blockquote>
+<ul>
+<li>扇区与扇区之间<strong>以间隙（空白）间隔开来</strong>，每个扇区以扇区头开始，然后是 512 个字节的数据区。</li>
+<li>扇区头包含了每个扇区自己的信息， 主要有本扇区的磁道号、磁头号和扇区号，用来供硬盘定位机构使用。</li>
+<li>现代的硬盘还会在扇区头部包括一个指示扇区是否健康的标志，以及用来替换该扇区的扇区地址。用于替换扇区的，是一些保留和隐藏的磁道。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>采用磁头、磁道和扇区这种模式来访问硬盘的方法称为 CHS 模式， 但不是很方便。想想看，如果有一大堆数据要写，还得注意磁头号、磁道号和扇区号不要超过界限。所以，后来引入了逻辑块地址（Logical Block Address，LBA）的概念。现在市场上销售的硬盘，无论是哪个厂家生产的，都支持 LBA 模式。</p>
+<blockquote>
+<ul>
+<li>LBA 模式不考虑扇区的物理位置（磁头号、磁道号），而是把它们全部组织起来统一编号。在这种编址方式下，原先的物理扇区被组织成逻辑扇区，且都有唯一的逻辑扇区号。</li>
+<li>比如，某硬盘有 6 个磁头，每面有 1000 个磁道，每磁道有 17 个扇 区。那么： <ul>
+<li>逻辑 0 扇区对应着 0 面 0 道 1 扇区； </li>
+<li>逻辑 1 扇区对应着 0 面 0 道 2 扇区；</li>
+<li>逻辑 16 扇区对应着 0 面 0 道 17 扇区； </li>
+<li><strong>逻辑 17 扇区对应着 1 面 0 道 1 扇区</strong>； </li>
+<li>逻辑 18 扇区对应着 1 面 0 道 2 扇区；</li>
+</ul>
+</li>
+<li><strong>扇区在编号时，是以柱面为单位的</strong>。即，先是 0 面 0 道， 接着是 1 面 0 道，直到把所有盘面上的 0 磁道处理完，再接着处理下一个柱面。之所以这样做，是因为我们讲过，要加速硬盘的访问速度，最好是尽可能不移动磁头。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="主引导扇区"><a href="#主引导扇区" class="headerlink" title="主引导扇区"></a>主引导扇区</h2><ul>
+<li><strong>硬盘的第一个扇区是 0 面 0 道 1 扇区</strong>，或者说是 0 头 0 柱 1 扇区，这个扇区称为 <code>主引导扇区</code>。</li>
+<li>如果计算机的设置是从硬盘启动，那么，ROM-BIOS 将读取硬盘主引导扇区的内容，将它加载到内存地址 0x0000:0x7c00 处（也就是物理地址0x07C00），然后用指令 <code>jmp 0x0000:0x7c00</code> 跳到那里执行。</li>
+<li>主引导扇区的功能是继续从硬盘的其他部分读取更多的内容加以执行。像 Windows 这样的操作系统，就是采用这种接力的方法一步一步把自己运行起来的。</li>
+</ul>
+<h1 id="第-5-章-编写主引导扇区代码"><a href="#第-5-章-编写主引导扇区代码" class="headerlink" title="第 5 章 编写主引导扇区代码"></a>第 5 章 编写主引导扇区代码</h1><h2 id="计算机启动顺序"><a href="#计算机启动顺序" class="headerlink" title="计算机启动顺序"></a>计算机启动顺序</h2><p>计算机启动顺序：</p>
+<ol>
+<li>上电</li>
+<li>读取 ROM 里面的 BIOS，用来检查硬件（Power On Self Test）</li>
+<li>硬件检查通过</li>
+<li><strong>BIOS 根据指定的顺序，检查引导设备的第一个扇区（即主引导记录），将这个扇区加载在内存地址 0x7c00 处</strong></li>
+<li>主引导记录把操作权交给操作系统</li>
+</ol>
+<ul>
+<li>处理器加电或者复位之后， 如果硬盘是首选的启动设备，那么，ROM-BIOS 将试图读取硬盘的 0 面 0 道 1 扇区。传统上，这就是 <code>主引导扇区</code>（Main Boot Sector，MBR）。</li>
+<li>读取的主引导扇区数据有 512 字节，ROM-BIOS 程序将它加载到逻辑地址 0x0000:0x7c00 处，也就是物理地址 0x07c00 处，然后判断它是否有效。</li>
+<li>一个有效的主引导扇区，其最后两字节应当是 0x55 和 0xAA。ROMBIOS 程序首先检测这两个标志，如果主引导扇区有效，则以一个段间转移指令 <code>jmp 0x0000:0x7c00</code> 跳到那里继续执行。</li>
+<li>主引导扇区是由操作系统负责的。它把操作系统的自举代码加载到内存，也用 jmp 指令跳转到那里继续执行，直到操作系统完全启动。</li>
+</ul>
+<h2 id="显卡和显存"><a href="#显卡和显存" class="headerlink" title="显卡和显存"></a>显卡和显存</h2><ul>
+<li><p>为了显示文字，通常需要两种硬件，一是<code>显示器</code>，二是<code>显卡</code>。</p>
+<ul>
+<li>显卡的职责是为显示器提供内容，并控制显示器的显示模式和状态，</li>
+<li>显示器的职责是将那些内容以视觉可见的方式呈现在屏幕上。</li>
+</ul>
+</li>
+<li><p>显卡都有自己的存储器，因为它位于显卡上，故称显示存储器（Video RAM：VRAM），简称<code>显存</code>，要显示的内容都预先写入显存。</p>
+</li>
+<li><p>显卡的工作是周期性地从显存中提取比特，并把它们按顺序显示在屏幕上。现在最流行的，是用 24 个比特，即 3 个字节，来对应一个像素 。</p>
+</li>
+<li><p>在不同的工作模式下，显卡对显存内容的解释是不同的。显卡的两种基本工作模式如下：</p>
+<ul>
+<li><code>文本模式</code></li>
+<li><code>图形模式</code></li>
+</ul>
+<p><img src="/images/image-20220208140654063.png" alt="image-20220208140654063"></p>
+</li>
+<li><p>因为显示功能对于现代计算机来说实在是太重要了。8086 处理器中，0xA0000～0xEFFFF 这段地址空间由特定的外围设备来提供，其中就包括显卡。一直以来，0xB8000～0xBFFFF 这段物理地址空间，是留给显卡的。</p>
+<p><strong>文本模式下显存到内存的映射</strong>如下：</p>
+<p><img src="/images/image-20220208141112124.png" alt="image-20220208141112124"></p>
+</li>
+</ul>
+<h2 id="访问显存"><a href="#访问显存" class="headerlink" title="访问显存"></a>访问显存</h2><ul>
+<li><p>和访问主内存一样，为了访问显存，也需要使用逻辑地址，也就是 采用“段地址：偏移地址”的形式。</p>
+</li>
+<li><p>考虑到<strong>文本模式下</strong>显存的起始物理地址是0xB8000，这块内存可以看成是段地址为 0xB800。</p>
+</li>
+<li><p>屏幕上的每个字符对应着显存中的两个连续字节，前一个是字符的 ASCII 代码，后面是字符的显示属性，包括字符颜色（前景色）和底色 （背景色）。</p>
+<blockquote>
+<ul>
+<li>Eg：字符“H”的 ASCII 代码是 0x48 ，其显示属性是 0x07；字符“e”的 ASCII 代码是 0x65，其显示属性是 0x07。</li>
+<li>K 是闪烁位，为 0 时不闪烁，为 1 时闪烁；I 是亮度位， 为 0 时正常亮度，为 1 时呈高亮。</li>
+<li>所以，字符属性 0x07 可以解释为黑底白字，无闪烁，无加亮。</li>
+</ul>
+<p><img src="/images/image-20220208142127968.png" alt="image-20220208142127968"></p>
+<p><img src="/images/image-20220208142257464.png" alt="image-20220208142257464"></p>
+</blockquote>
+<blockquote>
+<p>当屏幕上一片漆黑，什么内容都没有的时候，显 存里会是什么内容呢？实际上，这个时候，<strong>屏幕上显示的全是黑底白字的空格字符</strong>。</p>
+</blockquote>
+</li>
+<li><p>eg：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mov ax,0xb800  ;指向文本模式的显示缓冲区</span><br><span class="line">mov es,ax</span><br><span class="line"></span><br><span class="line">;显示字符串&quot;La&quot;</span><br><span class="line">mov byte [es:0x00],&#x27;L&#x27;</span><br><span class="line">mov byte [es:0x01],0x07</span><br><span class="line">mov byte [es:0x02],&#x27;a&#x27;</span><br><span class="line">mov byte [es:0x03],0x07</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="显示标号的汇编地址"><a href="#显示标号的汇编地址" class="headerlink" title="显示标号的汇编地址"></a>显示标号的汇编地址</h2><ul>
+<li><p>处理器访问内存时，采用的是“段地址：偏移地址”的模式。为了支持这种内存访问模式，在源程序的编译阶段，编译器会把源程序整体上作为一个独立的段来处理，并<strong>从 0 开始计算和跟踪每一条指令的地址</strong>。因为该地址是在编译期间计算的，故称为<code>汇编地址 </code>。</p>
+</li>
+<li><p>在源程序编译期间 ，<strong>汇编地址指示该指令相对于程序或者段起始处的距离</strong>， 以字节计。当编译后的程序装入物理内存后，它又是该指令在内存段内的偏移地址。</p>
+</li>
+<li><p>对于指令<code>infi: jmp near infi</code>，行首带冒号的是标号是“infi”。假设这条指令的汇编地址是 0x0000012B， 故 infi 就代表数值 0x0000012B，或者说 <strong>infi 是 0x0000012B 的符号化表示</strong>。</p>
+<blockquote>
+<ul>
+<li>实际上，这是一个 3 字节指令，操作码是 0xE9，后跟一个 16 位（两字节）的操作数。但是，该操作数并非目标位置的偏移地址，而是目标位置相对于当前指令处的<code>偏移量</code>（以字节为单位）。</li>
+<li>在编译阶段，编译器是这么做的：用标号（目标位置）处的汇编地址减去当前指令的汇编地址，再减去当前指令的长度（3），就得到了 jmp near infi 指令的实际操作数。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h1 id="第-6-章-相同的功能，不同的代码"><a href="#第-6-章-相同的功能，不同的代码" class="headerlink" title="第 6 章 相同的功能，不同的代码"></a>第 6 章 相同的功能，不同的代码</h1><h2 id="NASM-编译器的-和-标记"><a href="#NASM-编译器的-和-标记" class="headerlink" title="NASM 编译器的$和$$标记"></a>NASM 编译器的$和$$标记</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">times 510-($-$$) db 0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>NASM 编译器提供了一个标记<code>$</code>，该标记等同于标号，你可以把它看成是一个隐藏在当前行行首的标号。因此，<code>jmp near $</code>的意 是，转移到当前指令继续执行，它和<code>infi: jmp near infi</code>是一样的，没有区别，但不需要使用标号，更不必为给标号起一个有意义的名字而伤脑筋。</li>
+<li><code>$$</code>是NASM 编译器提供的另一个标记，代表当前汇编节（段）的起始汇编地址。当前程序没有定义节或段，就默认地自成一个汇编段，而且起始的汇编地址是0（程序起始处）。</li>
+<li><code>($-$$)</code>： 用当前汇编地址减去程序开头的汇编地址（0），就是程序实体的大小。 </li>
+</ul>
+<h1 id="第-7-章-比高斯更快的计算"><a href="#第-7-章-比高斯更快的计算" class="headerlink" title="第 7 章 比高斯更快的计算"></a>第 7 章 比高斯更快的计算</h1><h2 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h2><p>简单地说，寻址方式就是如何找到要操作的数据，以及如何找到存放操作结果的地方。</p>
+<ul>
+<li>寄存器寻址</li>
+<li>立即数寻址</li>
+<li>内存寻址</li>
+</ul>
+<h1 id="第-8-章-硬盘和显卡的访问与控制"><a href="#第-8-章-硬盘和显卡的访问与控制" class="headerlink" title="第 8 章 硬盘和显卡的访问与控制"></a>第 8 章 硬盘和显卡的访问与控制</h1><h2 id="用户程序的结构"><a href="#用户程序的结构" class="headerlink" title="用户程序的结构"></a>用户程序的结构</h2><ul>
+<li><p>处理器的工作模式是<strong>将内存分成逻辑上的段，指令的获取和数据的访问一律按“段地址：偏移地址”的方式进行</strong>。相对应地，一个规范的程序，应当包括代码段、数据段、附加段和栈段。</p>
+</li>
+<li><p>编译器不关心段的用途，可能也根本不知道段的用途，不知道它是数据段，还是代码段，或是栈段。事实上，这都不重要，<strong>段只用来分隔程序中的不同内容</strong>。</p>
+</li>
+<li><p>Intel 处理器要求段在内存中的起始物理地址起码是16 字节对齐的。 意思是该物理地址必须能被16 整除。 相应地，汇编语言源程序中定义的各个段，也有对齐方面的要求。 具体做法是，在段定义中使用 <code>align=</code> 子句，用于指定某个 SECTION 的汇编地址对齐方式。</p>
+<blockquote>
+<p>比如说， <code>align=16</code> 就表示段是 16 字节对齐的， <code>align=32</code> 就表示段是 32 字节对齐的。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">section data1 align=16</span><br><span class="line">	db 0x55</span><br><span class="line"></span><br><span class="line">section data2 align=16</span><br><span class="line">	db 0xaa</span><br><span class="line">	</span><br><span class="line">section data3 align=16</span><br><span class="line">	db 0x99</span><br></pre></td></tr></table></figure>
+
+<p>注意上面代码，段 data1 的起始汇编地址是 0。地址 0 本身就是 16 字节对齐的，符合 align 子句的要求。段 data2 也要求是 16 字节对齐的。于是，编译器将 0x00000010 作为段 data2 的汇编地址，并在两个段之间填充 15 字节的 0x00（段data1 只有 1 字节的长度）。</p>
+</li>
+<li><p>每个段都有一个汇编地址，它是相对于整个程序开头（0）的。为了方便取得该段的汇编地址，NASM 编译器可以使用 <code>section.段名称.start</code> 来获取段的汇编地址。</p>
+</li>
+<li><p>段定义语句还可以包含<code>vstart=</code>子句。其功能是：引用段内的某个标号时，该标号处的汇编地址是从段的开头处计算的。</p>
+<blockquote>
+<p>简单来说，<code>vstart=</code>子句影响了<code>段内标号</code>的汇编地址，决定了其是<strong>从程序开始计算</strong>还是<strong>从段内开始计算</strong>。</p>
+</blockquote>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SECTION mbr align=16 vstart=0x7c00</span><br><span class="line">		mov ax,0</span><br><span class="line">		mov ss,ax</span><br><span class="line">		mov sp,ax</span><br><span class="line">@1:</span><br><span class="line">		cmp ax,0</span><br><span class="line">		jz direct</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="用户程序头部"><a href="#用户程序头部" class="headerlink" title="用户程序头部"></a>用户程序头部</h2><ul>
+<li><p>加载器在加载用户程序的时候，需要知道用户程序的一些信息，用于知道如何加载该用户程序。约定把这些信息放在用户程序的开头，这就是<code>用户程序头部</code>。</p>
+</li>
+<li><p>用户程序头部<strong>在源程序以一个段的形式出现</strong>。用户程序头部起码要包含以下信息：</p>
+<ul>
+<li><code>用户程序的总长度</code>：加载器需要根据这一信息来决定读取多少个逻辑扇区。</li>
+<li><code>应用程序的入口点</code>，包括段地址和偏移地址：第一条指令的段地址和偏移地址。</li>
+<li><code>段重定位表项数</code>：有多少个需要重定位的段。</li>
+<li><code> 段重定位表</code>：用户程序可能包含不止一个段，大程序会包含多个代码段和多个数据段。这些段如何使用，是用户程序自己的 事，程序加载到内存后，每个段的地址必须重新确定一下。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">SECTION header vstart=0                     ;定义用户程序头部段 </span><br><span class="line">    program_length  dd program_end          ;程序总长度[0x00]</span><br><span class="line">    </span><br><span class="line">    ;用户程序入口点</span><br><span class="line">    code_entry      dw start                ;偏移地址[0x04]</span><br><span class="line">                    dd section.code_1.start ;段地址[0x06] </span><br><span class="line">    </span><br><span class="line">    realloc_tbl_len dw (header_end-code_1_segment)/4 ;段重定位表项个数[0x0a]</span><br><span class="line">    </span><br><span class="line">    ;段重定位表           </span><br><span class="line">    code_1_segment  dd section.code_1.start ;[0x0c]</span><br><span class="line">    code_2_segment  dd section.code_2.start ;[0x10]</span><br><span class="line">    data_1_segment  dd section.data_1.start ;[0x14]</span><br><span class="line">    data_2_segment  dd section.data_2.start ;[0x18]</span><br><span class="line">    stack_segment   dd section.stack.start  ;[0x1c]</span><br><span class="line">    </span><br><span class="line">    header_end:</span><br><span class="line"></span><br><span class="line">;====================================</span><br><span class="line">SECTION code_1 align=16 vstart=0         ;定义代码段1（16字节对齐）</span><br><span class="line">	...</span><br><span class="line">  start:</span><br><span class="line">         mov ax,[stack_segment]</span><br><span class="line"></span><br><span class="line">;====================================</span><br><span class="line">SECTION code_2 align=16 vstart=0 </span><br><span class="line">	...</span><br><span class="line">SECTION data_1 align=16 vstart=0</span><br><span class="line">	...</span><br><span class="line">SECTION data_2 align=16 vstart=0</span><br><span class="line">	...</span><br><span class="line">SECTION stack align=16 vstart=0</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">;====================================</span><br><span class="line">SECTION trail align=16</span><br><span class="line">program_end:</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="加载程序（器）的工作流程"><a href="#加载程序（器）的工作流程" class="headerlink" title="加载程序（器）的工作流程"></a>加载程序（器）的工作流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br></pre></td><td class="code"><pre><span class="line">         ;代码清单8-1</span><br><span class="line">         ;文件名：c08_mbr.asm</span><br><span class="line">         ;文件说明：硬盘主引导扇区代码（加载程序） </span><br><span class="line">         ;创建日期：2011-5-5 18:17</span><br><span class="line">         </span><br><span class="line">         app_lba_start equ 100           ;声明常数（用户程序起始逻辑扇区号）</span><br><span class="line">                                         ;常数的声明不会占用汇编地址</span><br><span class="line">                                    </span><br><span class="line">SECTION mbr align=16 vstart=0x7c00                                     </span><br><span class="line"></span><br><span class="line">         ;设置堆栈段和栈指针 </span><br><span class="line">         mov ax,0      </span><br><span class="line">         mov ss,ax</span><br><span class="line">         mov sp,ax</span><br><span class="line">      </span><br><span class="line">         mov ax,[cs:phy_base]            ;计算用于加载用户程序的逻辑段地址 </span><br><span class="line">         mov dx,[cs:phy_base+0x02]</span><br><span class="line">         mov bx,16        </span><br><span class="line">         div bx            </span><br><span class="line">         mov ds,ax                       ;令DS和ES指向该段以进行操作</span><br><span class="line">         mov es,ax                        </span><br><span class="line">    </span><br><span class="line">         ;以下读取程序的起始部分 </span><br><span class="line">         xor di,di</span><br><span class="line">         mov si,app_lba_start            ;程序在硬盘上的起始逻辑扇区号 </span><br><span class="line">         xor bx,bx                       ;加载到DS:0x0000处 </span><br><span class="line">         call read_hard_disk_0</span><br><span class="line">      </span><br><span class="line">         ;以下判断整个程序有多大</span><br><span class="line">         mov dx,[2]                      ;曾经把dx写成了ds，花了二十分钟排错 </span><br><span class="line">         mov ax,[0]</span><br><span class="line">         mov bx,512                      ;512字节每扇区</span><br><span class="line">         div bx</span><br><span class="line">         cmp dx,0</span><br><span class="line">         jnz @1                          ;未除尽，因此结果比实际扇区数少1 </span><br><span class="line">         dec ax                          ;已经读了一个扇区，扇区总数减1 </span><br><span class="line">   @1:</span><br><span class="line">         cmp ax,0                        ;考虑实际长度小于等于512个字节的情况 </span><br><span class="line">         jz direct</span><br><span class="line">         </span><br><span class="line">         ;读取剩余的扇区</span><br><span class="line">         push ds                         ;以下要用到并改变DS寄存器 </span><br><span class="line"></span><br><span class="line">         mov cx,ax                       ;循环次数（剩余扇区数）</span><br><span class="line">   @2:</span><br><span class="line">         mov ax,ds</span><br><span class="line">         add ax,0x20                     ;得到下一个以512字节为边界的段地址</span><br><span class="line">         mov ds,ax  </span><br><span class="line">                              </span><br><span class="line">         xor bx,bx                       ;每次读时，偏移地址始终为0x0000 </span><br><span class="line">         inc si                          ;下一个逻辑扇区 </span><br><span class="line">         call read_hard_disk_0</span><br><span class="line">         loop @2                         ;循环读，直到读完整个功能程序 </span><br><span class="line"></span><br><span class="line">         pop ds                          ;恢复数据段基址到用户程序头部段 </span><br><span class="line">      </span><br><span class="line">         ;计算入口点代码段基址 </span><br><span class="line">   direct:</span><br><span class="line">         mov dx,[0x08]</span><br><span class="line">         mov ax,[0x06]</span><br><span class="line">         call calc_segment_base</span><br><span class="line">         mov [0x06],ax                   ;回填修正后的入口点代码段基址 </span><br><span class="line">      </span><br><span class="line">         ;开始处理段重定位表</span><br><span class="line">         mov cx,[0x0a]                   ;需要重定位的项目数量</span><br><span class="line">         mov bx,0x0c                     ;重定位表首地址</span><br><span class="line">          </span><br><span class="line"> realloc:</span><br><span class="line">         mov dx,[bx+0x02]                ;32位地址的高16位 </span><br><span class="line">         mov ax,[bx]</span><br><span class="line">         call calc_segment_base</span><br><span class="line">         mov [bx],ax                     ;回填段的基址</span><br><span class="line">         add bx,4                        ;下一个重定位项（每项占4个字节） </span><br><span class="line">         loop realloc </span><br><span class="line">      </span><br><span class="line">         jmp far [0x04]                  ;转移到用户程序  </span><br><span class="line"> </span><br><span class="line">;-------------------------------------------------------------------------------</span><br><span class="line">read_hard_disk_0:                        ;从硬盘读取一个逻辑扇区</span><br><span class="line">                                         ;输入：DI:SI=起始逻辑扇区号</span><br><span class="line">                                         ;      DS:BX=目标缓冲区地址</span><br><span class="line">         push ax</span><br><span class="line">         push bx</span><br><span class="line">         push cx</span><br><span class="line">         push dx</span><br><span class="line">      </span><br><span class="line">         mov dx,0x1f2</span><br><span class="line">         mov al,1</span><br><span class="line">         out dx,al                       ;读取的扇区数</span><br><span class="line"></span><br><span class="line">         inc dx                          ;0x1f3</span><br><span class="line">         mov ax,si</span><br><span class="line">         out dx,al                       ;LBA地址7~0</span><br><span class="line"></span><br><span class="line">         inc dx                          ;0x1f4</span><br><span class="line">         mov al,ah</span><br><span class="line">         out dx,al                       ;LBA地址15~8</span><br><span class="line"></span><br><span class="line">         inc dx                          ;0x1f5</span><br><span class="line">         mov ax,di</span><br><span class="line">         out dx,al                       ;LBA地址23~16</span><br><span class="line"></span><br><span class="line">         inc dx                          ;0x1f6</span><br><span class="line">         mov al,0xe0                     ;LBA28模式，主盘</span><br><span class="line">         or al,ah                        ;LBA地址27~24</span><br><span class="line">         out dx,al</span><br><span class="line"></span><br><span class="line">         inc dx                          ;0x1f7</span><br><span class="line">         mov al,0x20                     ;读命令</span><br><span class="line">         out dx,al</span><br><span class="line"></span><br><span class="line">  .waits:</span><br><span class="line">         in al,dx</span><br><span class="line">         and al,0x88</span><br><span class="line">         cmp al,0x08</span><br><span class="line">         jnz .waits                      ;不忙，且硬盘已准备好数据传输 </span><br><span class="line"></span><br><span class="line">         mov cx,256                      ;总共要读取的字数</span><br><span class="line">         mov dx,0x1f0</span><br><span class="line">  .readw:</span><br><span class="line">         in ax,dx</span><br><span class="line">         mov [bx],ax</span><br><span class="line">         add bx,2</span><br><span class="line">         loop .readw</span><br><span class="line"></span><br><span class="line">         pop dx</span><br><span class="line">         pop cx</span><br><span class="line">         pop bx</span><br><span class="line">         pop ax</span><br><span class="line">      </span><br><span class="line">         ret</span><br><span class="line"></span><br><span class="line">;-------------------------------------------------------------------------------</span><br><span class="line">calc_segment_base:                       ;计算16位段地址</span><br><span class="line">                                         ;输入：DX:AX=32位物理地址</span><br><span class="line">                                         ;返回：AX=16位段基地址 </span><br><span class="line">         push dx                          </span><br><span class="line">         </span><br><span class="line">         add ax,[cs:phy_base]</span><br><span class="line">         adc dx,[cs:phy_base+0x02]</span><br><span class="line">         shr ax,4</span><br><span class="line">         ror dx,4</span><br><span class="line">         and dx,0xf000</span><br><span class="line">         or ax,dx</span><br><span class="line">         </span><br><span class="line">         pop dx</span><br><span class="line">         </span><br><span class="line">         ret</span><br><span class="line"></span><br><span class="line">;-------------------------------------------------------------------------------</span><br><span class="line">         phy_base dd 0x10000             ;用户程序被加载的物理起始地址</span><br><span class="line">         </span><br><span class="line"> times 510-($-$$) db 0</span><br><span class="line"> db 0x55,0xaa</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化和决定加载位置"><a href="#初始化和决定加载位置" class="headerlink" title="初始化和决定加载位置"></a>初始化和决定加载位置</h3><p>从大的方面来说，加载器要加载一个用户程序，并使之开始执行， 需要决定两件事：</p>
+<ol>
+<li>看看内存中的什么地方是空闲的，即从哪个物理内存地址开始加载用户程序；</li>
+<li>用户程序位于硬盘上的什么位置，它的起始逻辑扇区号是多少。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">app_lba_start equ 100 ;声明常数，用标号app_lba_start 来代表数值100</span><br><span class="line"></span><br><span class="line">mov al, 100</span><br><span class="line">; 等价于</span><br><span class="line">mov al, app_lba_start</span><br></pre></td></tr></table></figure>
+
+<p>常数的意思是在程序运行期间不变的数。和其他伪指令 db、dw、dd 不同，<strong>用 equ 声明的数值不占用任何汇编地址，也不在运行时占用任何内存位置。它仅仅代表一个数值，就这么简单</strong>。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

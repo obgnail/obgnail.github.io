@@ -1,0 +1,165 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;计算机是如何启动的？&quot;&gt;&lt;a href=&quot;#计算机是如何启动的？&quot; class=&quot;headerlink&quot; title=&quot;计算机是如何启动的？&quot;&gt;&lt;/a&gt;计算机是如何启动的？&lt;/h1&gt;&lt;h2 id=&quot;boot的含义&quot;&gt;&lt;a href=&quot;#boot的含义&quot; class=&quot;headerlink&quot; title=&quot;boot的含义&quot;&gt;&lt;/a&gt;boot的含义&lt;/h2&gt;&lt;p&gt;先问一个问题，”启动”用英语怎么说？回答是boot。可是，boot原来的意思是靴子，”启动”与靴子有什么关系呢？ 原来，这里的boot是bootstrap（鞋带）的缩写，它来自一句谚语："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>计算机是如何启动的？ | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Computer-Organization/" rel="tag">Computer Organization</a></div><div class="post-time">2022-02-04</div></div></div><div class="container post-header"><h1>计算机是如何启动的？</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">计算机是如何启动的？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#boot%E7%9A%84%E5%90%AB%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">boot的含义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9ABIOS"><span class="toc-number">1.2.</span> <span class="toc-text">第一阶段：BIOS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E8%87%AA%E6%A3%80"><span class="toc-number">1.2.1.</span> <span class="toc-text">硬件自检</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">启动顺序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A%E4%B8%BB%E5%BC%95%E5%AF%BC%E8%AE%B0%E5%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">第二阶段：主引导记录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%BC%95%E5%AF%BC%E8%AE%B0%E5%BD%95%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">主引导记录的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">分区表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%A1%AC%E7%9B%98%E5%90%AF%E5%8A%A8"><span class="toc-number">1.4.</span> <span class="toc-text">第三阶段：硬盘启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%85%E5%86%B5A%EF%BC%9A%E5%8D%B7%E5%BC%95%E5%AF%BC%E8%AE%B0%E5%BD%95"><span class="toc-number">1.4.1.</span> <span class="toc-text">情况A：卷引导记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%85%E5%86%B5B%EF%BC%9A%E6%89%A9%E5%B1%95%E5%88%86%E5%8C%BA%E5%92%8C%E9%80%BB%E8%BE%91%E5%88%86%E5%8C%BA"><span class="toc-number">1.4.2.</span> <span class="toc-text">情况B：扩展分区和逻辑分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%85%E5%86%B5C%EF%BC%9A%E5%90%AF%E5%8A%A8%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">情况C：启动管理器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.5.</span> <span class="toc-text">第四阶段：操作系统</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">计算机启动过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%AF%E5%8A%A8%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">计算机启动基本流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">计算机启动过程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E7%94%B5"><span class="toc-number">3.1.</span> <span class="toc-text">上电</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E7%BD%AE%E5%90%91%E9%87%8F"><span class="toc-number">3.2.</span> <span class="toc-text">重置向量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BIOS-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">BIOS 初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BIOS-POST%EF%BC%88%E5%8A%A0%E7%94%B5%E8%87%AA%E6%A3%80%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">BIOS POST（加电自检）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BIOS-%E8%AE%B0%E5%BD%95%E7%B3%BB%E7%BB%9F%E8%AE%BE%E5%AE%9A%E5%80%BC"><span class="toc-number">3.5.</span> <span class="toc-text">BIOS 记录系统设定值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2-MBR"><span class="toc-number">3.6.</span> <span class="toc-text">搜索 MBR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AC%E7%9B%98%E5%90%AF%E5%8A%A8"><span class="toc-number">3.7.</span> <span class="toc-text">硬盘启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.8.</span> <span class="toc-text">操作系统</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#refenrence"><span class="toc-number">4.</span> <span class="toc-text">refenrence</span></a></li></ol></details></div><div class="container post-content"><h1 id="计算机是如何启动的？"><a href="#计算机是如何启动的？" class="headerlink" title="计算机是如何启动的？"></a>计算机是如何启动的？</h1><h2 id="boot的含义"><a href="#boot的含义" class="headerlink" title="boot的含义"></a>boot的含义</h2><p>先问一个问题，”启动”用英语怎么说？回答是boot。可是，boot原来的意思是靴子，”启动”与靴子有什么关系呢？ 原来，这里的boot是bootstrap（鞋带）的缩写，它来自一句谚语：</p>
+<blockquote>
+<p>“pull oneself up by one’s bootstraps”</p>
+</blockquote>
+<p>字面意思是”拽着鞋带把自己拉起来”，这当然是不可能的事情。最早的时候，工程师们用它来比喻，计算机启动是一个很矛盾的过程：必须先运行程序，然后计算机才能启动，但是计算机不启动就无法运行程序！</p>
+<p>早期真的是这样，必须想尽各种办法，把一小段程序装进内存，然后计算机才能正常运行。所以，工程师们把这个过程叫做”拉鞋带”，久而久之就简称为boot了。</p>
+<p>计算机的整个启动过程分成四个阶段。</p>
+<h2 id="第一阶段：BIOS"><a href="#第一阶段：BIOS" class="headerlink" title="第一阶段：BIOS"></a>第一阶段：BIOS</h2><p>上个世纪70年代初，<code>只读内存</code>（read-only memory，缩写为ROM）发明，开机程序被刷入ROM芯片，计算机通电后，第一件事就是读取它。这块芯片里的程序叫做 <code>基本输入输出系统</code>（Basic Input/Output System），简称为BIOS。</p>
+<h3 id="硬件自检"><a href="#硬件自检" class="headerlink" title="硬件自检"></a>硬件自检</h3><p>BIOS程序首先检查，计算机硬件能否满足运行的基本条件，这叫做 <code>硬件自检</code>（Power-On Self-Test），缩写为<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Power-on_self-test">POST</a>。如果硬件出现问题，主板会发出不同含义的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Power-on_self-test#Original_IBM_POST_beep_codes">蜂鸣</a>，启动中止。如果没有问题，屏幕就会显示出CPU、内存、硬盘等信息。</p>
+<p><img src="/images/bg2013021503.png" alt="img"></p>
+<h3 id="启动顺序"><a href="#启动顺序" class="headerlink" title="启动顺序"></a>启动顺序</h3><ul>
+<li>硬件自检完成后，BIOS把控制权转交给下一阶段的启动程序。这时，BIOS需要知道，<code>下一阶段的启动程序</code>具体存放在哪一个设备。也就是说，BIOS需要有一个外部储存设备的排序，排在前面的设备就是优先转交控制权的设备。这种排序叫做<code>启动顺序</code>（Boot Sequence）。</li>
+<li>打开BIOS的操作界面，里面有一项就是<code>设定启动顺序</code>。</li>
+</ul>
+<p><img src="/images/bg2013021504.jpg" alt="img"></p>
+<h2 id="第二阶段：主引导记录"><a href="#第二阶段：主引导记录" class="headerlink" title="第二阶段：主引导记录"></a>第二阶段：主引导记录</h2><ul>
+<li>BIOS按照”启动顺序”，把控制权转交给排在第一位的储存设备。</li>
+<li>这时，计算机读取该设备的第一个扇区，也就是读取最前面的512个字节。如果这512个字节的最后两个字节是<code>0x55</code>和<code>0xAA</code>，表明这个设备可以用于启动；如果不是，表明设备不能用于启动，控制权于是被转交给”启动顺序”中的下一个设备。</li>
+<li>这最前面的512个字节，就叫做<code>主引导记录</code>（Master boot record，缩写为MBR）。</li>
+</ul>
+<h3 id="主引导记录的结构"><a href="#主引导记录的结构" class="headerlink" title="主引导记录的结构"></a>主引导记录的结构</h3><p>“主引导记录”只有512个字节，放不了太多东西。它的主要作用是，<strong>告诉计算机到硬盘的哪一个位置去找操作系统</strong>。</p>
+<p>主引导记录由三个部分组成：</p>
+<ol>
+<li>第1-446字节：调用操作系统的机器码。</li>
+<li>第447-510字节：分区表（Partition table）。</li>
+<li>第511-512字节：主引导记录签名（0x55和0xAA）。</li>
+</ol>
+<p>其中，第二部分<code>分区表</code>的作用，是将硬盘分成若干个区。</p>
+<blockquote>
+<p>简单来说：</p>
+<ul>
+<li>BIOS 怎么判断一个设备是 <code>可启动设备</code>？获取其第一个扇区(前 512 字节)的最后两个字节，如果是<code>0x55</code>和<code>0xAA</code>，那么这个设备就是可启动设备。</li>
+<li>当 BIOS 把控制权交给某个可启动设备的时候，就会执行其前 446 字节，也就是调用操作系统的<code>引导代码</code>。</li>
+<li>实际上 446 字节的引导代码根本不够实现如此复杂的功能，所以基本上也只是跳转功能，将其跳转到真正的引导程序。</li>
+</ul>
+</blockquote>
+<p><img src="/images/image-20220203235405178.png" alt="image-20220203235405178"></p>
+<h3 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h3><ul>
+<li><p>硬盘分区有很多<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Disk_partitioning#Benefits_of_multiple_partitions">好处</a>。考虑到每个区可以安装不同的操作系统，<code>主引导记录</code>因此必须知道将控制权转交给哪个区。</p>
+</li>
+<li><p>分区表的长度只有64个字节，里面又分成四项，每项16个字节。所以，一个硬盘最多只能分四个一级分区，又叫做”主分区”。</p>
+</li>
+<li><p>每个主分区的16个字节，由6个部分组成：</p>
+<ol>
+<li>第1个字节：如果为0x80，就表示该主分区是激活分区，控制权要转交给这个分区。四个主分区里面只能有一个是激活的。</li>
+<li>第2-4个字节：主分区第一个扇区的物理位置（柱面、磁头、扇区号等等）。</li>
+<li>第5个字节：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Partition_type">主分区类型</a>。</li>
+<li>第6-8个字节：主分区最后一个扇区的物理位置。</li>
+<li>第9-12字节：该主分区第一个扇区的逻辑地址。</li>
+<li>第13-16字节：主分区的扇区总数。</li>
+</ol>
+<blockquote>
+<p>最后的四个字节（”主分区的扇区总数”），决定了这个主分区的长度。也就是说，一个主分区的扇区总数最多不超过2的32次方。</p>
+</blockquote>
+</li>
+<li><p>如果每个扇区为512个字节，就意味着单个分区最大不超过2TB。再考虑到扇区的逻辑地址也是32位，所以单个硬盘可利用的空间最大也不超过2TB。如果想使用更大的硬盘，只有2个方法：一是提高每个扇区的字节数，二是<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/GUID_Partition_Table">增加扇区总数</a>。</p>
+</li>
+</ul>
+<p><img src="/images/image-20220203235502862.png" alt="image-20220203235502862"></p>
+<h2 id="第三阶段：硬盘启动"><a href="#第三阶段：硬盘启动" class="headerlink" title="第三阶段：硬盘启动"></a>第三阶段：硬盘启动</h2><p>这时，计算机的控制权就要转交给硬盘的某个分区了，这里又分成三种情况。</p>
+<h3 id="情况A：卷引导记录"><a href="#情况A：卷引导记录" class="headerlink" title="情况A：卷引导记录"></a>情况A：卷引导记录</h3><ul>
+<li>上一节提到，四个主分区里面，只有一个是激活的。计算机会读取激活分区的第一个扇区，叫做<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Volume_Boot_Record">“卷引导记录</a>“（Volume boot record，缩写为VBR）。</li>
+<li>“卷引导记录”的主要作用是，<strong>告诉计算机，操作系统在这个分区里的位置</strong>。然后，计算机就会加载操作系统了。</li>
+</ul>
+<h3 id="情况B：扩展分区和逻辑分区"><a href="#情况B：扩展分区和逻辑分区" class="headerlink" title="情况B：扩展分区和逻辑分区"></a>情况B：扩展分区和逻辑分区</h3><ul>
+<li>随着硬盘越来越大，四个主分区已经不够了，需要更多的分区。但是，分区表只有四项，因此规定有且仅有一个区可以被定义成”扩展分区”（Extended partition）。</li>
+<li>所谓”扩展分区”，就是指这个区里面又分成多个区。这种分区里面的分区，就叫做”逻辑分区”（logical partition）。</li>
+<li>计算机先读取扩展分区的第一个扇区，叫做<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Extended_partition">“扩展引导记录”</a>（Extended boot record，缩写为EBR）。它里面也包含一张64字节的分区表，但是最多只有两项（也就是两个逻辑分区）。</li>
+<li>计算机接着读取第二个逻辑分区的第一个扇区，再从里面的分区表中找到第三个逻辑分区的位置，以此类推，直到某个逻辑分区的分区表只包含它自身为止（即只有一个分区项）。因此，扩展分区可以包含无数个逻辑分区。</li>
+<li>但是，似乎很少通过这种方式启动操作系统。如果操作系统确实安装在扩展分区，一般采用下一种方式启动。</li>
+</ul>
+<h3 id="情况C：启动管理器"><a href="#情况C：启动管理器" class="headerlink" title="情况C：启动管理器"></a>情况C：启动管理器</h3><p>在这种情况下，计算机读取”主引导记录”前面446字节的机器码之后，不再把控制权转交给某一个分区，而是运行事先安装的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Boot_loader#Modern_boot_loaders">“启动管理器”</a>（boot loader），由用户选择启动哪一个操作系统。</p>
+<p>Linux环境中，目前最流行的启动管理器是<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/GNU_GRUB">Grub</a>。</p>
+<p><img src="/images/bg2013021505.png" alt="img"></p>
+<h2 id="第四阶段：操作系统"><a href="#第四阶段：操作系统" class="headerlink" title="第四阶段：操作系统"></a>第四阶段：操作系统</h2><p>控制权转交给操作系统后，操作系统的内核首先被载入内存。</p>
+<p>以Linux系统为例，先载入/boot目录下面的kernel。内核加载成功后，第一个运行的程序是/sbin/init。它根据配置文件（Debian系统是/etc/initab）产生init进程。这是Linux启动后的第一个进程，pid进程编号为1，其他进程都是它的后代。</p>
+<p>然后，init线程加载系统的各个模块，比如窗口程序和网络程序，直至执行/bin/login程序，跳出登录界面，等待用户输入用户名和密码。至此，全部启动过程完成。</p>
+<h1 id="计算机启动过程"><a href="#计算机启动过程" class="headerlink" title="计算机启动过程"></a>计算机启动过程</h1><h2 id="计算机启动基本流程"><a href="#计算机启动基本流程" class="headerlink" title="计算机启动基本流程"></a>计算机启动基本流程</h2><p>计算机的整个启动过程主要是按顺序执行三个独立存放的程序，分别是：</p>
+<ol>
+<li>存在 ROM 中的 BIOS;</li>
+<li>存放在启动设备（通常就是磁盘）第一个扇区，也就是 MBR（Master Boot Record，主引导记录）中的 bootloader，常用的 bootloader 有 grub 和 uboot;</li>
+<li>存放在磁盘中的 linux 操作系统内核，通常在 /boot 目录下，文件名类似 boot/vmlinuz-4.15.0-54-generic。</li>
+</ol>
+<blockquote>
+<ul>
+<li>计算机执行的程序是需要先加载到内存中才能由 cpu 读取执行，BIOS 存放在 ROM 中，而 ROM 正是内存的一部分， 只是 ROM 中的程序在系统掉电后不会消失，相当于是固化到 ROM 中的固件。</li>
+<li>BIOS 在电脑主板出厂的时候就已经由厂家烧录到 ROM 中了。 所以在计算机上电的时候，系统首先执行的就是 ROM 中的 BIOS 了。</li>
+<li>而 bootloader 和操作系统 linux 内核程序都是存放在磁盘上的， 这两个程序是在安装 linux 操作系统的时候安装到磁盘中的，bootloader 被安装到磁盘的第一个扇区，即 MBR，而 linux 内核则通常被安装到 /boot/ 目录下。</li>
+<li>所以这两个程序在执行之前都需要从磁盘加载到内存中才能执行，<strong>bootloader 被 BIOS 加载到内存，而 linux 内核则由 bootloader 加载到内存</strong>。</li>
+</ul>
+</blockquote>
+<p>综上所述，计算机的整个启动过程可以概述为如下三大步骤：<strong>bios –&gt; bootloader –&gt; linux</strong></p>
+<ol>
+<li>执行 ROM 中的 BIOS；</li>
+<li>BIOS 将启动设备第一个扇区即 MBR 中的 bootloader 加载到内存并执行；</li>
+<li>bootloader 将磁盘中的 linux 内核加载到内存中并执行。</li>
+</ol>
+<p>PC 机启动时，cpu 首先执行 ROM 中的 BIOS，ROM BIOS 会将默认启动驱动器上的引导扇区 (MBR) 中的 bootloader 读入内存， bootloader 将操作系统内核读入内存，并将控制权交给操作系统内核代码。</p>
+<h1 id="计算机启动过程详解"><a href="#计算机启动过程详解" class="headerlink" title="计算机启动过程详解"></a>计算机启动过程详解</h1><p><img src="/images/watermark.png" alt="在这里插入图片描述"></p>
+<h2 id="上电"><a href="#上电" class="headerlink" title="上电"></a>上电</h2><ul>
+<li><p>按下主机的电源键后，计算机开始启动，主板上电后开始初始化其固件（firmware）。固件是一些固化在芯片组上的程序，它会试图去启动 CPU。如果启动失败（例如 CPU 坏了或没插好），计算机就会死机并给出错误提示（如某些版本的主板固件会发出蜂鸣警告）。这种状态称为 “zoombie-with-fans”。</p>
+</li>
+<li><p>如果前一个阶段未出错，就开始加电工作，在多 CPU 或多核 CPU 情况下，某一个 CPU 会被随机选取作为启动  CPU（bootstrap processor，BSP）运行 BIOS 内部的程序。其余的 CPU（application processor，AP）保持停机直到操作系统内核显式地使用它们。</p>
+<blockquote>
+<p>2000 年以前的计算机主板上均使用 BIOS，如今绝大多数计算机采用的是 EFI（Mac 用的就是 EFI）或 UEFI，BIOS 正在逐步被淘汰。基于 EFI、UEFI 的开机过程与传统的 BIOS 不尽相同。</p>
+</blockquote>
+</li>
+<li><p>此时 CPU 工作模式为<code>实模式</code>，该模式下地址总线是 20 位，寻址范围是 0x00000~0xFFFFF 的 1M 范围。这也就解释了为什么 BIOS 的容量只有 1MB。</p>
+<blockquote>
+<ul>
+<li>Intel CPU 用三种运行模式: <code>实模式</code>、<code>32 位保护模式</code>、<code>64 位保护模式</code>。</li>
+<li>实模式: Intel 8086 的寻址方案，为了商业连续性，兼容了这古老的方案；</li>
+<li>保护模式：采用了虚实地址转换方案。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>BIOS 启动之初，内存是空的。此时 CPU 处于实模式，内存的地址映射均为硬连接的设备。内存映射图如下图所示:</p>
+<p><img src="/images/w1.png" alt="在这里插入图片描述"></p>
+</li>
+</ul>
+<h2 id="重置向量"><a href="#重置向量" class="headerlink" title="重置向量"></a>重置向量</h2><ul>
+<li>CPU 启动后其大多数<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%84%E5%AD%98%E5%99%A8">寄存器</a>会被初始化为预定的值，包括<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8C%87%E4%BB%A4%E5%AF%84%E5%AD%98%E5%99%A8">指令寄存器</a>（Instruction register，IR），它保存着 CPU 将要执行指令的内存地址。此时 CPU 会有一个特殊行为，其会对 IR 的初始值加上一个基址寄存器的值，生成一个 32 位的地址 <code>0xFFFFFFF0</code>。之所以称为特殊行为，是因为<strong>实模式下 CPU 只能寻址 1MB 地址空间</strong>，而这个 32 位地址已经大于 1MB 的内存限制。因此，<code>0xFFFFFFF0</code> 也被称为重置向量（reset vector），参考上图 <code>0xFFFFFFF0</code> 处的标识。</li>
+<li>于是，CPU 开始执行 <code>0xFFFFFFF0</code> 地址处的指令，该地址处是一条 <code>JUMP</code> 指令，这条指令清空了基址寄存器的值，并让指令跳回到 BIOS 开始处（物理地址为 <code>0xF0000</code>）以执行 BIOS。</li>
+<li>BIOS 内部可以分成两个区块: <code>code block</code>（普通程序）、<code>boot block</code>（引导程序）。上电后，<code>boot block</code> 会先被执行，它会检查 <code>code block</code> 的代码是否正确，如果正确，就会转到 <code>code block</code> 继续执行下去。</li>
+</ul>
+<h2 id="BIOS-初始化"><a href="#BIOS-初始化" class="headerlink" title="BIOS 初始化"></a>BIOS 初始化</h2><p><code>0xF0000</code> 地址实际上是 BIOS 中的 <code>boot block</code> 的开始处。在这个阶段，会初始化部分硬件。系统的 CPU、USB 只有部分被初始化。</p>
+<h2 id="BIOS-POST（加电自检）"><a href="#BIOS-POST（加电自检）" class="headerlink" title="BIOS POST（加电自检）"></a>BIOS POST（加电自检）</h2><ul>
+<li>初始化完成后，CPU 跳转到 <code>0xA0000</code> 地址处（参考上图 640KB 处）进行 BIOS <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Power-on_self-test">加电自检</a>（power on self test, POST）。这个过程会检查计算机的各项组件，如 CPU、显卡、内存、鼠标、键盘等。如果找不到内存或者键盘都有可能让 BIOS 停止工作并且打印一些相关的错误信息，如果找不到显卡 BIOS 会发出<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Power-on_self-test#Original_IBM_POST_beep_codes">蜂鸣警告</a></li>
+<li>当 CPU 执行到 <code>0xC0000</code> 地址处（参考上图 768KB 处），开始寻找其他设备的 ROM，如果找到任何其他设备的 BIOS，它们也会被执行。</li>
+<li>下一步，显卡就会显示 BIOS 界面，并进行更深入的检查。</li>
+</ul>
+<h2 id="BIOS-记录系统设定值"><a href="#BIOS-记录系统设定值" class="headerlink" title="BIOS 记录系统设定值"></a>BIOS 记录系统设定值</h2><ul>
+<li>检查完成后，BIOS 会根据自己的 “系统资源表”，对系统进行进一步确认，从而确定计算机配有哪些资源或设备。例如 BIOS 支持随插即用，它会检测并配置随插即用设备。</li>
+<li>然后 BIOS 会遵循<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-sg/%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E4%B8%8E%E7%94%B5%E6%BA%90%E6%8E%A5%E5%8F%A3">高级配置电源接口</a>（Advanced Configuration Power Interface，ACPI）在内存中设置好一系列的数据来描述硬件信息，以便被操作系统内核利用。</li>
+</ul>
+<h2 id="搜索-MBR"><a href="#搜索-MBR" class="headerlink" title="搜索 MBR"></a>搜索 MBR</h2><ul>
+<li><p>到这一步，BIOS 开始尝试加载操作系统。它会从硬盘，光驱，软驱，网络等几个地方依次寻找操作系统（用户可以在 BIOS 设定中修改查找的优先级）。如果找不到操作系统，BIOS 会停机并给出错误信息。</p>
+</li>
+<li><p>假设在硬盘上找到了操作系统，它会首先读取硬盘上的大小为 512 Bytes 的 0 号扇区，这个扇区被称为 <code>主引导记录</code>（master boot record，MBR），其包含三部分：</p>
+<ul>
+<li><p>引导程序（Boot Loader）</p>
+</li>
+<li><p>硬盘分区表（Partition Table）</p>
+</li>
+<li><p>结束标志字：BIOS 读完磁盘上的 MBR 之后会把它拷贝到内存 0x7C00 地址处，然后 CPU 跳转到该内存地址执行 MBR 里的指令。事实上，被复制到物理内存的内容就是 Boot Loader。常见的 Boot Loader 有 grub、lilo、spfdisk。下图可以帮助大家理解 MBR 的结构。</p>
+<p><img src="/images/format2.png" alt="img"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="硬盘启动"><a href="#硬盘启动" class="headerlink" title="硬盘启动"></a>硬盘启动</h2><p>这时，计算机的控制权就要转交给硬盘的某个分区了。</p>
+<h2 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h2><ul>
+<li>控制权转交给操作系统后，操作系统的内核首先被载入内存。</li>
+<li>然后，init 线程加载系统的各个模块，比如窗口程序和网络程序，直至执行 /bin/login 程序，跳出登录界面，等待用户输入用户名和密码。至此，全部启动过程完成。</li>
+</ul>
+<h1 id="refenrence"><a href="#refenrence" class="headerlink" title="refenrence"></a>refenrence</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2013/02/booting.html">计算机是如何启动的？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.initroot.com/linuxintroduction/computerbootprocess.html">计算机启动过程</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=ois-Ilfh5xg">Linux 系统启动详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/low5252/article/details/104373571">计算机启动过程详解</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
