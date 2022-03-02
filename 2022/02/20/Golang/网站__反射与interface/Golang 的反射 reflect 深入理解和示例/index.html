@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;interface-变量的值和类型&quot;&gt;&lt;a href=&quot;#interface-变量的值和类型&quot; class=&quot;headerlink&quot; title=&quot;interface 变量的值和类型&quot;&gt;&lt;/a&gt;interface 变量的值和类型&lt;/h2&gt;&lt;p&gt;变量包括（type, value）两部分。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Golang 的反射 reflect 深入理解和示例 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2022-02-20</div></div></div><div class="container post-header"><h1>Golang 的反射 reflect 深入理解和示例</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#interface-%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">interface 变量的值和类型</span></a></li></ol></details></div><div class="container post-content"><h2 id="interface-变量的值和类型"><a href="#interface-变量的值和类型" class="headerlink" title="interface 变量的值和类型"></a>interface 变量的值和类型</h2><p>变量包括（type, value）两部分。</p>
+<p>type 包括 static type 和 concrete type。</p>
+<ul>
+<li>static type 是你在编码是看见的类型 (如 int、string)，</li>
+<li>concrete type 是 runtime 系统看见的类型。</li>
+</ul>
+<p>类型断言能否成功，取决于变量的 concrete type，而不是 static type。因此，一个 reader 变量如果它的 concrete type 也实现了 write 方法的话，它也可以被类型断言为 writer。</p>
+<p>反射，就是建立在类型之上的，Golang 的指定类型的变量的类型是静态的（也就是指定 int、string 这些的变量，它的 type 是 static type），在创建变量的时候就已经确定，反射主要与 Golang 的 interface 类型相关（它的 type 是 concrete type），只有 interface 类型才有反射一说。</p>
+<p>在 Golang 的实现中，每个 interface 变量都有一个对应 pair，pair 中记录了实际变量的值和类型:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(value, type)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>value 是实际变量值，</li>
+<li>type 是实际变量的类型。</li>
+</ul>
+<p>一个 interface{} 类型的变量包含了 2 个指针：</p>
+<ul>
+<li>指针指向值的类型【对应 concrete type】，</li>
+<li>指针指向实际的值【对应 value】。</li>
+</ul>
+<p>例如，创建类型为 <code>*os.File</code> 的变量，然后将其赋给一个接口变量 r：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tty, err := os.OpenFile(<span class="string">&quot;/dev/tty&quot;</span>, os.O_RDWR, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> r io.Reader</span><br><span class="line">r = tty</span><br></pre></td></tr></table></figure>
+
+<p>接口变量 r 的 pair 中将记录如下信息：<code>(tty, *os.File)</code>。</p>
+<p>这个 pair 在接口变量的连续赋值过程中是不变的，将接口变量 r 赋给另一个接口变量 w:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> w io.Writer</span><br><span class="line">w = r.(io.Writer)</span><br></pre></td></tr></table></figure>
+
+<p>接口变量 w 的 pair 与 r 的 pair 相同，都是：<code>(tty, *os.File)</code>，即使 w 是空接口类型，pair 也是不变的。</p>
+<p>interface 及其 pair 的存在，是 Golang 中实现反射的前提，理解了 pair，就更容易理解反射。反射就是用来检测存储在接口变量内部 (值 value；类型 concrete type) pair 对的一种机制。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

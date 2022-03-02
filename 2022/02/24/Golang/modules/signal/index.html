@@ -1,0 +1,242 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="os/signal 包实现了&lt;strong&gt;对输入信号的访问&lt;/strong&gt;。这个包只有两个重要方法。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>signal | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2022-02-24</div></div></div><div class="container post-header"><h1>signal</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E7%9A%84%E8%BD%AC%E5%8F%91"><span class="toc-number">1.</span> <span class="toc-text">信号的转发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E8%BD%AC%E5%8F%91%E4%BF%A1%E5%8F%B7"><span class="toc-number">2.</span> <span class="toc-text">停止转发信号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E9%9B%85%E7%9A%84%E9%80%80%E5%87%BA%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">优雅的退出守护进程</span></a></li></ol></details></div><div class="container post-content"><p>os/signal 包实现了<strong>对输入信号的访问</strong>。这个包只有两个重要方法。</p>
+<h2 id="信号的转发"><a href="#信号的转发" class="headerlink" title="信号的转发"></a>信号的转发</h2><p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Notify&spm=1001.2101.3001.7020">Notify</a> 函数让 signal 包将输入信号转发到 c。如果没有列出要传递的信号，会将所有输入信号传递到 c；否则只传递列出的输入信号。</p>
+<blockquote>
+<p>signal 包不会为了向 c 发送信息而阻塞（就是说如果发送时 c 阻塞了，signal 包会直接放弃）：调用者应该保证 c 有足够的缓存空间可以跟上期望的信号频率。对使用单一信号用于通知的通道，缓存为 1 就足够了。</p>
+</blockquote>
+<p>可以使用同一通道多次调用 Notify：每一次都会扩展该通道接收的信号集。</p>
+<p>唯一从信号集去除信号的方法是调用 Stop。</p>
+<p>可以使用同一信号和不同通道多次调用 Notify：每一个通道都会独立接收到该信号的一个拷贝。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Notify</span><span class="params">(c <span class="keyword">chan</span>&lt;- os.Signal, sig ...os.Signal)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Example:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;os/signal&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 初始化一个os.Signal类型的channel</span></span><br><span class="line">	<span class="comment">// 我们必须使用缓冲通道，否则在信号发送时如果还没有准备好接收信号，就有丢失信号的风险。</span></span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal, <span class="number">1</span>)</span><br><span class="line">	<span class="comment">// notify用于监听信号</span></span><br><span class="line">	<span class="comment">// 参数1表示接收信号的channel</span></span><br><span class="line">	<span class="comment">// 参数2及后面的表示要监听的信号</span></span><br><span class="line">	<span class="comment">// os.Interrupt 表示中断</span></span><br><span class="line">	<span class="comment">// os.Kill 杀死退出进程</span></span><br><span class="line">	signal.Notify(c, os.Interrupt, os.Kill)</span><br><span class="line">	<span class="comment">// 阻塞直到接收到信息</span></span><br><span class="line">	s := &lt;-c</span><br><span class="line">	fmt.Println(<span class="string">&quot;Got signal:&quot;</span>, s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go   // 注意：运行代码后按`Ctrl +C`发送信号结果为:</span><br><span class="line">Got signal: interrupt</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="停止转发信号"><a href="#停止转发信号" class="headerlink" title="停止转发信号"></a>停止转发信号</h2><p>Stop 函数让 signal 包停止向 c 转发信号。它会取消之前使用 c 调用的所有 Notify 的效果。当 Stop 返回后，会保证 c 不再接收到任何信号。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Stop</span><span class="params">(c <span class="keyword">chan</span>&lt;- os.Signal)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Example:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;os/signal&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 初始化一个os.Signal类型的channel</span></span><br><span class="line">	<span class="comment">// 我们必须使用缓冲通道，否则在信号发送时如果还没有准备好接收信号，就有丢失信号的风险。</span></span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal)</span><br><span class="line">	<span class="comment">// notify用于监听信号 默认是所有信号</span></span><br><span class="line">	signal.Notify(ch)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//停止向ch转发信号，ch将不再收到任何信号</span></span><br><span class="line">	signal.Stop(ch)</span><br><span class="line">	fmt.Println(<span class="string">&quot;signal.Stop&quot;</span>)</span><br><span class="line">	<span class="comment">//ch将一直阻塞在这里，因为它将收不到任何信号</span></span><br><span class="line">	<span class="comment">//所以下面的exit输出也无法执行</span></span><br><span class="line">	s := &lt;-ch</span><br><span class="line">	fmt.Println(<span class="string">&quot;Got signal:&quot;</span>, s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go</span><br><span class="line">signal.Stop</span><br><span class="line"><span class="built_in">exit</span> status 2</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="优雅的退出守护进程"><a href="#优雅的退出守护进程" class="headerlink" title="优雅的退出守护进程"></a>优雅的退出守护进程</h2><p>我们先来了解一下 Golang 中的信号类型：</p>
+<p>在 POSIX.1-1990 标准中定义的信号列表</p>
+<table>
+<thead>
+<tr>
+<th>信号值</th>
+<th>值</th>
+<th>动作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SIGHUP</td>
+<td>1</td>
+<td>Term</td>
+<td>终端控制进程结束 (终端连接断开)</td>
+</tr>
+<tr>
+<td>SIGINT</td>
+<td>2</td>
+<td>Term</td>
+<td>用户发送 INTR 字符 (Ctrl+C) 触发</td>
+</tr>
+<tr>
+<td>SIGQUIT</td>
+<td>3</td>
+<td>Core</td>
+<td>用户发送 QUIT 字符 (Ctrl+/) 触发</td>
+</tr>
+<tr>
+<td>SIGILL</td>
+<td>4</td>
+<td>Core</td>
+<td>非法指令 (程序错误、试图执行数据段、栈溢出等)</td>
+</tr>
+<tr>
+<td>SIGABRT</td>
+<td>6</td>
+<td>Core</td>
+<td>调用 abort 函数触发</td>
+</tr>
+<tr>
+<td>SIGFPE</td>
+<td>8</td>
+<td>Core</td>
+<td>算术运行错误 (浮点运算错误、除数为零等)</td>
+</tr>
+<tr>
+<td>SIGKILL</td>
+<td>9</td>
+<td>Term</td>
+<td>无条件结束程序 (不能被捕获、阻塞或忽略)</td>
+</tr>
+<tr>
+<td>SIGSEGV</td>
+<td>11</td>
+<td>Core</td>
+<td>无效内存引用 (试图访问不属于自己的内存空间、对只读内存空间进行写操作)</td>
+</tr>
+<tr>
+<td>SIGPIPE</td>
+<td>13</td>
+<td>Term</td>
+<td>消息管道损坏 (FIFO/Socket 通信时，管道未打开而进行写操作)</td>
+</tr>
+<tr>
+<td>SIGALRM</td>
+<td>14</td>
+<td>Term</td>
+<td>时钟定时信号</td>
+</tr>
+<tr>
+<td>SIGTERM</td>
+<td>15</td>
+<td>Term</td>
+<td>结束程序 (可以被捕获、阻塞或忽略)</td>
+</tr>
+<tr>
+<td>SIGUSR1</td>
+<td>30,10,16</td>
+<td>Term</td>
+<td>用户保留</td>
+</tr>
+<tr>
+<td>SIGUSR2</td>
+<td>31,12,17</td>
+<td>Term</td>
+<td>用户保留</td>
+</tr>
+<tr>
+<td>SIGCHLD</td>
+<td>20,17,18</td>
+<td>Ign</td>
+<td>子进程结束 (由父进程接收)</td>
+</tr>
+<tr>
+<td>SIGCONT</td>
+<td>19,18,25</td>
+<td>Cont</td>
+<td>继续执行已经停止的进程 (不能被阻塞)</td>
+</tr>
+<tr>
+<td>SIGSTOP</td>
+<td>17,19,23</td>
+<td>Stop</td>
+<td>停止进程 (不能被捕获、阻塞或忽略)</td>
+</tr>
+<tr>
+<td>SIGTSTP</td>
+<td>18,20,24</td>
+<td>Stop</td>
+<td>停止进程 (可以被捕获、阻塞或忽略)</td>
+</tr>
+<tr>
+<td>SIGTTIN</td>
+<td>21,21,26</td>
+<td>Stop</td>
+<td>后台程序从终端中读取数据时触发</td>
+</tr>
+<tr>
+<td>SIGTTOU</td>
+<td>22,22,27</td>
+<td>Stop</td>
+<td>后台程序向终端中写数据时触发</td>
+</tr>
+</tbody></table>
+<p>在 SUSv2 和 POSIX.1-2001 标准中的信号列表:</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>值</th>
+<th>动作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SIGTRAP</td>
+<td>5</td>
+<td>Core</td>
+<td>Trap 指令触发 (如断点，在调试器中使用)</td>
+</tr>
+<tr>
+<td>SIGBUS</td>
+<td>0,7,10</td>
+<td>Core</td>
+<td>非法地址 (内存地址对齐错误)</td>
+</tr>
+<tr>
+<td>SIGPOLL</td>
+<td></td>
+<td>Term</td>
+<td>Pollable event (Sys V). Synonym for SIGIO</td>
+</tr>
+<tr>
+<td>SIGPROF</td>
+<td>27,27,29</td>
+<td>Term</td>
+<td>性能时钟信号 (包含系统调用时间和进程占用 CPU 的时间)</td>
+</tr>
+<tr>
+<td>SIGSYS</td>
+<td>12,31,12</td>
+<td>Core</td>
+<td>无效的系统调用 (SVr4)</td>
+</tr>
+<tr>
+<td>SIGURG</td>
+<td>16,23,21</td>
+<td>Ign</td>
+<td>有紧急数据到达 Socket (4.2BSD)</td>
+</tr>
+<tr>
+<td>SIGVTALRM</td>
+<td>26,26,28</td>
+<td>Term</td>
+<td>虚拟时钟信号 (进程占用 CPU 的时间)(4.2BSD)</td>
+</tr>
+<tr>
+<td>SIGXCPU</td>
+<td>24,24,30</td>
+<td>Core</td>
+<td>超过 CPU 时间资源限制 (4.2BSD)</td>
+</tr>
+<tr>
+<td>SIGXFSZ</td>
+<td>25,25,31</td>
+<td>Core</td>
+<td>超过文件大小资源限制 (4.2BSD)</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>注意：需要特别说明的是，SIGKILL 和 SIGSTOP 这两个信号既不能被应用程序捕获，也不能被操作系统阻塞或忽略。</p>
+</blockquote>
+<p>通常我们在 Linux 系统中会使用 kill 命令来杀死进程，那其中的原理是什么呢？</p>
+<ol>
+<li><code>kill pid 方式</code>：kill pid 的作用是向进程号为 pid 的进程发送 SIGTERM（这是 kill 默认发送的信号），该信号是一个结束进程的信号且可以被应用程序捕获。若应用程序没有捕获并响应该信号的逻辑代码，则该信号的默认动作是 kill 掉进程。这是终止指定进程的推荐做法。</li>
+<li><code>kill -9 pid 方式</code>：kill -9 pid 则是向进程号为 pid 的进程发送 SIGKILL（该信号的编号为 9），从上面的说明可知，SIGKILL 既不能被应用程序捕获，也不能被阻塞或忽略，其动作是立即结束指定进程。通俗地说，应用程序根本无法 “感知” SIGKILL 信号，它在完全无准备的情况下，就被收到 SIGKILL 信号的操作系统给干掉了，显然，在这种 “暴力” 情况下，应用程序完全没有释放当前占用资源的机会。事实上，SIGKILL 信号是直接发给 init 进程的，它收到该信号后，负责终止 pid 指定的进程。在某些情况下（如进程已经 hang 死，无响应正常信号），就可以使用 kill -9 来结束进程。</li>
+</ol>
+<p>从上面的介绍不难看出，优雅退出可以通过捕获 SIGTERM 来实现。具体来讲，通常只需要两步动作：</p>
+<ol>
+<li>注册 SIGTERM 信号的处理函数并在处理函数中做一些进程退出的准备。信号处理函数的注册可以通过 signal () 或 sigaction () 来实现，其中，推荐使用后者来实现信号响应函数的设置。信号处理函数的逻辑越简单越好，通常的做法是在该函数中设置一个 bool 型的 flag 变量以表明进程收到了 SIGTERM 信号，准备退出。</li>
+<li>在主进程的 main () 中，通过类似于 while (!bQuit) 的逻辑来检测那个 flag 变量，一旦 bQuit 在 signal handler function 中被置为 true，则主进程退出 while () 循环，接下来就是一些释放资源或 dump 进程当前状态或记录日志的动作，完成这些后，主进程退出。</li>
+</ol>
+<p>知道了这些，我们看一下下面的例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;os/signal&quot;</span></span><br><span class="line">	<span class="string">&quot;syscall&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 优雅退出go守护进程</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="comment">//创建监听退出chan</span></span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal)</span><br><span class="line">	<span class="comment">//监听指定信号 ctrl+c kill</span></span><br><span class="line">	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> s := <span class="keyword">range</span> c &#123;</span><br><span class="line">			<span class="keyword">switch</span> s &#123;</span><br><span class="line">			<span class="keyword">case</span> syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:</span><br><span class="line">				fmt.Println(<span class="string">&quot;退出&quot;</span>, s)</span><br><span class="line">				ExitFunc()</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				fmt.Println(<span class="string">&quot;other&quot;</span>, s)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">&quot;进程启动...&quot;</span>)</span><br><span class="line">	sum := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		sum++</span><br><span class="line">		fmt.Println(<span class="string">&quot;sum:&quot;</span>, sum)</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ExitFunc</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;开始退出...&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;执行清理...&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;结束退出...&quot;</span>)</span><br><span class="line">	os.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go</span><br><span class="line">进程启动...</span><br><span class="line">sum: 1</span><br><span class="line">sum: 2</span><br><span class="line">sum: 3</span><br><span class="line">退出 interrupt // Ctrl + C </span><br><span class="line">开始退出...</span><br><span class="line">执行清理...</span><br><span class="line">结束退出...</span><br></pre></td></tr></table></figure>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
