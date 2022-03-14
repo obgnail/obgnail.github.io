@@ -1,0 +1,193 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;使用索引的查询步骤&quot;&gt;&lt;a href=&quot;#使用索引的查询步骤&quot; class=&quot;headerlink&quot; title=&quot;使用索引的查询步骤&quot;&gt;&lt;/a&gt;使用索引的查询步骤&lt;/h2&gt;&lt;p&gt;MYSQL 使用索引的查询有两个步骤："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>索引失效原理 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/MySQL/" rel="tag">MySQL</a></div><div class="post-time">2022-03-10</div></div></div><div class="container post-header"><h1>索引失效原理</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E7%9A%84%E6%9F%A5%E8%AF%A2%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.</span> <span class="toc-text">使用索引的查询步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%80%BC%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82"><span class="toc-number">2.</span> <span class="toc-text">单值索引底层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82"><span class="toc-number">3.</span> <span class="toc-text">复合索引底层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%80%BC%E7%B4%A2%E5%BC%95%E7%9A%84-B-%E6%A0%91%E5%9B%BE"><span class="toc-number">4.</span> <span class="toc-text">单值索引的 B + 树图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%9A%84-B-%E6%A0%91%E5%9B%BE"><span class="toc-number">5.</span> <span class="toc-text">联合索引的 B + 树图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-b-%E6%8E%92%E5%BA%8F%E5%88%86%E6%9E%90"><span class="toc-number">5.1.</span> <span class="toc-text">a, b 排序分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%B7%A6%E5%89%8D%E7%BC%80%E5%8E%9F%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">最佳左前缀原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%B5%E5%BE%AA%E6%9C%80%E4%BD%B3%E5%B7%A6%E5%89%8D%E7%BC%80%E6%B3%95%E5%88%99%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">6.1.</span> <span class="toc-text">遵循最佳左前缀法则的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E9%81%B5%E5%BE%AA%E6%9C%80%E4%BD%B3%E5%B7%A6%E5%89%8D%E7%BC%80%E6%B3%95%E5%88%99%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">6.2.</span> <span class="toc-text">不遵循最佳左前缀法则的例子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2%E5%8F%B3%E8%BE%B9%E5%A4%B1%E6%95%88%E5%8E%9F%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">范围查询右边失效原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#like-%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E5%8E%9F%E7%90%86"><span class="toc-number">8.</span> <span class="toc-text">like 索引失效原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-X-%E6%9C%89%E6%97%B6%E5%80%99%E8%83%BD%E7%94%A8%E5%88%B0%E7%B4%A2%E5%BC%95"><span class="toc-number">8.1.</span> <span class="toc-text">为什么 X% 有时候能用到索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-X-%E5%92%8C-X-%E5%9C%A8%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E8%83%BD%E7%94%A8%E5%88%B0%E7%B4%A2%E5%BC%95"><span class="toc-number">8.2.</span> <span class="toc-text">为什么 %X 和 %X% 在覆盖索引的情况下能用到索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%92%8C-is-null-%E5%88%B0%E5%BA%95%E8%B5%B0%E4%B8%8D%E8%B5%B0%E7%B4%A2%E5%BC%95"><span class="toc-number">9.</span> <span class="toc-text">!&#x3D; 和 is null 到底走不走索引</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#refenence"><span class="toc-number"></span> <span class="toc-text">refenence</span></a></details></div><div class="container post-content"><h2 id="使用索引的查询步骤"><a href="#使用索引的查询步骤" class="headerlink" title="使用索引的查询步骤"></a>使用索引的查询步骤</h2><p>MYSQL 使用索引的查询有两个步骤：</p>
+<ol>
+<li>读取索引数据获取主键 ID</li>
+<li>根据主键 ID 从表中获取数据。</li>
+</ol>
+<p>如果第 1 步，在一个很大的表中查到少量的数据，那么在第 2 步就会只需要很少的时间。</p>
+<h2 id="单值索引底层"><a href="#单值索引底层" class="headerlink" title="单值索引底层"></a>单值索引底层</h2><p><img src="/images/20201026195717186.png" alt="在这里插入图片描述"></p>
+<p>这是单值索引时底层的样子。用单值索引（id）来查询数据时，是这样实现的：</p>
+<ol>
+<li>如果你需要查询 id 为 30 的键，会把第一排的所有数据放进缓存中，找出有这个值的地方（应该是二分查找），发现在 15-56 的区域。</li>
+<li>它会顺着向下找，再次把这块数据（只是指向的这一区域，并不是所有第二排）放进缓存中，查找出有 30 的地方，发现在 20-49 的区域。</li>
+<li>继续向下找，最终找到第三层，也就是叶子节点值为 30 的区域，data 为主键索引对应的数据；此索引为 id，那么 data 为 id 对应的一整行数据。这样，经过 3 次查找，最终找出数据。</li>
+</ol>
+<h2 id="复合索引底层"><a href="#复合索引底层" class="headerlink" title="复合索引底层"></a>复合索引底层</h2><p>复合索引第一个的为 id，第二个为 name，第三个为 date</p>
+<p><img src="/images/20201026201209940.PNG" alt="在这里插入图片描述"></p>
+<p>复合索引也是 3 排，这张图是从第二排开始的，最底层紫色的就是数据。</p>
+<p>先介绍一下复合索引：<br>复合索引是按照<code>多级排序</code>的方式存放的：先按照第一层索引排序，如果第一层数据一样，则会按照第二层排序，如果第二层还是一样，则会继续按照第三层排序。</p>
+<p>B+Tree 与 B-Tree 的不同：</p>
+<ol>
+<li>B-Tree 不论是第一排还是第二第三排，每个索引下都会有数据，如果上图时 B-Tree，10002 下就会有像叶子节点底层一样紫色的数据块。</li>
+<li>B+Tree 每两个节点之间都有指针，从左往右，如果是找出第一个值大于 10001 的，直接就可以顺着指针找出 10001 右边所有的数据；而 B-Tree 却是没有指针的。</li>
+</ol>
+<blockquote>
+<p>注意：不论是复合索引还是非主键单值索引，数据都<strong>存放的是主键的值</strong>，他会根据这个值去找主键索引对应的数据。</p>
+</blockquote>
+<h2 id="单值索引的-B-树图"><a href="#单值索引的-B-树图" class="headerlink" title="单值索引的 B + 树图"></a>单值索引的 B + 树图</h2><p>单值索引在 B + 树的结构里，一个节点只存一个键值对</p>
+<p><img src="/images/1558476-20210101113741649-1637203931.png" alt="img"></p>
+<h2 id="联合索引的-B-树图"><a href="#联合索引的-B-树图" class="headerlink" title="联合索引的 B + 树图"></a>联合索引的 B + 树图</h2><p><code>a</code> 字段和 <code>b</code> 字段组成一个<code>联合索引</code>。</p>
+<p><img src="/images/1558476-20210101113751439-688055169.png" alt="img"></p>
+<p>从本质上来说，联合索引也是一个 B + 树，和单值索引不同的是，联合索引的键值对不是 1，而是大于 1 个。</p>
+<h3 id="a-b-排序分析"><a href="#a-b-排序分析" class="headerlink" title="a, b 排序分析"></a>a, b 排序分析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(1,1)，(1,2)，(2,1)，(2,4)，(3,1)，(3,2)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>a 顺序：1，1，2，2，3，3</li>
+<li>b 顺序：1，2，1，4，1，2</li>
+</ul>
+<p>可以发现这其实就是一个 <code>多级排序</code>。a 的优先级高，b 的优先级低：</p>
+<p>a 字段是有序排列，b 字段是无序排列（因为 B + 树只能选一个字段来构建有序的树）。而且，在 a 相等的情况下，b 字段是有序的。</p>
+<blockquote>
+<p>多级索引本质就是一个 <code>多级排序</code>。</p>
+</blockquote>
+<h2 id="最佳左前缀原理"><a href="#最佳左前缀原理" class="headerlink" title="最佳左前缀原理"></a>最佳左前缀原理</h2><h3 id="遵循最佳左前缀法则的例子"><a href="#遵循最佳左前缀法则的例子" class="headerlink" title="遵循最佳左前缀法则的例子"></a>遵循最佳左前缀法则的例子</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from testTable where a=1 and b=2</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>首先 a 字段在 B + 树上是有序的，所以我们可以通过二分查找法来定位到 a=1 的位置。</li>
+<li>其次在 a 确定的情况下，b 是相对有序的，因为有序，所以同样可以通过二分查找法找到 b=2 的位置。</li>
+</ol>
+<h3 id="不遵循最佳左前缀法则的例子"><a href="#不遵循最佳左前缀法则的例子" class="headerlink" title="不遵循最佳左前缀法则的例子"></a>不遵循最佳左前缀法则的例子</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from testTable where b=2</span><br></pre></td></tr></table></figure>
+
+<p>我们来回想一下 b 有顺序的前提：在 a 确定的情况下。</p>
+<p>现在你的 a 都飞了，那 b 肯定是不能确定顺序的，在一个无序的 B + 树上是无法用二分查找来定位到 b 字段的。</p>
+<p>所以这个时候，是用不上索引的。</p>
+<h2 id="范围查询右边失效原理"><a href="#范围查询右边失效原理" class="headerlink" title="范围查询右边失效原理"></a>范围查询右边失效原理</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from testTable where a&gt;1 and b=2</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>首先 a 字段在 B + 树上是有序的，所以可以用二分查找法定位到 1，然后将所有大于 1 的数据取出来，a 可以用到索引。</li>
+<li><strong>b 有序的前提是 a 是确定的值</strong>，那么现在 a 的值是取大于 1 的，可能有 10 个大于 1 的 a，也可能有 100 个 a。</li>
+<li><strong>大于 1 的 a 那部分的 B + 树里，b 字段是无序的</strong>（见上图：<code>1，4，1，2</code>），所以 b 不能在无序的 B + 树里用二分查找来查询，b 用不到索引。</li>
+</ol>
+<blockquote>
+<p>比如说有三个字段 a b c，建立复合索引 a_b_c。此时叶子节点的数据排序后可能为</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(a<span class="operator">=</span><span class="number">1</span> b<span class="operator">=</span><span class="number">1</span> c<span class="operator">=</span><span class="number">1</span>) (a<span class="operator">=</span><span class="number">1</span> b<span class="operator">=</span><span class="number">2</span> c<span class="operator">=</span><span class="number">1</span>) (a<span class="operator">=</span><span class="number">1</span> b<span class="operator">=</span><span class="number">2</span> c<span class="operator">=</span><span class="number">3</span>)</span><br><span class="line">(a<span class="operator">=</span><span class="number">2</span> b<span class="operator">=</span><span class="number">2</span> c<span class="operator">=</span><span class="number">3</span>) (a<span class="operator">=</span><span class="number">2</span> b<span class="operator">=</span><span class="number">2</span> c<span class="operator">=</span><span class="number">5</span>) (a<span class="operator">=</span><span class="number">2</span> b<span class="operator">=</span><span class="number">5</span> c<span class="operator">=</span><span class="number">1</span>) (a<span class="operator">=</span><span class="number">2</span> b<span class="operator">=</span><span class="number">5</span> c<span class="operator">=</span><span class="number">2</span>)</span><br><span class="line">(a<span class="operator">=</span><span class="number">3</span> b<span class="operator">=</span><span class="number">0</span> c<span class="operator">=</span><span class="number">1</span>) (a<span class="operator">=</span><span class="number">3</span> b<span class="operator">=</span><span class="number">3</span> c<span class="operator">=</span><span class="number">5</span>) (a<span class="operator">=</span><span class="number">3</span> b<span class="operator">=</span><span class="number">8</span> c<span class="operator">=</span><span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+
+<p>查找</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a,b,c <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">2</span> <span class="keyword">and</span> b <span class="operator">=</span> <span class="number">5</span> <span class="keyword">and</span> c <span class="operator">=</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>先根据 a = 2 找到第二行的四条数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">3</span>) (a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">5</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">1</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后根据 b=5 查到两条</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">1</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>最后根据 c=2 查到目标数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>现在使用了范围条件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select a,b,c from table where a = <span class="number">2</span> <span class="keyword">and</span> b &gt;<span class="number">1</span> <span class="keyword">and</span> c = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>先根据 a = 2 找到第二行的四条数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">3</span>) (a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">5</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">1</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后根据 b&gt;1 查到四条数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">3</span>) (a=<span class="number">2</span> b=<span class="number">2</span> c=<span class="number">5</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">1</span>) (a=<span class="number">2</span> b=<span class="number">5</span> c=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>此时要查找 c=2 了，但发现四条数据的 c 分别是 3,5,1,2 无序！所以索引失效！</p>
+</blockquote>
+<blockquote>
+<p>更恶劣的情况：</p>
+<p>假设有以下数据</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>(b=<span class="number">1</span>,c=<span class="number">4</span>,d = <span class="number">10</span>)</span><br><span class="line"><span class="number">2</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">6</span>)</span><br><span class="line"><span class="number">3</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">7</span>)</span><br><span class="line"><span class="number">4</span>(b=<span class="number">3</span>,c=<span class="number">1</span>,d = <span class="number">2</span>)</span><br><span class="line"><span class="number">5</span>(b=<span class="number">3</span>,c=<span class="number">5</span>,d = <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>查找 b&gt;1 且 c = 5,d=6，先查出<br>b&gt;1：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">6</span>)</span><br><span class="line"><span class="number">3</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">7</span>)</span><br><span class="line"><span class="number">4</span>(b=<span class="number">3</span>,c=<span class="number">1</span>,d = <span class="number">2</span>)</span><br><span class="line"><span class="number">5</span>(b=<span class="number">3</span>,c=<span class="number">5</span>,d = <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>此时索引失效了。遍历一次结果（假设只对比 c 的值，这样更快）找到三条数据<br>c = 5：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">6</span>)</span><br><span class="line"><span class="number">3</span>(b=<span class="number">2</span>,c=<span class="number">5</span>,d = <span class="number">7</span>)</span><br><span class="line"><span class="number">5</span>(b=<span class="number">3</span>,c=<span class="number">5</span>,d = <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这时候发现要查找字段 d 还是乱的，继续 o (n)。<br>综上所述，范围后的查询字段都不是有序的，所以索引都失效了。</p>
+</blockquote>
+<h2 id="like-索引失效原理"><a href="#like-索引失效原理" class="headerlink" title="like 索引失效原理"></a>like 索引失效原理</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">where name like &quot;a%&quot;</span><br><span class="line">where name like &quot;%a%&quot;</span><br><span class="line">where name like &quot;%a&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么-X-有时候能用到索引"><a href="#为什么-X-有时候能用到索引" class="headerlink" title="为什么 X% 有时候能用到索引"></a>为什么 X% 有时候能用到索引</h3><ul>
+<li><code>X%</code>：<code>前缀</code></li>
+<li><code>%X%</code>：<code>中缀</code></li>
+<li><code>%X</code>：<code>后缀</code></li>
+</ul>
+<p>这里依然是最佳左前缀法则这个概念</p>
+<p><img src="/images/1558476-20210101113826413-596165055.png" alt="img"></p>
+<p>可以看到，上面的 B + 树是由字符串组成的。</p>
+<p><code>字符串的排序方式</code>：同样也是<code>多级排序</code>，先按照第一个字母排序，如果第一个字母相同，就按照第二个字母排序。以此类推。</p>
+<ul>
+<li><code>X%</code>（<code>前缀</code>）：由于 B + 树的索引顺序，是按照首字母的大小进行排序，前缀匹配又是匹配首字母。所以可以在 B + 树上进行有序的查找，查找首字母符合要求的数据。所以有些时候可以用到索引。</li>
+<li><code>%X</code>（<code>后缀</code>）：是匹配字符串尾部的数据。<strong>在非覆盖索引的情况下</strong>，根据上面排序规则，尾部的字母是没有顺序的，所以不能按照索引顺序查询，就用不到索引。</li>
+<li><code>%X%</code>（<code>中缀</code>）：这个是查询任意位置的字母满足条件即可，只有首字母是进行索引排序的，其他位置的字母都是相对无序的，<strong>在非覆盖索引的情况下</strong>，所以查找任意位置的字母是用不上索引的。</li>
+</ul>
+<h3 id="为什么-X-和-X-在覆盖索引的情况下能用到索引"><a href="#为什么-X-和-X-在覆盖索引的情况下能用到索引" class="headerlink" title="为什么 %X 和 %X% 在覆盖索引的情况下能用到索引"></a>为什么 %X 和 %X% 在覆盖索引的情况下能用到索引</h3><blockquote>
+<p>覆盖索引：select 的数据列只用从索引中就能够取得，不必从数据表中读取，换句话说查询列要被所使用的索引覆盖。</p>
+</blockquote>
+<p>要说回表查询，先要从 InnoDB 的索引实现说起。InnoDB 有两大类索引，一类是聚集索引（Clustered Index），一类是普通索引（Secondary Index）。</p>
+<p>InnoDB 的聚集索引：</p>
+<p>InnoDB 聚集索引的叶子节点<strong>存储行记录</strong>，因此 InnoDB 有且只有一个聚集索引。</p>
+<ul>
+<li>如果表定义了 PK（Primary Key，主键），那么 PK 就是聚集索引。</li>
+<li>如果表没有定义 PK，则第一个 NOT NULL UNIQUE 的列就是聚集索引。否则 InnoDB 会另外创建一个隐藏的 ROWID 作为聚集索引。（一般聚集索引默认就是主键上面的索引）这种机制使得基于 PK 的查询速度非常快，因为直接定位的行记录。</li>
+</ul>
+<p>二级索引：</p>
+<p>又称普遍索引，辅助索引、非聚集索引 (no-clustered index)，非主键索引。</p>
+<p>b＋tree 树结构，然而二级索引的叶子节点不保存记录中的所有列，其叶子节点保存的是 &lt;健值，(记录) 地址 &gt;，非叶子节点存放的记录格式为 &lt; 键值，主键值，地址 &gt;。而聚集索引叶子节点保存保存记录中的所有列，非叶子节点保存的是下一层节点地址。</p>
+<p>例如：<br>有个 t 表 (id PK, name KEY, sex, flag)，这里的 id 是聚集索引，name 则是普通索引。</p>
+<p><img src="/images/20191122104141973.png" alt="在这里插入图片描述"></p>
+<p>聚集索引的 B + 树索引（id 是 PK，叶子节点<strong>存储行记录</strong>）：</p>
+<p><img src="/images/20191122104254730.png" alt="在这里插入图片描述"></p>
+<p>普通索引的 B + 树索引（name 是 KEY，叶子节点存储 PK 值，即 id）：</p>
+<p><img src="/images/2019112210430632.png" alt="在这里插入图片描述"></p>
+<p>普通索引因为无法直接定位行记录，其查询过程在通常情况下是需要扫描两遍索引树的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where name = &#x27;lisi&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这里的执行过程是这样的：</p>
+<p><img src="/images/20191122104340544.png" alt="在这里插入图片描述"></p>
+<p>粉红色的路径需要扫描两遍索引树，<strong>第一遍先通过普通索引定位到主键值 id=5，然后第二遍再通过聚集索引定位到具体行记录</strong>。这就是所谓的<strong>回表查询</strong>，即先定位主键值，再根据主键值定位行记录，性能相对于只扫描一遍聚集索引树的性能要低一些。</p>
+<p><strong>索引覆盖是一种避免回表查询的优化策略</strong>。具体的做法就是将要查询的数据作为索引列建立普通索引（可以是单列索引，也可以一个索引语句定义所有要查询的列，即联合索引），这样的话就可以直接返回索引中的的数据，不需要再通过聚集索引去定位行记录，避免了回表的情况发生。</p>
+<p>只扫描索引而无需回表的优点：</p>
+<ol>
+<li>索引条目通常远小于数据行大小，只需要读取索引，则 mysql 会极大地减少数据访问量。</li>
+<li>因为索引是按照列值顺序存储的，所以对于 IO 密集的范围查找会比随机从磁盘读取每一行数据的 IO 少很多。</li>
+<li>一些存储引擎如 myisam 在内存中只缓存索引，数据则依赖于操作系统来缓存，因此要访问数据需要一次系统调用</li>
+<li>innodb 的聚簇索引，覆盖索引对 innodb 表特别有用。(innodb 的二级索引在叶子节点中保存了行的主键值，所以如果二级主键能够覆盖查询，则可以避免对主键索引的二次查询)</li>
+</ol>
+<p>覆盖索引必须要存储索引列的值，而哈希索引、空间索引和全文索引不存储索引列的值，所以 <strong>mysql 只能用 B-tree 索引做覆盖索引。</strong></p>
+<p>当发起一个索引覆盖查询时，在 explain 的 extra 列可以看到 using index 的信息</p>
+<p><img src="/images/20190506163626632.png" alt="在这里插入图片描述"></p>
+<p>覆盖索引的坑：mysql 查询优化器会在执行查询前判断是否有一个索引能进行覆盖，假设索引覆盖了 where 条件中的字段，但不是整个查询涉及的字段，mysql5.5 和之前的版本也会回表获取数据行，尽管并不需要这一行且最终会被过滤掉。</p>
+<p><img src="/images/20190506163643347.png" alt="在这里插入图片描述"></p>
+<p>如上图则无法使用覆盖查询，原因：</p>
+<ul>
+<li>没有任何索引能够覆盖这个索引。因为查询从表中选择了所有的列，而没有任何索引覆盖了所有的列。</li>
+<li>mysql 不能在索引中执行 LIke 操作。mysql 能在索引中做最左前缀匹配的 like 比较，但是如果是通配符开头的 like 查询，存储引擎就无法做比较匹配。这种情况下 mysql 只能提取数据行的值而不是索引值来做比较</li>
+</ul>
+<p><strong>优化后 SQL：添加索引（artist,title,prod_id），使用了延迟关联 (延迟了对列的访问)</strong><br><img src="/images/20190506163706567.png" alt="在这里插入图片描述"><br>说明：在查询的第一阶段可以使用覆盖索引，在 from 子句中的子查询找到匹配的 prod_id，然后根据 prod_id 值在外层查询匹配获取需要的所有值。</p>
+<p>5.5 时 API 设计不允许 mysql 将过滤条件传到存储引擎层（是把数据从存储引擎拉到服务器层，在根据条件过滤），5.6 之后由于 ICP 这个特性改善了查询执行方式</p>
+<p>采用执行计划分析覆盖索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE a1</span><br><span class="line">(</span><br><span class="line">    id INT AUTO_INCREMENT PRIMARY KEY,</span><br><span class="line">    column_name VARCHAR(20),</span><br><span class="line">    column_type VARCHAR(20)</span><br><span class="line">);</span><br><span class="line">CREATE INDEX idx_a1_column_name ON a1(column_name);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/20191122105332847.png" alt="在这里插入图片描述"></p>
+<p>语句 1：它没有使用到索引（Extra：using where），意味着全表扫描，理论如此。（因为索引没覆盖到 select 中的列）</p>
+<p>语句 2：它使用了索引范围查找（type=range）（key=idx_a1_column_name）, 但是它使用 ** 索引方式为二级检索（Extra：Using index condition）** 还是会有一定的性能消耗的，也有解决办法：针对 select 的列创建联合索引。</p>
+<p><strong>查询走了索引 idx_a1_column_name，但是还需要根据二级索引检测出的结果中的主键 id 去进行回表查询。</strong></p>
+<p>语句 3：虽然是全匹配模糊查询，但是使用了索引覆盖（Extra：Using index）<br>因为普通索引中已经包含了主键 id 的值，不需要再进行回表查询。<br>所以性能比（Extra：Using index condition）的快。</p>
+<p>结论：</p>
+<ul>
+<li>using index ：使用覆盖索引的时候就会出现</li>
+<li>using where：未使用索引，需要全表查询</li>
+<li>using index condition：查找使用了索引，但是需要回表查询数据</li>
+<li>using index &amp; using where：查找使用了索引，但是需要的数据都在索引列中能找到，所以不需要回表查询数据。</li>
+</ul>
+<blockquote>
+<p>实验证明 <strong>using index &amp; using where 要优于 using index condition</strong>。</p>
+</blockquote>
+<h2 id="和-is-null-到底走不走索引"><a href="#和-is-null-到底走不走索引" class="headerlink" title="!= 和 is null 到底走不走索引"></a>!= 和 is null 到底走不走索引</h2><p>MySQL 中决定使不使用某个索引执行查询的依据很简单：就是成本够不够小。而不是是否在 WHERE 子句中用了 <code>IS NULL</code>、<code>IS NOT NULL</code>、<code>!=</code> 这些条件。</p>
+<blockquote>
+<p>简单来说：默认为 Null 的列，存在 Null 值会导致 mysql 优化器处理起来比较复杂，但是到底走不走索引，或者走那个索引，是要靠 mysql 优化器预先预估走那个索引成本比较低来决定的。</p>
+</blockquote>
+<h1 id="refenence"><a href="#refenence" class="headerlink" title="refenence"></a>refenence</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1704743">索引失效原理，终于有人讲明白了</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33589510/article/details/123038988">为什么范围后索引会失效 存储引擎不能使用索引中范围条件右边的列</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_47646267/article/details/109297186">Mysql 索引底层原理以及为什么范围之后全失效</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903921450745863">MySQL 中 IS NULL、IS NOT NULL、!= 不能用索引？胡扯！</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/w1014074794/article/details/89886068">mysql 覆盖索引详解 ——like 模糊全匹配中使用索引</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

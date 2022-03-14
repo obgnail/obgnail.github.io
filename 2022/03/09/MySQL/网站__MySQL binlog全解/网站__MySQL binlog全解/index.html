@@ -1,0 +1,974 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;MySQL-复制原理基础&quot;&gt;&lt;a href=&quot;#MySQL-复制原理基础&quot; class=&quot;headerlink&quot; title=&quot;MySQL 复制原理基础&quot;&gt;&lt;/a&gt;MySQL 复制原理基础&lt;/h1&gt;&lt;h2 id=&quot;binlog-文件&quot;&gt;&lt;a href=&quot;#binlog-文件&quot; class=&quot;headerlink&quot; title=&quot;binlog 文件&quot;&gt;&lt;/a&gt;binlog 文件&lt;/h2&gt;&lt;p&gt;binlog 文件主要包括："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>MySQL binlog全解 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/MySQL/" rel="tag">MySQL</a></div><div class="post-time">2022-03-09</div></div></div><div class="container post-header"><h1>MySQL binlog全解</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">MySQL 复制原理基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog-%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">binlog 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog-%E6%96%87%E4%BB%B6%E7%BB%84%E6%88%90"><span class="toc-number">1.2.</span> <span class="toc-text">binlog 文件组成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BINLOG-MAGIC"><span class="toc-number">1.2.1.</span> <span class="toc-text">BINLOG_MAGIC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event"><span class="toc-number">1.2.2.</span> <span class="toc-text">event</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-binlog-event-%E8%A7%A3%E6%9E%90-%E2%80%94%E2%80%94-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">MySQL binlog event 解析 —— 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#event-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">2.1.</span> <span class="toc-text">event 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.1.1.</span> <span class="toc-text">event 类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E7%B1%BB%E5%9E%8B%E5%90%AB%E4%B9%89"><span class="toc-number">2.1.2.</span> <span class="toc-text">event 类型含义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#event-%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">event 字节解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E7%BB%84%E7%BB%87%E6%9E%B6%E6%9E%84"><span class="toc-number">2.2.1.</span> <span class="toc-text">event 组织架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E5%85%AC%E5%85%B1%E5%A4%B4%E9%83%A8"><span class="toc-number">2.2.2.</span> <span class="toc-text">event 公共头部</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-%E5%B8%B8%E8%A7%81-binlog-event-%E8%A7%A3%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">MySQL 常见 binlog event 解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Format-description-event"><span class="toc-number">3.1.</span> <span class="toc-text">Format_description_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86"><span class="toc-number">3.1.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86"><span class="toc-number">3.1.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.1.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rotate-event"><span class="toc-number">3.2.</span> <span class="toc-text">Rotate_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-log-event"><span class="toc-number">3.3.</span> <span class="toc-text">Query_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-2"><span class="toc-number">3.3.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rows-query-log-event"><span class="toc-number">3.4.</span> <span class="toc-text">Rows_query_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-3"><span class="toc-number">3.4.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-3"><span class="toc-number">3.4.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Table-map-event"><span class="toc-number">3.5.</span> <span class="toc-text">Table_map_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-4"><span class="toc-number">3.5.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-4"><span class="toc-number">3.5.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-4"><span class="toc-number">3.5.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Write-rows-log-event"><span class="toc-number">3.6.</span> <span class="toc-text">Write_rows_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-5"><span class="toc-number">3.6.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-5"><span class="toc-number">3.6.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-5"><span class="toc-number">3.6.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Update-rows-log-event"><span class="toc-number">3.7.</span> <span class="toc-text">Update_rows_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-6"><span class="toc-number">3.7.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-6"><span class="toc-number">3.7.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-6"><span class="toc-number">3.7.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Delete-rows-log-event"><span class="toc-number">3.8.</span> <span class="toc-text">Delete_rows_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-7"><span class="toc-number">3.8.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-7"><span class="toc-number">3.8.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-7"><span class="toc-number">3.8.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Xid-event"><span class="toc-number">3.9.</span> <span class="toc-text">Xid_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-8"><span class="toc-number">3.9.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-8"><span class="toc-number">3.9.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-8"><span class="toc-number">3.9.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gtid-log-event"><span class="toc-number">3.10.</span> <span class="toc-text">Gtid_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-9"><span class="toc-number">3.10.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-9"><span class="toc-number">3.10.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-9"><span class="toc-number">3.10.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Previous-gtid-log-event"><span class="toc-number">3.11.</span> <span class="toc-text">Previous_gtid_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-10"><span class="toc-number">3.11.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-10"><span class="toc-number">3.11.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-10"><span class="toc-number">3.11.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anonymous-gtid-log-event"><span class="toc-number">3.12.</span> <span class="toc-text">Anonymous_gtid_log_event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post-header-%E9%83%A8%E5%88%86-11"><span class="toc-number">3.12.1.</span> <span class="toc-text">post-header 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-body-%E9%83%A8%E5%88%86-11"><span class="toc-number">3.12.2.</span> <span class="toc-text">event-body 部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-11"><span class="toc-number">3.12.3.</span> <span class="toc-text">字节解析示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-binlog-event-%E8%A7%A3%E6%9E%90%E5%AE%9E%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">MySQL binlog event 解析实例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9AINSERT-%E8%AF%AD%E5%8F%A5%E5%9C%A8-binlog-%E4%B8%AD-event-%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="toc-number">4.1.</span> <span class="toc-text">示例：INSERT 语句在 binlog 中 event 表现形式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ROW-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="toc-number">4.1.1.</span> <span class="toc-text">ROW 格式下表现形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#STATEMENT-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="toc-number">4.1.2.</span> <span class="toc-text">STATEMENT 格式下表现形式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9AUPDATE-%E8%AF%AD%E5%8F%A5%E5%9C%A8-binlog-%E4%B8%AD-event-%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">示例：UPDATE 语句在 binlog 中 event 表现形式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ROW-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">ROW 格式下表现形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#STATEMENT-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">STATEMENT 格式下表现形式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9ADELETE-%E8%AF%AD%E5%8F%A5%E5%9C%A8-binlog-%E4%B8%AD-event-%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="toc-number">4.3.</span> <span class="toc-text">示例：DELETE 语句在 binlog 中 event 表现形式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ROW-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F-2"><span class="toc-number">4.3.1.</span> <span class="toc-text">ROW 格式下表现形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#STATEMENT-%E6%A0%BC%E5%BC%8F%E4%B8%8B%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F-2"><span class="toc-number">4.3.2.</span> <span class="toc-text">STATEMENT 格式下表现形式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reference"><span class="toc-number">5.</span> <span class="toc-text">reference</span></a></li></ol></details></div><div class="container post-content"><h1 id="MySQL-复制原理基础"><a href="#MySQL-复制原理基础" class="headerlink" title="MySQL 复制原理基础"></a>MySQL 复制原理基础</h1><h2 id="binlog-文件"><a href="#binlog-文件" class="headerlink" title="binlog 文件"></a>binlog 文件</h2><p>binlog 文件主要包括：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql-bin.00000x</span><br><span class="line">mysql-bin.index</span><br></pre></td></tr></table></figure>
+
+<p><code>mysql-bin.index</code> 记录了数据库中还未被 purge 的 binlog 文件名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@10-10-90-177 binlog]# cat mysql-bin.index</span><br><span class="line">/home/mysql/data/mysqldata1/binlog/mysql-bin.000001</span><br><span class="line">/home/mysql/data/mysqldata1/binlog/mysql-bin.000002</span><br><span class="line">/home/mysql/data/mysqldata1/binlog/mysql-bin.000003</span><br></pre></td></tr></table></figure>
+
+<p><code>mysql-bin.00000x</code> 是真正的 binlog 文件 ，x 表示 binlog 文件的序号，这些二进制文件里面的数据是以二进制的形式保存，可以通过特殊的工具 (mysqlbinlog) 进行解析，获取人类可读的信息。</p>
+<h2 id="binlog-文件组成"><a href="#binlog-文件组成" class="headerlink" title="binlog 文件组成"></a>binlog 文件组成</h2><p>binlog 文件格式有以下特点：</p>
+<ol>
+<li>binlog 是由 event 组成，<strong>event 是 binlog 的最小组成单元</strong></li>
+<li> binlog 文件头部固定以 4 个字节开头，这四个字节称为 <code>BINLOG_MAGIC</code> (fe 62 69 6e)</li>
+<li>每个 binlog 文件以一个 Format_desc 类型的 event 开始</li>
+<li>每个 binlog 文件以一个 Rotate 类型的 event 结束（但也有特殊情况，当数据库出现宕机的情况，重新启动数据库会生成一个新的 binlog 文件，但是宕机之前的最新 binlog 文件中，不是以 ROTATE_EVENT 结束的）</li>
+<li>在 FORMAT_DESCRIPTION_EVENT 和 ROTATE_EVENT 之间是各种不同 event，每个 event 代表 Master 上不同的操作。</li>
+</ol>
+<h3 id="BINLOG-MAGIC"><a href="#BINLOG-MAGIC" class="headerlink" title="BINLOG_MAGIC"></a>BINLOG_MAGIC</h3><p>每个 binlog 文件以固定的 4 个字节（fe 62 69 6e）开始，以表示是一个 binlog 文件，在 Linux 环境下，我们可以通过 <code>hexdump</code> 命令查看 binlog 文件的字节组成。</p>
+<p><img src="/images/20191117093140.png" alt="img"></p>
+<h3 id="event"><a href="#event" class="headerlink" title="event"></a>event</h3><p>我们有两种方式可以查看，binlog 文件中的 event 组成方式。一种是在 MySQL 数据库中通过 <code>SHOW BINLOG EVENTS IN &#39;binlog-file-name&#39;</code> 的方式查看，还有一种就是通过 mysqlbinlog 工具查看 binlog 文件的组成。</p>
+<p>在数据库中查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : (none) 10:50:48&gt; show binlog events in &#x27;mysql-bin.000004&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-----------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                      |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-----------------------------------------------------------+</span><br><span class="line">| mysql-bin.000004 |  4 | Format_desc |  3306114 |        120 | Server ver: 5.6.34-log, Binlog ver: 4                    |</span><br><span class="line">| mysql-bin.000004 | 120 | Query      |  3306114 |        201 | BEGIN                                                    |</span><br><span class="line">| mysql-bin.000004 | 201 | Rows_query  |  3306114 |        265 | # insert into test1(`name`) values(&#x27;woqu&#x27;)                |</span><br><span class="line">| mysql-bin.000004 | 265 | Table_map  |  3306114 |        320 | table_id: 70 (gangshen.test1)                            |</span><br><span class="line">| mysql-bin.000004 | 320 | Write_rows  |  3306114 |        365 | table_id: 70 flags: STMT_END_F                            |</span><br><span class="line">| mysql-bin.000004 | 365 | Xid        |  3306114 |        396 | COMMIT /* xid=24 */                                      |</span><br><span class="line">| mysql-bin.000004 | 396 | Query      |  3306114 |        477 | BEGIN                                                    |</span><br><span class="line">| mysql-bin.000004 | 477 | Rows_query  |  3306114 |        556 | # update test1 set name=&#x27;woqu-change&#x27; where name = &#x27;woqu&#x27; |</span><br><span class="line">| mysql-bin.000004 | 556 | Table_map  |  3306114 |        611 | table_id: 70 (gangshen.test1)                            |</span><br><span class="line">| mysql-bin.000004 | 611 | Update_rows |  3306114 |        674 | table_id: 70 flags: STMT_END_F                            |</span><br><span class="line">| mysql-bin.000004 | 674 | Xid        |  3306114 |        705 | COMMIT /* xid=27 */                                      |</span><br><span class="line">| mysql-bin.000004 | 705 | Query      |  3306114 |        786 | BEGIN                                                    |</span><br><span class="line">| mysql-bin.000004 | 786 | Rows_query  |  3306114 |        854 | # delete from test1 where name = &#x27;woqu-change&#x27;            |</span><br><span class="line">| mysql-bin.000004 | 854 | Table_map  |  3306114 |        909 | table_id: 70 (gangshen.test1)                            |</span><br><span class="line">| mysql-bin.000004 | 909 | Delete_rows |  3306114 |        961 | table_id: 70 flags: STMT_END_F                            |</span><br><span class="line">| mysql-bin.000004 | 961 | Xid        |  3306114 |        992 | COMMIT /* xid=28 */                                      |</span><br><span class="line">| mysql-bin.000004 | 992 | Rotate      |  3306114 |        1039 | mysql-bin.000005;pos=4                                    |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-----------------------------------------------------------+</span><br><span class="line">17 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 <code>mysql-bin.000004</code> 文件中，是以一个 Format_desc 类型的 event 开头，以一个 Rotate 类型的 event 结尾，中间是各种类型 event，这是看 binlog 文件中 event 的组成，如果想要查看更详细的 event 信息，可以通过 mysqlbinlog 工具来查看</p>
+<p>mysqlbinlog 工具查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">/*!40019 SET @@session.max_insert_delayed_threads=0*/;</span><br><span class="line">/*!50003 SET @OLD_COMPLETION_TYPE=@@COMPLETION_TYPE,COMPLETION_TYPE=0*/;</span><br><span class="line">DELIMITER /*!*/;</span><br><span class="line"># at 4</span><br><span class="line">#171205 10:35:43 server id 3306114  end_log_pos 120 CRC32 0x7d7e496c    Start: binlog v 4, server v 5.6.34-log created 171205 10:35:43</span><br><span class="line"># at 120</span><br><span class="line">#171205 10:49:25 server id 3306114  end_log_pos 201 CRC32 0x24d309ef    Query  thread_id=2    exec_time=0    error_code=0</span><br><span class="line">SET TIMESTAMP=1512442165/*!*/;</span><br><span class="line">SET @@session.pseudo_thread_id=2/*!*/;</span><br><span class="line">SET @@session.foreign_key_checks=1, @@session.sql_auto_is_null=0, @@session.unique_checks=1, @@session.autocommit=1/*!*/;</span><br><span class="line">SET @@session.sql_mode=1075838976/*!*/;</span><br><span class="line">SET @@session.auto_increment_increment=2, @@session.auto_increment_offset=2/*!*/;</span><br><span class="line">/*!\C utf8 *//*!*/;</span><br><span class="line">SET @@session.character_set_client=33,@@session.collation_connection=33,@@session.collation_server=83/*!*/;</span><br><span class="line">SET @@session.lc_time_names=0/*!*/;</span><br><span class="line">SET @@session.collation_database=DEFAULT/*!*/;</span><br><span class="line">BEGIN</span><br><span class="line">/*!*/;</span><br><span class="line"># at 201</span><br><span class="line">#171205 10:49:25 server id 3306114  end_log_pos 265 CRC32 0xef0e9a3a    Rows_query</span><br><span class="line"># insert into test1(`name`) values(&#x27;woqu&#x27;)</span><br><span class="line"># at 265</span><br><span class="line">#171205 10:49:25 server id 3306114  end_log_pos 320 CRC32 0xf86a076e    Table_map: `gangshen`.`test1` mapped to number 70</span><br><span class="line"># at 320</span><br><span class="line">#171205 10:49:25 server id 3306114  end_log_pos 365 CRC32 0x653b8de4    Write_rows: table id 70 flags: STMT_END_F</span><br><span class="line">### INSERT INTO `gangshen`.`test1`</span><br><span class="line">### SET</span><br><span class="line">###  @1=4 /* INT meta=0 nullable=0 is_null=0 */</span><br><span class="line">###  @2=&#x27;woqu&#x27; /* VARSTRING(60) meta=60 nullable=1 is_null=0 */</span><br><span class="line"># at 365</span><br><span class="line">#171205 10:49:25 server id 3306114  end_log_pos 396 CRC32 0x53ca8e9d    Xid = 24</span><br><span class="line">COMMIT/*!*/;</span><br><span class="line">............</span><br><span class="line"># at 705</span><br><span class="line">#171205 10:50:20 server id 3306114  end_log_pos 786 CRC32 0x815b7a14    Query  thread_id=2    exec_time=0    error_code=0</span><br><span class="line">SET TIMESTAMP=1512442220/*!*/;</span><br><span class="line">BEGIN</span><br><span class="line">/*!*/;</span><br><span class="line"># at 786</span><br><span class="line">#171205 10:50:20 server id 3306114  end_log_pos 854 CRC32 0xc265e50d    Rows_query</span><br><span class="line"># delete from test1 where name = &#x27;woqu-change&#x27;</span><br><span class="line"># at 854</span><br><span class="line">#171205 10:50:20 server id 3306114  end_log_pos 909 CRC32 0x3a62ecaf    Table_map: `gangshen`.`test1` mapped to number 70</span><br><span class="line"># at 909</span><br><span class="line">#171205 10:50:20 server id 3306114  end_log_pos 961 CRC32 0x2bf4c689    Delete_rows: table id 70 flags: STMT_END_F</span><br><span class="line">### DELETE FROM `gangshen`.`test1`</span><br><span class="line">### WHERE</span><br><span class="line">###  @1=4 /* INT meta=0 nullable=0 is_null=0 */</span><br><span class="line">###  @2=&#x27;woqu-change&#x27; /* VARSTRING(60) meta=60 nullable=1 is_null=0 */</span><br><span class="line"># at 961</span><br><span class="line">#171205 10:50:20 server id 3306114  end_log_pos 992 CRC32 0x412de6a3    Xid = 28</span><br><span class="line">COMMIT/*!*/;</span><br><span class="line"># at 992</span><br><span class="line">#171205 10:50:23 server id 3306114  end_log_pos 1039 CRC32 0x8372f001  Rotate to mysql-bin.000005  pos: 4</span><br><span class="line">DELIMITER ;</span><br><span class="line"># End of log file</span><br><span class="line">ROLLBACK /* added by mysqlbinlog */;</span><br><span class="line">/*!50003 SET COMPLETION_TYPE=@OLD_COMPLETION_TYPE*/;</span><br><span class="line">/*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=0*/;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到第一个 event 是 FORMAT_DESCRIPTION_EVENT，记录了 binlog 的版本为 v4。最后一个 event，是 ROTATE_EVENT，它记录了下一个 binlog 文件的文件名以及对应的位置点。</p>
+<h1 id="MySQL-binlog-event-解析-——-基础知识"><a href="#MySQL-binlog-event-解析-——-基础知识" class="headerlink" title="MySQL binlog event 解析 —— 基础知识"></a>MySQL binlog event 解析 —— 基础知识</h1><p>这篇文章介绍 binlog 里面的内容，看看主从之间同步具体同步了哪些内容。</p>
+<h2 id="event-基础知识"><a href="#event-基础知识" class="headerlink" title="event 基础知识"></a>event 基础知识</h2><h3 id="event-类型"><a href="#event-类型" class="headerlink" title="event 类型"></a>event 类型</h3><p>5.6.34 版本的 MySQL 的 event 类型有：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">enum Log_event_type</span><br><span class="line">&#123; UNKNOWN_EVENT= 0,</span><br><span class="line">  START_EVENT_V3= 1,</span><br><span class="line">  QUERY_EVENT= 2,</span><br><span class="line">  STOP_EVENT= 3,</span><br><span class="line">  ROTATE_EVENT= 4,</span><br><span class="line">  INTVAR_EVENT= 5,</span><br><span class="line">  LOAD_EVENT= 6,</span><br><span class="line">  SLAVE_EVENT= 7,  </span><br><span class="line">  CREATE_FILE_EVENT= 8,</span><br><span class="line">  APPEND_BLOCK_EVENT= 9,</span><br><span class="line">  EXEC_LOAD_EVENT= 10,</span><br><span class="line">  DELETE_FILE_EVENT= 11,</span><br><span class="line">  NEW_LOAD_EVENT= 12,</span><br><span class="line">  RAND_EVENT= 13,</span><br><span class="line">  USER_VAR_EVENT= 14,</span><br><span class="line">  FORMAT_DESCRIPTION_EVENT= 15,</span><br><span class="line">  XID_EVENT= 16,</span><br><span class="line">  BEGIN_LOAD_QUERY_EVENT= 17,</span><br><span class="line">  EXECUTE_LOAD_QUERY_EVENT= 18,</span><br><span class="line">  TABLE_MAP_EVENT = 19,</span><br><span class="line">  PRE_GA_WRITE_ROWS_EVENT = 20,</span><br><span class="line">  PRE_GA_UPDATE_ROWS_EVENT = 21,</span><br><span class="line">  PRE_GA_DELETE_ROWS_EVENT = 22,</span><br><span class="line">  WRITE_ROWS_EVENT_V1 = 23,</span><br><span class="line">  UPDATE_ROWS_EVENT_V1 = 24,</span><br><span class="line">  DELETE_ROWS_EVENT_V1 = 25,</span><br><span class="line">  INCIDENT_EVENT= 26,</span><br><span class="line">  HEARTBEAT_LOG_EVENT= 27,</span><br><span class="line">  IGNORABLE_LOG_EVENT= 28,</span><br><span class="line">  ROWS_QUERY_LOG_EVENT= 29,</span><br><span class="line">  WRITE_ROWS_EVENT = 30,</span><br><span class="line">  UPDATE_ROWS_EVENT = 31,</span><br><span class="line">  DELETE_ROWS_EVENT = 32,</span><br><span class="line">  GTID_LOG_EVENT= 33,</span><br><span class="line">  ANONYMOUS_GTID_LOG_EVENT= 34,</span><br><span class="line">  PREVIOUS_GTIDS_LOG_EVENT= 35,</span><br><span class="line">  ENUM_END_EVENT /* end marker */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="event-类型含义"><a href="#event-类型含义" class="headerlink" title="event 类型含义"></a>event 类型含义</h3><p>介绍几个常见的 event 类型所对应的含义，对于不常见或者现在基本上已经不用了的 event 类型，这边不做过多的描述</p>
+<ul>
+<li><p><code>FORMAT_DESCRIPTION_EVENT</code>：每个 binlog 文件开头的一个 event。</p>
+</li>
+<li><p><code>ROTATE_EVENT</code>：当 MySQL 切换至新的 binlog 文件的时候，MySQL 会在旧的 binlog 文件中写入一个 ROTATE_EVENT，表示新的 binlog 文件的文件名，以及第一个偏移地址。当在数据库中执行 <code>FLUSH LOGS</code> 语句或者 binlog 文件的大小超过 max_binlog_size 就会切换新的 binlog 文件。</p>
+</li>
+<li><p><code>TABLE_MAP_EVENT</code>：</p>
+<ul>
+<li>只有在 binlog 文件是以 ROW 格式记录的时候才会使用。</li>
+<li>binlog 中记录的每个更改的记录之前都会有一个对应要操作的表的 TABLE_MAP_EVENT。TABLE_MAP_EVENT 中记录了表的定义（包括 database name,table name，字段定义），并且会将这个表的定义对应于一个数字，称为 table_id。</li>
+<li>设计 TABLE_MAP_EVENT 类型 event 的目的是为了当主库和从库之间有不同的表定义的时候，复制仍能进行。如果一个事务中操作了多个表，多行记录，在 binlog 中会将对多行记录的操作 event 进行分组，每组行记录操作 event 前面会出现对应表的 TABLE_MAP_EVENT。</li>
+</ul>
+</li>
+<li><p><code>QUERY_EVENT</code>：记录更新操作的语句。</p>
+</li>
+<li><p><code>WRITE_ROWS_EVENT</code>：在以 ROW 格式记录的 binlog 文件中，WRITE_ROWS_EVENT 记录了插入的行记录。</p>
+</li>
+<li><p><code>UPDATE_ROWS_EVENT</code>：在以 ROW 格式记录的 binlog 文件中，UPDATE_ROWS_EVENT 记录了更新的行记录。</p>
+</li>
+<li><p><code>DELETE_ROWS_EVENT</code>：在以 ROW 格式记录的 binlog 文件中，DELETE_ROWS_EVENT 记录了删除的行记录。</p>
+</li>
+</ul>
+<h2 id="event-字节解析"><a href="#event-字节解析" class="headerlink" title="event 字节解析"></a>event 字节解析</h2><p>在 MySQL 的发展过程中，一共出现过三个版本的 event 结构：</p>
+<ul>
+<li>v1: 在 MySQL 3.23 中使用</li>
+<li>v2: 在 MySQL4.0.2 至 4.1 中使用</li>
+<li>v4: 在 MySQL5.0 及以上版本中使用</li>
+</ul>
+<p>因为目前 MySQL 数据库版本基本上都是 5.0 版本以上的，所以只介绍 v4 版本的 event 架构。</p>
+<h3 id="event-组织架构"><a href="#event-组织架构" class="headerlink" title="event 组织架构"></a>event 组织架构</h3><p>v4 版本的 event 主要由 <code>event header</code> 部分和 <code>post-header</code> 以及 <code>variable part</code> 部分组成。</p>
+<p>event 字节结构表示如下图：</p>
+<p><img src="/images/image-20220309160154958.png" alt="image-20220309160154958"></p>
+<ul>
+<li><p><code>event header</code>：每个 event 都会有的部分，并且每个 event header 的格式是相同的，固定为 19 个字节长度，在 event header 中记录了 event_length、type_code 等信息，可以表示 event 的长度，event 的类型，下一个 event 的偏移位置等信息，都可以再 event header 中获取到。</p>
+</li>
+<li><p><code>extra_headers</code>：指定了除公共头部外的内容，但是目前版本的 binlog 格式中，这一部分不存在的。</p>
+</li>
+<li><p><code>fixed_part</code>：也被称做 post-header，每个类型的 event 之间的 post-header 部分是不相同的，但是同一类型的 event 占用的 post-header 字节数是一样的。每个类型的 event 占用多少字节为 post-header，这个定义在了 Format_description_event 中。<code>x:y</code> 中 x 表示该部分从多少字节偏移开始，y 表示该部分占用多少字节。</p>
+</li>
+<li><p><code>variable part</code>：是 event 真实记录具体信息的部分。</p>
+</li>
+<li><p>timestamp 记录的是该事务记录的时间</p>
+</li>
+<li><p>type_code，记录的是该 event 的类型，具体的 event 类型，见上面的 Log_event_type</p>
+</li>
+<li><p>server_id，记录的是执行该 event 的 server 的 server_id 号</p>
+</li>
+<li><p>event_length，该 event 的长度，共占多少字节</p>
+</li>
+<li><p>next_position，下一个 event 在 binlog 文件中的偏移位置</p>
+</li>
+<li><p>flag: 标记</p>
+</li>
+<li><p>extra_headers，额外的头部内容，现在是空的，不存在</p>
+</li>
+<li><p>fixed part 有些时候也被称作 post-header</p>
+</li>
+<li><p>variable part 有些时候也被称作 payload 或者 body</p>
+</li>
+</ul>
+<h3 id="event-公共头部"><a href="#event-公共头部" class="headerlink" title="event 公共头部"></a>event 公共头部</h3><p>从上述的 event 结构中，可以看到，每个 event 的 header 部分的内容结构是一致的，所有的 event，都会记录这些信息，这是所有的 event 的公共头部。所以我们把这块内容单独拿出来讲。</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>timestamp</td>
+<td>4 字节</td>
+<td>时间戳</td>
+</tr>
+<tr>
+<td>type_code</td>
+<td>1 字节</td>
+<td>记录 event 类型</td>
+</tr>
+<tr>
+<td>server_id</td>
+<td>4 字节</td>
+<td>记录 event 生成的 MySQL 所对应的 server_id</td>
+</tr>
+<tr>
+<td>event_length</td>
+<td>4 字节</td>
+<td>这个 event 的字节长度，包括 event header</td>
+</tr>
+<tr>
+<td>next_position</td>
+<td>4 字节</td>
+<td>下一个 event 在 binlog 文件中的偏移位置</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>2 字节</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>示例：我们拿一个 Write_rows_event 的字节内容作为示例，解析 event 内容:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">b6 <span class="number">1</span>e <span class="number">1</span>c <span class="number">5</span>a   <span class="comment">//timestamp:小端存储，将16进制转换成10进制为1511792310，将时间戳转换为时间为2017-11-27 22:18:30</span></span><br><span class="line"><span class="number">1</span>e            <span class="comment">//type_code:event类型，0x1e转换为10进制为30，查看Log_event_type中，看到30的为WRITE_ROWS_EVENT</span></span><br><span class="line"><span class="number">0</span>f <span class="number">27</span> <span class="number">00</span> <span class="number">00</span>   <span class="comment">//server_id :小端存储，将16进制转换为10进制为9999</span></span><br><span class="line"><span class="number">31</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>   <span class="comment">//event_length :小端存储，将16进制转换为10进制为49</span></span><br><span class="line">b1 <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>   <span class="comment">//next_position:小端存储，将16进制转换为10进制为945</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span>         <span class="comment">//flags:</span></span><br><span class="line">body部分省略</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="MySQL-常见-binlog-event-解析"><a href="#MySQL-常见-binlog-event-解析" class="headerlink" title="MySQL 常见 binlog event 解析"></a>MySQL 常见 binlog event 解析</h1><p>具体来解析 binlog 中常见的 event，了解其具体代表的意义。本文会介绍 Format_description_event、Rotate_event、Query_log_event、Rows_query_log_event 几种 event。</p>
+<p><img src="/images/1679665-20191029150402950-1427650324.jpg" alt="img"></p>
+<h2 id="Format-description-event"><a href="#Format-description-event" class="headerlink" title="Format_description_event"></a>Format_description_event</h2><p>Format_description_event 是每个 binlog 文件开头的一个描述信息的 event。</p>
+<h3 id="post-header-部分"><a href="#post-header-部分" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>binlog_version</td>
+<td>2 字节</td>
+<td>binlog 结构的版本，v1,v2,v4</td>
+</tr>
+<tr>
+<td>server_version</td>
+<td>50 字节</td>
+<td>MySQL server 的数据库版本</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>4 字节</td>
+<td>创建该 binlog 文件的时间，单位为秒</td>
+</tr>
+<tr>
+<td>header_length</td>
+<td>1 字节</td>
+<td>指定公共头部的长度，v4 版本中这个值一直为 19，说明其他所有的 event 的 extra_header 部分都是空，extra_header 长度为 header_length-19</td>
+</tr>
+<tr>
+<td>event_post_header_length</td>
+<td>variable size，跟各个版本支持的 event 类型总数一致</td>
+<td>每个 event 类型，占用一个字节，表示该 event 类型 post-header 部分的长度</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分"><a href="#event-body-部分" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><p>无</p>
+<h3 id="字节解析示例"><a href="#字节解析示例" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略</span><br><span class="line">04 00 //binlog_version :v4版本</span><br><span class="line">35 2e 36 2e 33 34 2d 6c 6f 67 </span><br><span class="line">00 00 00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 00 00 </span><br><span class="line">00 00 00 00 00 00 00 00 00 00 </span><br><span class="line">00 00 00 00 00 00 00 00 00 00  //mysql server version :16进制转换为ascii之后，值为5.6.34-log</span><br><span class="line">00 00 00 00 //timestamp:</span><br><span class="line">13 //header length :19,说明该版本的event类型公共头部长度都为19，extra_header长度为header_length-19</span><br><span class="line">38 0d 00 08 00 12 00 04 04 04 </span><br><span class="line">04 12 00 00 5c 00 04 1a 08 00 </span><br><span class="line">00 00 08 08 08 02 00 00 00 0a </span><br><span class="line">0a 0a 19 19 00 //event_post_header_len:各个类型event的post-header部分长度</span><br><span class="line">01 2e ef 23 e2</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Rotate-event"><a href="#Rotate-event" class="headerlink" title="Rotate_event"></a>Rotate_event</h2><p>当 MySQL 切换至新的 binlog 文件的时候，MySQL 会在旧的 binlog 文件中写入一个 ROTATE_EVENT，其内容包含新的 binlog 文件的文件名以及第一个偏移地址。当在数据库中执行 <code>FLUSH LOGS</code> 语句或者 binlog 文件的大小超过 max_binlog_size 参数设定的值就会切换新的 binlog 文件。</p>
+<h3 id="post-header-部分-1"><a href="#post-header-部分-1" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>next_binlog_po</td>
+<td>8 字节</td>
+<td>下一个 binlog 文件起始的偏移地址</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-1"><a href="#event-body-部分-1" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>next_binlog_filename</td>
+<td>variable string</td>
+<td>下一个 binlog 文件的文件名</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-1"><a href="#字节解析示例-1" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略</span><br><span class="line">04 00 00 00 00 00 00 00 //next_binlog_pos：下一个binlog的起始偏移地址,小端存储，16进制转换为10进制之后为4</span><br><span class="line">6d 79 73 71 6c 2d 62 69 6e 2e 30 30 30 30 30 32  //next_binlog_filename：下一个binlog的文件名,16进制转换为ascii之后，值为mysql-bin.000002</span><br><span class="line">b3 db 0b 9a checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Query-log-event"><a href="#Query-log-event" class="headerlink" title="Query_log_event"></a>Query_log_event</h2><p>记录更新操作的语句。</p>
+<h3 id="post-header-部分-2"><a href="#post-header-部分-2" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>thread_id</td>
+<td>4 字节</td>
+<td>小端存储，执行语句的线程 ID 号</td>
+</tr>
+<tr>
+<td>exec_time</td>
+<td>4 字节</td>
+<td>小端存储，语句执行的时间</td>
+</tr>
+<tr>
+<td>db_len</td>
+<td>1 字节</td>
+<td>database 名的长度</td>
+</tr>
+<tr>
+<td>error_code</td>
+<td>2 字节</td>
+<td>错误号</td>
+</tr>
+<tr>
+<td>status_vars_len</td>
+<td>2 字节</td>
+<td>小端存储，这部分，在 v1 和 v3 版本的 event 中是没有的，指定状态值的长度</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-2"><a href="#event-body-部分-2" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>status_vars</td>
+<td>status_vars_len 字节</td>
+<td>记录状态值，具体的解析见下表</td>
+</tr>
+<tr>
+<td>database_name</td>
+<td>db_len+1 字节</td>
+<td>null-terminaled 类型的字符串，记录 database 的名字</td>
+</tr>
+<tr>
+<td>query_statement</td>
+<td>不定</td>
+<td>执行的语句</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<p>status_vars 的解析是，一个字节表示状态的类型，在类型之后按照类型不同紧接着不同字节数的状态值，状态的类型一共有：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">enum Query_event_status_vars</span><br><span class="line">  &#123;</span><br><span class="line">    Q_FLAGS2_CODE= 0,</span><br><span class="line">    Q_SQL_MODE_CODE,</span><br><span class="line">    Q_CATALOG_CODE,</span><br><span class="line">    Q_AUTO_INCREMENT,</span><br><span class="line">    Q_CHARSET_CODE,</span><br><span class="line">    Q_TIME_ZONE_CODE,</span><br><span class="line">    Q_CATALOG_NZ_CODE,</span><br><span class="line">    Q_LC_TIME_NAMES_CODE,</span><br><span class="line">    Q_CHARSET_DATABASE_CODE,</span><br><span class="line">    Q_TABLE_MAP_FOR_UPDATE_CODE,</span><br><span class="line">    Q_MASTER_DATA_WRITTEN_CODE,</span><br><span class="line">    Q_INVOKER,</span><br><span class="line">    Q_UPDATED_DB_NAMES,</span><br><span class="line">    Q_MICROSECONDS,</span><br><span class="line">    Q_COMMIT_TS,</span><br><span class="line">    Q_COMMIT_TS2,</span><br><span class="line">    Q_EXPLICIT_DEFAULTS_FOR_TIMESTAMP</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>不同状态对应的状态值的字节数</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>对用的 code</th>
+<th>状态值占用的字节数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Q_FLAGS2_CODE</td>
+<td>0</td>
+<td>4 字节</td>
+</tr>
+<tr>
+<td>Q_SQL_MODE_CODE</td>
+<td>1</td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td>Q_CATALOG_CODE</td>
+<td>2</td>
+<td>第一个字节表示 catalog_len，总共 catalog_len+2 个字节</td>
+</tr>
+<tr>
+<td>Q_AUTO_INCREMENT</td>
+<td>3</td>
+<td>4 字节</td>
+</tr>
+<tr>
+<td>Q_CHARSET_CODE</td>
+<td>4</td>
+<td>6 字节</td>
+</tr>
+<tr>
+<td>Q_TIME_ZONE_CODE</td>
+<td>5</td>
+<td>第一个字节表示 time_zone_len，总共 time_zone_len+1 字节</td>
+</tr>
+<tr>
+<td>Q_CATALOG_NZ_CODE</td>
+<td>6</td>
+<td>第一个字节表示 catalog_len，总共 catalog_len+1 个字节</td>
+</tr>
+<tr>
+<td>Q_LC_TIME_NAMES_CODE</td>
+<td>7</td>
+<td>2 字节</td>
+</tr>
+<tr>
+<td>Q_CHARSET_DATABASE_CODE</td>
+<td>8</td>
+<td>2 字节</td>
+</tr>
+<tr>
+<td>Q_TABLE_MAP_FOR_UPDATE_CODE</td>
+<td>9</td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td>Q_MASTER_DATA_WRITTEN_CODE</td>
+<td>10</td>
+<td>4 字节</td>
+</tr>
+<tr>
+<td>Q_INVOKER</td>
+<td>11</td>
+<td>包含两部分，一部分是 user，一部分是 host。user 部分，一个字节表示 user_len，接着 user_len 个字节表示 user。host 部分，一个字节表示 host_len，接着 host_len 个字节表示 host。</td>
+</tr>
+<tr>
+<td>Q_UPDATED_DB_NAMES</td>
+<td>12</td>
+<td></td>
+</tr>
+<tr>
+<td>Q_MICROSECONDS</td>
+<td>13</td>
+<td>3 字节</td>
+</tr>
+<tr>
+<td>Q_COMMIT_TS</td>
+<td>14</td>
+<td></td>
+</tr>
+<tr>
+<td>Q_COMMIT_TS2</td>
+<td>15</td>
+<td></td>
+</tr>
+<tr>
+<td>Q_EXPLICIT_DEFAULTS_FOR_TIMESTAMP</td>
+<td>16</td>
+<td>1 字节</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-2"><a href="#字节解析示例-2" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>执行语句:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">insert into test1(`name`) values(&#x27;beijing&#x27;);</span><br><span class="line"></span><br><span class="line">root@localhost : (none) 06:07:04&gt; show binlog events  in &#x27;mysql-bin.000012&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------+</span><br><span class="line">| mysql-bin.000012 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4                      |</span><br><span class="line">| mysql-bin.000012 | 120 | Query      |    330619 |        212 | BEGIN                                                      |</span><br><span class="line">| mysql-bin.000012 | 212 | Intvar      |    330619 |        244 | INSERT_ID=28                                                |</span><br><span class="line">| mysql-bin.000012 | 244 | Query      |    330619 |        374 | use `gangshen`; insert into test1(`name`) values(&#x27;beijing&#x27;) |</span><br><span class="line">| mysql-bin.000012 | 374 | Xid        |    330619 |        405 | COMMIT /* xid=2961 */                                      |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------+</span><br><span class="line">5 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>使用 mysqlbinlog 工具解析 binlog 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># at 244</span><br><span class="line">#180105 15:20:29 server id 330619  end_log_pos 244 CRC32 0xf41b5eaa    Intvar</span><br><span class="line">SET INSERT_ID=28/*!*/;</span><br><span class="line">#180105 15:20:29 server id 330619  end_log_pos 374 CRC32 0x98379221    Query    thread_id=106404    exec_time=0    error_code=0</span><br><span class="line">use `gangshen`/*!*/;</span><br><span class="line">SET TIMESTAMP=1515183629/*!*/;</span><br><span class="line">insert into test1(`name`) values(&#x27;beijing&#x27;)</span><br><span class="line">/*!*/;</span><br><span class="line"># at 374</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。。</span><br><span class="line">a4 9f 01 00 //thread_id:执行语句的线程号，小端存储，转换为16进制为106404</span><br><span class="line">00 00 00 00 //exec_time:执行语句的时间，小端存储，转化为16进制为0</span><br><span class="line">08 //db_len:database name的长度，转换为10进制为8</span><br><span class="line">00 00 //error_code:错误号，小端存储，转换为10进制为0</span><br><span class="line">2a 00 //status_vars_len:状态值的长度，小端存储，转换为10进制为42，表示后续的42个字节为状态值的内容</span><br><span class="line">//status_vars_len</span><br><span class="line">00 00 00 00 00 </span><br><span class="line">01 00 00 20 40 00 00 00 00</span><br><span class="line">06 03 73 74 64 </span><br><span class="line">03 02 00 02 00</span><br><span class="line">04 21 00 21 00 53 00 </span><br><span class="line">0c 01 67 61 6e 67 73 68 65 6e 00 </span><br><span class="line">67 61 6e 67 73 68 65 6e 00 //database_name:数据库名称，null-terminaled string类型 ，转换为字符串为gangshen</span><br><span class="line">696e7365727420696e746f20746573743128606e616d6560292076616c75657328276265696a696e672729 //query_statement:执行的语句，转换为字符串为:insert into test1(`name`) values(&#x27;beijing&#x27;)</span><br><span class="line">21 92 37 98//checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Rows-query-log-event"><a href="#Rows-query-log-event" class="headerlink" title="Rows_query_log_event"></a>Rows_query_log_event</h2><p>在 row 格式复制模式下，将 query 以语句形式记录。在 5.6.2 版本之后，可以通过设置 <code>binlog_rows_query_log_events</code> 参数来控制在 row 格式复制模式下是否需要将 query 语句记录到 binlog 文件中。</p>
+<h3 id="post-header-部分-3"><a href="#post-header-部分-3" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><p>无</p>
+<h3 id="event-body-部分-3"><a href="#event-body-部分-3" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>str_len</td>
+<td>1 字节</td>
+<td>记录语句长度</td>
+</tr>
+<tr>
+<td>statement</td>
+<td>str_len 字节</td>
+<td>对应的语句</td>
+</tr>
+<tr>
+<td>checksum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-3"><a href="#字节解析示例-3" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>执行语句:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : gangshen 09:11:56&gt; insert into test1(`name`) values(&#x27;rows_query&#x27;);</span><br><span class="line">Query OK, 1 row affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 09:12:06&gt; show binlog events in &#x27;mysql-bin.000014&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                            |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------+</span><br><span class="line">| mysql-bin.000014 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4            |</span><br><span class="line">| mysql-bin.000014 | 120 | Query      |    330619 |        201 | BEGIN                                            |</span><br><span class="line">| mysql-bin.000014 | 201 | Rows_query  |    330619 |        271 | # insert into test1(`name`) values(&#x27;rows_query&#x27;) |</span><br><span class="line">| mysql-bin.000014 | 271 | Table_map  |    330619 |        326 | table_id: 98 (gangshen.test1)                    |</span><br><span class="line">| mysql-bin.000014 | 326 | Write_rows  |    330619 |        377 | table_id: 98 flags: STMT_END_F                  |</span><br><span class="line">| mysql-bin.000014 | 377 | Xid        |    330619 |        408 | COMMIT /* xid=3032 */                            |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------+</span><br><span class="line">6 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>使用 mysqlbinlog 工具解析 binlog 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># at 201</span><br><span class="line">#180108  9:12:06 server id 330619  end_log_pos 271 CRC32 0xdc68af8a    Rows_query</span><br><span class="line"># insert into test1(`name`) values(&#x27;rows_query&#x27;)</span><br><span class="line"># at 271</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。</span><br><span class="line">2e //str_len:执行语句的长度，转换为10进制为46</span><br><span class="line">696e7365727420696e746f20746573743128606e616d6560292076616c7565732827726f77735f71756572792729  //statement:执行的语句，转换为ascii为insert into test1(`name`) values(&#x27;rows_query&#x27;)</span><br><span class="line">8a af 68 dc //check_sum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Table-map-event"><a href="#Table-map-event" class="headerlink" title="Table_map_event"></a>Table_map_event</h2><p>TABLE_MAP_EVENT 只有在 binlog 文件是以 ROW 格式记录的时候，才会使用。binlog 中记录的每个更改的记录之前都会有一个对应要操作的表的 TABLE_MAP_EVENT。TABLE_MAP_EVENT 中记录了表的定义（包括 database name,table name，字段定义），并且会将这个表的定义对应于一个数字，称为 table_id。设计 TABLE_MAP_EVENT 类型 event 的目的是为了当主库和从库之间有不同的表定义的时候，复制仍能进行。如果一个事务中操作了多个表，多行记录，在 binlog 中会将对多行记录的操作 event 进行分组，每组行记录操作 event 前面会出现对应表的 TABLE_MAP_EVENT。</p>
+<h3 id="post-header-部分-4"><a href="#post-header-部分-4" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table_id</td>
+<td>6 字节</td>
+<td>操作的表的 table_id</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>2 字节</td>
+<td>目前版本没有用，都是 0，保留给之后的版本使用</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-4"><a href="#event-body-部分-4" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>database_name</td>
+<td>1 个字节表示字符串长度，之后接一个 null-terminated 类型的字符串</td>
+<td></td>
+</tr>
+<tr>
+<td>table_name</td>
+<td>1 个字节表示字符串长度，之后接一个 null-terminated 类型的字符串</td>
+<td>操作的表的名称</td>
+</tr>
+<tr>
+<td>column_count</td>
+<td>packed integer (1 或 3 或 4 或 9 个字节)</td>
+<td>对应表中的字段数量</td>
+</tr>
+<tr>
+<td>column_type</td>
+<td>每个字段占用一个字节，字段类型定义在 enum_field_types 中</td>
+<td>字段类型</td>
+</tr>
+<tr>
+<td>metadata_length</td>
+<td>packed integer (1 或 3 或 4 或 9 个字节)</td>
+<td>对应字段的元数据信息的长度</td>
+</tr>
+<tr>
+<td>metadata</td>
+<td>根据 enum_field_type 中的定义确定不同字段的元数据，如果某字段类型没有元数据，则不记录</td>
+<td>每个字段的元数据信息，比如 varchar 字段需要记录最长长度</td>
+</tr>
+<tr>
+<td>null_bits</td>
+<td>int ((column_count + 7)/8) 字节</td>
+<td>一个 bit 表示一个字段是否可以为 NULL，顺序是：第一个字节的最低位开始向最高位增长，之后第二个字节的最低位开始向最高位增长，以此类推</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-4"><a href="#字节解析示例-4" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>建表语句:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `test1` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `name` varchar(20) COLLATE utf8_bin DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_bin</span><br></pre></td></tr></table></figure>
+
+<p>二进制内容解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略</span><br><span class="line">6c 00 00 00 00 00 //table_id :小端存储，16进制转换为10进制为108</span><br><span class="line">01 00 //flag :</span><br><span class="line">08 67 61 6e 67 73 68 65 6e 00 //database_name :1个字节是字符串长度，后接一个null-terminated string 第一个字节表示字符串长度为8，后面内容将16进制转换为ascii字符为gangshen</span><br><span class="line">05 74 65 73 74 31 00 //table_name: 1个字节是字符串长度，后接一个null-terminated string第一个字节表示字符串长度为5，后面内容将16进制转换为ascii字符为test1</span><br><span class="line">02 //columns count :packet integer类型，转换之后，数值为2 表示表中有两个字段</span><br><span class="line">03 0f //column type : 一个字节表示一个字段的类型，字段类型定义在enum enum_field_types ，分别是一个int类型以及一个varchar类型,具体的字段类型及记录格式等信息可以查看《MySQL中Rows_event中字段表示》文档</span><br><span class="line">02 //metadata length : packet integer类型,转换之后，数值为2，表示记录表中的metadata内容占用2个字节</span><br><span class="line">14 00 // :varchar 的max length 因为int没有metadata所以跳过</span><br><span class="line">02 //null_bits :int((column_count + 7) / 8)个字节 一个bit表示一个字段是否可以为null </span><br><span class="line">52 53 4a d9 checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Write-rows-log-event"><a href="#Write-rows-log-event" class="headerlink" title="Write_rows_log_event"></a>Write_rows_log_event</h2><p>在以 ROW 格式记录的 binlog 文件中，Write_rows_log_event 记录了插入的行记录。</p>
+<h3 id="post-header-部分-5"><a href="#post-header-部分-5" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table_id</td>
+<td>6 字节</td>
+<td>操作的表的 table_id</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>2 字节</td>
+<td>目前版本没有用，都是 0，保留给之后的版本使用</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-5"><a href="#event-body-部分-5" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>var_header</td>
+<td>2 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>m_width</td>
+<td>packed integer (1 或 3 或 4 或 9 个字节)</td>
+<td>表中字段数量</td>
+</tr>
+<tr>
+<td>before_image</td>
+<td>(m_width + 7)/8 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>after_bitmap_bits</td>
+<td>(m_with +7)/8 字节</td>
+<td>字段值是否为空标记，一个 bit 表示一个字段是否为 NULL，顺序是：第一个字节的最低位开始向最高位增长，之后第二个字节的最低位开始向最高位增长，以此类推</td>
+</tr>
+<tr>
+<td>after_column_content</td>
+<td>不定</td>
+<td>按照顺序每个字段的内容</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-5"><a href="#字节解析示例-5" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>建表语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `int_table` (</span><br><span class="line">  `col1` tinyint(4) DEFAULT NULL,</span><br><span class="line">  `col2` smallint(6) DEFAULT NULL,</span><br><span class="line">  `col3` mediumint(9) DEFAULT NULL,</span><br><span class="line">  `col4` int(11) DEFAULT NULL,</span><br><span class="line">  `col5` bigint(20) DEFAULT NULL,</span><br><span class="line">  `col6` tinyint(1) DEFAULT NULL</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin</span><br></pre></td></tr></table></figure>
+
+<p>插入数据:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into int_table values(1,11,111,1111,11111,true);</span><br></pre></td></tr></table></figure>
+
+<p>对应 Write_rows_log_event 使用 mysqlbinlog 解析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># at 340</span><br><span class="line">#180103 10:21:20 server id 330619  end_log_pos 395 CRC32 0x50177e10    Write_rows: table id 100 flags: STMT_END_F</span><br><span class="line">### INSERT INTO `gangshen`.`int_table`</span><br><span class="line">### SET</span><br><span class="line">###  @1=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @2=11 /* SHORTINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @3=111 /* MEDIUMINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @4=1111 /* INT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @5=11111 /* LONGINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @6=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line"># at 395</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略</span><br><span class="line">64 00 00 00 00 00 //table_id: 小端存储，16进制转换为10进制为100</span><br><span class="line">01 00 //flag:</span><br><span class="line">02 00 //var header length :小端存储，16进制转换为10进制为2</span><br><span class="line">06 //m_width :packet integer，表示表中字段数量</span><br><span class="line">ff //before image: (m_width + 7) / 8字节</span><br><span class="line">c0 //after_bitmap_bits :insert插入之后的记录的NULL标记，表中六个字段，插入的值都不为NULL</span><br><span class="line">//after_columns_content：insert插入记录之后的记录值</span><br><span class="line">01 </span><br><span class="line">0b 00 </span><br><span class="line">6f 00 00 </span><br><span class="line">57 04 00 00</span><br><span class="line">67 2b 00 00 00 00 00 00</span><br><span class="line">01 </span><br><span class="line">10 7e 17 50 //checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Update-rows-log-event"><a href="#Update-rows-log-event" class="headerlink" title="Update_rows_log_event"></a>Update_rows_log_event</h2><p>在以 ROW 格式记录的 binlog 文件中，Update_rows_log_event 记录了更新的行记录。</p>
+<h3 id="post-header-部分-6"><a href="#post-header-部分-6" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table_id</td>
+<td>6 字节</td>
+<td>操作的表的 table_id</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>2 字节</td>
+<td>目前版本没有用，都是 0，保留给之后的版本使用</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-6"><a href="#event-body-部分-6" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>var_header</td>
+<td>2 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>m_width</td>
+<td>packed integer (1 或 3 或 4 或 9 个字节)</td>
+<td>表中字段数量</td>
+</tr>
+<tr>
+<td>before_image</td>
+<td>(m_with+7)/8 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>after_image</td>
+<td>(m_with+7)/8 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>before_bitmap_bits</td>
+<td>(m_with+7)/8 字节</td>
+<td>before_bitmap_bits 记录的是 update 更改之前的记录中，字段值是否为 NULL 标记，一个 bit 表示一个字段是否为 NULL，顺序是：第一个字节的最低位开始向最高位开始增长，之后第二个字节的最低位开始向最高位增长，以此类推</td>
+</tr>
+<tr>
+<td>before_column_content</td>
+<td>不定</td>
+<td>update 更新之前的记录值，按照顺序每个字段的内容</td>
+</tr>
+<tr>
+<td>after_bitmap_bits</td>
+<td>(m_with+7)/8 字节</td>
+<td>after_bitmap_bits 记录的是 update 更改之前的记录中，字段值是否为 NULL 标记，一个 bit 表示一个字段是否为 NULL，顺序是：第一个字节的最低位开始向最高位开始增长，之后第二个字节的最低位开始向最高位增长，以此类推</td>
+</tr>
+<tr>
+<td>after_column_content</td>
+<td>不定</td>
+<td>update 更新之后的记录值，按照顺序每个字段的内容</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-6"><a href="#字节解析示例-6" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>建表语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `int_table` (</span><br><span class="line">  `col1` tinyint(4) DEFAULT NULL,</span><br><span class="line">  `col2` smallint(6) DEFAULT NULL,</span><br><span class="line">  `col3` mediumint(9) DEFAULT NULL,</span><br><span class="line">  `col4` int(11) DEFAULT NULL,</span><br><span class="line">  `col5` bigint(20) DEFAULT NULL,</span><br><span class="line">  `col6` tinyint(1) DEFAULT NULL</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin</span><br></pre></td></tr></table></figure>
+
+<p>插入数据并更新:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : gangshen 10:20:49&gt; insert into int_table values(1,11,111,1111,11111,true);</span><br><span class="line">Query OK, 1 row affected (0.03 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 10:21:20&gt; update int_table set col2=22,col3=222 where col1=1;</span><br><span class="line">Query OK, 1 row affected (0.02 sec)</span><br><span class="line">Rows matched: 1  Changed: 1  Warnings: 0</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 10:21:44&gt; select * from int_table;</span><br><span class="line">+------+------+------+------+-------+------+</span><br><span class="line">| col1 | col2 | col3 | col4 | col5  | col6 |</span><br><span class="line">+------+------+------+------+-------+------+</span><br><span class="line">|    1 |  22 |  222 | 1111 | 11111 |    1 |</span><br><span class="line">+------+------+------+------+-------+------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>对应 Update_rows_log_event 使用 mysqlbinlog 解析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># at 644</span><br><span class="line">#180103 10:41:37 server id 9999  end_log_pos 720 CRC32 0x5576b52f    Update_rows: table id 231 flags: STMT_END_F</span><br><span class="line">### UPDATE `gangshen`.`int_table`</span><br><span class="line">### WHERE</span><br><span class="line">###  @1=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @2=11 /* SHORTINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @3=111 /* MEDIUMINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @4=1111 /* INT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @5=11111 /* LONGINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @6=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">### SET</span><br><span class="line">###  @1=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @2=22 /* SHORTINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @3=222 /* MEDIUMINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @4=1111 /* INT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @5=11111 /* LONGINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @6=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line"># at 720</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。</span><br><span class="line">64 00 00 00 00 00 //table_id: 小端存储，16进制转换为10进制为100</span><br><span class="line">01 00 //flag:</span><br><span class="line">02 00 //var header length :小端存储，16进制转换为10进制为2</span><br><span class="line">06 //m_width :packet integer，表示表中字段数量</span><br><span class="line">ff //before image: (m_width + 7) / 8字节</span><br><span class="line">ff //after image: (m_width + 7) / 8字节</span><br><span class="line">c0 //before_bitmap_bits :update更新之前记录中NULL标记，表中六个字段，值都不为NULL</span><br><span class="line">//before_column_content接下来是update更新之前记录的值</span><br><span class="line">01 </span><br><span class="line">0b 00</span><br><span class="line">6f 00 00 </span><br><span class="line">57 04 00 00</span><br><span class="line">67 2b 00 00 00 00 00 00</span><br><span class="line">01 </span><br><span class="line">c0 //after_bitmap_bits :update更新之后记录中NULL标记，表中六个字段，值都不为NULL</span><br><span class="line">//after_column_content接下来是update更新之前记录的值</span><br><span class="line">01 </span><br><span class="line">16 00 </span><br><span class="line">de 00 00 </span><br><span class="line">57 04 00 00</span><br><span class="line">67 2b 00 00 00 00 00 00 </span><br><span class="line">01 </span><br><span class="line">16 a3 de bb //checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Delete-rows-log-event"><a href="#Delete-rows-log-event" class="headerlink" title="Delete_rows_log_event"></a>Delete_rows_log_event</h2><p>在以 ROW 格式记录的 binlog 文件中，Delete_rows_log_event 记录了删除的行记录。</p>
+<h3 id="post-header-部分-7"><a href="#post-header-部分-7" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table_id</td>
+<td>6 字节</td>
+<td>操作的表的 table_id</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>2 字节</td>
+<td>目前版本没有用，都是 0，保留给之后的版本使用</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-7"><a href="#event-body-部分-7" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>var_header</td>
+<td>2 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>m_width</td>
+<td>packed integer (1 或 3 或 4 或 9 个字节)</td>
+<td>表中字段数量</td>
+</tr>
+<tr>
+<td>after_image</td>
+<td>(m_width + 7)/8 字节</td>
+<td></td>
+</tr>
+<tr>
+<td>before_bitmap_bits</td>
+<td>(m_with+7)/8 字节</td>
+<td>before_bitmap_bits 记录的是 update 更改之前的记录中，字段值是否为 NULL 标记，一个 bit 表示一个字段是否为 NULL，顺序是：第一个字节的最低位开始向最高位开始增长，之后第二个字节的最低位开始向最高位增长，以此类推</td>
+</tr>
+<tr>
+<td>before_column_content</td>
+<td>不定</td>
+<td>delete 删除之前的记录值，按照顺序每个字段的内容</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-7"><a href="#字节解析示例-7" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>建表语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `int_table` (</span><br><span class="line">  `col1` tinyint(4) DEFAULT NULL,</span><br><span class="line">  `col2` smallint(6) DEFAULT NULL,</span><br><span class="line">  `col3` mediumint(9) DEFAULT NULL,</span><br><span class="line">  `col4` int(11) DEFAULT NULL,</span><br><span class="line">  `col5` bigint(20) DEFAULT NULL,</span><br><span class="line">  `col6` tinyint(1) DEFAULT NULL</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin</span><br></pre></td></tr></table></figure>
+
+<p>删除数据:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from int_table where col1=1;</span><br></pre></td></tr></table></figure>
+
+<p>对应 Delete_rows_log_event 使用 mysqlbinlog 解析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># at 320</span><br><span class="line">#180103 14:24:54 server id 330619  end_log_pos 375 CRC32 0xce4818b2    Delete_rows: table id 100 flags: STMT_END_F</span><br><span class="line">### DELETE FROM `gangshen`.`int_table`</span><br><span class="line">### WHERE</span><br><span class="line">###  @1=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @2=22 /* SHORTINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @3=222 /* MEDIUMINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @4=1111 /* INT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @5=11111 /* LONGINT meta=0 nullable=1 is_null=0 */</span><br><span class="line">###  @6=1 /* TINYINT meta=0 nullable=1 is_null=0 */</span><br><span class="line"># at 375</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略</span><br><span class="line">64 00 00 00 00 00 //table_id: 小端存储，16进制转换为10进制为100</span><br><span class="line">01 00 //flag:</span><br><span class="line">02 00 //var header length :小端存储，16进制转换为10进制为2</span><br><span class="line">06 //m_width :packet integer，表示表中字段数量</span><br><span class="line">ff //after image: (m_width + 7) / 8字节</span><br><span class="line">c0 //before_bitmap_bits :delete删除之前的记录的NULL标记，表中六个字段，值都不为NULL</span><br><span class="line">//before_columns_content：delete删除记录之前的记录值</span><br><span class="line">01 </span><br><span class="line">16 00 </span><br><span class="line">de 00 00 </span><br><span class="line">57 04 00 00</span><br><span class="line">67 2b 00 00 00 00 00 00</span><br><span class="line">01 </span><br><span class="line">10 7e 17 50 //checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Xid-event"><a href="#Xid-event" class="headerlink" title="Xid_event"></a>Xid_event</h2><p>表示支持内部 XA 的存储引擎上的事务提交。正常的事务是通过 <code>QUERY_EVENT</code> 来发送一个 <code>BEGIN</code> 语句并且通过 <code>QUERY_EVENT</code> 来发送一个 <code>COMMIT</code> 语句（如果事务回滚则发送的是 <code>ROLLBACK</code>）实现。</p>
+<h3 id="post-header-部分-8"><a href="#post-header-部分-8" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><p>无</p>
+<h3 id="event-body-部分-8"><a href="#event-body-部分-8" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>xid</td>
+<td>8 字节</td>
+<td>xid 号，小端存储，无符号数</td>
+</tr>
+<tr>
+<td>check_sum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-8"><a href="#字节解析示例-8" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>使用 mysqlbinlog 工具解析对应的 Xid_event</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># at 1691</span><br><span class="line">#180103 15:30:45 server id 330619  end_log_pos 1722 CRC32 0x8816181c    Xid = 2698</span><br><span class="line">COMMIT/*!*/;</span><br><span class="line"># at 1722</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略...</span><br><span class="line">8a 0a 00 00 00 00 00 00 //xid,因为是小端存储，所以实际为0x 00 00 00 00 00 00 0a 8a，转换为10进制为2698</span><br><span class="line">1c 18 16 88 //check_sum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Gtid-log-event"><a href="#Gtid-log-event" class="headerlink" title="Gtid_log_event"></a>Gtid_log_event</h2><p>开启 GTID 模式的场景下，每次事务 commit 提交时，MySQL 会在 binlog 中事务开始写入一个 Gtid_log_event，记录该事务的 GTID 事务号。</p>
+<h3 id="post-header-部分-9"><a href="#post-header-部分-9" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>commit_flag</td>
+<td>1 字节</td>
+<td>标记事务是否提交，非 0 为已提交，为 0 表示，事务未提交</td>
+</tr>
+<tr>
+<td>sid</td>
+<td>16 字节</td>
+<td>记录 GTID 中 uuid 的部分（不记录‘-’），每 1 个字节表示 uuid 中 2 个字符</td>
+</tr>
+<tr>
+<td>gno</td>
+<td>8 字节</td>
+<td>小端存储，GTID 中的事务号部分</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-9"><a href="#event-body-部分-9" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>checksum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-9"><a href="#字节解析示例-9" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>使用 mysqlbinlog 工具解析 binlog 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># at 191</span><br><span class="line">#180109 18:31:08 server id 330619  end_log_pos 239 CRC32 0xd20330e8    GTID [commit=yes]</span><br><span class="line">SET @@SESSION.GTID_NEXT= &#x27;89fbcea2-da65-11e7-a851-fa163e618bac:5&#x27;/*!*/;</span><br><span class="line"># at 239</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。。</span><br><span class="line">01 //commit_flag:标记事务是否已提交，表示已提交</span><br><span class="line">89 fb ce a2 da 65 11 e7 a8 51 fa 16 3e 61 8b ac //sid:GTID中uuid部分，转换为uuid为89fbcea2-da65-11e7-a851-fa163e618bac</span><br><span class="line">05 00 00 00 00 00 00 00 //gno:GTID中的事务号，小端存储，转换为10进制为5</span><br><span class="line">e8 30 03 d2 //checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Previous-gtid-log-event"><a href="#Previous-gtid-log-event" class="headerlink" title="Previous_gtid_log_event"></a>Previous_gtid_log_event</h2><p>在开启 GTID 的模式下，每个 binlog 文件开始会记录一个 Previous_gtid_log_event，Previous_gtid_log_event 中会包含当前 binlog 之前所有 binlog 中的 GTID 集合。</p>
+<h3 id="post-header-部分-10"><a href="#post-header-部分-10" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n_sids</td>
+<td>8 字节</td>
+<td>小端存储，记录之后有几个 GTID 中的 uuid 号</td>
+</tr>
+<tr>
+<td>sid</td>
+<td>16 字节</td>
+<td>记录 GTID 中 uuid 的部分（不记录‘-’），每 1 个字节表示 uuid 中 2 个字符</td>
+</tr>
+<tr>
+<td>n_intervals</td>
+<td>8 字节</td>
+<td>记录每个 sid 对应有几个间隔，指的是事务号间隔</td>
+</tr>
+<tr>
+<td>start</td>
+<td>8 字节</td>
+<td>每个事务号间隔中的起始事务号</td>
+</tr>
+<tr>
+<td>end</td>
+<td>8 字节</td>
+<td>每个事务号间隔中的结束事务号 + 1</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-10"><a href="#event-body-部分-10" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>checksum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-10"><a href="#字节解析示例-10" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>使用 mysqlbinlog 工具解析 binlog 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># at 120</span><br><span class="line">#180111 14:10:27 server id 330619  end_log_pos 279 CRC32 0x94a92478    Previous-GTIDs</span><br><span class="line"># 89fbcea2-da65-11e7-a851-fa163e618bac:1-5:999:1050-1052,</span><br><span class="line"># aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:1-2:5-7</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。</span><br><span class="line">02 00 00 00 00 00 00 00 //n_sids:记录之后有几个GTID中的uuid号，小端存储，转换为10进制为2，表后后续有2个uuid号</span><br><span class="line">89 fb ce a2 da 65 11 e7 a8 51 fa 16 3e 61 8b ac //sid:GTID中的uuid号转换为uuid为89fbcea2-da65-11e7-a851-fa163e618bac</span><br><span class="line">03 00 00 00 00 00 00 00 //n_intervals:对应的sid中中对应几个事务号间隔，小端存储，转换为10进制为3，表示有3个事务号间隔</span><br><span class="line">01 00 00 00 00 00 00 00 //start:事务号间隔中的起始事务号，小端存储，转换为10进制为1</span><br><span class="line">06 00 00 00 00 00 00 00 //end:事务号间隔中的结束事务号+1，小端存储，转换为10进制为6，实际的间隔结束事务号为5</span><br><span class="line">e7 03 00 00 00 00 00 00 //start:事务号间隔中的起始事务号，小端存储，转换为10进制为999</span><br><span class="line">e8 03 00 00 00 00 00 00 //end:事务号间隔中的结束事务号+1，小端存储，转换为10进制为1000，实际的间隔结束事务号为999</span><br><span class="line">1a 04 00 00 00 00 00 00 //start:事务号间隔中的起始事务号，小端存储，转换为10进制为1050</span><br><span class="line">1d 04 00 00 00 00 00 00 //end:事务号间隔中的结束事务号+1，小端存储，转换为10进制为1053，实际的间隔结束事务号为1052</span><br><span class="line">aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa //sid:GTID中的uuid号转换为uuid为aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</span><br><span class="line">02 00 00 00 00 00 00 00 //n_intervals:对应的sid中中对应几个事务号间隔，小端存储，转换为10进制为2，表示有2个事务号间隔</span><br><span class="line">01 00 00 00 00 00 00 00 //start:事务号间隔中的起始事务号，小端存储，转换为10进制为1</span><br><span class="line">03 00 00 00 00 00 00 00 //end:事务号间隔中的结束事务号+1，小端存储，转换为10进制为3，实际的间隔结束事务号为2</span><br><span class="line">05 00 00 00 00 00 00 00 //start:事务号间隔中的起始事务号，小端存储，转换为10进制为5</span><br><span class="line">08 00 00 00 00 00 00 00 //end:事务号间隔中的结束事务号+1，小端存储，转换为10进制为8，实际的间隔结束事务号为7</span><br><span class="line">78 24 a9 94 //checksum</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Anonymous-gtid-log-event"><a href="#Anonymous-gtid-log-event" class="headerlink" title="Anonymous_gtid_log_event"></a>Anonymous_gtid_log_event</h2><p>MySQL 在 binlog 中记录每一个匿名事务之前会记录一个 Anonymous_gtid_log_event 表示接下来的事务是一个匿名事务。 <strong>注意：因为在 5.6.34 中并不会产生 Anonymous_gtid_log_event，所以以下内容是基于 5.7.19 版本解析</strong></p>
+<h3 id="post-header-部分-11"><a href="#post-header-部分-11" class="headerlink" title="post-header 部分"></a>post-header 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>gtid_flags</td>
+<td>1 字节</td>
+<td>记录 binlog 格式，如果 gtid_flags 值为 1，表示 binlog 中可能有以 statement 方式记录的 binlog，如果为 0 表示，binlog 中只有以 row 格式记录的 binlog</td>
+</tr>
+<tr>
+<td>sid</td>
+<td>16 字节</td>
+<td>记录 GTID 中 uuid 的部分（不记录‘-’），每 1 个字节表示 uuid 中 2 个字符</td>
+</tr>
+<tr>
+<td>gno</td>
+<td>8 字节</td>
+<td>小端存储，GTID 中的事务号部分</td>
+</tr>
+<tr>
+<td>logical_timestamp_typecode</td>
+<td>1 字节</td>
+<td>判断是否有 last_commit 和 sequence_no，在 logical_tmiestamp_typecode=2 的情况下，有 last_commit 和 sequence_no</td>
+</tr>
+<tr>
+<td>last_commit</td>
+<td>8 字节</td>
+<td>小端存储，上次提交的事务号</td>
+</tr>
+<tr>
+<td>sequence_no</td>
+<td>8 字节</td>
+<td>小端存储，本次提交的序列号</td>
+</tr>
+</tbody></table>
+<h3 id="event-body-部分-11"><a href="#event-body-部分-11" class="headerlink" title="event-body 部分"></a>event-body 部分</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字节数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>checksum</td>
+<td>4 字节</td>
+<td>校验码</td>
+</tr>
+</tbody></table>
+<h3 id="字节解析示例-11"><a href="#字节解析示例-11" class="headerlink" title="字节解析示例"></a>字节解析示例</h3><p>使用 mysqlbinlog 工具解析 binlog 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#180109 10:53:54 server id 9999  end_log_pos 5681 CRC32 0x46be0639    Anonymous_GTID    last_committed=20    sequence_number=21    rbr_only=yes</span><br><span class="line">/*!50718 SET TRANSACTION ISOLATION LEVEL READ COMMITTED*//*!*/;</span><br><span class="line">SET @@SESSION.GTID_NEXT= &#x27;ANONYMOUS&#x27;/*!*/;</span><br><span class="line"># at 5681</span><br></pre></td></tr></table></figure>
+
+<p>解析二进制文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">公共头部部分省略。。。</span><br><span class="line">00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 //sid:</span><br><span class="line">00 00 00 00 00 00 00 00 //gno:</span><br><span class="line">02 //logical_timestamp_typecode:判断是否有last_commit和sequence_no，在logical_tmiestamp_typecode=2的情况下，有last_commit和sequence_no，所以这边的话，后续有last_commit和sequence_no部分的内容</span><br><span class="line">14 00 00 00 00 00 00 00 //last_commit:上次提交的事务号，小端存储，转换为10机制为20</span><br><span class="line">15 00 00 00 00 00 00 00 //sequence_no:本次提交的序列号，小端存储，转换为10进制为21</span><br><span class="line">39 06 be 46 //checksum:校验码</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="MySQL-binlog-event-解析实例"><a href="#MySQL-binlog-event-解析实例" class="headerlink" title="MySQL binlog event 解析实例"></a>MySQL binlog event 解析实例</h1><p>进行实际 binlog 的解析，看看常见的 insert、update、delete 语句在 binlog 中存储的形式。</p>
+<h2 id="示例：INSERT-语句在-binlog-中-event-表现形式"><a href="#示例：INSERT-语句在-binlog-中-event-表现形式" class="headerlink" title="示例：INSERT 语句在 binlog 中 event 表现形式"></a>示例：INSERT 语句在 binlog 中 event 表现形式</h2><p>下面，我们就看一下一条 INSERT 语句在会产生哪些类型的 event，这些 event 在数据库中查看是怎么样的，在 binlog 文件中查看是怎么样的。</p>
+<h3 id="ROW-格式下表现形式"><a href="#ROW-格式下表现形式" class="headerlink" title="ROW 格式下表现形式"></a>ROW 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 ROW 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : gangshen 09:34:02&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 09:34:22&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                  |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 09:34:32&gt; insert into test1(`name`) values(&#x27;woqutech&#x27;);</span><br><span class="line">Query OK, 1 row affected (0.03 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 09:36:01&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                          |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+------------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4          |</span><br><span class="line">| mysql-bin.000001 | 120 | Query      |    330619 |        201 | BEGIN                                          |</span><br><span class="line">| mysql-bin.000001 | 201 | Rows_query  |    330619 |        269 | # insert into test1(`name`) values(&#x27;woqutech&#x27;) |</span><br><span class="line">| mysql-bin.000001 | 269 | Table_map  |    330619 |        324 | table_id: 70 (gangshen.test1)                  |</span><br><span class="line">| mysql-bin.000001 | 324 | Write_rows  |    330619 |        373 | table_id: 70 flags: STMT_END_F                |</span><br><span class="line">| mysql-bin.000001 | 373 | Xid        |    330619 |        404 | COMMIT /* xid=13 */                            |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+------------------------------------------------+</span><br><span class="line">6 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中，我们可以看到 <code>insert into test1(</code>name<code>) values(&#39;woqutech&#39;);</code> 语句，在 binlog 日志文件中转换成了 5 个 event 存储，分别为 Query,Rows_query,Table_map,Write_rows,Xid 类型的 event，这些 event 中，Query event 表示一个更新语句的开始，Rows_query event 记录了更新语句的语句内容，Table_map event 中记录了 insert 语句操作的表的信息，Write_rows event 记录了真实更新的记录的内容，最后一个 Xid event 中表示 COMMIT 操作。</p>
+<p>在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<p>可以看到通过 mysqlbinlog 工具查看 binlog 文件，可以看到每个 event 中更加详细的内容。</p>
+<h3 id="STATEMENT-格式下表现形式"><a href="#STATEMENT-格式下表现形式" class="headerlink" title="STATEMENT 格式下表现形式"></a>STATEMENT 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 STATEMENT 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : gangshen 04:31:35&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      143 |</span><br><span class="line">| mysql-bin.000002 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 04:31:48&gt; show binlog events in &#x27;mysql-bin.000002&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                  |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| mysql-bin.000002 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 04:32:02&gt; insert into test1(`name`) values(&#x27;woqu112233&#x27;);</span><br><span class="line">Query OK, 1 row affected (0.05 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 04:32:29&gt; show binlog events in &#x27;mysql-bin.000002&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                          |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------+</span><br><span class="line">| mysql-bin.000002 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4                          |</span><br><span class="line">| mysql-bin.000002 | 120 | Query      |    330619 |        212 | BEGIN                                                          |</span><br><span class="line">| mysql-bin.000002 | 212 | Intvar      |    330619 |        244 | INSERT_ID=8                                                    |</span><br><span class="line">| mysql-bin.000002 | 244 | Query      |    330619 |        377 | use `gangshen`; insert into test1(`name`) values(&#x27;woqu112233&#x27;) |</span><br><span class="line">| mysql-bin.000002 | 377 | Xid        |    330619 |        408 | COMMIT /* xid=17 */                                            |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------+</span><br><span class="line">5 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中我们可以看到 <code>insert into test1(</code>name<code>) values(&#39;woqu112233&#39;);</code> 这个 insert 语句转换成了 4 个 event，分别是 Query,Intvar,Quert,Xid4 个 event。第一个 Query 的 event 表示语句开始执行，第二个 Intvar 的 event，是因为表结构中的 id 字段定义的是 auto_increment，这个 Intvar event 是对自增的主键生成主键值的，接着的 Query 的 event 就是真实执行的语句了，最后一个 Xid 表示语句的提交。 在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<h2 id="示例：UPDATE-语句在-binlog-中-event-表现形式"><a href="#示例：UPDATE-语句在-binlog-中-event-表现形式" class="headerlink" title="示例：UPDATE 语句在 binlog 中 event 表现形式"></a>示例：UPDATE 语句在 binlog 中 event 表现形式</h2><p>下面，我们就看一下一条 UPDATE 语句在会产生哪些类型的 event，这些 event 在数据库中查看是怎么样的，在 binlog 文件中查看是怎么样的。</p>
+<h3 id="ROW-格式下表现形式-1"><a href="#ROW-格式下表现形式-1" class="headerlink" title="ROW 格式下表现形式"></a>ROW 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 ROW 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; update test1 set name=&#x27;woqutech_new&#x27; where name=&#x27;woqutech&#x27;;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line">Rows matched: 1  Changed: 1  Warnings: 0</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4                  |</span><br><span class="line">| mysql-bin.000001 | 120 | Query      |      9999 |        196 | BEGIN                                                        |</span><br><span class="line">| mysql-bin.000001 | 196 | Rows_query  |      9999 |        278 | # update test1 set name=&#x27;woqutech_new&#x27; where name=&#x27;woqutech&#x27; |</span><br><span class="line">| mysql-bin.000001 | 278 | Table_map  |      9999 |        333 | table_id: 70 (gangshen.test1)                                |</span><br><span class="line">| mysql-bin.000001 | 333 | Update_rows |      9999 |        401 | table_id: 70 flags: STMT_END_F                              |</span><br><span class="line">| mysql-bin.000001 | 401 | Xid        |      9999 |        432 | COMMIT /* xid=16 */                                          |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+--------------------------------------------------------------+</span><br><span class="line">6 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中，我们可以看到 <code>update test1 set name=&#39;woqutech_new&#39; where name=&#39;woqutech&#39;;</code> 语句，在 binlog 日志文件中转换成了 5 个 event 存储，分别为 Query,Rows_query,Table_map,Update_rows,Xid 类型的 event，这些 event 中，Query event 表示一个更新语句的开始，Rows_query event 记录了更新语句的语句内容，Table_map event 中记录了 insert 语句操作的表的信息，Update_rows event 记录了真实更新的记录的内容，最后一个 Xid event 中表示 COMMIT 操作。</p>
+<p>在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<p>可以看到通过 mysqlbinlog 工具查看 binlog 文件，可以看到每个 event 中更加详细的内容。</p>
+<h3 id="STATEMENT-格式下表现形式-1"><a href="#STATEMENT-格式下表现形式-1" class="headerlink" title="STATEMENT 格式下表现形式"></a>STATEMENT 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 STATEMENT 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; update test1 set name=&#x27;woqutech_new&#x27; where name=&#x27;woqutech&#x27;;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line">Rows matched: 1  Changed: 1  Warnings: 0</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                                      |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4                                |</span><br><span class="line">| mysql-bin.000001 | 120 | Query      |      9999 |        207 | BEGIN                                                                      |</span><br><span class="line">| mysql-bin.000001 | 207 | Query      |      9999 |        347 | use `gangshen`; update test1 set name=&#x27;woqutech_new&#x27; where name=&#x27;woqutech&#x27; |</span><br><span class="line">| mysql-bin.000001 | 347 | Xid        |      9999 |        378 | COMMIT /* xid=46 */                                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+----------------------------------------------------------------------------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中我们可以看到 <code>update test1 set name=&#39;woqutech_new&#39; where name=&#39;woqutech&#39;;</code> 这个 insert 语句转换成了 3 个 event，分别是 Query,Quert,Xid4 个 event。第一个 Query 的 event 表示语句开始执行，接着的 Query 的 event 就是真实执行的语句了，最后一个 Xid 表示语句的提交。 在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<h2 id="示例：DELETE-语句在-binlog-中-event-表现形式"><a href="#示例：DELETE-语句在-binlog-中-event-表现形式" class="headerlink" title="示例：DELETE 语句在 binlog 中 event 表现形式"></a>示例：DELETE 语句在 binlog 中 event 表现形式</h2><p>下面，我们就看一下一条 DELETE 语句在会产生哪些类型的 event，这些 event 在数据库中查看是怎么样的，在 binlog 文件中查看是怎么样的。</p>
+<h3 id="ROW-格式下表现形式-2"><a href="#ROW-格式下表现形式-2" class="headerlink" title="ROW 格式下表现形式"></a>ROW 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 ROW 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : gangshen 09:34:02&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">root@localhost : gangshen 09:34:22&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                  |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |    330619 |        120 | Server ver: 5.6.34-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; delete from test1 where id = 1;</span><br><span class="line">Query OK, 1 row affected (0.02 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4 |</span><br><span class="line">| mysql-bin.000001 | 120 | Query      |      9999 |        196 | BEGIN                                      |</span><br><span class="line">| mysql-bin.000001 | 196 | Rows_query  |      9999 |        250 | # delete from test1 where id = 1            |</span><br><span class="line">| mysql-bin.000001 | 250 | Table_map  |      9999 |        305 | table_id: 70 (gangshen.test1)              |</span><br><span class="line">| mysql-bin.000001 | 305 | Delete_rows |      9999 |        358 | table_id: 70 flags: STMT_END_F              |</span><br><span class="line">| mysql-bin.000001 | 358 | Xid        |      9999 |        389 | COMMIT /* xid=27 */                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">6 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中，我们可以看到 <code>delete from test1 where id = 1;</code> 语句，在 binlog 日志文件中转换成了 5 个 event 存储，分别为 Query,Rows_query,Table_map,Delete_rows,Xid 类型的 event，这些 event 中，Query event 表示一个更新语句的开始，Rows_query event 记录了更新语句的语句内容，Table_map event 中记录了 insert 语句操作的表的信息，Delete_rows event 记录了真实更新的记录的内容，最后一个 Xid event 中表示 COMMIT 操作。</p>
+<p>在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<p>可以看到通过 mysqlbinlog 工具查看 binlog 文件，可以看到每个 event 中更加详细的内容。</p>
+<h3 id="STATEMENT-格式下表现形式-2"><a href="#STATEMENT-格式下表现形式-2" class="headerlink" title="STATEMENT 格式下表现形式"></a>STATEMENT 格式下表现形式</h3><p>以下显示内容是在 MySQL-5.6.34 版本上，且 binlog 日志记录格式为 STATEMENT 模式的情况下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name        | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |      120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                        |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4 |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; delete from test1 where name = &#x27;woqutech_new&#x27;;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show binlog events in &#x27;mysql-bin.000001&#x27;;</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------------------------+</span><br><span class="line">| Log_name        | Pos | Event_type  | Server_id | End_log_pos | Info                                                          |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------------------------+</span><br><span class="line">| mysql-bin.000001 |  4 | Format_desc |      9999 |        120 | Server ver: 5.6.34-debug-log, Binlog ver: 4                  |</span><br><span class="line">| mysql-bin.000001 | 120 | Query      |      9999 |        207 | BEGIN                                                        |</span><br><span class="line">| mysql-bin.000001 | 207 | Query      |      9999 |        334 | use `gangshen`; delete from test1 where name = &#x27;woqutech_new&#x27; |</span><br><span class="line">| mysql-bin.000001 | 334 | Xid        |      9999 |        365 | COMMIT /* xid=58 */                                          |</span><br><span class="line">+------------------+-----+-------------+-----------+-------------+---------------------------------------------------------------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从数据库中我们可以看到 <code>delete from test1 where name = &#39;woqutech_new&#39;;</code> 这个 insert 语句转换成了 3 个 event，分别是 Query,Quert,Xid4 个 event。第一个 Query 的 event 表示语句开始执行，接着的 Query 的 event 就是真实执行的语句了，最后一个 Xid 表示语句的提交。 在数据库中查看 binlog 文件内容可以很直观的看到，event 的类型以及主要内容，那我们接着来看看，在 binlog 文件中，通过 mysqlbinlog 工具可以看到的具体内容是什么样的。</p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053441298439">MySQL Binlog (一)——MySQL 复制原理基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053445492750">MySQL Binlog (四)—— MySQL binlog event 解析 —— 基础知识</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053449687048">MySQL Binlog (五)——MySQL 常见 binlog event 解析（上）</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053449687047">MySQL Binlog (六)——MySQL 常见 binlog event 解析（中）</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053449703432">MySQL Binlog (七)——MySQL 常见 binlog event 解析（下）</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904053453881357">MySQL Binlog (十一)——MySQL binlog event 解析实例</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
