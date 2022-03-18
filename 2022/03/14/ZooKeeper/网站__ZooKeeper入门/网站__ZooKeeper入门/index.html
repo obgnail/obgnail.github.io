@@ -1,0 +1,393 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;什么是ZooKeeper？&quot;&gt;&lt;a href=&quot;#什么是ZooKeeper？&quot; class=&quot;headerlink&quot; title=&quot;什么是ZooKeeper？&quot;&gt;&lt;/a&gt;什么是ZooKeeper？&lt;/h2&gt;&lt;p&gt;Zookeeper是一个&lt;strong&gt;分布式协调服务&lt;/strong&gt;的开源框架。主要用来&lt;strong&gt;解决分布式集群中应用系统的一致性问题&lt;/strong&gt;，例如怎样避免同时操作同一数据造成脏读的问题。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ZooKeeper入门 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></div><div class="post-time">2022-03-14</div></div></div><div class="container post-header"><h1>ZooKeeper入门</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFZooKeeper%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">什么是ZooKeeper？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">ZooKeeper的数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">监听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6"><span class="toc-number">4.</span> <span class="toc-text">ZooKeeper工作机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E4%B8%80%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="toc-number">4.1.</span> <span class="toc-text">统一配置管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E4%B8%80%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.2.</span> <span class="toc-text">统一命名服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">4.3.</span> <span class="toc-text">分布式锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81"><span class="toc-number">4.4.</span> <span class="toc-text">集群状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper%E9%9B%86%E7%BE%A4%E8%A7%92%E8%89%B2"><span class="toc-number">5.</span> <span class="toc-text">ZooKeeper集群角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeepe%E7%89%B9%E7%82%B9"><span class="toc-number">6.</span> <span class="toc-text">ZooKeepe特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E5%99%A8%E5%8E%9F%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">监听器原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E5%86%99%E6%95%B0%E6%8D%AE%E5%85%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">8.</span> <span class="toc-text">Zookeeper 写数据全流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E6%B7%B1%E5%85%A5%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">9.</span> <span class="toc-text">Zookeeper 深入数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">9.1.</span> <span class="toc-text">数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="toc-number">9.2.</span> <span class="toc-text">节点类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E5%B1%9E%E6%80%A7"><span class="toc-number">9.3.</span> <span class="toc-text">节点属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">10.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-Shell"><span class="toc-number">11.</span> <span class="toc-text">Zookeeper Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="toc-number">11.1.</span> <span class="toc-text">客户端连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shell-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">11.2.</span> <span class="toc-text">Shell 基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9"><span class="toc-number">11.2.1.</span> <span class="toc-text">创建节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E8%8A%82%E7%82%B9"><span class="toc-number">11.2.2.</span> <span class="toc-text">读取节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%8A%82%E7%82%B9"><span class="toc-number">11.2.3.</span> <span class="toc-text">更新节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%8A%82%E7%82%B9"><span class="toc-number">11.2.4.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#quota"><span class="toc-number">11.2.5.</span> <span class="toc-text">quota</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#listquota%EF%BC%9A%E5%88%97%E5%87%BA%E8%8A%82%E7%82%B9%E7%9A%84quota"><span class="toc-number">11.2.6.</span> <span class="toc-text">listquota：列出节点的quota</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#delquota%EF%BC%9A%E5%88%A0%E9%99%A4quota"><span class="toc-number">11.2.7.</span> <span class="toc-text">delquota：删除quota</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#history%EF%BC%9A%E5%88%97%E5%87%BA%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">11.2.8.</span> <span class="toc-text">history：列出历史命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#redo%EF%BC%9A%E9%87%8D%E6%96%B0%E6%89%A7%E8%A1%8C%E6%8C%87%E5%AE%9A%E7%BC%96%E5%8F%B7%E7%9A%84%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">11.2.9.</span> <span class="toc-text">redo：重新执行指定编号的历史命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-Watcher"><span class="toc-number">12.</span> <span class="toc-text">Zookeeper Watcher</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#watch%E6%9C%BA%E5%88%B6%E7%89%B9%E7%82%B9"><span class="toc-number">12.1.</span> <span class="toc-text">watch机制特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%8A%B6%E6%80%81%E5%92%8C%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-number">12.2.</span> <span class="toc-text">通知状态和事件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shell-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E7%BD%AEWatcher"><span class="toc-number">12.3.</span> <span class="toc-text">Shell 客户端设置Watcher</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper%E7%9A%84%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6"><span class="toc-number">13.</span> <span class="toc-text">Zookeeper的选举机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">13.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E6%96%B0%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE"><span class="toc-number">13.2.</span> <span class="toc-text">全新集群选举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E5%85%A8%E6%96%B0%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE"><span class="toc-number">13.3.</span> <span class="toc-text">非全新集群选举</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper%E7%9A%84%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8"><span class="toc-number">14.</span> <span class="toc-text">Zookeeper的典型应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85-%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-number">14.1.</span> <span class="toc-text">数据发布与订阅(配置中心)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1-Naming-Service"><span class="toc-number">14.2.</span> <span class="toc-text">命名服务(Naming Service)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81-1"><span class="toc-number">14.3.</span> <span class="toc-text">分布式锁</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reference"><span class="toc-number"></span> <span class="toc-text">reference</span></a></details></div><div class="container post-content"><h2 id="什么是ZooKeeper？"><a href="#什么是ZooKeeper？" class="headerlink" title="什么是ZooKeeper？"></a>什么是ZooKeeper？</h2><p>Zookeeper是一个<strong>分布式协调服务</strong>的开源框架。主要用来<strong>解决分布式集群中应用系统的一致性问题</strong>，例如怎样避免同时操作同一数据造成脏读的问题。</p>
+<p>可以用ZooKeeper来做：</p>
+<ul>
+<li>统一配置管理</li>
+<li>统一命名服务</li>
+<li>分布式锁</li>
+<li>集群管理</li>
+</ul>
+<p>使用分布式系统就无法避免对节点管理的问题(需要<strong>实时感知节点的状态、对节点进行统一管理</strong>等等)，而由于这些问题处理起来可能相对麻烦和提高了系统的复杂性，ZooKeeper作为一个能够通用解决这些问题的中间件就应运而生了。</p>
+<h2 id="ZooKeeper的数据结构"><a href="#ZooKeeper的数据结构" class="headerlink" title="ZooKeeper的数据结构"></a>ZooKeeper的数据结构</h2><p><strong>ZooKeeper本质上是一个分布式的小文件存储系统</strong>。提供基于类似于文件系统的目录树方式的数据存储，并且可以对树中的节点进行有效管理。从而用来维护和监控你存储的数据的状态变化。通过监控这些数据状态的变化，从而可以达到基于数据的集群管理。</p>
+<blockquote>
+<p>ZooKeeper nodes store their data in a hierarchical name space, much like a file system or a tree data structure</p>
+</blockquote>
+<p>ZooKeeper的数据结构，跟Unix文件系统非常类似，可以看做是一颗<strong>树</strong>，每个节点叫做<strong>ZNode</strong>。每一个节点可以通过<strong>路径</strong>来标识，结构图如下：（<strong>其实就是字典树</strong>）</p>
+<p><img src="/images/image-20210806155612764.png" alt="image-20210806155612764"></p>
+<p>ZooKeeper的节点我们称之为<strong>Znode</strong>，Znode分为<strong>两种</strong>类型：</p>
+<ul>
+<li>**短暂/临时(Ephemeral)**：当客户端和服务端断开连接后，所创建的Znode(节点)<strong>会自动删除</strong></li>
+<li>**持久(Persistent)**：当客户端和服务端断开连接后，所创建的Znode(节点)<strong>不会删除</strong></li>
+</ul>
+<p>ZooKeeper和Redis一样，也是C/S结构：</p>
+<p><img src="/images/image-20210806155651887.png" alt="image-20210806155651887"></p>
+<h2 id="监听器"><a href="#监听器" class="headerlink" title="监听器"></a>监听器</h2><p>ZooKeeper常见的监听场景有以下两项：</p>
+<ul>
+<li>监听Znode节点的<strong>数据变化</strong></li>
+<li>监听子节点的<strong>增减变化</strong></li>
+</ul>
+<p><img src="/images/image-20210806155717439.png" alt="image-20210806155717439"></p>
+<p><img src="/images/image-20210806155756062.png" alt="image-20210806155756062"></p>
+<h2 id="ZooKeeper工作机制"><a href="#ZooKeeper工作机制" class="headerlink" title="ZooKeeper工作机制"></a>ZooKeeper工作机制</h2><p>Zookeeper从设计模式角度来理解：是一个基于<strong>观察者模式</strong>设计的分布式服务管理框架。</p>
+<p>它负责存储和管理大家都关心的数据，然后接受观察者的注册，一旦这些数据的状态发生变化，Zookeeper就将负责通知已经在 Zookeeper上注册的那些观察者做出相应的反应。</p>
+<p><img src="/images/1593951954322.png" alt="1593951954322"></p>
+<h3 id="统一配置管理"><a href="#统一配置管理" class="headerlink" title="统一配置管理"></a>统一配置管理</h3><p>比如我们现在有三个系统A、B、C，他们有三份配置，分别是<code>ASystem.yml、BSystem.yml、CSystem.yml</code>，然后，这三份配置又非常类似，很多的配置项几乎都一样。</p>
+<p>此时，如果我们要改变其中一份配置项的信息，很可能其他两份都要改。并且，改变了配置项的信息<strong>很可能就要重启系统</strong></p>
+<p>于是，我们希望把<code>ASystem.yml、BSystem.yml、CSystem.yml</code>相同的配置项抽取出来成一份<strong>公用</strong>的配置<code>common.yml</code>，系统A、B、C都使用着这份配置，并且即便<code>common.yml</code>改了，也不需要系统A、B、C重启。</p>
+<p><img src="/images/image-20210806155829568.png" alt="image-20210806155829568"></p>
+<p>做法：我们可以将<code>common.yml</code>这份配置放在ZooKeeper的Znode节点中，<strong>系统A、B、C监听着这个Znode节点有无变更</strong>，如果变更了，<strong>及时</strong>响应。</p>
+<p><img src="/images/image-20210806155850468.png" alt="image-20210806155850468"></p>
+<h3 id="统一命名服务"><a href="#统一命名服务" class="headerlink" title="统一命名服务"></a>统一命名服务</h3><p>统一命名服务的理解其实跟<strong>域名</strong>一样，是我们为这某一部分的资源给它<strong>取一个名字</strong>，别人通过这个名字就可以拿到对应的资源。</p>
+<p>通过名称去访问旗下的IP。比如说，现在我有一个域名<code>www.java3y.com</code>，但我这个域名下有多台机器：</p>
+<ul>
+<li>192.168.1.1</li>
+<li>192.168.1.2</li>
+<li>192.168.1.3</li>
+<li>192.168.1.4</li>
+</ul>
+<p>别人访问<code>www.java3y.com</code>即可访问到我的机器，而不是通过IP去访问。</p>
+<p><img src="/images/image-20210806155921357.png" alt="image-20210806155921357"></p>
+<h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h3><p>系统A、B、C都去访问<code>/locks</code>节点</p>
+<p><img src="/images/image-20210806155950757.png" alt="image-20210806155950757"></p>
+<p>访问的时候会创建<strong>带顺序号的临时/短暂</strong>(<code>EPHEMERAL_SEQUENTIAL</code>)节点，比如，系统A创建了<code>id_000000</code>节点，系统B创建了<code>id_000002</code>节点，系统C创建了<code>id_000001</code>节点。</p>
+<p><img src="/images/image-20210806160017084.png" alt="image-20210806160017084"></p>
+<p>接着，拿到<code>/locks</code>节点下的所有子节点(id_000000,id_000001,id_000002)，<strong>判断自己创建的是不是最小的那个节点</strong></p>
+<ul>
+<li><p>如果是，则拿到锁。释放锁：执行完操作后，把创建的节点给删掉</p>
+</li>
+<li><p>如果不是，则监听比自己要小1的节点变化</p>
+</li>
+</ul>
+<p>举个例子：</p>
+<ul>
+<li>系统A拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000000</code>)，是所有子节点最小的。所以得到锁</li>
+<li>系统B拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000002</code>)，不是所有子节点最小的。所以监听比自己小1的节点<code>id_000001</code>的状态</li>
+<li>系统C拿到<code>/locks</code>节点下的所有子节点，经过比较，发现自己(<code>id_000001</code>)，不是所有子节点最小的。所以监听比自己小1的节点<code>id_000000</code>的状态</li>
+<li>……</li>
+<li>等到系统A执行完操作以后，将自己创建的节点删除(<code>id_000000</code>)。通过监听，系统C发现<code>id_000000</code>节点已经删除了，发现自己已经是最小的节点了，于是顺利拿到锁</li>
+<li>….系统B如上</li>
+</ul>
+<h3 id="集群状态"><a href="#集群状态" class="headerlink" title="集群状态"></a>集群状态</h3><p>以三个系统A、B、C为例，在ZooKeeper中各维护一个临时节点：</p>
+<p><img src="/images/image-20210806160041372.png" alt="image-20210806160041372"></p>
+<p>只要系统A挂了，那<code>/groupMember/A</code>这个节点就会删除，通过<strong>监听</strong><code>groupMember</code>下的子节点，系统B和C就能够感知到系统A已经挂了。(新增也是同理)</p>
+<p>除了能够感知节点的上下线变化，ZooKeeper还可以实现<strong>动态选举Master</strong>的功能(如果集群是主从架构模式下)。原理也很简单，如果想要实现动态选举Master的功能，Znode节点的类型是带<strong>顺序号的临时节点</strong>(<code>EPHEMERAL_SEQUENTIAL</code>)就好了。Zookeeper会每次选举最小编号的作为Master，如果Master挂了，自然对应的Znode节点就会删除。然后让<strong>新的最小编号作为Master</strong>，这样就可以实现动态选举的功能了。</p>
+<h2 id="ZooKeeper集群角色"><a href="#ZooKeeper集群角色" class="headerlink" title="ZooKeeper集群角色"></a>ZooKeeper集群角色</h2><p><img src="/images/image-20210806154323084.png" alt="image-20210806154323084"></p>
+<p><code>Leader</code>： </p>
+<ul>
+<li>Zookeeper集群工作的核心</li>
+<li>事务请求（写操作）的唯一调度和处理者，保证集群事务处理的顺序性</li>
+<li>集群内部各个服务器的调度者。</li>
+</ul>
+<blockquote>
+<p>对于create，setData，delete等有写操作的请求，则需要<strong>统一转发给leader处理</strong>，leader需要决定编号、执行操作，这个过程称为一个事务</p>
+</blockquote>
+<p><code>Follower</code>：</p>
+<ul>
+<li>处理客户端非事务（读操作）请求，转发事务请求给 Leader</li>
+<li>参与集群 Leader选举投票。</li>
+</ul>
+<p><code>Observer</code>：针对访问量比较大的zookeeper集群，还可新增观察者角色。</p>
+<ul>
+<li>观察者角色，观察zookeeper集群的最新状态变化并将这些状态同步过来，其对于非事务请求可以进行独立处理，对于事务请求，则会转发给Leader服务器进行处理</li>
+<li><strong>不会参与任何形式的投票</strong>，只提供非事务服务，通常用于在不影响集群事务处理能力的前提下提升集群的非事务处理能力。</li>
+</ul>
+<h2 id="ZooKeepe特点"><a href="#ZooKeepe特点" class="headerlink" title="ZooKeepe特点"></a>ZooKeepe特点</h2><p><img src="/images/1593952140891.png" alt="1593952140891"></p>
+<ol>
+<li>一个领导者，多个跟随者组成的集群</li>
+<li>集群中只要有半数以上节点存活，Zookeeper集群就能正常服务。</li>
+<li><code>全局数据一致</code> : 每个 server 都保存相同的数据副本，<strong>client无论连接到哪个server，展示的数据都是一致的</strong>，这是最重要的特征</li>
+<li><code>可靠性</code> ：如果消息被其中一台服务器接受，那么将被所有的服务器接受</li>
+<li><code>顺序性</code>：包括全局有序和偏序两种：<ul>
+<li>全局有序：是指如果在一台服务器上消息a在消息b前发布，则在所有Server 上消息a都将在消息b前被发布</li>
+<li>偏序：是指如果一个消息b在消息a后被同一个发送者发布，a必将排在b前面。</li>
+</ul>
+</li>
+<li><code>数据更新原子性</code>：一次数据更新要么成功（半数以上节点成功），要么失败，不存在中间状态</li>
+<li><code>实时性</code>：Zookeeper 保证客户端将在一个时间间隔范围内获得服务器的更新信息，或者服务器失效的信息。</li>
+</ol>
+<h2 id="监听器原理"><a href="#监听器原理" class="headerlink" title="监听器原理"></a>监听器原理</h2><ol>
+<li>首先要有一个main()线程</li>
+<li>在main线程中创建Zookeeper客户端，这时就会创建两个线程，一个负责网络连接通信（connet），一个负责监听（listener）</li>
+<li>通过connect线程将注册的监听事件发送给Zookeeper。</li>
+<li>在 Zookeeper的注册监听列表中将注册的监听事件添到列表中。</li>
+<li>Zookeeper监听到有数据或路径变化，就会将这个消息发送给listener线程</li>
+<li>listener线程内部调用了process()方法。</li>
+</ol>
+<p><img src="/images/1594003453668.png" alt="1594003453668"></p>
+<p>常见的监听</p>
+<ol>
+<li>监听节点数据的变化</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get path [watch]</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>监听子节点增减的变化</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls pathh [watch]</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Zookeeper-写数据全流程"><a href="#Zookeeper-写数据全流程" class="headerlink" title="Zookeeper 写数据全流程"></a>Zookeeper 写数据全流程</h2><p><img src="/images/1594003701405.png" alt="1594003701405"></p>
+<h2 id="Zookeeper-深入数据模型"><a href="#Zookeeper-深入数据模型" class="headerlink" title="Zookeeper 深入数据模型"></a>Zookeeper 深入数据模型</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>Zookeeper树中的每个节点被称为<code>Znode</code>。和文件系统的目录树一样，ZooKeeper树中的每个节点可以拥有子节点。但也有不同之处：</p>
+<ol>
+<li><strong>Znode兼具文件和目录两种特点</strong>。既像文件一样维护着数据、元信息、ACL、时间戳等数据结构，又像目录一样可以作为路径标识的一部分，并可以具有子Znode。用户对 znode具有增、删、改、查等操作（权限允许的情况下）。</li>
+<li><strong>znode具有原子性操作</strong>，读操作将获取与节点相关的所有数据，写操作也将替换掉节点的所有数据。另外，每一个节点都拥有自己的ACL（访问控制列表），这个列表规定了用户的权限，即限定了特定用户对目标节点可以执行的操作。</li>
+<li><strong>znode存储数据大小有限制</strong>。ZooKeeper虽然可以关联一些数据，但并没有被设计为常规的数据库或者大数据存储，相反的是，它用来管理调度数据比如分布式应用中的配置文件信息、状态信息、汇集位置等等。这些数据的共同特性就是它们都是很小的数据，通常以KB为大小单位。ZooKeeper的服务器和客户端都被设计为严格检查并限制每个 Znode的数据大小至多1M，当时常规使用中应该远小于此值。</li>
+<li><strong>Znode过路径引用</strong>，如同Uinx中的文件路径。路径必须是绝对的，因此他们必须由斜杠字符来开头。除此以外，他们必须是唯一的，也就是说每一个路径只有一个表示，因此这些路径不能改变。在  Zookeeper中，路径由Unicode字符串组成，并且有一些限制。字符串“/zookeeper”用以保存管理信息，比如关键配额信息。</li>
+</ol>
+<p>每个Znode由3部分组成：</p>
+<ol>
+<li>stat：此为状态信息，描述该 Znode的版本，权限等信息</li>
+<li>data：与该 Znode关联的数据</li>
+<li>children：该Znode下的子节点</li>
+</ol>
+<h3 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h3><ul>
+<li><p>Znode有两种，分别为<code>临时节点</code>和<code>永久节点</code> , 节点的类型在创建时即被确定，并且不能改变。</p>
+</li>
+<li><p>Znode<code>序列化</code>的特性：如果创建的时候开启此特性的话，该Znode的名字后面会自动追加一个不断增加的序列号。序列号对于此节点的父节点来说是唯一的，这样便会<strong>记录每个子节点创建的先后顺序</strong>。它的格式为“%10d”（10位数字，没有数值的数位用0补充，例如<code>00000001</code>）</p>
+</li>
+</ul>
+<p>这样便会存在四种类型的 Znode节点，分别对应：</p>
+<ul>
+<li>PERSISTENT：永久节点</li>
+<li>EPHEMERAL：临时节点</li>
+<li>PERSISTENT_SEQUENTIAL：永久节点、序列化</li>
+<li>EPHEMERAL_SEQUENTIAL：临时节点、序列化</li>
+</ul>
+<h3 id="节点属性"><a href="#节点属性" class="headerlink" title="节点属性"></a>节点属性</h3><p>每个Znode都包含了一系列的属性，通过命令get，可以获得节点的属性。</p>
+<p><img src="/images/1593941602610.png" alt="1593941602610"></p>
+<ul>
+<li><p>dataVersion：数据版本号，每次对节点进行set操作，dataversion的值都会增加1（即使设置的是相同的数据），可有效避免了数据更新时出现的先后顺序问题</p>
+</li>
+<li><p>cversion：子节点的版本号。当znode的子节点有变化时，cversion的值就会增加1</p>
+</li>
+<li><p>aclVersion：ACL的版本号</p>
+</li>
+<li><p>cZxid：Znode创建的事务id</p>
+</li>
+<li><p>mZxid：Znode被修改的事务id，即每次对znode的修改都会更新mZxid</p>
+<ul>
+<li>对于zk来说，每次的变化都会产生一个唯一的事务id,zxid（Zookeeper Transaction Id）。</li>
+<li>通过zxid，可以确定更新操作的先后顺序。例如，如果 zxid1小于zxid2，说明<br>zxid1操作先于zxid2发生，</li>
+<li>zxid对于整个zk都是唯一的 , 即使操作的是不同的 znode</li>
+</ul>
+</li>
+<li><p>ctime：节点创建时的时间戳</p>
+</li>
+<li><p>mtime：节点最新一次更新发生时的时间戳</p>
+</li>
+<li><p>ephemeralOwner：如果该节点为临时节点，ephemeralOwner值表示与该节点绑定的 session  id。如果不是，ephemeralOwner值为0。</p>
+<blockquote>
+<p>在 client和 server通信之前，首先需要建立连接，该连接称为  session，连接建立后，如果发生连接超时、授权失败，或者显式关闭连接，连接便处于 CLOSED状态，此时 session结束。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h2><p>Zookeeper中的配置文件zoo.cfg中参数含义解读如下：</p>
+<ol>
+<li><p>tickTime =2000：通信心跳数，Zookeeper服务器与客户端心跳时间，单位毫秒Zookeeper使用的基本时间，服务器之间或客户端与服务器之间维持心跳的时间间隔，也就是每个tickTime时间就会发送一个心跳，时间单位为毫秒。</p>
+<p>它用于心跳机制，并且设置最小的session超时时间为两倍心跳时间。(session的最小超时时间是2*tickTime)</p>
+</li>
+<li><p>initLimit =10：LF初始通信时限</p>
+<p>集群中的Follower跟随者服务器与Leader领导者服务器之间初始连接时能容忍的最多心跳数（tickTime的数量），用它来限定集群中的Zookeeper服务器连接到Leader的时限。</p>
+</li>
+<li><p>syncLimit =5：LF同步通信时限</p>
+<p>集群中Leader与Follower之间的最大响应时间单位，假如响应超过syncLimit * tickTime，Leader认为Follwer死掉，从服务器列表中删除Follwer。</p>
+</li>
+<li><p>dataDir：数据文件目录+数据持久化路径</p>
+<p>主要用于保存Zookeeper中的数据。</p>
+</li>
+<li><p>clientPort =2181：客户端连接端口</p>
+<p>监听客户端连接的端口。</p>
+</li>
+</ol>
+<h2 id="Zookeeper-Shell"><a href="#Zookeeper-Shell" class="headerlink" title="Zookeeper Shell"></a>Zookeeper Shell</h2><h3 id="客户端连接"><a href="#客户端连接" class="headerlink" title="客户端连接"></a>客户端连接</h3><p>运行 <code>zkCli.sh - server ip</code> 进入命令行工具 , 输入help，输出 zk shell提示：</p>
+<p><img src="/images/1593942269931.png" alt="1593942269931"></p>
+<h3 id="Shell-基本操作"><a href="#Shell-基本操作" class="headerlink" title="Shell 基本操作"></a>Shell 基本操作</h3><h4 id="创建节点"><a href="#创建节点" class="headerlink" title="创建节点"></a>创建节点</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create [-s] [-e] path data acl</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-s : 顺序(默认非序列化)</li>
+<li>-e : 临时节点(默认永久)</li>
+<li>acl : 用户权限控制</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建顺序节点</span></span><br><span class="line">create -s /<span class="built_in">test</span> 123</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建临时节点</span></span><br><span class="line">create -e /test-temp 123temp</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="读取节点"><a href="#读取节点" class="headerlink" title="读取节点"></a>读取节点</h4><p>相关命令 : <code>ls</code> 和 <code>get</code></p>
+<ul>
+<li>ls : 列出指定节点下面的所有<strong>第一级</strong>子节点 ,</li>
+<li>get : 获取指定节点的数据内容和属性信息</li>
+<li>ls2 : 比ls显示更全面的信息</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls path [watch]</span><br><span class="line">get path [watch]</span><br><span class="line">ls2 path [watch]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls /heyingliang</span><br><span class="line">get /heyingliang</span><br><span class="line">ls2 /heyingliang</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="更新节点"><a href="#更新节点" class="headerlink" title="更新节点"></a>更新节点</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set path data [version]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>data : 要更新的新内容</li>
+<li>version : 数据版本 , 必须和data的数据版本一致,否则不允许更新</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将/heyingliang的数值修改为123</span></span><br><span class="line"><span class="built_in">set</span> /heyingliang 123</span><br><span class="line"><span class="comment"># 此时/heyingliang的dataVersion就会+1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设此时/heingliang的dataVersio=3</span></span><br><span class="line"><span class="built_in">set</span> /heyingliang 2 <span class="comment"># 执行失败</span></span><br><span class="line"><span class="built_in">set</span> /heyingliang 3 <span class="comment"># 执行成功</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="删除节点"><a href="#删除节点" class="headerlink" title="删除节点"></a>删除节点</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete path [version]</span><br></pre></td></tr></table></figure>
+
+<p>若删除的节点拥有子节点 , 那么将无法删除 , 必须先删除子节点才能删除这个节点</p>
+<h4 id="quota"><a href="#quota" class="headerlink" title="quota"></a>quota</h4><p>对节点增加限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setquota -n|-b val path </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>n : 节点的最大个数(子节点+自己)</li>
+<li>b : 数据值的最大长度</li>
+<li>val : 子节点最大个数 或 数据值的最大长度</li>
+<li>path : 节点路径</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setquota -n 2 /hyl</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意 : 这种限制是<code>假的</code> , 就算超出了限制 , 也不会报错 , 只会在日志里写入一个WRANNIG日志</p>
+</blockquote>
+<h4 id="listquota：列出节点的quota"><a href="#listquota：列出节点的quota" class="headerlink" title="listquota：列出节点的quota"></a>listquota：列出节点的quota</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listquota /hyl</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="delquota：删除quota"><a href="#delquota：删除quota" class="headerlink" title="delquota：删除quota"></a>delquota：删除quota</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delquota [-n|-b] path </span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="history：列出历史命令"><a href="#history：列出历史命令" class="headerlink" title="history：列出历史命令"></a>history：列出历史命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="redo：重新执行指定编号的历史命令"><a href="#redo：重新执行指定编号的历史命令" class="headerlink" title="redo：重新执行指定编号的历史命令"></a>redo：重新执行指定编号的历史命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编号可以通过history命令查看</span></span><br><span class="line">redo 10</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Zookeeper-Watcher"><a href="#Zookeeper-Watcher" class="headerlink" title="Zookeeper Watcher"></a>Zookeeper Watcher</h2><ul>
+<li>ZooKeeper提供了<strong>分布式数据发布/订阅</strong>功能，一个典型的发布/订阅模型系统定义了一对多的订阅关系，能让多个订阅者同时监听某一个主题对象，当这个主题对象自身状态变化时，会通知所有订阅者，使他们能够做出相应的处理。</li>
+<li>ZooKeeper中，引入了Watcher机制来实现这种分布式的通知功能。</li>
+<li>Zookeeper允许客户端向服务端注册一个 Watcher监听，当服务端的一些事件触发了这个Watcher，那么就会向指定客户端发送一个事件通知来实现分布式的通知功能。</li>
+<li>触发事件种类很多，如：节点创建，节点删除，节点改变，子节点改变等。</li>
+</ul>
+<p>总的来说可以概括 Watcher为以下三个过程：</p>
+<ol>
+<li>客户端向服务端注册 Watcher、</li>
+<li>服务端事件发生触发  Watcher、</li>
+<li>客户端回 Watcher 得到触发事件情况</li>
+</ol>
+<h3 id="watch机制特点"><a href="#watch机制特点" class="headerlink" title="watch机制特点"></a>watch机制特点</h3><ul>
+<li><p>一次性触发 : 事件发生触发监听，一个 watcher  event就会被发送到设置监听的客户端这种效果是一次性的，后续再次发生同样的事件，不会再次触发。</p>
+</li>
+<li><p>事件封装 :  ZooKeeper使用 WatchedEvent对象来封装服务端事件并传递。</p>
+<blockquote>
+<p>WatchedEvent包含了每一个事件的三个基本属性：</p>
+<p><code>通知状态</code>（keeperstate），<code>事件类型</code>（EventType）和<code>节点路径</code>（path）</p>
+</blockquote>
+</li>
+<li><p>event异步发送 : watcher的通知事件从服务端发送到客户端是异步的。</p>
+</li>
+<li><p>先注册再触发 : Zookeeper中的 watch机制，必须客户端先去服务端注册监听，这样事件发才会触发监听，通知给客户端</p>
+</li>
+</ul>
+<h3 id="通知状态和事件类型"><a href="#通知状态和事件类型" class="headerlink" title="通知状态和事件类型"></a>通知状态和事件类型</h3><p>同一个事件类型在不同的通知状态中代表的含义有所不同，下表列举了常见的通知状态和事件类型。</p>
+<p><img src="/images/1593944966320.png" alt="1593944966320"></p>
+<p>其中<code>连接状态事件</code>（type=None,path=nul1）不需要客户端注册，客户端只要有需要直接处理就行了。</p>
+<h3 id="Shell-客户端设置Watcher"><a href="#Shell-客户端设置Watcher" class="headerlink" title="Shell 客户端设置Watcher"></a>Shell 客户端设置Watcher</h3><p>设置节点数据变动监听 :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get /hyl watch</span><br></pre></td></tr></table></figure>
+
+<p>通过另一个客户端更改节点数据 :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> /hyl 123</span><br></pre></td></tr></table></figure>
+
+<p>此时设置监听的节点收到通知 : </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WATCHER:</span><br><span class="line">WatchedEvent state:SyncConnected type:NodeDataChanged path:/hyl</span><br><span class="line">get /hyl watch</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Zookeeper的选举机制"><a href="#Zookeeper的选举机制" class="headerlink" title="Zookeeper的选举机制"></a>Zookeeper的选举机制</h2><p>zookeeper默认的算法是<code>Fast Leader Election</code>，采用<strong>投票数大于半数则胜出</strong>的逻辑</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
+<li><p>服务器ID : </p>
+<ul>
+<li>比如有三台服务器，编号分别是1，2，3</li>
+<li>编号越大在选择算法中的权重越大。</li>
+</ul>
+</li>
+<li><p>选举状态 : </p>
+<ul>
+<li>LOOKING，竞选状态。</li>
+<li>FOLLOWING，随从状态，同步leader状态，参与投票。</li>
+<li>OBSERVING，观察状态，同步leader状态，不参与投票</li>
+<li>LEADING，领导者状态，</li>
+</ul>
+</li>
+<li><p>数据ID : </p>
+<ul>
+<li>服务器中存放的最新数据version</li>
+<li>值越大说明数据越新，在选举算法中数据越新权重越大</li>
+</ul>
+</li>
+<li><p>逻辑时钟 : </p>
+<ul>
+<li>也叫投票的次数，同一轮投票过程中的逻辑时钟值是相同的。每投完一次票这个数据就会增加，然后与接收到的其它服务器返回的投票信息中的数值相比，根据不同的值做出不同的判断。</li>
+<li>比如说某台服务器在投票过程中掉线了 , 导致逻辑时钟比别人小 , 那么参与下次投票时 , 这台服务器的权重就会降低 (这是自然的,你都经常掉线了,还怎么当leader)</li>
+</ul>
+</li>
+</ul>
+<h3 id="全新集群选举"><a href="#全新集群选举" class="headerlink" title="全新集群选举"></a>全新集群选举</h3><ol>
+<li>每个机器都给自己投票</li>
+<li>按票数过半则选举法束</li>
+</ol>
+<p>假设目前有5台服务器，每台服务器均没有数据，它们的编号分别是1，2，3，4，5，按编号依次启动，它们的选择举过程如下：</p>
+<ul>
+<li>服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到馈信息，服务器1的状态一直属于 Looking</li>
+<li>服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大，所以服务器2胜出，但此时投票数没有大于半数所以两个服务器的状态依然是LO0KING</li>
+<li>服务器3启动，给自己投票，同时与之前启动的服务器1，2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为领导者，服务器1，2成为小弟。</li>
+<li>服务器4启动，给自己投票，同时与之前启动的服务器1，2，3交换信息，尽管服务器4的编号大，但之前服务器3已经胜出，所以服务器4只能成为小弟。</li>
+<li>服务器5启动，后面的逻辑同服务器4成为小弟</li>
+</ul>
+<h3 id="非全新集群选举"><a href="#非全新集群选举" class="headerlink" title="非全新集群选举"></a>非全新集群选举</h3><p>对于运行正常的  zookeeper集群，中途有机器down掉，需要重新选举时，选举过程就需要加入数据ID、服务器ID和逻辑时钟</p>
+<ul>
+<li>数据ID：数据越新,其versIon就越大，数据每次更新都会更新version . 也就是说 , 数据ID越大 , 说明该服务器保存的数据就越新</li>
+<li>服务器ID：就是我们配置的myid中的值，每个机器一个。</li>
+<li>逻辑时钟：这个值从0开始递增，每次选举对应一个值。如果在同一次选举中，这个值是一致的。</li>
+</ul>
+<p>这样选举的标准就变成：</p>
+<ol>
+<li>逻辑时钟小的选举结果被忽略，重新投票；</li>
+<li>统一逻辑时钟后，数据id大的胜出</li>
+<li>数据id相同的情况下，服务器id大的胜出</li>
+</ol>
+<h2 id="Zookeeper的典型应用"><a href="#Zookeeper的典型应用" class="headerlink" title="Zookeeper的典型应用"></a>Zookeeper的典型应用</h2><h3 id="数据发布与订阅-配置中心"><a href="#数据发布与订阅-配置中心" class="headerlink" title="数据发布与订阅(配置中心)"></a>数据发布与订阅(配置中心)</h3><ul>
+<li>发布与订阅模型，即所谓的配置中心，顾名思义就是<strong>发布者将数据发布到ZK节点上，供订阅者动态获取数据，实现配置信息的集中式管理和动态更新</strong>。</li>
+<li>应用在启动的时候会主动来获取一次配置，同时，在节点上注册一个  Watcher，这样一来，以后每次配置有更新的时候，都会实时通知到订阅的客户端，从来达到获取最新配置信息的目的。比如：<ul>
+<li>分布式搜索服务中，索引的元信息和服务器集群机器的节点状态存放在ZK的一些指定节点，供各个客户端订阅使用。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意：适合数据量很小的场景，这样数据更新可能会比较快</p>
+</blockquote>
+<h3 id="命名服务-Naming-Service"><a href="#命名服务-Naming-Service" class="headerlink" title="命名服务(Naming Service)"></a>命名服务(Naming Service)</h3><ul>
+<li>在分布式系统中，<strong>通过使用命名服务，客户端应用能够根据指定名字来获取资源或服务的地址，提供者等信息</strong>。</li>
+<li>被命名的实体通常可以是集群中的机器，提供的服务地址，远程对象等等一一这些我们都可以统称他们为名字（Name）。其中较为常见的就是一些分布式服务框架中的服务地址列表。通过调用ZK提供的创建节点的API，能够很容易创建一个全局唯一的path，这个path就可以作为一个名称</li>
+<li>阿里巴巴集团开源的分布式服务框架 Dubbo中使用 Zookeeper来作为其命名服务，维护全局的服务地址列表</li>
+</ul>
+<h3 id="分布式锁-1"><a href="#分布式锁-1" class="headerlink" title="分布式锁"></a>分布式锁</h3><ul>
+<li><p>分布式锁，这个主要得益于  Zookeeper保证了数据的强一致性。锁服务可以分为两类，一个是保持独占，另一个是控制时序。</p>
+</li>
+<li><p>所谓保持独占，就是所有试图来获取这个锁的客户端，最终只有一个可以成功获得这把锁。通常的做法是把zk上的一个znode看作是一把锁，通过 create znode的方式来实现。所有客户端都去创建/distribute_lock节点，最终成功创建的那个客户端也即拥有了这把锁。</p>
+</li>
+<li><p>控制时序，就是所有试图来获取这个锁的客户端，最终都是会被安排执行，只是有个全局时序了。做法和上面基本类似，只是这里/distribute_lock已经预先存在，客户端在它下面创建临时有序节点（这个可以通过节点的属性控制：CreateMode。EPHEMERAL_SEQUENTIAL来指定），Zk的父节点（/distribute_lock）维持一份  sequence，保证子节点创建的时序性，从而也形成了每个客户端的全局时序。</p>
+</li>
+</ul>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1r7411A7fg">ZooKeeper框架入门到精通</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1PW411r7iP">zookeeper 框架精讲</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
