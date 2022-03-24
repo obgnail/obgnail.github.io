@@ -1,0 +1,237 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;1-一级索引&quot;&gt;&lt;a href=&quot;#1-一级索引&quot; class=&quot;headerlink&quot; title=&quot;1. 一级索引&quot;&gt;&lt;/a&gt;1. 一级索引&lt;/h2&gt;&lt;p&gt;MergeTree 主键使用 primary key 定义，定义主键后，会将数据依据 index_granularity 参数设置的间隔（默认：8192）为表生成一级索引保存到 primary.idx 文件中，索引文件按照 primary key 进行排序。但&lt;strong&gt;更常用 order by 代替主键&lt;/strong&gt;，这时索引文件（primary.idx）与数据文件（column_name.bin）会按照相同的规则排序。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ClickHouse 表引擎 MergeTree 索引与数据存储方式 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></div><div class="post-time">2022-03-24</div></div></div><div class="container post-header"><h1>ClickHouse 表引擎 MergeTree 索引与数据存储方式</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%80%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="toc-number">1.</span> <span class="toc-text">1. 一级索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%B3%BB%E6%95%B0%E7%B4%A2%E5%BC%95"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 系数索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E7%B4%A2%E5%BC%95%E7%B2%92%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 索引粒度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 索引数据的生成规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E7%B4%A2%E5%BC%95%E7%9A%84%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 索引的查询过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="toc-number">2.</span> <span class="toc-text">2. 二级索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-granularity-%E4%B8%8E-index-granularity"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 granularity 与 index_granularity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%B7%B3%E6%95%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 跳数索引的生成规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E8%B7%B3%E6%95%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 跳数索引的类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-minmax"><span class="toc-number">2.3.1.</span> <span class="toc-text">2.3.1 minmax</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-set"><span class="toc-number">2.3.2.</span> <span class="toc-text">2.3.2 set</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-3-ngrambf-v1"><span class="toc-number">2.3.3.</span> <span class="toc-text">2.3.3 ngrambf_v1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-4-tokenbf-v1"><span class="toc-number">2.3.4.</span> <span class="toc-text">2.3.4 tokenbf_v1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-number">3.</span> <span class="toc-text">3. 数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%90%84%E5%88%97%E7%8B%AC%E7%AB%8B%E5%AD%98%E5%82%A8"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 各列独立存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8E%8B%E7%BC%A9%E6%95%B0%E6%8D%AE%E5%9D%97"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 压缩数据块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E6%A0%87%E8%AE%B0"><span class="toc-number">4.</span> <span class="toc-text">4. 数据标记</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%95%B0%E6%8D%AE%E6%A0%87%E8%AE%B0%E7%9A%84%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 数据标记的生成规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%95%B0%E6%8D%AE%E6%A0%87%E8%AE%B0%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 数据标记的工作方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-%E8%AF%BB%E5%8F%96%E5%8E%8B%E7%BC%A9%E6%95%B0%E6%8D%AE%E5%9D%97"><span class="toc-number">4.2.1.</span> <span class="toc-text">4.2.1 读取压缩数据块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">4.2.2.</span> <span class="toc-text">4.2.2 读取数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%86%E5%8C%BA%EF%BC%8C%E7%B4%A2%E5%BC%95%EF%BC%8C%E6%A0%87%E8%AE%B0%E5%92%8C%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">5. 分区，索引，标记和数据压缩总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%86%99%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 写入过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 查询过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%95%B0%E6%8D%AE%E6%A0%87%E8%AE%B0%E4%B8%8E%E5%8E%8B%E7%BC%A9%E6%95%B0%E6%8D%AE%E5%9D%97%E7%9A%84%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 数据标记与压缩数据块的对应关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-1-%E5%A4%9A%E5%AF%B9%E4%B8%80"><span class="toc-number">5.3.1.</span> <span class="toc-text">5.3.1 多对一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-2-%E4%B8%80%E5%AF%B9%E4%B8%80"><span class="toc-number">5.3.2.</span> <span class="toc-text">5.3.2 一对一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-3-%E4%B8%80%E5%AF%B9%E5%A4%9A"><span class="toc-number">5.3.3.</span> <span class="toc-text">5.3.3 一对多</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reference"><span class="toc-number"></span> <span class="toc-text">reference</span></a></details></div><div class="container post-content"><h2 id="1-一级索引"><a href="#1-一级索引" class="headerlink" title="1. 一级索引"></a>1. 一级索引</h2><p>MergeTree 主键使用 primary key 定义，定义主键后，会将数据依据 index_granularity 参数设置的间隔（默认：8192）为表生成一级索引保存到 primary.idx 文件中，索引文件按照 primary key 进行排序。但<strong>更常用 order by 代替主键</strong>，这时索引文件（primary.idx）与数据文件（column_name.bin）会按照相同的规则排序。</p>
+<h3 id="1-1-系数索引"><a href="#1-1-系数索引" class="headerlink" title="1.1 系数索引"></a>1.1 系数索引</h3><p>primary.idx 文件内的一级索引采用稀疏索引的方式实现的，如下图所示：</p>
+<p><img src="/images/FpOIIW4KOmdlsQW0fwxuJ2bxrAHe.jpeg" alt="稀疏索引与稠密索引"></p>
+<ul>
+<li><strong>稠密索引每一个索引都会对应一条数据记录</strong>。</li>
+<li>一条稀疏索引标记对应一段数据，稀疏索引就像是一本书的目录，每个目录只会对应章节的开始位置，而不会对应到具体的每个字。</li>
+<li>使用稀疏索引的好处是使用少量的索引就能标记大量的数据记录的区间位置，而且数据量越大这种优势就会越明显。</li>
+<li>mergetree 使用 12208 条索引标记就能为 1 亿行数据记录提供索引。</li>
+<li><strong>由于稀疏索引占用空间小，所以 primary.idx 中的数据时常驻内存的，读取速度非常快</strong>。</li>
+</ul>
+<h3 id="1-2-索引粒度"><a href="#1-2-索引粒度" class="headerlink" title="1.2 索引粒度"></a>1.2 索引粒度</h3><ul>
+<li>索引粒度对于 MergeTree 而言是一个非常重要的概念，索引粒度如同标尺一样，会标注整个数据的长度，最终数据会形成多个间隔的小段。</li>
+<li>在新版本中也支持使用自适应粒度，使用 enable_mixed_granularity_parts 参数开启。</li>
+<li>MergeTree 使用 index_granularity 参数设置索引粒度（默认：8192），数据通过索引粒度被标记成多个区间，每个区间最多 8192 条数据。</li>
+<li>MergeTree 使用 MarkRange 表示一个具体的区间，并通过 start 和 end 表示具体范围。</li>
+<li>index_granularity 参数除了作用于一级索引以外还会影响数据标记（.mrk）和数据文件（.bin）。</li>
+<li>标记文件与一级索引文件粒度相同，彼此对齐，数据文件也会依据粒度间隔生成压缩数据块。</li>
+<li>查询数据时需要数据索引、数据标记和数据文件一起工作完成查询功能。</li>
+</ul>
+<p>索引粒度图示：</p>
+<p><img src="/images/FgipmO_qt8jkZdBvnaHCD8LEefqA.jpeg" alt="索引粒度图示"></p>
+<h3 id="1-3-索引数据的生成规则"><a href="#1-3-索引数据的生成规则" class="headerlink" title="1.3 索引数据的生成规则"></a>1.3 索引数据的生成规则</h3><ul>
+<li>MergeTree 的一级索引属于稀疏索引，需要间隔 index_granularity 行数据才会生成一条索引记录，其索引值会依据声明的主键字段获取。</li>
+<li>索引值为间隔 index_granularity 行数据取一次主键值作为索引值，将几次取指拼接到一起形成最终索引值，<strong>索引数据最终会被保存到 primary.idx 文件中进行保存</strong>。</li>
+<li>如下图 ID 作为主键 ，order by (ID)。</li>
+</ul>
+<p><img src="/images/Fi3JoIguwjBaDPu5fFvSGEJGsuyp.jpeg" alt="稀疏索引生成规则"></p>
+<p>MergeTree 对稀疏索引的存储是非常紧凑的，索引值前后相连，按主键顺序紧密排列在一起，clickhouse 中很多数据结构都被设计的非常紧凑，如使用位读取代替专门的标识位或状态码，不浪费一点空间，这也是 clickhouse 性能出色的原因之一。</p>
+<p>如果使用多个主键，索引如下图所示，order by (ID,EventData)</p>
+<p><img src="/images/imageslim-20220321145852388.jpeg" alt="img"></p>
+<h3 id="1-4-索引的查询过程"><a href="#1-4-索引的查询过程" class="headerlink" title="1.4 索引的查询过程"></a>1.4 索引的查询过程</h3><p>要想知道索引是如何工作的，需要先知道 MarkRange 是什么。</p>
+<p><strong>MarkRange 是 clickhouse 中用于定义标记区间的对象</strong>，MergeTree 按照 index_granularity 的间隔粒度将一段完整的数据划分成多个小的间隔数据段，其中的每个小的数据段都是一个 MarkRange。</p>
+<p>MarkRange 与索引编号对应，使用 start 和 end 两个属性表示其区间范围，通过与 start 和 end 对应的索引编号的取值，即能够得到它对应的数值区间，而数值区间表示了此 MarkRange 包含的数据范围。</p>
+<p>一份 192 行的测试数据，主键为 String 类型的 ID，取值范围从 A000 ，A001，A002 … A192。MergeTree 索引粒度 index_granularity = 3，根据索引生成规则，primary.idx 文件内的索引数据如下图所示：</p>
+<p><img src="/images/imageslim.jpeg" alt="img"></p>
+<p>根据索引数据，MergeTree 会将此数据片段划分成 192/3=64 个小的 MarkRange，相邻的 MarkRange 步长为 1，所有 MarkRange 的最大步长为 [A000,+inf]</p>
+<p><img src="/images/imageslim-20220321145852588.jpeg" alt="img"></p>
+<p>对于索引的查询就是两个数值区间的交集判断，一个区间是基于主键的查询条件转换来的，另一个区间是与 MarkRange 对应的数值区间。</p>
+<p>整个索引查询大约分为三个步骤：</p>
+<ol>
+<li><p>生成查询条件区间：将查询条件转换为条件区间，单个查询条件也会被转换为区间的形式，如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">where</span> ID <span class="operator">=</span> <span class="string">&#x27;A0003&#x27;</span>  <span class="operator">-</span><span class="operator">&gt;</span>  [<span class="string">&#x27;A0003&#x27;</span>,<span class="string">&#x27;A0003&#x27;</span>]</span><br><span class="line"><span class="keyword">where</span> ID <span class="operator">&gt;</span> <span class="string">&#x27;A0003&#x27;</span>  <span class="operator">-</span><span class="operator">&gt;</span>  [<span class="string">&#x27;A0003&#x27;</span>,<span class="operator">+</span>inf]</span><br><span class="line"><span class="keyword">where</span> ID <span class="operator">&lt;</span> <span class="string">&#x27;A0003&#x27;</span>  <span class="operator">-</span><span class="operator">&gt;</span>  [<span class="operator">-</span>inf,<span class="string">&#x27;A0003&#x27;</span>]</span><br></pre></td></tr></table></figure></li>
+<li><p>做递归交集判断：以递归的形式依次对 MarkRange 的数值区间与条件区间做交集判断，从最大的区间 <code>[&#39;A0000&#39;,+inf]</code> 开始。</p>
+<ul>
+<li>如果不存在交集，则直接使用剪枝算法优化此段 MarkRange。</li>
+<li>如果存在交集，且 MarkRange 步长大于 merge_tree_coarse_index_granularity （默认：8），则将该区间进一步拆分成对应数量的子区间，并重复递归，继续做交集判断。</li>
+<li>如果存在交集，且 MarkRange 步长小于 merge_tree_coarse_index_granularity （默认：8），则记录 MarkRange 并返回。</li>
+</ul>
+</li>
+<li><p>合并 MarkRange 区间：将最终匹配的 MarkRange 聚集到一起，合并他们的范围。MarkRange 通过递归持续向下拆分区间，最终将 MarkRange 定位到最细的粒度，使得在后面取数据时能够最小化扫描数据的范围。</p>
+</li>
+</ol>
+<p>当查询条件是 <code>where ID = &#39;A0003&#39;</code> 最终需要读取 [A000,A003] 和 [A003,A006] 两个区间的数据，他们对应 MarkRange [0,2] 范围，而其他无用的区间都被剪掉了。</p>
+<p><img src="/images/imageslim-20220321145852627.jpeg" alt="img"></p>
+<h2 id="2-二级索引"><a href="#2-二级索引" class="headerlink" title="2. 二级索引"></a>2. 二级索引</h2><ul>
+<li><p>除了一级索引之外，MergeTree 还支持二级索引</p>
+</li>
+<li><p>二级索引又称为跳数索引，由数据的聚合信息构成。</p>
+</li>
+<li><p>根据索引类型不同，聚合信息的内容也不相同。</p>
+</li>
+<li><p>设计二级索引的目的与一级索引一样，也是为了在查询时减少扫描数据的范围</p>
+</li>
+<li><p>二级索引需要在 create 语句内定义，支持元组和表达式的声明形式。</p>
+</li>
+<li><p>如果声明了二级索引，那么在会额外生成对应的索引文件<code>（skp_idx_[column].idx）</code>与标记文件<code>（skp_idx_[column].mrk）</code></p>
+</li>
+<li><p>声明方式：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INDEX index_name expr TYPE index_type(...) GRANULARITY Granularity</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="2-1-granularity-与-index-granularity"><a href="#2-1-granularity-与-index-granularity" class="headerlink" title="2.1 granularity 与 index_granularity"></a>2.1 granularity 与 index_granularity</h3><ul>
+<li>index_granularity：定义数据的粒度，数据通过索引粒度被标记成多个区间。</li>
+<li>granularity：定义汇聚信息汇总的粒度，定义了一个跳数索引能跳过多少 index_granularity 的区间数据。</li>
+</ul>
+<h3 id="2-2-跳数索引的生成规则"><a href="#2-2-跳数索引的生成规则" class="headerlink" title="2.2 跳数索引的生成规则"></a>2.2 跳数索引的生成规则</h3><ol>
+<li>按照 index_granularity 粒度间隔将数据划分成 N 段，共有 [0,N-1] 个区间（N = 总行数 /index_granularity 向上取整）</li>
+<li>根据索引定义时声明的表达式，从 0 区间开始，依次按 index_granularity 粒度从数据中获取聚合信息，每次向前移动 1 步，聚合信息逐步累加。</li>
+<li>当移动 granularity 次区间时，汇总并声称一行跳数索引数据。</li>
+</ol>
+<p>以 minmax 类型索引为例介绍二级生成方式：</p>
+<p>minmax 索引的聚合信息是在一个 index_granularity 区间内 granularity 的最小值与最大值。</p>
+<p>一下图为例，设置 index_granularity = 8192 ，granularity = 3，则会将数据按照 index_granularity 划分为 N 份，MergeTree 会从第 0 份开始获取聚合信息。当获取到第三个分区时，汇总并生成第一个 minmax 索引，前 3 段 minmax 极值汇总后取值为 [1,9]</p>
+<p><img src="/images/imageslim-20220321145852182.jpeg" alt="img"></p>
+<h3 id="2-3-跳数索引的类型"><a href="#2-3-跳数索引的类型" class="headerlink" title="2.3 跳数索引的类型"></a>2.3 跳数索引的类型</h3><ul>
+<li>MergeTree 共支持 4 种跳数索引，分别是：<code>minmax</code> 、 <code>set</code> 、 <code>ngrambf_v1</code> 和 <code>tokenbf_v1</code>。</li>
+<li>在一张表中可以同时声明多个跳数索引。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> skip_test</span><br><span class="line">(</span><br><span class="line">    `id` String,</span><br><span class="line">    `name` String,</span><br><span class="line">    `event_date` <span class="type">date</span>,</span><br><span class="line">    INDEX a id TYPE minmax GRANULARITY <span class="number">5</span>,</span><br><span class="line">    INDEX b length(id) <span class="operator">*</span> <span class="number">8</span> TYPE <span class="keyword">set</span>(<span class="number">1000</span>) GRANULARITY <span class="number">5</span>,</span><br><span class="line">    INDEX c (id, name) TYPE ngrambf_v1(<span class="number">3</span>, <span class="number">256</span>, <span class="number">2</span>, <span class="number">0</span>) GRANULARITY <span class="number">5</span>,</span><br><span class="line">    INDEX d id TYPE tokenbf_v1(<span class="number">256</span>, <span class="number">2</span>, <span class="number">0</span>) GRANULARITY <span class="number">5</span></span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> MergeTree</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> id</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-1-minmax"><a href="#2-3-1-minmax" class="headerlink" title="2.3.1 minmax"></a>2.3.1 minmax</h4><ul>
+<li>minmax 索引 记录了一段数据内的最小值和最大值</li>
+<li>索引的作用类似分区目录的 minmax 索引，能够快速跳过无用的数据区间。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 示例</span></span><br><span class="line">INDEX a id TYPE minmax GRANULARITY <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- minmax 索引会记录这段数据区间内 id 字段的最小值与最大值，极值计算设计 5 个 index_granularity 区间的数据</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-2-set"><a href="#2-3-2-set" class="headerlink" title="2.3.2 set"></a>2.3.2 set</h4><ul>
+<li>set 索引直接记录了声明字段或表达式的取值（唯一值，不重复）</li>
+<li>完整形式为：set (max_rows)，其中 max_rows 是一个阈值，表示在一个 index_granularity 内，索引最多记录的数据行数</li>
+<li>如果 max_rows = 0 ，表示无限制</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 示例</span></span><br><span class="line">INDEX b length(id) <span class="operator">*</span> <span class="number">8</span> TYPE <span class="keyword">set</span>(<span class="number">1000</span>) GRANULARITY <span class="number">5</span>,</span><br><span class="line"></span><br><span class="line"><span class="comment">-- set 索引会记录 id 长度 * 8 的值，每个 index_granularity 最多记录 1000 条</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-3-ngrambf-v1"><a href="#2-3-3-ngrambf-v1" class="headerlink" title="2.3.3 ngrambf_v1"></a>2.3.3 ngrambf_v1</h4><ul>
+<li>ngrambf_v1 索引记录的是数据短语的布隆过滤器</li>
+<li>ngrambf_v1 索引只支持 String 和 FixedString 类型</li>
+<li>ngrambf_v1 索引只能提升 in、notIn、like、equals 和 notEquals 的查询性能</li>
+<li>完整形式为：ngrambf_v1 (n, size_of_bloom_filter_in_bytes, number_of_hash_functions, random_seed)<ul>
+<li>n：token 长度，根据 n 长度，将数据切割为 token 短语</li>
+<li>size_of_bloom_filter_in_bytes：布隆过滤器的大小</li>
+<li>number_of_hash_functions：布隆过滤器中使用 hash 函数的个数</li>
+<li>random_seed：hash 函数的随机种子</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 示例</span></span><br><span class="line">INDEX c (id, name) TYPE ngrambf_v1(<span class="number">3</span>, <span class="number">256</span>, <span class="number">2</span>, <span class="number">0</span>) GRANULARITY <span class="number">5</span>,</span><br><span class="line"></span><br><span class="line"><span class="comment">-- ngrambf_v1索引会按照3 的粒度，将数据切分成短语 token，</span></span><br><span class="line"><span class="comment">-- token 会经过两次 hash 函数再被写入</span></span><br><span class="line"><span class="comment">-- 布隆过滤器的大小是 256 字节</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-4-tokenbf-v1"><a href="#2-3-4-tokenbf-v1" class="headerlink" title="2.3.4 tokenbf_v1"></a>2.3.4 tokenbf_v1</h4><ul>
+<li>tokenbf_v1 索引也是一种布隆过滤器索引，可以看做是 ngrambf_v1 索引的变种。</li>
+<li>tokenbf_v1 索引除了短语 token 处理的方法与 ngrambf_v1 索引不同，其他方面处理都是一样的。</li>
+<li>tokenbf_v1 索引会自动按照非字符的，数字的字符分割 token</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 示例</span></span><br><span class="line">INDEX d id TYPE tokenbf_v1(<span class="number">256</span>, <span class="number">2</span>, <span class="number">0</span>) GRANULARITY <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- token 会经过两次 hash 函数再被写入</span></span><br><span class="line"><span class="comment">-- 布隆过滤器的大小是 256 字节</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-数据存储"><a href="#3-数据存储" class="headerlink" title="3. 数据存储"></a>3. 数据存储</h2><h3 id="3-1-各列独立存储"><a href="#3-1-各列独立存储" class="headerlink" title="3.1 各列独立存储"></a>3.1 各列独立存储</h3><ul>
+<li>MergeTree 中数据时案列存储的，具体到每个字段时也是独立存储的。</li>
+<li>每个列字段都有一个与之对应的 [column_name].bin 文件，这些文件承载着数据最终的物理存储。</li>
+<li>数据文件以分区目录的形式被组织存放，所以 [column_name].bin 文件只会保存当前分区内的这一部分数据。</li>
+<li>按列存储的优势在于可以减少扫描的数据量</li>
+<li>按列存储还可以优化压缩的效率，同一字段的类型相同且重复率更高。</li>
+<li>MergeTree 将数据写入 bin 文件也是经过设计的：<ol>
+<li>数据会经过压缩，目前支持的压缩算法有：LZ4 (默认)、ZSTD、Multiple 和 Delat 几种算法。</li>
+<li>数据会按照 order by 的声明排序。</li>
+<li>数据以压缩块的形式被组织并写入 bin 文件中</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-2-压缩数据块"><a href="#3-2-压缩数据块" class="headerlink" title="3.2 压缩数据块"></a>3.2 压缩数据块</h3><ul>
+<li>压缩数据块由头信息和压缩数据两部分组成</li>
+<li>头信息使用固定 9 个字节表示，分为三个部分<ol>
+<li>压缩算法（1 个 UInt8 整型表示，1 字节）</li>
+<li>压缩后的数据大小（1 个 UInt32 整型表示，4 字节）</li>
+<li>压缩前数据大小（1 个 UInt32 整型表示，4 字节）</li>
+</ol>
+</li>
+</ul>
+<p><img src="/images/imageslim-20220321145852828.jpeg" alt="img"></p>
+<p>.bin 数据文件是由多个数据压缩块组成的，每个数据压缩块的头信息又是由 CompressionMethod_CompressedSize_UncompressedSize 组成的。</p>
+<p>可以通过 clickhouse 提供的 clickhouse-compressor 工具查看某个.bin 数据文件的统计信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看 data.bin 压缩数据统计信息</span></span><br><span class="line">[root@node3 data]# clickhouse-compressor --stat db_merge/t_merge_tree_partition/202001_1_1_2/data.bin</span><br><span class="line">2    12</span><br><span class="line">6    16</span><br><span class="line">8    18</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每一行代表一个数据压缩块的头信息，分别代表着压缩后的数据大小与未压缩的数据大小</span></span><br></pre></td></tr></table></figure>
+
+<p>每个压缩数据块的体积，按照其压缩前的数据字节大小，被严格控制在 64KB~1MB 之间，分别由 min_compress_block_size （默认 65536） 与 min_compress_block_size （默认：1048576）参数指定。</p>
+<p>数据压缩块的大小和间隔（index_granularity）内的数据实际大小有关。</p>
+<p>MergeTree 在写入数据过程中，会依照 index_granularity 粒度，按批次取数据并进行处理。设下一批未压缩数据大小为 x 字节，写入数据遵循如下规则：</p>
+<ol>
+<li>x &lt; 64KB：当单批次数据小于 64KB 时，继续获取下一批数据，直到累积到 64KB 后，生成下一个数据压缩块。</li>
+<li>64KB &lt; x &lt; 1MB：当单批次数据大于 64KB 且小于 1M 时，直接生成下一个数据压缩块。</li>
+<li>x &gt; 1MB：当单批次数据大于 1MB 时，将数据按照 1MB 截取，生成数据压缩块，其余的数据按照前面的规则执行，此时可能生成多个压缩数据块。</li>
+</ol>
+<p><img src="/images/imageslim-20220321145853335.jpeg" alt="img"></p>
+<p>一个 .bin 数据压缩文件，是由一个到多个压缩数据块组成，每个数据压缩块在 64KB 到 1MB 之间，多个数据块之间，按照写入顺序，首尾相连，紧密的排列在一起。</p>
+<ul>
+<li>数据文件中写入压缩数据块的目的：<ol>
+<li>数据被压缩后能够大大减少占用磁盘的空间并增加传输效率，但额外的压缩与解压缩会带来 CPU 性能的损耗，所以需要控制被压缩的数据大小，以保证在性能损耗与数据压缩之间保持平衡。</li>
+<li>在读取某一列数据时，需要将压缩文件加载到内存并解压，这样才能进行后续的数据处理，通过数据压缩块可以在不读取整个.bin 文件的情况下，将读取粒度降低到数据压缩块级别，减少数据读取的范围。</li>
+</ol>
+</li>
+</ul>
+<p><img src="/images/imageslim-20220321145852781.jpeg" alt="img"></p>
+<h2 id="4-数据标记"><a href="#4-数据标记" class="headerlink" title="4. 数据标记"></a>4. 数据标记</h2><p>如果把 MergeTree 比作一本书，那么这本书的 一级章节目录就是 primary.idx 一级索引，书中的文字就是 .bin 文件中的数据。一级章节目录与书中的文字的联系由 数据标记（.mrk）建立。</p>
+<p>数据标记记录了两个非常重要的信息：</p>
+<ol>
+<li>一级章节对应的页码信息</li>
+<li>文字在某一页的起始位置</li>
+</ol>
+<p>通过数据标记后，很容易就能找到快速的从一本书中找到你想看的那一页，并知道从哪行开始阅读。</p>
+<h3 id="4-1-数据标记的生成规则"><a href="#4-1-数据标记的生成规则" class="headerlink" title="4.1 数据标记的生成规则"></a>4.1 数据标记的生成规则</h3><p><img src="/images/Fleqgd4U96913C__OQpuAofgihYu.jpeg" alt="通过索引下标找到对应的数据标记"></p>
+<p><strong>通过索引下标找到对应的数据标记</strong></p>
+<p>数据标记是衔接一级章节与数据的桥梁，每本书的每个章节也都会有各自的桥梁。从上图能够发现数据标记的首个特征即数据标记与索引区间是对齐的，都按照 index_granularity 的粒度间隔。这样只需要简单通过索引区间的下标编号就能找到对应的数据标记。</p>
+<p>为了能够与数据衔接，数据标记文件与 .bin 文件也是一一对应的。即每个列字段 [column].bin 文件都有一个与之对应的 [column].mrk 数据标记文件，用于记录 .bin 文件中的偏移量信息。</p>
+<p>一行标记文件使用一个元组表示，元组内包含两个整数的偏移量信息，分别表示：在此段数据区间内，对应的 .bin 压缩文件中，压缩数据块的起始偏移量，以及对该数据块解压后，其未压缩数据的起始偏移量。</p>
+<p><img src="/images/Fu2rQj8Do-xA9bXKB6Q6SuvkZl8x.jpeg" alt="img"></p>
+<p>每一行标记数据都表示了一个片段的数据（默认 8192 行）在 .bin 文件中的读取位置信息。标记数据与索引数据不同，不能常驻内存，而是使用 URL（最近最少使用）缓存策略加快其读取速度。</p>
+<h3 id="4-2-数据标记的工作方式"><a href="#4-2-数据标记的工作方式" class="headerlink" title="4.2 数据标记的工作方式"></a>4.2 数据标记的工作方式</h3><p>Merge 在读取数据时，必须通过标记数据的位置信息才能找到所需的数据。整个查询过程大致可以分为读取数据压缩块和读取数据两个步骤，下面图示说明了标记数据与压缩数据的对应关系。</p>
+<p><img src="/images/FnMFHZo_RKyCJ1iM8DBu2GG500pQ.jpeg" alt="img"></p>
+<p>字段了性为 UInt8，每行占用一个字节，index_granularity 粒度为 8192，所以一个索引片段占用数据大小是 8192B，根据压缩块的生成规则，当单批次数据小于 64KB 时，继续获取下一批数据，直到累积到 64KB 后，生成下一个数据压缩块。</p>
+<p>可以看到标记文件中，每 8 个标记文件对应一个压缩块，（64KB=65536B， 1B*8192= 8192B，65536/8192=8）所以能够看到标记文件中，压缩文件中每 8 行的偏移量都是相同的，因此该 8 行数据都指向了同一个压缩块。</p>
+<p>这 8 行数据中的解压缩文件偏移量按照 8192B 累加，当累加到 65536 后设置为 0，根据规则生成下一个压缩数据块。</p>
+<h4 id="4-2-1-读取压缩数据块"><a href="#4-2-1-读取压缩数据块" class="headerlink" title="4.2.1 读取压缩数据块"></a>4.2.1 读取压缩数据块</h4><ul>
+<li>在读取某一列数据时，Merge 无需加载整个 .bin 文件，这个特性需要借助标记文件中的压缩文件偏移量来实现。</li>
+<li>在标记文件中，上下相邻的像个压缩文件中的起始偏移量，构成了与获取当前标记对应的压缩数据块的偏移量区间。</li>
+<li>由当前标记数据开始向下寻找，直到找到不同的压缩数据偏移量截止，此时得到一组压缩数据偏移量区间，即压缩数据在 .bin 文件中 [0,12016] 字节就能读取到第 0 个压缩数据块。</li>
+<li>压缩数据块加载到内存后会进行解压，接着就到了读取数据的环节。</li>
+</ul>
+<h4 id="4-2-2-读取数据"><a href="#4-2-2-读取数据" class="headerlink" title="4.2.2 读取数据"></a>4.2.2 读取数据</h4><ul>
+<li>在读取解压后的数据时，Merge 不需要扫描全部解压数据</li>
+<li>可以根据需要，以 index_granularity 的粒度为单位加载特定小段数据，这个特性需要依靠标记文件中解压文件偏移量来实现。</li>
+<li>上下相邻两个解压缩数据块中的起始偏移量构成了获取当前标记对应的数据偏移量。</li>
+<li>依靠这个区间，能够在数据解压缩后依照偏移量获取数据，如通过 [0,8192] 来获取压缩文件 0 中的第一个数据片段。</li>
+</ul>
+<h2 id="5-分区，索引，标记和数据压缩总结"><a href="#5-分区，索引，标记和数据压缩总结" class="headerlink" title="5. 分区，索引，标记和数据压缩总结"></a>5. 分区，索引，标记和数据压缩总结</h2><p>分区、索引、标记数据和压缩数据都是 Merge 的重要组成部分，前面介绍过这不各部分的特点之后，现在需要将它们汇聚在一次做一个总结，下面从写入、查询。数据标记与压缩数据的对应关系三个部分介绍。</p>
+<h3 id="5-1-写入过程"><a href="#5-1-写入过程" class="headerlink" title="5.1 写入过程"></a>5.1 写入过程</h3><ul>
+<li>写入数据的第一步是生成分区目录，伴随着每一批数据的写入都会生成一个新的目录。</li>
+<li>在后续的某个时间属于相同分区的目录会合并到一起。</li>
+<li>接下来按照 index_granularity 的粒度 分别生成 primary.idx 一级索引、如果声明了二级索引也会生成二级索引、每一个列字段对应的 .mrk 标记文件和 .bin 压缩数据文件。</li>
+</ul>
+<p><img src="/images/imageslim-20220321145853480.jpeg" alt="img"></p>
+<h3 id="5-2-查询过程"><a href="#5-2-查询过程" class="headerlink" title="5.2 查询过程"></a>5.2 查询过程</h3><ul>
+<li>数据查询的本质是一个不断减小数据范围的过程</li>
+<li>Merge 可以依次借助分区索引、一级索引和二级索引将数据扫描范围缩至最小</li>
+<li>然后借助标记数据将需要解压与计算的数据范围缩至最小</li>
+<li>下图示意了在经过层层过滤获取最小数据范围的过程</li>
+</ul>
+<p><img src="/images/imageslim-20220321145853188.jpeg" alt="img"></p>
+<p>如果一条语句没有指定任何的 where 条件，或者指定了 where 条件但是没有匹配到任何索引，那么 Merge 就不能预先减小数据范围，在后续的查询中会扫描所有的分区目录，以及目录内的数据。虽然不能减少数据范围，但是 Merge 仍然能借助数据标记，以多线程的形式同时读取多个压缩数据块，以提升性能。</p>
+<h3 id="5-3-数据标记与压缩数据块的对应关系"><a href="#5-3-数据标记与压缩数据块的对应关系" class="headerlink" title="5.3 数据标记与压缩数据块的对应关系"></a>5.3 数据标记与压缩数据块的对应关系</h3><p>如下图所示，数据标记与压缩数据块存在三种关系</p>
+<ul>
+<li>多对一</li>
+<li>一对一</li>
+<li>一对多</li>
+</ul>
+<p><img src="/images/imageslim-20220321145853355.jpeg" alt="img"></p>
+<h4 id="5-3-1-多对一"><a href="#5-3-1-多对一" class="headerlink" title="5.3.1 多对一"></a>5.3.1 多对一</h4><p>多个数据标记对应一个数据压缩块，当一个数据间隔内的未压缩数据不到 64KB 时会出现这种关系。</p>
+<p>多个数据标记对应一个数据压缩块：</p>
+<p><img src="/images/imageslim-20220321145853655.jpeg" alt="多个数据标记对应一个数据压缩块"></p>
+<h4 id="5-3-2-一对一"><a href="#5-3-2-一对一" class="headerlink" title="5.3.2 一对一"></a>5.3.2 一对一</h4><p>一个数据标记对应一个数据压缩块，当一个数据间隔内的未压缩数据大于 64KB 且小于 1MB 时会出现这种关系。</p>
+<p>一个数据标记对应一个数据压缩块:</p>
+<p><img src="/images/FsVyLpz0aK84EprNCdvTIAo08Dnx.jpeg" alt="一个数据标记对应一个数据压缩块"></p>
+<h4 id="5-3-3-一对多"><a href="#5-3-3-一对多" class="headerlink" title="5.3.3 一对多"></a>5.3.3 一对多</h4><p>一个数据标记对应多个数据压缩块，当一个数据间隔内的未压缩数据大于 1MB 时会出现这种关系。</p>
+<p>一个数据标记对应多个数据压缩块:</p>
+<p><img src="/images/FgEDoEtQW44G83DmsMwWnS3W83D1.jpeg" alt="一个数据标记对应多个数据压缩块"></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ul>
+<li><a target="_blank" rel="noopener" href="http://www.hnbian.cn/posts/e6ed3197.html">ClickHouse 表引擎 2.MergeTree 索引与数据存储方式</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
