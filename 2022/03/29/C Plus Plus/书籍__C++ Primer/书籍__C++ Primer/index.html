@@ -1,0 +1,238 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;第一部分-C-基础&quot;&gt;&lt;a href=&quot;#第一部分-C-基础&quot; class=&quot;headerlink&quot; title=&quot;第一部分 C++基础&quot;&gt;&lt;/a&gt;第一部分 C++基础&lt;/h1&gt;&lt;h2 id=&quot;输出输入运算符&quot;&gt;&lt;a href=&quot;#输出输入运算符&quot; class=&quot;headerlink&quot; title=&quot;输出输入运算符&quot;&gt;&lt;/a&gt;输出输入运算符&lt;/h2&gt;&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;meta-string&quot;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  	&lt;span class=&quot;comment&quot;&gt;// :: 作用域运算符&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  	&lt;span class=&quot;comment&quot;&gt;// std::cout 说明名字cout是定义在名为std的命名空间中的.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::&lt;span class=&quot;built_in&quot;&gt;cout&lt;/span&gt; &amp;lt;&amp;lt; &lt;span class=&quot;string&quot;&gt;&amp;quot;Enter two numbers:&amp;quot;&lt;/span&gt; &amp;lt;&amp;lt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::&lt;span class=&quot;built_in&quot;&gt;endl&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; v1 = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, v2 = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::&lt;span class=&quot;built_in&quot;&gt;cin&lt;/span&gt; &amp;gt;&amp;gt; v1 &amp;gt;&amp;gt; v2;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::&lt;span class=&quot;built_in&quot;&gt;cout&lt;/span&gt; &amp;lt;&amp;lt; &lt;span class=&quot;string&quot;&gt;&amp;quot;The sum of &amp;quot;&lt;/span&gt; &amp;lt;&amp;lt; v1 &amp;lt;&amp;lt; &lt;span class=&quot;string&quot;&gt;&amp;quot; and &amp;quot;&lt;/span&gt; &amp;lt;&amp;lt; v2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              &amp;lt;&amp;lt; &lt;span class=&quot;string&quot;&gt;&amp;quot; is &amp;quot;&lt;/span&gt; &amp;lt;&amp;lt; v1 + v2 &amp;lt;&amp;lt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::&lt;span class=&quot;built_in&quot;&gt;endl&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code&gt;输出运算符&amp;lt;&amp;lt;&lt;/code&gt;接受两个运算对象：左侧的运算对象必须是一个ostream对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的ostream对象中。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>C++ Primer | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/C-Plus-Plus/" rel="tag">C Plus Plus</a></div><div class="post-time">2022-03-29</div></div></div><div class="container post-header"><h1>C++ Primer</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-C-%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">第一部分 C++基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E8%BE%93%E5%85%A5%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.1.</span> <span class="toc-text">输出输入运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91C"><span class="toc-number">1.2.</span> <span class="toc-text">编译C++</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.2.1.</span> <span class="toc-text">文件重定向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%8C%96%E7%AD%96%E7%95%A5%E9%9B%86%EF%BC%88locale%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">本地化策略集（locale）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-C-%E7%9A%84%E7%BC%96%E8%AF%91%E7%AD%96%E7%95%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text">C&#x2F;C++的编译策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E6%B2%A1%E6%9C%89%E9%99%90%E5%AE%9Awchar-t%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%92%8C%E7%BC%96%E7%A0%81"><span class="toc-number">1.3.3.</span> <span class="toc-text">标准没有限定wchar_t的大小和编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.4.</span> <span class="toc-text">如何选择数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%9B%E5%8C%96%E7%9A%84%E8%BD%AC%E4%B9%89%E5%BA%8F%E5%88%97"><span class="toc-number">1.4.</span> <span class="toc-text">泛化的转义序列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E9%9D%A2%E5%80%BC%E5%89%8D%E5%90%8E%E7%BC%80"><span class="toc-number">1.5.</span> <span class="toc-text">字面值前后缀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.6.</span> <span class="toc-text">列表初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E4%B8%8E%E5%AE%9A%E4%B9%89%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.7.</span> <span class="toc-text">声明与定义的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E5%BC%8F%E8%AE%BF%E9%97%AE%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">1.8.</span> <span class="toc-text">显式访问全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E5%8D%B3%E5%88%AB%E5%90%8D"><span class="toc-number">1.9.</span> <span class="toc-text">引用即别名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A9%BA%E6%8C%87%E9%92%88nullptr"><span class="toc-number">1.10.</span> <span class="toc-text">空指针nullptr</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#const"><span class="toc-number">1.11.</span> <span class="toc-text">const</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#const%E5%AF%B9%E8%B1%A1%E4%BB%85%E5%9C%A8%E6%96%87%E4%BB%B6%E5%86%85%E6%9C%89%E6%95%88"><span class="toc-number">1.11.1.</span> <span class="toc-text">const对象仅在文件内有效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B6%E5%B1%82const%E4%B8%8E%E5%BA%95%E5%B1%82const"><span class="toc-number">1.11.2.</span> <span class="toc-text">顶层const与底层const</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BA%E5%88%86%E9%A1%B6%E5%B1%82const%E5%92%8C%E5%BA%95%E5%B1%82const%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.11.3.</span> <span class="toc-text">区分顶层const和底层const的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.11.4.</span> <span class="toc-text">常量表达式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-C-%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-number">2.</span> <span class="toc-text">第二部分 C++标准库</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E7%B1%BB%E8%AE%BE%E8%AE%A1%E8%80%85%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">3.</span> <span class="toc-text">第三部分 类设计者的工具</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E9%AB%98%E7%BA%A7%E4%B8%BB%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">第四部分 高级主题</span></a></li></ol></details></div><div class="container post-content"><h1 id="第一部分-C-基础"><a href="#第一部分-C-基础" class="headerlink" title="第一部分 C++基础"></a>第一部分 C++基础</h1><h2 id="输出输入运算符"><a href="#输出输入运算符" class="headerlink" title="输出输入运算符"></a>输出输入运算符</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	<span class="comment">// :: 作用域运算符</span></span><br><span class="line">  	<span class="comment">// std::cout 说明名字cout是定义在名为std的命名空间中的.</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Enter two numbers:&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> v1 = <span class="number">0</span>, v2 = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; v1 &gt;&gt; v2;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;The sum of &quot;</span> &lt;&lt; v1 &lt;&lt; <span class="string">&quot; and &quot;</span> &lt;&lt; v2</span><br><span class="line">              &lt;&lt; <span class="string">&quot; is &quot;</span> &lt;&lt; v1 + v2 &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>输出运算符&lt;&lt;</code>接受两个运算对象：左侧的运算对象必须是一个ostream对象，右侧的运算对象是要打印的值。此运算符将给定的值写到给定的ostream对象中。</p>
+<p>输出运算符的计算结果就是其左侧运算对象。即，计算结果就是我们写入给定值的那个ostream对象。所以：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Enter two numbers:&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Enter two numbers:&quot;</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt;  <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 同理</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; v1 &gt;&gt; v2;</span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; v1;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; v2;</span><br></pre></td></tr></table></figure>
+
+<p>第二个运算符打印<code>end1</code>，这是一个被称为<code>操纵符（manipulator）</code>的特殊值。<strong>写入endl的效果是结束当前行，并将与设备关联的缓冲区（buffer）中的内容刷到设备中</strong>。</p>
+<p>使用istream对象作为条件时，其效果是检测流的状态。如果流是有效的，即流未遇到错误，那么检测成功。当遇到文件结（EOF），或<strong>遇到一个无效输入时（例如读入的值不是一个整数），istream对象的状态会变为无效</strong>。</p>
+<h2 id="编译C"><a href="#编译C" class="headerlink" title="编译C++"></a>编译C++</h2><p>C++ 和C语言类似，也要经过编译和链接后才能运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gcc命令在链接时默认使用C的库，只有添加了-lstdc++选项才会使用 C++ 的库。</span></span><br><span class="line">gcc main.cpp -lstdc++</span><br><span class="line"></span><br><span class="line"><span class="comment"># OR</span></span><br><span class="line"><span class="comment"># g++命令用来编译 C++，gcj命令用来编译 Java，gccgo命令用来编译Go语言。</span></span><br><span class="line">g++ main.cpp</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="文件重定向"><a href="#文件重定向" class="headerlink" title="文件重定向"></a>文件重定向</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出</span></span><br><span class="line">./a.out &gt; my_output_file.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入</span></span><br><span class="line">./a.out &lt; my_input_file.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<p>data.txt：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">998</span><br><span class="line">997</span><br><span class="line">996</span><br></pre></td></tr></table></figure>
+
+<p>maim.cpp:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> value = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> count = <span class="number">0</span>;count &lt;<span class="number">3</span>;count++) &#123;</span><br><span class="line">        std::cin &gt;&gt; value;</span><br><span class="line">        std::cout &lt;&lt; value &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gcc main.cpp -lstdc++</span><br><span class="line">./a.out &lt; data.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># output：</span></span><br><span class="line"><span class="comment"># 998</span></span><br><span class="line"><span class="comment"># 997</span></span><br><span class="line"><span class="comment"># 996</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>最小尺寸</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bool</td>
+<td>布尔类型</td>
+<td>未定义</td>
+</tr>
+<tr>
+<td>char</td>
+<td>字符</td>
+<td>8位</td>
+</tr>
+<tr>
+<td>wchar_t</td>
+<td>宽字符</td>
+<td>16 位</td>
+</tr>
+<tr>
+<td>char16_t</td>
+<td>Unicode 字符</td>
+<td>16 位</td>
+</tr>
+<tr>
+<td>char32_t</td>
+<td>Unicode 字符</td>
+<td>32位</td>
+</tr>
+<tr>
+<td>short</td>
+<td>短整型</td>
+<td>16 位</td>
+</tr>
+<tr>
+<td>int</td>
+<td>整型</td>
+<td>16 位</td>
+</tr>
+<tr>
+<td>long</td>
+<td>长整型</td>
+<td>32 位</td>
+</tr>
+<tr>
+<td>long long</td>
+<td>长整型</td>
+<td>64位</td>
+</tr>
+<tr>
+<td>float</td>
+<td>单精度浮点数</td>
+<td>6 位有效数字</td>
+</tr>
+<tr>
+<td>double</td>
+<td>双精度浮点数</td>
+<td>10 位有效数字</td>
+</tr>
+<tr>
+<td>long double</td>
+<td>扩展精度浮点数</td>
+<td>10 位有效数字</td>
+</tr>
+</tbody></table>
+<h3 id="本地化策略集（locale）"><a href="#本地化策略集（locale）" class="headerlink" title="本地化策略集（locale）"></a>本地化策略集（locale）</h3><p>char是一种整数类型，这句话的含义是，char所能表示的字符在C/C++中都是整数类型。</p>
+<p>很多文章就会举出一个典型例子，比如，’a’的数值就是0x61。这种说法对吗？如果你细心的读过K&amp;R和BS对于C和C++描述的原著，你就会马上反驳道，<strong>0x61只是’a’的ASCII值，并没有任何规定C/C++的char值必须对应ASCII</strong>。C/C++甚至没有规定char占几位，只是规定了sizeof(char)等于1。</p>
+<p>当然，目前大部分情况下，char是8位的，并且与ASCII值对应。</p>
+<p>“将’a’翻译成0x61的整数值”，“将ASCII范围内的编码与char的整数值对应起来”，类似这样的规定，<strong>是特定系统和特定编译器制定的</strong>，C/C++中有个特定的名词来描述这种规定的集合：<code>本地化策略集</code>（locale。也有翻译成“现场”）。而翻译——也就是代码转换（codecvt）只是这个集合中的一个，C++中定义为策略（facet。也有翻译为“刻面”）</p>
+<h3 id="C-C-的编译策略"><a href="#C-C-的编译策略" class="headerlink" title="C/C++的编译策略"></a>C/C++的编译策略</h3><p>字符（串）在程序文件（可执行文件，非源文件）中的表示，与在程序执行中在内存中的表示一致。考虑两种情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A、char c = 0x61;</span><br><span class="line">B、char c = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>情况A下，编译器可以直接认识作为整数，但是在情况B下，编译器必须将’a’翻译成整数。<strong>编译器的策略也很简单，就是直接读取字符（串）在源文件中的编码数值</strong>。</p>
+<blockquote>
+<p>比如这段字符串：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* s = <span class="string">&quot;中文abc&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在GB2312，也就是我们的windows默认中文系统，源文件中的编码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0xD6  0xD0  0xCE 0xC4 0x61 0x62 0x63</span><br></pre></td></tr></table></figure>
+
+<p>在UTF-8，也就是Linux默认系统，源文件中的编码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0xE4  0xB8  0xAD  0xE6  0x96  0x87  0x61  0x62  0x63</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>一般情况下，编译器会<strong>忠实于源文件的编码为s赋值</strong>，例外的情况比如VC会自作聪明的把大部分其他类型编码的字符串转换成GB2312（除了像UTF-8 without signature这样的幸存者）。程序在执行的时候，s也就保持是这样的编码，不会再做其他的转换。</p>
+<h3 id="标准没有限定wchar-t的大小和编码"><a href="#标准没有限定wchar-t的大小和编码" class="headerlink" title="标准没有限定wchar_t的大小和编码"></a>标准没有限定<code>wchar_t</code>的大小和编码</h3><p>正如char没有规定大小，wchar_t同样没有标准限定大小，<strong>标准只是要求一个wchar_t可以表示任何系统所能认识的字符</strong>。在win32中，wchar_t为16位；Linux中是32位。</p>
+<p>wchar_t同样没有规定编码。在win32中，wchar_t的编码是UCS-2BE；而Linux中是UTF-32BE。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 大写的L是告诉编译器：这是宽字符串。</span></span><br><span class="line"><span class="comment">// 所以，这时候是需要编译器根据locale来进行翻译的。</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span>* ws = <span class="string">L&quot;中文abc&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在不同环境的编码分别为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x4E2D  0x6587  0x0061  0x0062  0x0063                        //win32，16位</span><br><span class="line">0x00004E2D  0x00006587  0x00000061  0x00000062  0x00000063    //Linux，32位</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="如何选择数据类型"><a href="#如何选择数据类型" class="headerlink" title="如何选择数据类型"></a>如何选择数据类型</h3><ul>
+<li>当明确知晓数值不可能为负时，选用无符号类型。</li>
+<li>使用int执行整数运算。如果数值超过了int的表示范围，选用1ong long。</li>
+<li>在算术表达式中不要使用char或bool，只有在存放字符或布尔值时才使用它们。因为类型char在一些机器上是有符号的，而在另一些机器上又是无符号的，所以如果使用char进行运算特别容易出问题。如果你需要使用一个不大的整数，那么明确指定它的类型是signed char或者unsigned char。</li>
+<li>执行浮点数运算选用double，这是因为float通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double提供的精度在一般情况下是没有必要的，况且它带来的运行时消耗也不容忽视。</li>
+</ul>
+<h2 id="泛化的转义序列"><a href="#泛化的转义序列" class="headerlink" title="泛化的转义序列"></a>泛化的转义序列</h2><p>我们也可以使用泛化的转义序列，其形式是<code>\x</code>后紧跟1个或多个十六进制数字，或者\后紧跟1个、2个或3个八进制数字，其中数字部分表示的是字符对应的数值。假设使用的是Latin-1字符集，以下是一些示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">\7(响铃)</span><br><span class="line">\12(换行符)</span><br><span class="line">\40(空格)</span><br><span class="line">\0(空字符)</span><br><span class="line">\115(字符M)</span><br><span class="line">\x4d(字符M)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="字面值前后缀"><a href="#字面值前后缀" class="headerlink" title="字面值前后缀"></a>字面值前后缀</h2><ul>
+<li>‘a’, L’a’, “a”, L”a”：字符字面值，宽字符字面值，字符串字面值，宽字符串字面值。</li>
+<li>10, 10u, 10L, 10uL, 012, 0xC：十进制整型，十进制无符号整型，十进制长整型，十进制无符号长整型，八进制整型，十六进制整型。</li>
+<li>3.14, 3.14f, 3.14L：double, float, long double</li>
+<li>10, 10u, 10., 10e-2：十进制整型，十进制无符号整型，double, double</li>
+</ul>
+<h2 id="列表初始化"><a href="#列表初始化" class="headerlink" title="列表初始化"></a>列表初始化</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> a = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> a&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">a</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>当用于内置类型的变量时，列表初始化有个重要特点：<strong>如果我们使用列表初始化且初始值存在丢失信息的风险，则编译器将报错</strong>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> <span class="keyword">double</span> ld = <span class="number">3.1415926536</span>;</span><br><span class="line"><span class="keyword">int</span> a&#123;ld&#125;, b = &#123;ld&#125;;  <span class="comment">// 错误：转换未执行，因为存在丢失信息的危险</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">c</span><span class="params">(ld)</span>, d </span>= ld;    <span class="comment">// 正确：转换执行，且确实丢失了部分值</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="声明与定义的区别"><a href="#声明与定义的区别" class="headerlink" title="声明与定义的区别"></a>声明与定义的区别</h2><ul>
+<li>变量声明规定了<code>变量的类型</code>和<code>名字</code>，在这一点上定义与之相同。</li>
+<li><code>定义还申请存储空间</code>，也可能会为变量赋一个初始值。</li>
+</ul>
+<h2 id="显式访问全局变量"><a href="#显式访问全局变量" class="headerlink" title="显式访问全局变量"></a>显式访问全局变量</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> reused = <span class="number">42</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> unique = <span class="number">0</span>;</span><br><span class="line">    std::cout &lt;&lt; reused &lt;&lt; unique &lt;&lt; std::endl; <span class="comment">// 42 0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> reused = <span class="number">0</span>;</span><br><span class="line">    std::cout &lt;&lt; reused &lt;&lt; unique &lt;&lt; std::endl; <span class="comment">// 0 0</span></span><br><span class="line"></span><br><span class="line">  	<span class="comment">// 显示访问全局变量</span></span><br><span class="line">  	<span class="comment">// 全局作用域本身并没有名字，所以当作用域操作符的左侧为空</span></span><br><span class="line">    std::cout &lt;&lt; ::reused &lt;&lt; unique &lt;&lt; std::endl; <span class="comment">// 42 0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="引用即别名"><a href="#引用即别名" class="headerlink" title="引用即别名"></a>引用即别名</h2><p>引用就是对一块内存取一个别名。因此引用并不开辟新的内存块。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> ival = <span class="number">1024</span>;     <span class="comment">// 开辟了一块内存用于存放1024，并且在ival这个变量的存活期内，ival就代表了这块内存区域</span></span><br><span class="line"><span class="keyword">int</span> &amp;refVal = ival;  <span class="comment">// 这块内存区域现在可以通过refVal来获取。相当于给这块内存区域起了一个别名</span></span><br></pre></td></tr></table></figure>
+
+<p>引用很容易与指针混淆，它们之间有三个主要的不同：</p>
+<ul>
+<li>不存在空引用。引用必须连接到一块合法的内存。</li>
+<li>一旦引用被初始化为一个对象，就<strong>不能被指向到另一个对象</strong>。指针可以在任何时候指向到另一个对象。</li>
+<li><strong>引用必须在创建时被初始化</strong>。指针可以在任何时间被初始化。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> ival = <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;refVal = ival;      <span class="comment">// refVal 指向ival(是ival的别名)</span></span><br><span class="line"><span class="keyword">int</span> &amp;refVal2;            <span class="comment">// error：引用必须被初始化</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;refVal3 = <span class="number">42</span>; <span class="comment">// 对于const的引用是支持直接给到字面值的,这里的const的功能就是：禁止使用refVal3去修改42这个值。</span></span><br></pre></td></tr></table></figure>
+
+<p>指针的别名：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">42</span>;</span><br><span class="line">    <span class="keyword">int</span> *p = &amp;i;</span><br><span class="line">  	<span class="comment">// 指针的别名</span></span><br><span class="line">    <span class="keyword">int</span> *&amp;r = p;</span><br><span class="line">    std::cout &lt;&lt; *r &lt;&lt; std::endl; <span class="comment">// 42</span></span><br><span class="line"></span><br><span class="line">    *r = <span class="number">43</span>;</span><br><span class="line">    std::cout &lt;&lt; *r &lt;&lt; std::endl; <span class="comment">// 43</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对常量的引用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 当i是const时，i的别名必须也是const</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> i = <span class="number">42</span>;</span><br><span class="line"><span class="comment">// r必须是const。int &amp;r = i;会报错</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r = i;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="空指针nullptr"><a href="#空指针nullptr" class="headerlink" title="空指针nullptr"></a>空指针nullptr</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	<span class="comment">// 等价于 int *p1 = 0;</span></span><br><span class="line">    <span class="keyword">int</span> *p1 = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">    p1 = &amp;i;</span><br><span class="line">    std::cout &lt;&lt; *p1 &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>const的特点：</p>
+<ul>
+<li>用const加以限定的变量，无法改变。</li>
+<li>由于const对象定义之后就无法改变，所以必须对其进行初始化。</li>
+<li><strong>const对象的常量特征仅在尝试改变它的时候表现出来，其他时候和变量无异。</strong></li>
+</ul>
+<h3 id="const对象仅在文件内有效"><a href="#const对象仅在文件内有效" class="headerlink" title="const对象仅在文件内有效"></a>const对象仅在文件内有效</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> bufsize=<span class="number">512</span>；<span class="comment">//输入缓冲区大小</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>编译器将在编译过程中会找到代码中所有用到bufSize的地方，然后用512替换</strong>。</p>
+<ul>
+<li><p>为了执行上述替换，编译器必须知道变量的初始值。如果程序包含多个文件，那么每个用了const对象的文件都必须知道它的初始值才行。</p>
+</li>
+<li><p>要做到这一点，就必须在每一个用到变量的文件中都有对它的定义。为了支持这一用法，同时避免对同一变量的重复定义，默认情况下，<strong>const对象被设定为仅在文件内有效</strong>。当多个文件中出现了同名的const变量时，其实等同于在不同文件中分别定义了独立的变量。</p>
+</li>
+<li><p>const对象通常只在本文件内有效，如果希望其在其他文件中也有效，则需要在其前面加上<code>extern</code>关键字。更详细的做法是，在一个文件中定义const，在其他多个文件中声明并使用它。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file_1.cc 定义并初始化一个变量，改变量能被其他文件访问</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">const</span> <span class="keyword">int</span> bufSize = <span class="built_in">func</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// file_1.h头文件</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">const</span> <span class="keyword">int</span> bufSize; <span class="comment">// 与file_1.cc中定义的bufSize是同一个</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="顶层const与底层const"><a href="#顶层const与底层const" class="headerlink" title="顶层const与底层const"></a>顶层const与底层const</h3><p>const是一个限定符，被它修饰的变量的值不能改变。对于一般的变量来说，其实没有顶层const和底层const的区别，而只有对于指针这类复合类型的基本变量，才有这样的区别。</p>
+<p><img src="/images/image-20220329150035968.png" alt="image-20220329150035968"></p>
+<p>指针一共有两个值：<code>自身的值</code>和<code>所指之物的值</code>。所以就对应两种const：<code>int * const p2 = &amp;a;</code>，<code>int const *p1 = &amp;a; </code>。</p>
+<ul>
+<li><code>顶层const</code>（top-level const）：表示指针本身是个常量，更一般的，<strong>顶层const可以表示任意的对象是常量</strong>，这一点对任何数据类型都适用，如算术类型、类、指针等。</li>
+<li><code>底层const</code>（low-level const）：表示指针所指的对象是一个常量。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r = ci;   <span class="comment">// 用于声明引用的const都是底层const</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="区分顶层const和底层const的作用"><a href="#区分顶层const和底层const的作用" class="headerlink" title="区分顶层const和底层const的作用"></a>区分顶层const和底层const的作用</h3><p>执行拷贝操作时，顶层const不会有太大影响，但有两个例外：</p>
+<ul>
+<li>非常量引用不能绑定常量。</li>
+<li>非常量指针不能指向常量。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> ival = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;ri = ival;      <span class="comment">//错误，非常量引用不能绑定常量。</span></span><br><span class="line"><span class="keyword">int</span> *iptr = &amp;ival;   <span class="comment">//错误，非常量指针不能指向常量。</span></span><br></pre></td></tr></table></figure>
+
+<p>底层const在执行拷贝操作时的限制比较大，总结出两点：</p>
+<ul>
+<li><strong>当拷贝操作的右侧对象具有底层const时，要求左侧对象也要有底层const资格</strong>。</li>
+<li>非常量对象一般可以转换成常量，而反过来常量则不能转换成非常量。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> *<span class="keyword">const</span> p1 = &amp;i;       <span class="comment">// 不能改变p1的值，这是一个顶层const</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> ci = <span class="number">42</span>;        <span class="comment">// 不能改变ci的值，这是一个顶层const</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> *p2 = &amp;ci;      <span class="comment">// 允许改变p2的值，这是一个底层const</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p3 = p2; <span class="comment">// 靠右的const是顶层const，靠左的是底层const</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> &amp;r = ci;        <span class="comment">// 引用本身没有地址，他作为别名指向一个值，所以用于声明引用的const都是底层const</span></span><br><span class="line"></span><br><span class="line">    i = ci;  <span class="comment">// 正确：拷贝ci的值，ci是一个顶层const，对此操作无影响</span></span><br><span class="line">    p2 = p3; <span class="comment">// 正确：p2和p3指向的对象类型相同，p3顶层const的部分不影响</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> *p = p3;       <span class="comment">// 错误：p3包含底层const的定义，而p没有</span></span><br><span class="line">    p2 = p3;           <span class="comment">// 正确：p2和p3都是底层const</span></span><br><span class="line">    p2 = &amp;i;           <span class="comment">// 正确：int*能转换成const int*</span></span><br><span class="line">    <span class="keyword">int</span> &amp;r = ci;       <span class="comment">// 错误：普通的int&amp;不能绑定到int常量上</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> &amp;r2 = i; <span class="comment">// 正确：const int&amp;可以绑定到一个普通int上</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="常量表达式"><a href="#常量表达式" class="headerlink" title="常量表达式"></a>常量表达式</h3><p>常量表达式(const expression)是指值不会改变并且<strong>在编译过程就能得到计算结果</strong>的表达式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> max_files = <span class="number">20</span>;           <span class="comment">// max_files是常量表达式</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> limit = max_files + <span class="number">1</span>;    <span class="comment">// limit是</span></span><br><span class="line"><span class="keyword">int</span> staff_size = <span class="number">27</span>;                <span class="comment">// staff_size不是</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> sz = <span class="built_in">get_size</span>();          <span class="comment">// sz的具体值直到运行时才能获取到，所以sz不是</span></span><br></pre></td></tr></table></figure>
+
+<p>C++11新标准规定，允许<strong>将变量声明为constexpr类型以便由编译器来验证变量的值是否是一个常量表达式</strong>。声明为constexpr的变量一定是一个常量，而且必须用常量表达式初始化：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> mf = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> limit = mf +<span class="number">1</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> sz = <span class="built_in">size</span>();   <span class="comment">// 只有当size是一个constexpr函数时才是一条正确的生命语句</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>P85</p>
+<h1 id="第二部分-C-标准库"><a href="#第二部分-C-标准库" class="headerlink" title="第二部分 C++标准库"></a>第二部分 C++标准库</h1><h1 id="第三部分-类设计者的工具"><a href="#第三部分-类设计者的工具" class="headerlink" title="第三部分 类设计者的工具"></a>第三部分 类设计者的工具</h1><h1 id="第四部分-高级主题"><a href="#第四部分-高级主题" class="headerlink" title="第四部分 高级主题"></a>第四部分 高级主题</h1></div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
