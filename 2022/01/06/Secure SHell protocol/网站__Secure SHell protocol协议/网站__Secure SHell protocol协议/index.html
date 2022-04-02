@@ -1,0 +1,219 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SSH&lt;/code&gt;是（Secure SHell protocol）的简写，安全外壳协议（SSH）是一种在不安全网络上提供安全远程登录及其它安全网络服务的协议。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;OpenSSH&lt;/code&gt; 是 SSH（Secure SHell）协议的&lt;strong&gt;免费开源实现&lt;/strong&gt;。SSH协议族可以用来进行远程控制，或在计算机之间传送文件。而实现此功能的传统方式，如telnet(终端仿真协议)、 rcp ftp、 rlogin、rsh都是极为不安全的，并且会使用明文传送密码。OpenSSH提供了服务端后台程序和客户端工具，用来加密远程控件和文件传输过程的中的数据，并由此来代替原来的类似服务。&lt;/li&gt;
+&lt;li&gt;在过去我们使用的 rsh 和 telnet，因为包括登录时的 ID 和密码数据没有加密就传到网络上，存在安全上的问题。即使在内部网上，也有在因特网上的窃取和篡改等危险性。SSH 将包括密码在内的所有数据都已进行了加密处理，可以进行更安全的远程操作。在 SSH 中，由于协议标准的不同而存在 SSH1 和 SSH2 两个不同的版本。SSH2 是为了回避 SSH1 所使用的加密算法的许可证问题而开发的（现在这一许可证问题已经不存在了）。TLES 8中作为安装 SSH 协议的应用程序采用了开放源码的 OpenSSH。OpenSSH 与 SSH1 和 SSH2 的任何一个协议都能对应，但默认使用SSH2。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;简单描述SSH运行的过程&quot;&gt;&lt;a href=&quot;#简单描述SSH运行的过程&quot; class=&quot;headerlink&quot; title=&quot;简单描述SSH运行的过程&quot;&gt;&lt;/a&gt;简单描述SSH运行的过程&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Client端向Server端发起SSH连接请求。&lt;/li&gt;
+&lt;li&gt;Server端向Client端发起版本协商。&lt;/li&gt;
+&lt;li&gt;协商结束后Server端发送Host Key公钥 Server Key公钥，随机数等信息。到这里所有通信是不加密的。&lt;/li&gt;
+&lt;li&gt;Client端返回确认信息，同时附带用公钥加密过的一个随机数，用于双方计算Session Key。&lt;/li&gt;
+&lt;li&gt;进入认证阶段。从此以后所有通信均加密。&lt;/li&gt;
+&lt;li&gt;认证成功后，进入交互阶段。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;工作过程&quot;&gt;&lt;a href=&quot;#工作过程&quot; class=&quot;headerlink&quot; title=&quot;工作过程&quot;&gt;&lt;/a&gt;工作过程&lt;/h2&gt;&lt;p&gt;ssh的工作过程共分为几步："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Secure SHell protocol协议 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Secure-SHell-protocol/" rel="tag">Secure SHell protocol</a></div><div class="post-time">2022-01-06</div></div></div><div class="container post-header"><h1>Secure SHell protocol协议</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E6%8F%8F%E8%BF%B0SSH%E8%BF%90%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">简单描述SSH运行的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">工作过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP%E7%9A%84%E5%BB%BA%E7%AB%8B%E4%B8%8E%E6%96%AD%E5%BC%80"><span class="toc-number">3.1.</span> <span class="toc-text">TCP的建立与断开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E5%8D%8F%E5%95%86%E9%98%B6%E6%AE%B5"><span class="toc-number">3.2.</span> <span class="toc-text">版本协商阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E5%8D%8F%E5%95%86"><span class="toc-number">3.3.</span> <span class="toc-text">算法协商</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E9%98%B6%E6%AE%B5"><span class="toc-number">3.4.</span> <span class="toc-text">密钥交换阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#H%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">3.4.1.</span> <span class="toc-text">H的计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E5%AF%86%E9%92%A5%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">3.4.2.</span> <span class="toc-text">加密密钥的计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DH%E7%AE%97%E6%B3%95"><span class="toc-number">3.4.3.</span> <span class="toc-text">DH算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E9%98%B6%E6%AE%B5"><span class="toc-number">3.5.</span> <span class="toc-text">用户认证阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AElinux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%85%AC%E9%92%A5%E7%99%BB%E9%99%86"><span class="toc-number">3.5.1.</span> <span class="toc-text">配置linux服务器的公钥登陆</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D%E4%B8%8E%E4%BA%A4%E6%8D%A2%E9%98%B6%E6%AE%B5"><span class="toc-number">3.6.</span> <span class="toc-text">会话与交换阶段</span></a></li></ol></li></ol></details></div><div class="container post-content"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li><code>SSH</code>是（Secure SHell protocol）的简写，安全外壳协议（SSH）是一种在不安全网络上提供安全远程登录及其它安全网络服务的协议。</li>
+<li><code>OpenSSH</code> 是 SSH（Secure SHell）协议的<strong>免费开源实现</strong>。SSH协议族可以用来进行远程控制，或在计算机之间传送文件。而实现此功能的传统方式，如telnet(终端仿真协议)、 rcp ftp、 rlogin、rsh都是极为不安全的，并且会使用明文传送密码。OpenSSH提供了服务端后台程序和客户端工具，用来加密远程控件和文件传输过程的中的数据，并由此来代替原来的类似服务。</li>
+<li>在过去我们使用的 rsh 和 telnet，因为包括登录时的 ID 和密码数据没有加密就传到网络上，存在安全上的问题。即使在内部网上，也有在因特网上的窃取和篡改等危险性。SSH 将包括密码在内的所有数据都已进行了加密处理，可以进行更安全的远程操作。在 SSH 中，由于协议标准的不同而存在 SSH1 和 SSH2 两个不同的版本。SSH2 是为了回避 SSH1 所使用的加密算法的许可证问题而开发的（现在这一许可证问题已经不存在了）。TLES 8中作为安装 SSH 协议的应用程序采用了开放源码的 OpenSSH。OpenSSH 与 SSH1 和 SSH2 的任何一个协议都能对应，但默认使用SSH2。</li>
+</ul>
+<h2 id="简单描述SSH运行的过程"><a href="#简单描述SSH运行的过程" class="headerlink" title="简单描述SSH运行的过程"></a>简单描述SSH运行的过程</h2><ol>
+<li>Client端向Server端发起SSH连接请求。</li>
+<li>Server端向Client端发起版本协商。</li>
+<li>协商结束后Server端发送Host Key公钥 Server Key公钥，随机数等信息。到这里所有通信是不加密的。</li>
+<li>Client端返回确认信息，同时附带用公钥加密过的一个随机数，用于双方计算Session Key。</li>
+<li>进入认证阶段。从此以后所有通信均加密。</li>
+<li>认证成功后，进入交互阶段。</li>
+</ol>
+<h2 id="工作过程"><a href="#工作过程" class="headerlink" title="工作过程"></a>工作过程</h2><p>ssh的工作过程共分为几步：</p>
+<ol>
+<li>TCP三次握手建立tcp链接；</li>
+<li>版本协商阶段</li>
+<li>算法协商阶段</li>
+<li>密钥交换阶段</li>
+<li>会话请求阶段</li>
+<li>交互会话阶段</li>
+<li>TCP四次挥手断开tcp链接；</li>
+</ol>
+<h3 id="TCP的建立与断开"><a href="#TCP的建立与断开" class="headerlink" title="TCP的建立与断开"></a>TCP的建立与断开</h3><p>ssh在Internet中通常工作在TCP/IP层之上，基于tcp，端口使用22端口，所以在ssh开始前及结束后需要建立或者断开TCP链接；</p>
+<p>三次握手：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png"><img src="/images/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png" alt="TCP三次握手"></a></p>
+<p>四次挥手：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png"><img src="/images/TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" alt="TCP四次挥手"></a></p>
+<h3 id="版本协商阶段"><a href="#版本协商阶段" class="headerlink" title="版本协商阶段"></a>版本协商阶段</h3><p>服务器及客户端在此步骤中交互各自的ssh版本及软件版本信息，过程如下：</p>
+<p>在tcp建立链接之后，服务器向客户端发送“SSH-&lt;主协议版本号&gt;.&lt;次协议版本号&gt; - &lt;软件版本号&gt;”，客户端根据协议版本号，给出自己支持的版本号并发送给客户端，完成协商，否则断开tcp。</p>
+<p>服务器向客户端发送自己的版本信息：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-server%E7%89%88%E6%9C%AC%E5%8F%91%E9%80%81.png"><img src="/images/ssh-server%E7%89%88%E6%9C%AC%E5%8F%91%E9%80%81.png" alt="ssh-server版本发送"></a></p>
+<p>客户端回服务器自己的版本信息，完成协商：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-client%E7%89%88%E6%9C%AC%E5%9B%9E%E5%A4%8D.png"><img src="/images/ssh-client%E7%89%88%E6%9C%AC%E5%9B%9E%E5%A4%8D.png" alt="ssh-client版本回复"></a></p>
+<h3 id="算法协商"><a href="#算法协商" class="headerlink" title="算法协商"></a>算法协商</h3><p>服务器端和客户端分别发送算法协商报文给对端，报文包含自己支持的公钥算法，加密算法，MAC算法，压缩算法等；</p>
+<p>服务器&amp;客户端发送的协商报文：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-server&client%E5%AF%86%E9%92%A5init.png"><img src="/images/ssh-server&client%E5%AF%86%E9%92%A5init.png" alt="ssh-server&amp;client密钥init"></a></p>
+<h3 id="密钥交换阶段"><a href="#密钥交换阶段" class="headerlink" title="密钥交换阶段"></a>密钥交换阶段</h3><p>ssh的密钥交换基于diffie-hellman-group-exchange-shaxxx&lt;xxx如256&gt;实现密钥的交换，过程如下：</p>
+<p>client向server发送Exchange Request报文，开始密钥交换：</p>
+<p>[![ssh-exchange requests](/images/ssh-exchange requests.png)](<a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-exchange">https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-exchange</a> requests.png)</p>
+<p>server向client发送Group报文，与client共享DH算法中的P和G：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-group-p&g.png"><img src="/images/ssh-group-p&g.png" alt="ssh-group-p&amp;g"></a></p>
+<p>client将使用p与g计算出的e发送给server;</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-init-e.png"><img src="/images/ssh-init-e.png" alt="ssh-init-e"></a></p>
+<p>server收到e后，根据算法计算出秘钥K，然后使用sha256算法将一些已知信息hash加密为H，并用rsa将hash签名，最后发送rsa的公钥，dh的f值，rsa签名后的hash信息发回客户端：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-reply.png"><img src="/images/ssh-reply.png" alt="ssh-reply"></a></p>
+<p>同时server也会在相同的报文中发送验证无误后发送的new-key报文：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-new-key-server.png"><img src="/images/ssh-new-key-server.png" alt="ssh-new-key-server"></a></p>
+<p>客户端根据服务器发回的f计算出K值，并根据同样的已有信息hash计算得到H后，使用服务器发来的rsa-公钥校验服务器发回的hash值的签名，根据得到的hash值H，再进行特定的hash运算即可得到以后用于数据加密的密钥，校验无误返回new key，表示密钥交换完毕，以后数据均会被数据加密密钥加密；</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/ssh-new-key-client.png"><img src="/images/ssh-new-key-client.png" alt="ssh-new-key-client"></a></p>
+<h4 id="H的计算"><a href="#H的计算" class="headerlink" title="H的计算"></a>H的计算</h4><p>H = hash(V_C|V_S|I_C|I_S|K_S||e||f||K);</p>
+<blockquote>
+<p>tips：可以看H中有只有client和server才知道的值K，也包含rsa公钥，所以hash后，中间人无法更改里面的值，如果更改了rsa的公钥与H的签名，其实也是没有意义的，因为在H中包含一个不易破解的rsa公钥；所以唯一有问题的点在于，你开始就不是在和你的目的主机在协商，而是中间人；</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">值</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">string</td>
+<td align="left">V_C</td>
+<td align="left">客户端的初始报文（版本信息：SSH-2.0-xxx，不含结尾的CR和LF）</td>
+</tr>
+<tr>
+<td align="left">string</td>
+<td align="left">V_S</td>
+<td align="left">服务器的初始报文</td>
+</tr>
+<tr>
+<td align="left">string</td>
+<td align="left">I_C</td>
+<td align="left">客户端 SSH_MSG_KEX_INIT的有效载荷（不含开头的数据长度值）</td>
+</tr>
+<tr>
+<td align="left">string</td>
+<td align="left">I_S</td>
+<td align="left">服务器的同上</td>
+</tr>
+<tr>
+<td align="left">string</td>
+<td align="left">K_S</td>
+<td align="left">主机秘钥（dh gex reply（33)过程服务器发送host key (RSA公钥)）</td>
+</tr>
+<tr>
+<td align="left">mpint</td>
+<td align="left">e</td>
+<td align="left">客户端DH公钥</td>
+</tr>
+<tr>
+<td align="left">mpint</td>
+<td align="left">f</td>
+<td align="left">服务器DH公钥</td>
+</tr>
+<tr>
+<td align="left">mpint</td>
+<td align="left">K</td>
+<td align="left">共同DH计算结果</td>
+</tr>
+</tbody></table>
+<p>将以上内容顺序拼接后，使用sha256计算出H，会话第一次的密钥交换生成的H为session_id，之后再进行密钥交换的H不再是session_id，session_id不变；</p>
+<h4 id="加密密钥的计算"><a href="#加密密钥的计算" class="headerlink" title="加密密钥的计算"></a>加密密钥的计算</h4><p>加密密钥是一个对称加密算法(一般为aes算法)所用到的密钥，用于实际的数据加密。</p>
+<p>计算：hash(K,H,单个字符,session_id);</p>
+<p>单个字符指的是单个大写的ASCII字母，根据不同的加密秘钥选择不同的字符来计算。</p>
+<table>
+<thead>
+<tr>
+<th align="left">字母</th>
+<th align="left">秘钥</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">‘A’</td>
+<td align="left">客户端到服务器的初始IV（CBC）</td>
+</tr>
+<tr>
+<td align="left">‘B’</td>
+<td align="left">服务器到客户端的初始IV</td>
+</tr>
+<tr>
+<td align="left">‘C’</td>
+<td align="left">客户端到服务器的加密秘钥（数据加解密秘钥）</td>
+</tr>
+<tr>
+<td align="left">‘D’</td>
+<td align="left">服务器到客户端的加密秘钥</td>
+</tr>
+<tr>
+<td align="left">‘E’</td>
+<td align="left">客户端到服务器的完整性秘钥(HMAC)</td>
+</tr>
+<tr>
+<td align="left">‘F’</td>
+<td align="left">服务器到客户端的完整性秘钥</td>
+</tr>
+</tbody></table>
+<p>哈希计算得到字符串RE，如果我么想要的秘钥长度比RE长，则在RE后面继续加上一个hash值：hash(K,H,RE)成为一个加长的RE。还不够继续加上hash(K,H,RE)，依次类推</p>
+<h4 id="DH算法"><a href="#DH算法" class="headerlink" title="DH算法"></a>DH算法</h4><p>dh算法最终目的是在不安全的网络上完成K值的传递：</p>
+<ol>
+<li>server生成两个数<code>G</code>与<code>P</code>,<code>P</code>为非常大的素数，为DH算法的mod；<code>G</code>为密码发生器；，将<code>P</code>与<code>G</code>发送给client；</li>
+<li>客户端生成一个<code>x</code>（0&lt;x&lt;P），计算<code>e</code>=(G^x)%P，<code>e</code>就是客户端的公钥，客户端将<code>e</code>发送给服务器；</li>
+<li>服务器也同客户端一样，生成一个数<code>y</code>，计算<code>f</code>=(G^y)%P。将服务器公钥<code>f</code>发送给客户端；</li>
+<li>服务端与客户端分别计算<code>K1</code>与<code>K2</code>，可以证明<code>K1</code>=<code>K2</code>，所以<code>K</code>= K1=(e^y)%P = K2= (f^x)%P，完成<code>K</code>的传递；</li>
+</ol>
+<blockquote>
+<p>如上，中间人可以看到G,P,e,f，只要P足够大，中间人就无法根据这几个值计算出K；</p>
+</blockquote>
+<p>如下为一段破解的程序，在x，y及G与P不大的情况下，根据e和f猜测x和y并得出K：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="comment"># 生成P和G</span></span><br><span class="line">g = random.randint(<span class="number">100010001000</span>, <span class="number">10000100010001000</span>)</span><br><span class="line">p = random.randint(<span class="number">100010001000</span>, <span class="number">10001000100010001000</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;底数为%d, 模数为%d&quot;</span> % (g, p))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指数运算</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">power</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> g ** x</span><br><span class="line"></span><br><span class="line"><span class="comment"># mod运算</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mod</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x % p</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据最后生成的公钥e和f的值与P和G的值猜测x和y</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demod</span>(<span class="params">e_or_f</span>):</span></span><br><span class="line">    <span class="keyword">for</span> x_or_y <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>):</span><br><span class="line">        <span class="keyword">if</span> mod(power(x_or_y)) == e_or_f:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> x_or_y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x = random.randint(<span class="number">1000</span>, <span class="number">10000</span>)</span><br><span class="line">y = random.randint(<span class="number">1000</span>, <span class="number">10000</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;client, server各自的源数字为：&quot;</span>, [x, y])</span><br><span class="line"></span><br><span class="line">e = mod(power(x))  <span class="comment"># client加密后的公钥e，被我窃听</span></span><br><span class="line">f = mod(power(y))  <span class="comment"># server加密后的公钥f，被我窃听</span></span><br><span class="line">K1 = mod(f ** x)   <span class="comment"># client计算出的K值</span></span><br><span class="line">K2 = mod(e ** y)   <span class="comment"># server计算出的K值</span></span><br><span class="line"></span><br><span class="line">guess_x = demod(e) <span class="comment"># 猜测下x</span></span><br><span class="line">guess_K1 = mod(f ** guess_x) <span class="comment"># 根据猜测的x算出K1值；</span></span><br><span class="line">guess_y = demod(f) <span class="comment"># 猜测下y </span></span><br><span class="line">guess_K2 = mod(e ** guess_y) <span class="comment"># 根据y值算出K2值；</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;client,server各自算出的密钥为:&quot;</span>, [K1, K2])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;我猜测的client，server各自的源数字为：&quot;</span>, [guess_x, guess_y])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;我猜测的client，server各自算出的钥匙为：&quot;</span>, [guess_K1, guess_K2])</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/Bruce_Amadeus_Lee/mytp/raw/master/img/dh%E7%A0%B4%E8%A7%A3%E5%9B%BE.png"><img src="/images/dh%E7%A0%B4%E8%A7%A3%E5%9B%BE.png" alt="dh破解图"></a></p>
+<h3 id="用户认证阶段"><a href="#用户认证阶段" class="headerlink" title="用户认证阶段"></a>用户认证阶段</h3><blockquote>
+<p>tips：完成密钥交换节点后，所有数据均使用加密密钥加密的密文包；</p>
+</blockquote>
+<p>目前用户阶段主要使用两种方式，password认证及publickey认证：</p>
+<p>password认证方式：</p>
+<ol>
+<li>客户端向服务器发出password认证请求，同时将用户名密码发送给服务器；</li>
+<li>服务器将用户名与密码与服务器上的进行对比，返回成功或失败；</li>
+</ol>
+<p>publickey认证方式：</p>
+<ol>
+<li>客户端生成RSA公钥和私钥；</li>
+<li>客户端将自己的公钥存放到服务器；</li>
+<li>客户端请求连接服务器，服务器将一个随机字符串发送给客户端；</li>
+<li>客户端根据自己的私钥加密这个随机字符串之后再发送给服务器；</li>
+<li>服务器接受到加密后的字符串之后用公钥解密，如果正确就让客户端登录，否则拒绝。</li>
+</ol>
+<blockquote>
+<p>tips：ssh2中以上两种方式可以混合使用，比如两种均需要验证或只验证其中任意一种(and与or)；</p>
+</blockquote>
+<p>整体认证过程如下：</p>
+<ol>
+<li>客户端向服务器端发送认证请求，认证请求中包含用户名、认证方法、与该认证方法相关的内容（如：password认证时，内容为密码）。</li>
+<li>服务器端对客户端进行认证，如果认证失败，则向客户端发送认证失败消息，其中包含可以再次认证的方法列表。</li>
+<li>客户端从认证方法列表中选取一种认证方法再次进行认证。</li>
+<li>该过程反复进行， 直到认证成功或者认证次数达到上限， 服务器关闭连接为止。</li>
+</ol>
+<h4 id="配置linux服务器的公钥登陆"><a href="#配置linux服务器的公钥登陆" class="headerlink" title="配置linux服务器的公钥登陆"></a>配置linux服务器的公钥登陆</h4><ol>
+<li><p>在client生成密钥对</p>
+<blockquote>
+<p>支持多种非对称密钥生成算法，如dsa，ecdsa和rsa等；</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -P参数表示密码，用于确保私钥的安全，可以使用ssh-agent来自动设置password的输入，一方方面是登陆方便，另一方面防止私钥丢失造成安全的隐患；</span></span><br><span class="line"><span class="comment"># -f指定存放密钥的文件，公钥/私钥存放同一目录，公钥为.pub</span></span><br><span class="line"><span class="comment"># -b采用长度为1024字节的公钥/私钥对,最长4096；</span></span><br><span class="line">ssh-keygen -b 2048 -t rsa -P</span><br><span class="line"><span class="comment"># 该命令将在/root/.ssh目录下面产生一对密钥id_rsa和id_rsa.pub</span></span><br></pre></td></tr></table></figure></li>
+<li><p>将client下面的id_rsa.pub复制到Server的/root/.ssh/authorized_keys</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果.ssh/authorized_keys不存在则需要手动创建</span></span><br><span class="line">scp /root/.ssh/id_rsa.pub root@server_ip:/root/.ssh/authorized_keys</span><br><span class="line"><span class="comment"># 复制到某个用户的home下，即对某个用户的验证，比如这里，登陆上来即是root用户</span></span><br><span class="line">chmod 600 /root/.ssh/authorized_keys</span><br><span class="line"><span class="comment"># 只有root或当前用户才可以访问这个目录，这个是必须的，否则这个目录ssh会认为无效；</span></span><br></pre></td></tr></table></figure></li>
+<li><p>可以关闭密码登陆：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line">PasswordAuthentication:no</span><br><span class="line">systemctl restart sshd</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="会话与交换阶段"><a href="#会话与交换阶段" class="headerlink" title="会话与交换阶段"></a>会话与交换阶段</h3><p>会话请求后即计入交互会话阶段：</p>
+<ol>
+<li>服务器等待客户端的请求；</li>
+<li>认证通过后，客户端向服务器发送会话请求；</li>
+<li>服务器处理客户端的请求。请求被成功处理后， 服务器会向客户端回应 SSH_SMSG_SUCCESS包，SSH进入交互会话阶段；否则回应 SSH_SMSG_FAILURE包，表示服务器处理请求失败或者不能识别请求。</li>
+<li>客户端将要执行的命令加密后传给服务器;</li>
+<li>服务器接收到报文，解密后执行该命令,将执行的结果加密发还给客户端;</li>
+<li>客户端将接收到的结果解密后显示到终端上.</li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

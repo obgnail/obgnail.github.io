@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Devle 是一个非常棒的 golang 调试工具，支持多种调试方式，直接运行调试，或者 attach 到一个正在运行中的 Go 程序，进行调试。线上 Go 服务出现问题时，Devle 是必不可少的在线调试工具，如果使用 docker，也可以把 Devle 打进 docker 镜像里，从而调试代码。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>如何调试docker下的go代码 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2022-03-30</div></div></div><div class="container post-header"><h1>如何调试docker下的go代码</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Go-get"><span class="toc-number">1.</span> <span class="toc-text">1. Go get</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%90%AF%E5%8A%A8docker"><span class="toc-number">2.</span> <span class="toc-text">2. 启动docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-IDE%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">3. IDE配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%96%E8%80%85"><span class="toc-number">4.</span> <span class="toc-text">或者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">完整示例</span></a></li></ol></details></div><div class="container post-content"><p>Devle 是一个非常棒的 golang 调试工具，支持多种调试方式，直接运行调试，或者 attach 到一个正在运行中的 Go 程序，进行调试。线上 Go 服务出现问题时，Devle 是必不可少的在线调试工具，如果使用 docker，也可以把 Devle 打进 docker 镜像里，从而调试代码。</p>
+<h2 id="1-Go-get"><a href="#1-Go-get" class="headerlink" title="1. Go get"></a>1. Go get</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/go-delve/delve/cmd/dlv</span><br></pre></td></tr></table></figure>
+
+<p>编译完成后 dlv 文件就在 <code>$GOPATH/bin</code> 目录下了，可以以下命令查看版本信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dlv -v</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-启动docker"><a href="#2-启动docker" class="headerlink" title="2. 启动docker"></a>2. 启动docker</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -it \</span><br><span class="line">-v <span class="variable">$GOPATH</span>/src:/go/src \</span><br><span class="line">-v $(<span class="built_in">pwd</span>):$(<span class="built_in">pwd</span>) \</span><br><span class="line">-e GO111MODULE=off \</span><br><span class="line">-p 2345:2345 \</span><br><span class="line">godebuger /bin/sh -c <span class="string">&#x27;cd &#x27;</span><span class="string">&quot;<span class="subst">$(pwd)</span>&quot;</span><span class="string">&#x27; &amp;&amp; go build -gcflags &quot;all=-N -l&quot; -o godebuger &amp;&amp; dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./godebuger&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-IDE配置"><a href="#3-IDE配置" class="headerlink" title="3. IDE配置"></a>3. IDE配置</h2><p>使用 idea 为例，点击编辑配置项</p>
+<p><img src="/images/godebuger-idea.jpg" alt="img"></p>
+<p>添加 go 远程调试项，修改名称点 OK 创建</p>
+<p><img src="/images/godebuger-idea-add-remote.jpg" alt="godebuger-idea-add-remote"></p>
+<p>点击如图所示的按钮，即可正常调试Go程序</p>
+<p><img src="/images/godebuger-start-debug.jpg" alt="godebuger-start-debug"></p>
+<h2 id="或者"><a href="#或者" class="headerlink" title="或者"></a>或者</h2><p>在容器内部执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/src/ones_resource</span><br><span class="line"></span><br><span class="line">go build -gcflags <span class="string">&quot;all=-N -l&quot;</span> -o ones_resource &amp;&amp; ../../bin/dlv --listen=:2345 --headless=<span class="literal">true</span> --api-version=2 --accept-multiclient <span class="built_in">exec</span> ./ones_resource</span><br></pre></td></tr></table></figure>
+
+<p>ones_resource 为源代码的目录名</p>
+<p>由于 dlv 进程不会自动终止，需要执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 `lsof -i:2345 | awk <span class="string">&#x27;NR==2&#123;print&#125;&#x27;</span> | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>` ; go build -gcflags <span class="string">&quot;all=-N -l&quot;</span> -o ones_resource &amp;&amp; ../../bin/dlv --listen=:2345 --headless=<span class="literal">true</span> --api-version=2 --accept-multiclient <span class="built_in">exec</span> ./ones_resource</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="完整示例"><a href="#完整示例" class="headerlink" title="完整示例"></a>完整示例</h2><ol>
+<li><p>配置好 IDE</p>
+</li>
+<li><p>如果要每次新建一个容器，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -rm --name rocksdb \</span><br><span class="line">-p 2345:2345 -p 50051:50051 \</span><br><span class="line">-v /Users/heyingliang/go:/data 9aa3c502e82c /bin/bash \</span><br><span class="line">-c <span class="string">&#x27;cd ./data/src/ones_resource &amp;&amp; go build -gcflags &quot;all=-N -l&quot; -o ones_resource &amp;&amp; ../../bin/dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./ones_resource&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>如果保持容器开启，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it c393fdfbbe4f /bin/bash -c <span class="string">&#x27;cd /data/src/ones_resource &amp;&amp; go build -gcflags &quot;all=-N -l&quot; -o ones_resource &amp;&amp; ../../bin/dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./ones_resource&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
