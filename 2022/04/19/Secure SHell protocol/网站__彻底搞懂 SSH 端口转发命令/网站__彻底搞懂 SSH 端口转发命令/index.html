@@ -1,0 +1,131 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;基本连接&quot;&gt;&lt;a href=&quot;#基本连接&quot; class=&quot;headerlink&quot; title=&quot;基本连接&quot;&gt;&lt;/a&gt;基本连接&lt;/h2&gt;&lt;p&gt;SSH 基本的连接命令是："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>彻底搞懂 SSH 端口转发命令 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Secure-SHell-protocol/" rel="tag">Secure SHell protocol</a></div><div class="post-time">2022-04-19</div></div></div><div class="container post-header"><h1>彻底搞懂 SSH 端口转发命令</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.</span> <span class="toc-text">基本连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">本地端口转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF1"><span class="toc-number">2.1.</span> <span class="toc-text">场景1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF2"><span class="toc-number">2.2.</span> <span class="toc-text">场景2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">3.</span> <span class="toc-text">远程端口转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF3"><span class="toc-number">3.1.</span> <span class="toc-text">场景3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF4"><span class="toc-number">3.2.</span> <span class="toc-text">场景4</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">4.</span> <span class="toc-text">动态端口转发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E7%9A%84%E5%81%9C%E6%AD%A2"><span class="toc-number">5.</span> <span class="toc-text">端口转发的停止</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reference"><span class="toc-number"></span> <span class="toc-text">reference</span></a></details></div><div class="container post-content"><h2 id="基本连接"><a href="#基本连接" class="headerlink" title="基本连接"></a>基本连接</h2><p>SSH 基本的连接命令是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh username@hostname</span><br></pre></td></tr></table></figure>
+
+<p>这里牵扯到了两台主机，</p>
+<ul>
+<li>一是执行命令、运行 SSH 客户端的主机，我们称为本地主机 A【Host A】；</li>
+<li>二是接收连接请求、运行 SSH 服务器的主机，我们称为远程主机 B【Host B】。</li>
+</ul>
+<p>通过密码或密钥等方式验证后，SSH 连接建立，主机 A 可以使用命令行对主机 B 实施远程控制。</p>
+<p>以上命令中，username 是主机 B 上已登录的用户名，hostname 则是主机 B 的设备名、域名或 IP 等可以在网络（局域网或互联网）上定位的名称。</p>
+<p>端口转发涉及的主机较多，这是引起名词混乱的原因之一。在此不深究用词问题，仅以字母代表之。如无特殊说明，SSH 连接都建立在由主机 A 到主机 B 间，SSH 命令都在主机 A 上被执行。</p>
+<h2 id="本地端口转发"><a href="#本地端口转发" class="headerlink" title="本地端口转发"></a>本地端口转发</h2><p>顾名思义，本地端口转发是将应用【application client】对于本地主机 A 指定端口 X 的访问请求转发给主机 B，交由主机 B 对另一指定主机 C 的指定端口 Z 发起访问。命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 主机A端口X:主机C:主机C端口Z username@hostname</span><br><span class="line"><span class="comment"># 简单理解为：将对A:X的访问转变成对C:Z的访问</span></span><br></pre></td></tr></table></figure>
+
+<p>客户端在执行端口转发命令的同时，实际上也执行了基本的连接命令。</p>
+<p><code>-L</code> 旗标表示使用「本地端口转发」选项，之后是用冒号分隔开的三个需要指定的项。原理上，主机 C 可以是任何能够被主机 B 识别到的设备，也可以是主机 B 自身。</p>
+<p>当主机 C 在其某端口提供某服务【application server】，主机 A 需要使用该服务却无法直接访问主机 C 或该端口时，如果发现有 SSH：A→B 的连接，且主机 B 能够直接访问主机 C 的该端口，本地端口转发就派上用场。</p>
+<p>eg：localhost 执行 <code>ssh -L 9200:220.181.38.148:5600 your-name@119.23.130.213 -p 8022 -N -f</code> 后：</p>
+<ol>
+<li>A 会起一个端口和 B:8022 维持一个 SSH 连接。</li>
+<li>当 localhost:9200 接受一个请求时，通过 SSH 连接，将 X 协议的内容封装成 SSH 包，发送给 B。</li>
+<li>B 将信息还原后，使用 X 协议传递给 C:5600。</li>
+</ol>
+<blockquote>
+<p> <code>-N</code> 参数：表示不在 SSH 跳板机执行远程命令，让 SSH 只充当隧道。<code>-f</code> 参数：表示 SSH 连接在后台运行。</p>
+</blockquote>
+<p>![ssh-ssh -L.drawio](/images/ssh-ssh -L.png)</p>
+<p>实际上 ssh 本地端口转发命令的「-L」旗标后可以填写四个参数，完整格式为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L [收听接口:]收听端口:目标主机:目标端口 username@hostname</span><br></pre></td></tr></table></figure>
+
+<p>命令中方括号内的部分，即第一个参数。表示<strong>来自哪个 IP 的请求</strong>。</p>
+<p>默认值一般是 0.0.0.0（OpenSSH 客户端配置文件「ssh_config」中「GatewayPorts」选项的值一般为「yes」），意味着 SSH 隧道会收听所有接口，接受来自任何地址的应用访问请求并进行转发。而如果在此处填写了绑定地址（bind address），SSH 隧道连接就会只处理来自绑定地址的应用请求，而对其他地址发来的请求置之不理；如同在（真实世界的）隧道入口设立哨卡，只对白名单牌号的车辆放行。例如在此处填写 127.0.0.1，即可实现只有来自主机 A 本机的应用请求才被 SSH 隧道转发的效果。</p>
+<blockquote>
+<p>需留意，收听接口是站在主机 A 的视角上去规定允许与 A 连接的设备，解决「能够使用 SSH 端口转发的应用请求从何处来」的问题，类似防火墙的入站；收听端口则依旧是主机 A 上的那个端口 X，不能够跑到别的主机上去。</p>
+</blockquote>
+<h3 id="场景1"><a href="#场景1" class="headerlink" title="场景1"></a>场景1</h3><blockquote>
+<p>主机 B 与主机 C 处于同一内网中，主机 B 能够与外界联系而主机 C 不能。这时不处于内网中的主机 A 如果想要访问主机 C，就可以通过 SSH 连接主机 B＋端口转发来进行。</p>
+</blockquote>
+<p>台式机 B 上运行着虚拟机 C，虚拟机使用虚拟机软件搭建的虚拟网络与宿主主机 B 相连接，但在主机 B 以外无法直接访问该虚拟网络。想要通过 SSH，用与台式机 B 处于同一 WiFi 下的笔记本 A 来远程控制虚拟机 C。</p>
+<p>在 A 上执行端口转发命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 22022:10.0.2.15:22 desktop_user@192.168.1.11	<span class="comment"># cmd.1-1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>22022 号端口是随便选的一个没被占用的端口；</li>
+<li>192.168.1.11 是台式机 B 在 WiFi 中的 IP；</li>
+<li>desktop_user 是主机 B 上的用户名；</li>
+<li>10.0.2.15 是虚拟机 C 在主机 B 为其搭建的虚拟网络中的 IP；</li>
+<li>22 号端口是默认的 SSH 端口。</li>
+</ul>
+<p>已知 virtual_user 是虚拟机 C 上的用户名，这时在笔记本 A 上执行应用的访问请求命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 22022 virtual_user@localhost	<span class="comment"># cmd.1-2</span></span><br></pre></td></tr></table></figure>
+
+<p>我们在笔记本 A 上以 SSH 协议访问本机（localhost）的 22022 号端口，这个请求就像通过了隧道（SSH 隧道）一样抵达台式机 B，台式机 B 则把这个请求变为对虚拟机 C 的 22 号端口的访问，并为 A 返回结果。</p>
+<p>其中，使用「-p」旗标是为了访问主机 A 的特定端口而不是 SSH 默认的 22 号端口；由于我们在主机 A 上执行命令，A 管自己叫 localhost，假如在其他主机上执行则需相应地改为主机 A 的域名或 IP 等他们对 A 的称呼。</p>
+<p>![ssh-ssh -L 的副本.drawio](/images/ssh-ssh -L 的副本.drawio.png)</p>
+<p>以上 cmd.1-1 和 cmd.1-2 合起来实际是想（在 A 上）进行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 22 virtual_user@10.0.2.15	<span class="comment"># cmd.1-3</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，如果这 cmd.1-3 能被成功执行的话，就不需要端口转发了。</p>
+<h3 id="场景2"><a href="#场景2" class="headerlink" title="场景2"></a>场景2</h3><blockquote>
+<p>防火墙阻止了主机 A 对主机 B 一些端口的连接，但主机 B 仍有部分端口是对主机 A 开放的。这时主机 A 如果需要访问主机 B 上被防火墙阻挡的端口，就可以通过 SSH 连接主机 B＋端口转发来进行。此时主机 C 就是主机 B。</p>
+</blockquote>
+<p>某某云的云服务器 B 默认的防火墙设置仅开放了 22 号端口，其他入方向的访问都被屏蔽了。我们为云服务器 B 安装了桌面环境，现在想要在自己的计算机 A 上，通过 VNC 远程控制云服务器 B 的桌面。</p>
+<p>在 A 上执行端口转发命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 5920:localhost:5901 cloud_user@server.example.com	<span class="comment"># cmd.2-1</span></span><br></pre></td></tr></table></figure>
+
+<p>因为 C 就是 B 自己，所以 C 的位置填 localhost；5920 随便选；5901 是云服务器 B 上 VNC 服务进程收听的端口；cloud_user 是 B 上的用户名；<a target="_blank" rel="noopener" href="http://server.example.com/">http://server.example.com</a> 是 B 的域名，换成公网 IP 也行。</p>
+<p>下面在计算机 A 上打开 RealVNC VNC Viewer（VNC 客户端），输入 VNC 服务器地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost:20</span><br></pre></td></tr></table></figure>
+
+<p>20=5920−5900，这是采用 5901 到 5999 之间端口时 RealVNC 的特殊设定。开始使用优雅的 GUI 来操作云服务器吧！</p>
+<p><img src="/images/ssh-%E5%9C%BA%E6%99%AF2.drawio.png" alt="ssh-场景2.drawio"></p>
+<h2 id="远程端口转发"><a href="#远程端口转发" class="headerlink" title="远程端口转发"></a>远程端口转发</h2><p>当主机 C 在其某端口提供某服务，主机 B 需要使用该服务却无法直接访问主机 C 或该端口时，如果发现有 SSH：A→B 的连接，且主机 A 能够直接访问主机 C 的该端口，远程端口转发就派上用场。</p>
+<p>需注意，此时访问请求在主机 B 一侧发生，而 SSH 连接的方向却没有变化，仍是由 A 到 B 的。因此「本地与远程端口转发互为镜像」的说法并不完全准确；严格意义上的镜像，SSH 连接也要变为由 B 到 A，那时则应该是在 B 上采用本地端口转发。可以看出，采取哪种端口转发主要取决于 SSH 连接建立的方向。</p>
+<p>与本地端口转发的流动方向相反，远程端口转发是将对于远程主机 B 指定端口 Y 的访问请求转发给主机 A，交由主机 A 对另一指定主机 C 的指定端口 Z 发起访问。命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 主机B端口Y:主机C:主机C端口Z username@hostname</span><br><span class="line"><span class="comment"># 简单理解为：将对B:Y的访问转变成对C:Z的访问</span></span><br></pre></td></tr></table></figure>
+
+<p>username@hostname 不变，因为我们仍然以从主机 A 对主机 B 发起 SSH 连接为基础；</p>
+<p>「-R」旗标表示使用「远程端口转发」选项，之后是用冒号分隔开的三个需要指定的项。原理上，主机 C 可以是任何能够被主机 A 识别到的设备，也可以是主机 A 自身。</p>
+<p>![ssh-ssh -R.drawio](/images/ssh-ssh -R.drawio.png)</p>
+<h3 id="场景3"><a href="#场景3" class="headerlink" title="场景3"></a>场景3</h3><blockquote>
+<p>主机 A 与主机 C 处于同一内网中，主机 A 能够与外界联系而主机 C 不能。这时（在主机 A 上）如果想让不处于内网中的主机 B 访问主机 C，就可以通过 SSH 连接主机 B＋端口转发来进行。</p>
+</blockquote>
+<p>台式机 A 上运行着虚拟机 C，虚拟机使用虚拟机软件搭建的虚拟网络与宿主主机 A 相连接，但在主机 A 以外无法直接访问该虚拟网络。想要通过 SFTP，用与台式机 A 处于同一 WiFi 下的笔记本 B 来向虚拟机 C 传输文件。</p>
+<p>在 A 上执行端口转发命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 22122:10.0.2.16:22 laptop_user@192.168.1.233	<span class="comment"># cmd.3-1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>22122 号端口是随便选的一个没被占用的端口；</li>
+<li>192.168.1.233 是笔记本 B 在 WiFi 中的 IP；</li>
+<li>laptop_user 是主机 B 上的用户名；</li>
+<li>10.0.2.16 是虚拟机 C 在主机 A 为其搭建的虚拟网络中的 IP；</li>
+<li>22 号端口是默认的 SFTP 端口。</li>
+</ul>
+<p>已知 virtual_user 是虚拟机 C 上的用户名，这时在笔记本 B 上执行应用的访问请求命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sftp -P 22122 virtual_user@localhost	<span class="comment"># cmd.3-2</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/ssh-%E5%9C%BA%E6%99%AF3.drawio.png" alt="ssh-场景3.drawio (1)"></p>
+<p>请注意这是一条运行在 B 上的应用命令；B 上的 SFTP 客户端这时充当 application client。此处 localhost 是主机 B 对自己的称呼。对 B 的 22122 号端口的访问被转发至 A，A 访问 C，即 10.0.2.16 的 22 号端口并将结果返回给 B。于是 B 就通过远程端口转发成功访问了 C 上的 SFTP 服务器。</p>
+<p>以上 cmd.3-1 和 cmd.3-2 合起来实际是想（在 B 上）进行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sftp -P 22 virtual_user@10.0.2.15	<span class="comment"># cmd.3-3</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，这 cmd.3-3 也是不能被直接成功执行的。</p>
+<h3 id="场景4"><a href="#场景4" class="headerlink" title="场景4"></a>场景4</h3><blockquote>
+<p>处于内网之中的主机 A 可以访问公网，但不具有公网 IP；公网中的主机 B 无法找到 A，但为 A 开放各个端口的访问（A 可以直接连接 B，反之则不行）。这时 A 想要让 B 访问自己，就可以通过 SSH 连接主机 B＋端口转发来进行。需注意，这时所谓的主机 C 就是主机 A。</p>
+</blockquote>
+<p>注意：OpenSSH 服务器对于远程端口转发的设定，默认只接受远程主机 B 本机上的应用发起的请求。想要从其他连接到 B 的设备发起请求，需将「sshd_config」文件中「GatewayPorts」选项后的「no」修改为「yes」。</p>
+<p>手头上计算机 A 运行着 http 服务，但 A 没有公网 IP，其他设备不能使用该服务。恰好云服务器 B 有公网 IP（甚至域名），便于被访问。在不将 http 服务迁移至云服务器 B 的前提下，可以使用 SSH 端口转发使其他设备通过访问 B 的方式访问 A 上的 http 服务。</p>
+<p>在 A 上执行端口转发命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 80:localhost:80 cloud_user@server.example.com	<span class="comment"># cmd.4-1</span></span><br></pre></td></tr></table></figure>
+
+<p>这时 C 便是 A 自己（localhost）；80 号端口是 http 默认端口，为简便两个都用默认；cloud_user 还是 B 上的用户名；<a target="_blank" rel="noopener" href="http://server.example.com/">http://server.example.com</a> 还是 B 的域名。</p>
+<p>接下来在其他设备上打开浏览器，输入地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://server.example.com/</span><br></pre></td></tr></table></figure>
+
+<p>于是大家可以通过访问 <a target="_blank" rel="noopener" href="http://server.example.com/">http://server.example.com</a> 来访问本地计算机 A 提供的 http 服务了。</p>
+<p><img src="/images/ssh-%E5%9C%BA%E6%99%AF4.drawio.png" alt="ssh-场景4.drawio"></p>
+<h2 id="动态端口转发"><a href="#动态端口转发" class="headerlink" title="动态端口转发"></a>动态端口转发</h2><p>动态端口转发可以把本地主机 A 上运行的 SSH 客户端转变成一个 SOCKS 代理服务器；实际上它是一种特殊的本地端口转发，或者说叫它「动态本地端口转发」更科学。</p>
+<p>这个动态，就动在这种转发不规定目标地址（主机 C）和目标端口（端口 Z），而是去读取应用发起的请求，从请求中获取目标信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -D 主机A端口X username@hostname</span><br></pre></td></tr></table></figure>
+
+<p>好像很强，但有一个问题：之前使用固定的端口转发时，应用的访问请求都是指向被转发的那个端口 X 的，但现在应用的访问请求必须指向目标，以指定动态端口转发的目标。可如果不指向端口 X，如何让数据走 SSH 隧道呢？这就要求我们在系统或应用（浏览器等）中设置一个使用 SOCKS5 协议、服务器为 localhost、端口为 X 的代理，利用代理使请求走端口 X。</p>
+<p>这样应用的请求就从 X 进入隧道，抵达 B 后其中的目标信息被解析出来，B 访问目标后再将结果通过隧道返回给 A。比如在开启代理的 A 上的浏览器中访问 <a target="_blank" rel="noopener" href="http://zhihu.com/">http://zhihu.com</a>，经过端口转发，相当于是 B 在帮 A 访问 <a target="_blank" rel="noopener" href="http://zhihu.com/">http://zhihu.com</a>。</p>
+<h2 id="端口转发的停止"><a href="#端口转发的停止" class="headerlink" title="端口转发的停止"></a>端口转发的停止</h2><p>SSH 端口转发完全基于基本的 SSH 连接，因此，通过在远程终端上执行 exit 命令、暴力关闭本地终端窗口、远程主机 B 关机、本地主机 A 关机等可以切断 SSH 连接的方式，即可停止 SSH 端口转发。就是这样。</p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/148825449">彻底搞懂 SSH 端口转发命令</a></li>
+</ul>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
