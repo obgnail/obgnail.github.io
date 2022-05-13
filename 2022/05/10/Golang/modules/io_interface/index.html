@@ -1,0 +1,349 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;所有的-IO-接口&quot;&gt;&lt;a href=&quot;#所有的-IO-接口&quot; class=&quot;headerlink&quot; title=&quot;所有的 IO 接口&quot;&gt;&lt;/a&gt;所有的 IO 接口&lt;/h1&gt;&lt;p&gt;io 包为 I/O 原语提供了基本的接口。它主要包装了这些原语的已有实现。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>io_interface | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/Golang/" rel="tag">Golang</a></div><div class="post-time">2022-05-10</div></div></div><div class="container post-header"><h1>io_interface</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E7%9A%84-IO-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.</span> <span class="toc-text">所有的 IO 接口</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Reader-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">1.1. Reader 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-Writer-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.2.</span> <span class="toc-text">1.2. Writer 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E5%AE%9E%E7%8E%B0%E4%BA%86-io-Reader-%E6%8E%A5%E5%8F%A3%E6%88%96-io-Writer-%E6%8E%A5%E5%8F%A3%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">1.3. 实现了 io.Reader 接口或 io.Writer 接口的类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-ReaderAt-%E5%92%8C-WriterAt-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.4.</span> <span class="toc-text">1.4. ReaderAt 和 WriterAt 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-ReaderFrom-%E5%92%8C-WriterTo-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.5.</span> <span class="toc-text">1.5. ReaderFrom 和 WriterTo 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-Seeker-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.6.</span> <span class="toc-text">1.6. Seeker 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-Closer-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.7.</span> <span class="toc-text">1.7. Closer 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8-%E5%85%B6%E4%BB%96%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.8.</span> <span class="toc-text">1.8. 其他接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-1-ByteReader-%E5%92%8C-ByteWriter"><span class="toc-number">1.8.1.</span> <span class="toc-text">1.8.1. ByteReader 和 ByteWriter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-2-ByteScanner%E3%80%81RuneReader-%E5%92%8C-RuneScanner"><span class="toc-number">1.8.2.</span> <span class="toc-text">1.8.2. ByteScanner、RuneReader 和 RuneScanner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-3-ReadCloser%E3%80%81ReadSeeker%E3%80%81ReadWriteCloser%E3%80%81ReadWriteSeeker%E3%80%81ReadWriter%E3%80%81WriteCloser-%E5%92%8C-WriteSeeker-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.8.3.</span> <span class="toc-text">1.8.3. ReadCloser、ReadSeeker、ReadWriteCloser、ReadWriteSeeker、ReadWriter、WriteCloser 和 WriteSeeker 接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-9-SectionReader-%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.9.</span> <span class="toc-text">1.9. SectionReader 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-10-LimitedReader-%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.10.</span> <span class="toc-text">1.10. LimitedReader 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-11-PipeReader-%E5%92%8C-PipeWriter-%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.11.</span> <span class="toc-text">1.11. PipeReader 和 PipeWriter 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-12-Copy-%E5%92%8C-CopyN-%E5%87%BD%E6%95%B0"><span class="toc-number">1.12.</span> <span class="toc-text">1.12. Copy 和 CopyN 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-13-ReadAtLeast-%E5%92%8C-ReadFull-%E5%87%BD%E6%95%B0"><span class="toc-number">1.13.</span> <span class="toc-text">1.13. ReadAtLeast 和 ReadFull 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-14-WriteString-%E5%87%BD%E6%95%B0"><span class="toc-number">1.14.</span> <span class="toc-text">1.14. WriteString 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-15-MultiReader-%E5%92%8C-MultiWriter-%E5%87%BD%E6%95%B0"><span class="toc-number">1.15.</span> <span class="toc-text">1.15. MultiReader 和 MultiWriter 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-16-TeeReader-%E5%87%BD%E6%95%B0"><span class="toc-number">1.16.</span> <span class="toc-text">1.16. TeeReader 函数</span></a></li></ol></li></ol></details></div><div class="container post-content"><h1 id="所有的-IO-接口"><a href="#所有的-IO-接口" class="headerlink" title="所有的 IO 接口"></a>所有的 IO 接口</h1><p>io 包为 I/O 原语提供了基本的接口。它主要包装了这些原语的已有实现。</p>
+<p>由于这些被接口包装的 I/O 原语是由不同的低级操作实现，因此，在另有声明之前不该假定它们的并发执行是安全的。</p>
+<p>在 io 包中最重要的是两个接口：Reader 和 Writer 接口。本章所提到的各种 IO 包，都跟这两个接口有关，也就是说，只要满足这两个接口，它就可以使用 IO 包的功能。</p>
+<h2 id="1-1-Reader-接口"><a href="#1-1-Reader-接口" class="headerlink" title="1.1. Reader 接口"></a>1.1. Reader 接口</h2><p>Reader 接口的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</span><br><span class="line">    Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>Read 将 len (p) 个字节读取到 p 中。它返回读取的字节数 n（0 &lt;= n &lt;= len (p)） 以及任何遇到的错误。即使 Read 返回的 n &lt; len (p)，它也会在调用过程中占用 len (p) 个字节作为暂存空间。若可读取的数据不到 len (p) 个字节，Read 会返回可用数据，而不是等待更多数据。</p>
+<p>当 Read 在成功读取 n &gt; 0 个字节后遇到一个错误或 EOF (end-of-file)，它会返回读取的字节数。它可能会同时在本次的调用中返回一个 non-nil 错误，或在下一次的调用中返回这个错误（且 n 为 0）。 一般情况下，Reader 会返回一个非 0 字节数 n, 若 n = len (p) 个字节从输入源的结尾处由 Read 返回，Read 可能返回 err == EOF 或者 err == nil。并且之后的 Read () 都应该返回 (n:0, err:EOF)。</p>
+<p>调用者在考虑错误之前应当首先处理返回的数据。这样做可以正确地处理在读取一些字节后产生的 I/O 错误，同时允许 EOF 的出现。</p>
+</blockquote>
+<p>根据 Go 语言中关于接口和满足了接口的类型的定义（<a target="_blank" rel="noopener" href="http://golang.org/ref/spec#Interface_types">Interface_types</a>），我们知道 Reader 接口的方法集（<a target="_blank" rel="noopener" href="http://golang.org/ref/spec#Method_sets">Method_sets</a>）只包含一个 Read 方法，因此，所有实现了 Read 方法的类型都满足 io.Reader 接口，也就是说，在所有需要 io.Reader 的地方，可以传递实现了 Read () 方法的类型的实例。</p>
+<p>下面，我们通过具体例子来谈谈该接口的用法。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFrom</span><span class="params">(reader io.Reader, num <span class="keyword">int</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">    p := <span class="built_in">make</span>([]<span class="keyword">byte</span>, num)</span><br><span class="line">    n, err := reader.Read(p)</span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> p[:n], <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ReadFrom 函数将 io.Reader 作为参数，也就是说，ReadFrom 可以从任意的地方读取数据，只要来源实现了 io.Reader 接口。比如，我们可以从标准输入、文件、字符串等读取数据，示例代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从标准输入读取</span></span><br><span class="line">data, err = ReadFrom(os.Stdin, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从普通文件读取，其中 file 是 os.File 的实例</span></span><br><span class="line">data, err = ReadFrom(file, <span class="number">9</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从字符串读取</span></span><br><span class="line">data, err = ReadFrom(strings.NewReader(<span class="string">&quot;from string&quot;</span>), <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p>完整的演示例子源码见 <a target="_blank" rel="noopener" href="https://books.studygolang.com/The-Golang-Standard-Library-by-Example/code/src/chapter01/io/reader.go">code/src/chapter01/io/reader.go</a></p>
+<p><strong>小贴士</strong></p>
+<p>io.EOF 变量的定义：<code>var EOF = errors.New(&quot;EOF&quot;)</code>，是 error 类型。根据 reader 接口的说明，在 n &gt; 0 且数据被读完了的情况下，返回的 error 有可能是 EOF 也有可能是 nil。</p>
+<h2 id="1-2-Writer-接口"><a href="#1-2-Writer-接口" class="headerlink" title="1.2. Writer 接口"></a>1.2. Writer 接口</h2><p>Writer 接口的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</span><br><span class="line">    Write(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>Write 将 len (p) 个字节从 p 中写入到基本数据流中。它返回从 p 中被写入的字节数 n（0 &lt;= n &lt;= len (p)）以及任何遇到的引起写入提前停止的错误。若 Write 返回的 n &lt; len (p)，它就必须返回一个 非 nil 的错误。</p>
+</blockquote>
+<p>同样的，所有实现了 Write 方法的类型都实现了 io.Writer 接口。</p>
+<p>在上个例子中，我们是自己实现一个函数接收一个 io.Reader 类型的参数。这里，我们通过标准库的例子来学习。</p>
+<p>在 fmt 标准库中，有一组函数：Fprint/Fprintf/Fprintln，它们接收一个 io.Wrtier 类型参数（第一个参数），也就是说它们将数据格式化输出到 io.Writer 中。那么，调用这组函数时，该如何传递这个参数呢？</p>
+<p>我们以 fmt.Fprintln 为例，同时看一下 fmt.Println 函数的源码。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Println</span><span class="params">(a ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Fprintln(os.Stdout, a...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很显然，fmt.Println 会将内容输出到标准输出中。下一节我们将详细介绍 fmt 包。</p>
+<p>关于 io.Writer 的更多说明，可以查看笔者之前写的博文<a target="_blank" rel="noopener" href="http://blog.studygolang.com/2013/02/%E4%BB%A5io-writer%E4%B8%BA%E4%BE%8B%E7%9C%8Bgo%E4%B8%AD%E7%9A%84interface/">《以 io.Writer 为例看 go 中的 interface {}》</a>。</p>
+<h2 id="1-3-实现了-io-Reader-接口或-io-Writer-接口的类型"><a href="#1-3-实现了-io-Reader-接口或-io-Writer-接口的类型" class="headerlink" title="1.3. 实现了 io.Reader 接口或 io.Writer 接口的类型"></a>1.3. 实现了 io.Reader 接口或 io.Writer 接口的类型</h2><p>初学者看到函数参数是一个接口类型，很多时候有些束手无策，不知道该怎么传递参数。还有人问：标准库中有哪些类型实现了 io.Reader 或 io.Writer 接口？</p>
+<p>通过本节上面的例子，我们可以知道，os.File 同时实现了这两个接口。我们还看到 os.Stdin/Stdout 这样的代码，它们似乎分别实现了 io.Reader/io.Writer 接口。没错，实际上在 os 包中有这样的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    Stdin  = NewFile(<span class="keyword">uintptr</span>(syscall.Stdin), <span class="string">&quot;/dev/stdin&quot;</span>)</span><br><span class="line">    Stdout = NewFile(<span class="keyword">uintptr</span>(syscall.Stdout), <span class="string">&quot;/dev/stdout&quot;</span>)</span><br><span class="line">    Stderr = NewFile(<span class="keyword">uintptr</span>(syscall.Stderr), <span class="string">&quot;/dev/stderr&quot;</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，Stdin/Stdout/Stderr 只是三个特殊的文件类型的标识（即都是 os.File 的实例），自然也实现了 io.Reader 和 io.Writer。</p>
+<p>目前，Go 文档中还没有直接列出实现了某个接口的所有类型。不过，我们可以通过查看标准库文档，列出实现了 io.Reader 或 io.Writer 接口的类型（导出的类型）：（注：godoc 命令支持额外参数 -analysis ，能列出都有哪些类型实现了某个接口，相关参考 <code>godoc -h</code> 或 <a target="_blank" rel="noopener" href="https://golang.org/lib/godoc/analysis/help.html">Static analysis features of godoc</a>。另外，我做了一个官网镜像，能查看接口所有的实现类型，地址：<a target="_blank" rel="noopener" href="http://docs.studygolang.com./">http://docs.studygolang.com。</a></p>
+<ul>
+<li>os.File 同时实现了 io.Reader 和 io.Writer</li>
+<li>strings.Reader 实现了 io.Reader</li>
+<li>bufio.Reader/Writer 分别实现了 io.Reader 和 io.Writer</li>
+<li>bytes.Buffer 同时实现了 io.Reader 和 io.Writer</li>
+<li>bytes.Reader 实现了 io.Reader</li>
+<li>compress/gzip.Reader/Writer 分别实现了 io.Reader 和 io.Writer</li>
+<li>crypto/cipher.StreamReader/StreamWriter 分别实现了 io.Reader 和 io.Writer</li>
+<li>crypto/tls.Conn 同时实现了 io.Reader 和 io.Writer</li>
+<li>encoding/csv.Reader/Writer 分别实现了 io.Reader 和 io.Writer</li>
+<li>mime/multipart.Part 实现了 io.Reader</li>
+<li>net/conn 分别实现了 io.Reader 和 io.Writer (Conn 接口定义了 Read/Write)</li>
+</ul>
+<p>除此之外，io 包本身也有这两个接口的实现类型。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">实现了 Reader 的类型：LimitedReader、PipeReader、SectionReader</span><br><span class="line">实现了 Writer 的类型：PipeWriter</span><br></pre></td></tr></table></figure>
+
+<p>以上类型中，常用的类型有：os.File、strings.Reader、bufio.Reader/Writer、bytes.Buffer、bytes.Reader</p>
+<p><strong>小贴士</strong></p>
+<p>从接口名称很容易猜到，一般地， Go 中接口的命名约定：接口名以 er 结尾。注意，这里并非强行要求，你完全可以不以 er 结尾。标准库中有些接口也不是以 er 结尾的。</p>
+<h2 id="1-4-ReaderAt-和-WriterAt-接口"><a href="#1-4-ReaderAt-和-WriterAt-接口" class="headerlink" title="1.4. ReaderAt 和 WriterAt 接口"></a>1.4. ReaderAt 和 WriterAt 接口</h2><p><strong>ReaderAt 接口</strong>的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadAt(p []<span class="keyword">byte</span>, off <span class="keyword">int64</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>ReadAt 从基本输入源的偏移量 off 处开始，将 len (p) 个字节读取到 p 中。它返回读取的字节数 n（0 &lt;= n &lt;= len (p)）以及任何遇到的错误。</p>
+<p>当 ReadAt 返回的 n &lt;len (p) 时，它就会返回一个 非 nil 的错误来解释 为什么没有返回更多的字节。在这一点上，ReadAt 比 Read 更严格。</p>
+<p>即使 ReadAt 返回的 n &lt;len (p)，它也会在调用过程中使用 p 的全部作为暂存空间。若可读取的数据不到 len (p) 字节，ReadAt 就会阻塞，直到所有数据都可用或一个错误发生。 在这一点上 ReadAt 不同于 Read。</p>
+<p>若 n = len (p) 个字节从输入源的结尾处由 ReadAt 返回，Read 可能返回 err == EOF 或者 err == nil</p>
+<p>若 ReadAt 携带一个偏移量从输入源读取，ReadAt 应当既不影响偏移量也不被它所影响。</p>
+<p>可对相同的输入源并行执行 ReadAt 调用。</p>
+</blockquote>
+<p>可见，ReaderAt 接口使得可以从指定偏移量处开始读取数据。</p>
+<p>简单示例代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">reader := strings.NewReader(<span class="string">&quot;Go语言中文网&quot;</span>)</span><br><span class="line">p := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">6</span>)</span><br><span class="line">n, err := reader.ReadAt(p, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;%s, %d\n&quot;</span>, p, n)</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">语言, 6</span><br></pre></td></tr></table></figure>
+
+<p><strong>WriterAt 接口</strong>的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteAt(p []<span class="keyword">byte</span>, off <span class="keyword">int64</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>WriteAt 从 p 中将 len (p) 个字节写入到偏移量 off 处的基本数据流中。它返回从 p 中被写入的字节数 n（0 &lt;= n &lt;= len (p)）以及任何遇到的引起写入提前停止的错误。若 WriteAt 返回的 n &lt; len (p)，它就必须返回一个 非 nil 的错误。</p>
+<p>若 WriteAt 携带一个偏移量写入到目标中，WriteAt 应当既不影响偏移量也不被它所影响。</p>
+<p>若被写区域没有重叠，可对相同的目标并行执行 WriteAt 调用。</p>
+</blockquote>
+<p>我们可以通过该接口将数据写入到数据流的特定偏移量之后。</p>
+<p>通过简单示例来演示 WriteAt 方法的使用（os.File 实现了 WriterAt 接口）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">file, err := os.Create(<span class="string">&quot;writeAt.txt&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line">file.WriteString(<span class="string">&quot;Golang中文社区——这里是多余&quot;</span>)</span><br><span class="line">n, err := file.WriteAt([]<span class="keyword">byte</span>(<span class="string">&quot;Go语言中文网&quot;</span>), <span class="number">24</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(n)</span><br></pre></td></tr></table></figure>
+
+<p>打开文件 WriteAt.txt，内容是：<code>Golang中文社区——Go语言中文网</code>。</p>
+<p>分析：</p>
+<p><code>file.WriteString(&quot;Golang中文社区——这里是多余&quot;)</code> 往文件中写入 <code>Golang中文社区——这里是多余</code>，之后 <code>file.WriteAt([]byte(&quot;Go语言中文网&quot;), 24)</code> 在文件流的 offset=24 处写入 <code>Go语言中文网</code>（会覆盖该位置的内容）。</p>
+<h2 id="1-5-ReaderFrom-和-WriterTo-接口"><a href="#1-5-ReaderFrom-和-WriterTo-接口" class="headerlink" title="1.5. ReaderFrom 和 WriterTo 接口"></a>1.5. ReaderFrom 和 WriterTo 接口</h2><p><strong>ReaderFrom</strong> 的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderFrom <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadFrom(r Reader) (n <span class="keyword">int64</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>ReadFrom 从 r 中读取数据，直到 EOF 或发生错误。其返回值 n 为读取的字节数。除 io.EOF 之外，在读取过程中遇到的任何错误也将被返回。</p>
+<p>如果 ReaderFrom 可用，Copy 函数就会使用它。</p>
+</blockquote>
+<p>注意：ReadFrom 方法不会返回 err == EOF。</p>
+<p>下面的例子简单的实现将文件中的数据全部读取（显示在标准输出）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">file, err := os.Open(<span class="string">&quot;writeAt.txt&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line">writer := bufio.NewWriter(os.Stdout)</span><br><span class="line">writer.ReadFrom(file)</span><br><span class="line">writer.Flush()</span><br></pre></td></tr></table></figure>
+
+<p>当然，我们可以通过 ioutil 包的 ReadFile 函数获取文件全部内容。其实，跟踪一下 ioutil.ReadFile 的源码，会发现其实也是通过 ReadFrom 方法实现（用的是 bytes.Buffer，它实现了 ReaderFrom 接口）。</p>
+<p>如果不通过 ReadFrom 接口来做这件事，而是使用 io.Reader 接口，我们有两种思路：</p>
+<ol>
+<li>先获取文件的大小（File 的 Stat 方法），之后定义一个该大小的 [] byte，通过 Read 一次性读取</li>
+<li>定义一个小的 [] byte，不断的调用 Read 方法直到遇到 EOF，将所有读取到的 [] byte 连接到一起</li>
+</ol>
+<p>这里不给出实现代码了，有兴趣的可以实现一下。</p>
+<p><strong>提示</strong></p>
+<p>通过查看 bufio.Writer 或 strings.Buffer 类型的 ReadFrom 方法实现，会发现，其实它们的实现和上面说的第 2 种思路类似。</p>
+<p><strong>WriterTo</strong> 的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterTo <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteTo(w Writer) (n <span class="keyword">int64</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>WriteTo 将数据写入 w 中，直到没有数据可写或发生错误。其返回值 n 为写入的字节数。 在写入过程中遇到的任何错误也将被返回。</p>
+<p>如果 WriterTo 可用，Copy 函数就会使用它。</p>
+</blockquote>
+<p>读者是否发现，其实 ReaderFrom 和 WriterTo 接口的方法接收的参数是 io.Reader 和 io.Writer 类型。根据 io.Reader 和 io.Writer 接口的讲解，对该接口的使用应该可以很好的掌握。</p>
+<p>这里只提供简单的一个示例代码：将一段文本输出到标准输出</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reader := bytes.NewReader([]<span class="keyword">byte</span>(<span class="string">&quot;Go语言中文网&quot;</span>))</span><br><span class="line">reader.WriteTo(os.Stdout)</span><br></pre></td></tr></table></figure>
+
+<p>通过 io.ReaderFrom 和 io.WriterTo 的学习，我们知道，如果这样的需求，可以考虑使用这两个接口：“一次性从某个地方读或写到某个地方去。”</p>
+<h2 id="1-6-Seeker-接口"><a href="#1-6-Seeker-接口" class="headerlink" title="1.6. Seeker 接口"></a>1.6. Seeker 接口</h2><p>接口定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Seeker <span class="keyword">interface</span> &#123;</span><br><span class="line">    Seek(offset <span class="keyword">int64</span>, whence <span class="keyword">int</span>) (ret <span class="keyword">int64</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方文档中关于该接口方法的说明：</p>
+<blockquote>
+<p>Seek 设置下一次 Read 或 Write 的偏移量为 offset，它的解释取决于 whence： 0 表示相对于文件的起始处，1 表示相对于当前的偏移，而 2 表示相对于其结尾处。 Seek 返回新的偏移量和一个错误，如果有的话。</p>
+</blockquote>
+<p>也就是说，Seek 方法是用于设置偏移量的，这样可以从某个特定位置开始操作数据流。听起来和 ReaderAt/WriteAt 接口有些类似，不过 Seeker 接口更灵活，可以更好的控制读写数据流的位置。</p>
+<p>简单的示例代码：获取倒数第二个字符（需要考虑 UTF-8 编码，这里的代码只是一个示例）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">reader := strings.NewReader(<span class="string">&quot;Go语言中文网&quot;</span>)</span><br><span class="line">reader.Seek(<span class="number">-6</span>, io.SeekEnd)</span><br><span class="line">r, _, _ := reader.ReadRune()</span><br><span class="line">fmt.Printf(<span class="string">&quot;%c\n&quot;</span>, r)</span><br></pre></td></tr></table></figure>
+
+<p><strong>小贴士</strong></p>
+<p>whence 的值，在 io 包中定义了相应的常量，应该使用这些常量</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">  SeekStart   = <span class="number">0</span> <span class="comment">// seek relative to the origin of the file</span></span><br><span class="line">  SeekCurrent = <span class="number">1</span> <span class="comment">// seek relative to the current offset</span></span><br><span class="line">  SeekEnd     = <span class="number">2</span> <span class="comment">// seek relative to the end</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>而原先 os 包中的常量已经被标注为 Deprecated</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Deprecated: Use io.SeekStart, io.SeekCurrent, and io.SeekEnd.</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">  SEEK_SET <span class="keyword">int</span> = <span class="number">0</span> <span class="comment">// seek relative to the origin of the file</span></span><br><span class="line">  SEEK_CUR <span class="keyword">int</span> = <span class="number">1</span> <span class="comment">// seek relative to the current offset</span></span><br><span class="line">  SEEK_END <span class="keyword">int</span> = <span class="number">2</span> <span class="comment">// seek relative to the end</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-7-Closer-接口"><a href="#1-7-Closer-接口" class="headerlink" title="1.7. Closer 接口"></a>1.7. Closer 接口</h2><p>接口定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</span><br><span class="line">    Close() error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该接口比较简单，只有一个 Close () 方法，用于关闭数据流。</p>
+<p>文件 (os.File)、归档（压缩包）、数据库连接、Socket 等需要手动关闭的资源都实现了 Closer 接口。</p>
+<p>实际编程中，经常将 Close 方法的调用放在 defer 语句中。</p>
+<p><strong>小提示</strong></p>
+<p>初学者容易写出这样的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file, err := os.Open(<span class="string">&quot;studygolang.txt&quot;</span>)</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当文件 studygolang.txt 不存在或找不到时，file.Close () 会 panic，因为 file 是 nil。因此，应该将 defer file.Close () 放在错误检查之后。</p>
+<p>经过 <a target="_blank" rel="noopener" href="https://github.com/polaris1119/The-Golang-Standard-Library-by-Example/issues/40">issue40</a> 提醒，查看源码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *File)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> f == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ErrInvalid</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f.file.<span class="built_in">close</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见并不会 panic，但在 Close 之前校验错误是个好习惯！</p>
+<h2 id="1-8-其他接口"><a href="#1-8-其他接口" class="headerlink" title="1.8. 其他接口"></a>1.8. 其他接口</h2><h3 id="1-8-1-ByteReader-和-ByteWriter"><a href="#1-8-1-ByteReader-和-ByteWriter" class="headerlink" title="1.8.1. ByteReader 和 ByteWriter"></a>1.8.1. ByteReader 和 ByteWriter</h3><p>通过名称大概也能猜出这组接口的用途：读或写一个字节。接口定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteReader <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadByte() (c <span class="keyword">byte</span>, err error)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ByteWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteByte(c <span class="keyword">byte</span>) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在标准库中，有如下类型实现了 io.ByteReader 或 io.ByteWriter:</p>
+<ul>
+<li>bufio.Reader/Writer 分别实现了 io.ByteReader 和 io.ByteWriter</li>
+<li>bytes.Buffer 同时实现了 io.ByteReader 和 io.ByteWriter</li>
+<li>bytes.Reader 实现了 io.ByteReader</li>
+<li>strings.Reader 实现了 io.ByteReader</li>
+</ul>
+<p>接下来的示例中，我们通过 bytes.Buffer 来一次读取或写入一个字节（主要代码）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ch <span class="keyword">byte</span></span><br><span class="line">fmt.Scanf(<span class="string">&quot;%c\n&quot;</span>, &amp;ch)</span><br><span class="line"></span><br><span class="line">buffer := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">err := buffer.WriteByte(ch)</span><br><span class="line"><span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;写入一个字节成功！准备读取该字节……&quot;</span>)</span><br><span class="line">    newCh, _ := buffer.ReadByte()</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取的字节：%c\n&quot;</span>, newCh)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;写入错误&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序从标准输入接收一个字节（ASCII 字符），调用 buffer 的 WriteByte 将该字节写入 buffer 中，之后通过 ReadByte 读取该字节。完整的代码见：<a target="_blank" rel="noopener" href="https://books.studygolang.com/The-Golang-Standard-Library-by-Example/code/src/chapter01/io/byterwer.go">code/src/chapter01/io/byterwer.go</a></p>
+<p>一般地，我们不会使用 bytes.Buffer 来一次读取或写入一个字节。那么，这两个接口有哪些用处呢？</p>
+<p>在标准库 encoding/binary 中，实现 <a target="_blank" rel="noopener" href="https://code.google.com/p/protobuf/">Google-ProtoBuf</a> 中的 Varints 读取，<a target="_blank" rel="noopener" href="http://docs.studygolang.com/pkg/encoding/binary/#ReadVarint">ReadVarint</a> 就需要一个 io.ByteReader 类型的参数，也就是说，它需要一个字节一个字节的读取。关于 encoding/binary 包在后面会详细介绍。</p>
+<p>在标准库 image/jpeg 中，<a target="_blank" rel="noopener" href="http://docs.studygolang.com/pkg/image/jpeg/#Encode">Encode</a> 函数的内部实现使用了 ByteWriter 写入一个字节。</p>
+<p><strong>小贴士</strong></p>
+<p>可以通过在 Go 语言源码 src/pkg 中搜索 “io.ByteReader” 或 “io.ByteWiter”，获得哪些地方用到了这两个接口。你会发现，这两个接口在二进制数据或归档压缩时用的比较多。</p>
+<h3 id="1-8-2-ByteScanner、RuneReader-和-RuneScanner"><a href="#1-8-2-ByteScanner、RuneReader-和-RuneScanner" class="headerlink" title="1.8.2. ByteScanner、RuneReader 和 RuneScanner"></a>1.8.2. ByteScanner、RuneReader 和 RuneScanner</h3><p>将这三个接口放在一起，是考虑到与 ByteReader 相关或相应。</p>
+<p>ByteScanner 接口的定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteScanner <span class="keyword">interface</span> &#123;</span><br><span class="line">    ByteReader</span><br><span class="line">    UnreadByte() error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见，它内嵌了 ByteReader 接口（可以理解为继承了 ByteReader 接口），UnreadByte 方法的意思是：将上一次 ReadByte 的字节还原，使得再次调用 ReadByte 返回的结果和上一次调用相同，也就是说，UnreadByte 是重置上一次的 ReadByte。注意，UnreadByte 调用之前必须调用了 ReadByte，且不能连续调用 UnreadByte。即：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">buffer := bytes.NewBuffer([]<span class="keyword">byte</span>&#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>&#125;)</span><br><span class="line">err := buffer.UnreadByte()</span><br></pre></td></tr></table></figure>
+
+<p>和</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">buffer := bytes.NewBuffer([]<span class="keyword">byte</span>&#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>&#125;)</span><br><span class="line">buffer.ReadByte()</span><br><span class="line">err := buffer.UnreadByte()</span><br><span class="line">err = buffer.UnreadByte()</span><br></pre></td></tr></table></figure>
+
+<p>err 都 非 nil，错误为：<code>bytes.Buffer: UnreadByte: previous operation was not a read</code></p>
+<p>RuneReader 接口和 ByteReader 类似，只是 ReadRune 方法读取单个 UTF-8 字符，返回其 rune 和该字符占用的字节数。该接口在 <a target="_blank" rel="noopener" href="http://docs.studygolang.com/pkg/regexp">regexp</a> 包有用到。</p>
+<p>之前有人在 QQ 群中问道：</p>
+<blockquote>
+<p>strings.Index (“行业交流群”, “交流”) 返回的是单字节字符的位置：6。但是想要的是 unicode 字符的位置：2。</p>
+</blockquote>
+<p>这里借助 utf8 的 RuneCountInString 函数，实现代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// strings.Index 的 UTF-8 版本</span></span><br><span class="line"><span class="comment">// 即 Utf8Index(&quot;Go语言中文网&quot;, &quot;中文&quot;) 返回 4，而不是 strings.Index 的 8</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Utf8Index</span><span class="params">(str, substr <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    index := strings.Index(str, substr)</span><br><span class="line">    <span class="keyword">if</span> index &lt; <span class="number">0</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> utf8.RuneCountInString(str[:index])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RuneScanner 接口和 ByteScanner 类似，就不赘述了。</p>
+<h3 id="1-8-3-ReadCloser、ReadSeeker、ReadWriteCloser、ReadWriteSeeker、ReadWriter、WriteCloser-和-WriteSeeker-接口"><a href="#1-8-3-ReadCloser、ReadSeeker、ReadWriteCloser、ReadWriteSeeker、ReadWriter、WriteCloser-和-WriteSeeker-接口" class="headerlink" title="1.8.3. ReadCloser、ReadSeeker、ReadWriteCloser、ReadWriteSeeker、ReadWriter、WriteCloser 和 WriteSeeker 接口"></a>1.8.3. ReadCloser、ReadSeeker、ReadWriteCloser、ReadWriteSeeker、ReadWriter、WriteCloser 和 WriteSeeker 接口</h3><p>这些接口是上面介绍的接口的两个或三个组合而成的新接口。例如 ReadWriter 接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReadWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">    Reader</span><br><span class="line">    Writer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是 Reader 接口和 Writer 接口的简单组合（内嵌）。</p>
+<p>这些接口的作用是：有些时候同时需要某两个接口的所有功能，即必须同时实现了某两个接口的类型才能够被传入使用。可见，io 包中有大量的 “小接口”，这样方便组合为 “大接口”。</p>
+<h2 id="1-9-SectionReader-类型"><a href="#1-9-SectionReader-类型" class="headerlink" title="1.9. SectionReader 类型"></a>1.9. SectionReader 类型</h2><p>SectionReader 是一个 struct（没有任何导出的字段），实现了 Read, Seek 和 ReadAt，同时，内嵌了 ReaderAt 接口。结构定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SectionReader <span class="keyword">struct</span> &#123;</span><br><span class="line">    r     ReaderAt    <span class="comment">// 该类型最终的 Read/ReadAt 最终都是通过 r 的 ReadAt 实现</span></span><br><span class="line">    base  <span class="keyword">int64</span>        <span class="comment">// NewSectionReader 会将 base 设置为 off</span></span><br><span class="line">    off   <span class="keyword">int64</span>        <span class="comment">// 从 r 中的 off 偏移处开始读取数据</span></span><br><span class="line">    limit <span class="keyword">int64</span>        <span class="comment">// limit - off = SectionReader 流的长度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从名称我们可以猜到，该类型读取数据流中部分数据。看一下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSectionReader</span><span class="params">(r ReaderAt, off <span class="keyword">int64</span>, n <span class="keyword">int64</span>)</span> *<span class="title">SectionReader</span></span></span><br></pre></td></tr></table></figure>
+
+<p>的文档说明就知道了：</p>
+<blockquote>
+<p>NewSectionReader 返回一个 SectionReader，它从 r 中的偏移量 off 处读取 n 个字节后以 EOF 停止。</p>
+</blockquote>
+<p>也就是说，SectionReader 只是内部（内嵌）ReaderAt 表示的数据流的一部分：从 off 开始后的 n 个字节。</p>
+<p>这个类型的作用是：方便重复操作某一段 (section) 数据流；或者同时需要 ReadAt 和 Seek 的功能。</p>
+<p>由于该类型所支持的操作，前面都有介绍，因此不提供示例代码了。</p>
+<p>关于该类型在标准库中的使用，我们在 <a target="_blank" rel="noopener" href="https://books.studygolang.com/The-Golang-Standard-Library-by-Example/chapter01/01.1.html">8.5 archive/zip — zip 归档访问</a> 会讲到。</p>
+<h2 id="1-10-LimitedReader-类型"><a href="#1-10-LimitedReader-类型" class="headerlink" title="1.10. LimitedReader 类型"></a>1.10. LimitedReader 类型</h2><p>LimitedReader 结构定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> LimitedReader <span class="keyword">struct</span> &#123;</span><br><span class="line">    R Reader <span class="comment">// underlying reader，最终的读取操作通过 R.Read 完成</span></span><br><span class="line">    N <span class="keyword">int64</span>  <span class="comment">// max bytes remaining</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>文档说明如下：</p>
+<blockquote>
+<p>从 R 读取但将返回的数据量限制为 N 字节。每调用一次 Read 都将更新 N 来反应新的剩余数量。</p>
+</blockquote>
+<p>也就是说，最多只能返回 N 字节数据。</p>
+<p>LimitedReader 只实现了 Read 方法（Reader 接口）。</p>
+<p>使用示例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">content := <span class="string">&quot;This Is LimitReader Example&quot;</span></span><br><span class="line">reader := strings.NewReader(content)</span><br><span class="line">limitReader := &amp;io.LimitedReader&#123;R: reader, N: <span class="number">8</span>&#125;</span><br><span class="line"><span class="keyword">for</span> limitReader.N &gt; <span class="number">0</span> &#123;</span><br><span class="line">    tmp := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</span><br><span class="line">    limitReader.Read(tmp)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;%s&quot;</span>, tmp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This Is</span><br></pre></td></tr></table></figure>
+
+<p>可见，通过该类型可以达到 <em>只允许读取一定长度数据</em> 的目的。</p>
+<p>在 io 包中，LimitReader 函数的实现其实就是调用 LimitedReader：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LimitReader</span><span class="params">(r Reader, n <span class="keyword">int64</span>)</span> <span class="title">Reader</span></span> &#123; <span class="keyword">return</span> &amp;LimitedReader&#123;r, n&#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-11-PipeReader-和-PipeWriter-类型"><a href="#1-11-PipeReader-和-PipeWriter-类型" class="headerlink" title="1.11. PipeReader 和 PipeWriter 类型"></a>1.11. PipeReader 和 PipeWriter 类型</h2><p>PipeReader（一个没有任何导出字段的 struct）是管道的读取端。它实现了 io.Reader 和 io.Closer 接口。结构定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PipeReader <span class="keyword">struct</span> &#123;</span><br><span class="line">    p *pipe</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于 PipeReader.Read 方法的说明</strong>：从管道中读取数据。该方法会堵塞，直到管道写入端开始写入数据或写入端被关闭。如果写入端关闭时带有 error（即调用 CloseWithError 关闭），该 Read 返回的 err 就是写入端传递的 error；否则 err 为 EOF。</p>
+<p>PipeWriter（一个没有任何导出字段的 struct）是管道的写入端。它实现了 io.Writer 和 io.Closer 接口。结构定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PipeWriter <span class="keyword">struct</span> &#123;</span><br><span class="line">    p *pipe</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于 PipeWriter.Write 方法的说明</strong>：写数据到管道中。该方法会堵塞，直到管道读取端读完所有数据或读取端被关闭。如果读取端关闭时带有 error（即调用 CloseWithError 关闭），该 Write 返回的 err 就是读取端传递的 error；否则 err 为 ErrClosedPipe。</p>
+<p>使用示例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    pipeReader, pipeWriter := io.Pipe()</span><br><span class="line">    <span class="keyword">go</span> PipeWrite(pipeWriter)</span><br><span class="line">    <span class="keyword">go</span> PipeRead(pipeReader)</span><br><span class="line">    time.Sleep(<span class="number">30</span> * time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PipeWrite</span><span class="params">(writer *io.PipeWriter)</span></span>&#123;</span><br><span class="line">    data := []<span class="keyword">byte</span>(<span class="string">&quot;Go语言中文网&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">3</span>; i++&#123;</span><br><span class="line">        n, err := writer.Write(data)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;写入字节 %d\n&quot;</span>,n)</span><br><span class="line">    &#125;</span><br><span class="line">    writer.CloseWithError(errors.New(<span class="string">&quot;写入段已关闭&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PipeRead</span><span class="params">(reader *io.PipeReader)</span></span>&#123;</span><br><span class="line">    buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">128</span>)</span><br><span class="line">    <span class="keyword">for</span>&#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;接口端开始阻塞5秒钟...&quot;</span>)</span><br><span class="line">        time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">        fmt.Println(<span class="string">&quot;接收端开始接受&quot;</span>)</span><br><span class="line">        n, err := reader.Read(buf)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;收到字节: %d\n buf内容: %s\n&quot;</span>,n,buf)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>io.Pipe () 用于创建一个同步的内存管道 (synchronous in-memory pipe)，函数签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pipe</span><span class="params">()</span> <span class="params">(*PipeReader, *PipeWriter)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它将 io.Reader 连接到 io.Writer。一端的读取匹配另一端的写入，直接在这两端之间复制数据；它没有内部缓存。它对于并行调用 Read 和 Write 以及其它函数或 Close 来说都是安全的。一旦等待的 I/O 结束，Close 就会完成。并行调用 Read 或并行调用 Write 也同样安全：同种类的调用将按顺序进行控制。</p>
+<p>正因为是<em>同步</em>的，因此不能在一个 goroutine 中进行读和写。</p>
+<p>另外，对于管道的 close 方法（非 CloseWithError 时），err 会被置为 EOF。</p>
+<h2 id="1-12-Copy-和-CopyN-函数"><a href="#1-12-Copy-和-CopyN-函数" class="headerlink" title="1.12. Copy 和 CopyN 函数"></a>1.12. Copy 和 CopyN 函数</h2><p><strong>Copy 函数</strong>的签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Copy</span><span class="params">(dst Writer, src Reader)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数文档：</p>
+<blockquote>
+<p>Copy 将 src 复制到 dst，直到在 src 上到达 EOF 或发生错误。它返回复制的字节数，如果有错误的话，还会返回在复制时遇到的第一个错误。</p>
+<p>成功的 Copy 返回 err == nil，而非 err == EOF。由于 Copy 被定义为从 src 读取直到 EOF 为止，因此它不会将来自 Read 的 EOF 当做错误来报告。</p>
+<p>若 dst 实现了 ReaderFrom 接口，其复制操作可通过调用 dst.ReadFrom (src) 实现。此外，若 src 实现了 WriterTo 接口，其复制操作可通过调用 src.WriteTo (dst) 实现。</p>
+</blockquote>
+<p>代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.Copy(os.Stdout, strings.NewReader(<span class="string">&quot;Go语言中文网&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>直接将内容输出（写入 Stdout 中）。</p>
+<p>我们甚至可以这么做：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;io&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    io.Copy(os.Stdout, os.Stdin)</span><br><span class="line">    fmt.Println(<span class="string">&quot;Got EOF -- bye&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行：<code>echo &quot;Hello, World&quot; | go run main.go</code></p>
+<p><strong>CopyN 函数</strong>的签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyN</span><span class="params">(dst Writer, src Reader, n <span class="keyword">int64</span>)</span> <span class="params">(written <span class="keyword">int64</span>, err error)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数文档：</p>
+<blockquote>
+<p>CopyN 将 n 个字节 (或到一个 error) 从 src 复制到 dst。 它返回复制的字节数以及在复制时遇到的最早的错误。当且仅当 err == nil 时，written == n 。</p>
+<p>若 dst 实现了 ReaderFrom 接口，复制操作也就会使用它来实现。</p>
+</blockquote>
+<p>代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.CopyN(os.Stdout, strings.NewReader(<span class="string">&quot;Go语言中文网&quot;</span>), <span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+
+<p>会输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Go语言</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-13-ReadAtLeast-和-ReadFull-函数"><a href="#1-13-ReadAtLeast-和-ReadFull-函数" class="headerlink" title="1.13. ReadAtLeast 和 ReadFull 函数"></a>1.13. ReadAtLeast 和 ReadFull 函数</h2><p><strong>ReadAtLeast 函数</strong>的签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAtLeast</span><span class="params">(r Reader, buf []<span class="keyword">byte</span>, min <span class="keyword">int</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数文档：</p>
+<blockquote>
+<p>ReadAtLeast 将 r 读取到 buf 中，直到读了最少 min 个字节为止。它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了少于 min 个字节之后，ReadAtLeast 就会返回 ErrUnexpectedEOF。若 min 大于 buf 的长度，ReadAtLeast 就会返回 ErrShortBuffer。对于返回值，当且仅当 err == nil 时，才有 n &gt;= min。</p>
+</blockquote>
+<p>一般可能不太会用到这个函数。使用时需要注意返回的 error 判断。</p>
+<p><strong>ReadFull 函数</strong>的签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFull</span><span class="params">(r Reader, buf []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数文档：</p>
+<blockquote>
+<p>ReadFull 精确地从 r 中将 len (buf) 个字节读取到 buf 中。它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了一些但不是所有的字节后，ReadFull 就会返回 ErrUnexpectedEOF。对于返回值，当且仅当 err == nil 时，才有 n == len (buf)。</p>
+</blockquote>
+<p>注意该函数和 ReadAtLeast 的区别：ReadFull 将 buf 读满；而 ReadAtLeast 是最少读取 min 个字节。</p>
+<h2 id="1-14-WriteString-函数"><a href="#1-14-WriteString-函数" class="headerlink" title="1.14. WriteString 函数"></a>1.14. WriteString 函数</h2><p>这是为了方便写入 string 类型提供的函数，函数签名：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteString</span><span class="params">(w Writer, s <span class="keyword">string</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数文档：</p>
+<blockquote>
+<p>WriteString 将 s 的内容写入 w 中，当 w 实现了 WriteString 方法时，会直接调用该方法，否则执行 w.Write ([] byte (s))。</p>
+</blockquote>
+<h2 id="1-15-MultiReader-和-MultiWriter-函数"><a href="#1-15-MultiReader-和-MultiWriter-函数" class="headerlink" title="1.15. MultiReader 和 MultiWriter 函数"></a>1.15. MultiReader 和 MultiWriter 函数</h2><p>这两个函数的定义分别是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MultiReader</span><span class="params">(readers ...Reader)</span> <span class="title">Reader</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MultiWriter</span><span class="params">(writers ...Writer)</span> <span class="title">Writer</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它们接收多个 Reader 或 Writer，返回一个 Reader 或 Writer。我们可以猜想到这两个函数就是操作多个 Reader 或 Writer 就像操作一个。</p>
+<p>事实上，在 io 包中定义了两个非导出类型：mutilReader 和 multiWriter，它们分别实现了 io.Reader 和 io.Writer 接口。类型定义为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> multiReader <span class="keyword">struct</span> &#123;</span><br><span class="line">    readers []Reader</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> multiWriter <span class="keyword">struct</span> &#123;</span><br><span class="line">    writers []Writer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于这两种类型对应的实现方法（Read 和 Write 方法）的使用，我们通过例子来演示。</p>
+<p><strong>MultiReader 的使用</strong>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">readers := []io.Reader&#123;</span><br><span class="line">    strings.NewReader(<span class="string">&quot;from strings reader&quot;</span>),</span><br><span class="line">    bytes.NewBufferString(<span class="string">&quot;from bytes buffer&quot;</span>),</span><br><span class="line">&#125;</span><br><span class="line">reader := io.MultiReader(readers...)</span><br><span class="line">data := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">0</span>, <span class="number">128</span>)</span><br><span class="line">buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> n, err := reader.Read(buf); err != io.EOF ; n, err = reader.Read(buf)&#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    data = <span class="built_in">append</span>(data,buf[:n]...)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, data)</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from strings readerfrom bytes buffer</span><br></pre></td></tr></table></figure>
+
+<p>代码中首先构造了一个 io.Reader 的 slice，由 strings.Reader 和 bytes.Buffer 两个实例组成，然后通过 MultiReader 得到新的 Reader，循环读取新 Reader 中的内容。从输出结果可以看到，第一次调用 Reader 的 Read 方法获取到的是 slice 中第一个元素的内容…… 也就是说，MultiReader 只是逻辑上将多个 Reader 组合起来，并不能通过调用一次 Read 方法获取所有 Reader 的内容。在所有的 Reader 内容都被读完后，Reader 会返回 EOF。</p>
+<p><strong>MultiWriter 的使用</strong>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">file, err := os.Create(<span class="string">&quot;tmp.txt&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line">writers := []io.Writer&#123;</span><br><span class="line">    file,</span><br><span class="line">    os.Stdout,</span><br><span class="line">&#125;</span><br><span class="line">writer := io.MultiWriter(writers...)</span><br><span class="line">writer.Write([]<span class="keyword">byte</span>(<span class="string">&quot;Go语言中文网&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>这段程序执行后在生成 tmp.txt 文件，同时在文件和屏幕中都输出：<code>Go语言中文网</code>。这和 Unix 中的 tee 命令类似。</p>
+<p><strong>动手试试</strong></p>
+<p>Go 实现 Unix 中 tee 命令的功能很简单吧。MultiWriter 的 Write 方法是如何实现的？有兴趣可以自己实现一个，然后对着源码比较一下。</p>
+<h2 id="1-16-TeeReader-函数"><a href="#1-16-TeeReader-函数" class="headerlink" title="1.16. TeeReader 函数"></a>1.16. TeeReader 函数</h2><p>函数签名如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TeeReader</span><span class="params">(r Reader, w Writer)</span> <span class="title">Reader</span></span></span><br></pre></td></tr></table></figure>
+
+<p>TeeReader 返回一个 Reader，它将从 r 中读到的数据写入 w 中。所有经由它处理的从 r 的读取都匹配于对应的对 w 的写入。它没有内部缓存，即写入必须在读取完成前完成。任何在写入时遇到的错误都将作为读取错误返回。</p>
+<p>也就是说，我们通过 Reader 读取内容后，会自动写入到 Writer 中去。例子代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reader := io.TeeReader(strings.NewReader(<span class="string">&quot;Go语言中文网&quot;</span>), os.Stdout)</span><br><span class="line">reader.Read(<span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">20</span>))</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Go语言中文网</span><br></pre></td></tr></table></figure>
+
+<p>这种功能的实现其实挺简单，无非是在 Read 完后执行 Write。</p>
+<p>至此，io 所有接口、类型和函数都讲解完成。</p>
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
