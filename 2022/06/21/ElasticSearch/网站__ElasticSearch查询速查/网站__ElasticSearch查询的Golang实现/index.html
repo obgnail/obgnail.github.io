@@ -1,0 +1,511 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=" id=&quot;0-前言&quot;&gt;&lt;a href=&quot;#0-前言&quot; class=&quot;headerlink&quot; title=&quot;0. 前言&quot;&gt;&lt;/a&gt;0. 前言&lt;/h1&gt;&lt;p&gt;ES 中的查询分为三大类，一是 &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html&quot;&gt;Term-level queries&lt;/a&gt;（字段匹配），二是 &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html&quot;&gt;Full-text queries&lt;/a&gt;（全文搜索），三是不常用的 &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/specialized-queries.html&quot;&gt;Specialized queries&lt;/a&gt;（专门查询）。各自可细分为如下几种："><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>ElasticSearch查询的Golang实现 | 凉薄的自动书记人偶</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.4.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Tags</a><a class="sidebar-nav-item" href="/About">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a></div><div class="post-time">2022-06-21</div></div></div><div class="container post-header"><h1>ElasticSearch查询的Golang实现</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0. 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%A0%B9%E6%8D%AE-ID-%E6%9F%A5%E8%AF%A2"><span class="toc-number">2.</span> <span class="toc-text">1. 根据 ID 查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E8%8E%B7%E5%8F%96%E5%8D%95%E4%B8%AA%E6%96%87%E6%A1%A3"><span class="toc-number">2.1.</span> <span class="toc-text">1.1 获取单个文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96%E5%A4%9A%E4%B8%AA%E6%96%87%E6%A1%A3"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 批量获取多个文档</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E7%B2%BE%E7%A1%AE%E5%8C%B9%E9%85%8D%E5%8D%95%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">2. 精确匹配单个字段</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E7%B2%BE%E7%A1%AE%E5%8C%B9%E9%85%8D%E5%8D%95%E4%B8%AA%E5%AD%97%E6%AE%B5%E7%9A%84%E5%A4%9A%E4%B8%AA%E5%80%BC"><span class="toc-number">4.</span> <span class="toc-text">3. 精确匹配单个字段的多个值</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E5%85%A8%E6%96%87%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.</span> <span class="toc-text">4. 全文查询</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="toc-number">6.</span> <span class="toc-text">5. 范围查询</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%AA%E5%AD%97%E6%AE%B5%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">7.</span> <span class="toc-text">6. 判断某个字段是否存在</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-bool-%E7%BB%84%E5%90%88%E6%9F%A5%E8%AF%A2"><span class="toc-number">8.</span> <span class="toc-text">7.bool 组合查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#must"><span class="toc-number">8.1.</span> <span class="toc-text">must</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#filter"><span class="toc-number">8.2.</span> <span class="toc-text">filter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#should"><span class="toc-number">8.3.</span> <span class="toc-text">should</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#must-not"><span class="toc-number">8.4.</span> <span class="toc-text">must_not</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2"><span class="toc-number">9.</span> <span class="toc-text">8. 分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#from-size%EF%BC%88%E6%B5%85%E5%88%86%E9%A1%B5%EF%BC%89"><span class="toc-number">9.1.</span> <span class="toc-text">from+size（浅分页）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scroll-api%EF%BC%88%E6%B7%B1%E5%88%86%E9%A1%B5%EF%BC%89"><span class="toc-number">9.2.</span> <span class="toc-text">scroll api（深分页）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#search-after%EF%BC%88%E6%B7%B1%E5%88%86%E9%A1%B5%EF%BC%89"><span class="toc-number">9.3.</span> <span class="toc-text">search after（深分页）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">9.4.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">10.</span> <span class="toc-text">9. 查询文档是否存在</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#9-1-%E6%A0%B9%E6%8D%AE-ID-%E5%88%A4%E6%96%AD%E6%96%87%E6%A1%A3%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">10.1.</span> <span class="toc-text">9.1 根据 ID 判断文档是否存在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-2-%E6%9F%A5%E8%AF%A2%E7%AC%A6%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84%E6%96%87%E6%A1%A3%E6%95%B0%E9%87%8F"><span class="toc-number">10.2.</span> <span class="toc-text">9.2 查询符合条件的文档数量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#10-%E8%8E%B7%E5%8F%96%E6%96%87%E6%A1%A3%E6%95%B0%E9%87%8F"><span class="toc-number">11.</span> <span class="toc-text">10. 获取文档数量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#12-%E8%84%9A%E6%9C%AC%E6%9F%A5%E8%AF%A2"><span class="toc-number">12.</span> <span class="toc-text">12. 脚本查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#12-1-%E5%88%A4%E6%96%AD%E6%95%B0%E7%BB%84%E9%95%BF%E5%BA%A6"><span class="toc-number">12.1.</span> <span class="toc-text">12.1 判断数组长度</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#13-%E9%81%8D%E5%8E%86%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C"><span class="toc-number">13.</span> <span class="toc-text">13. 遍历查询结果</span></a></li></ol></details></div><div class="container post-content"><h1 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h1><p>ES 中的查询分为三大类，一是 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html">Term-level queries</a>（字段匹配），二是 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html">Full-text queries</a>（全文搜索），三是不常用的 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/specialized-queries.html">Specialized queries</a>（专门查询）。各自可细分为如下几种：</p>
+<ul>
+<li>Term-level queries<ul>
+<li>  exists query 字段是否存在值</li>
+<li>  fuzzy query 模糊查询</li>
+<li>  ids query ID 查询</li>
+<li>  prefix query 前缀查询</li>
+<li>  range query 范围查询</li>
+<li>  regexp query 正则查询</li>
+<li>  term query 精确匹配单个字段</li>
+<li>  terms query 精确匹配单个字段，但使用多值进行匹配，类似于 SQL 中的 in 操作</li>
+<li>  terms_set query 字段集合查询。文档需包含字段集合中指定的最少数量字段</li>
+<li>  wildcard query 通配符查询</li>
+</ul>
+</li>
+<li>Full-text queries<ul>
+<li>  match query 单字段搜索（匹配分词结果，不需要全文匹配）</li>
+</ul>
+</li>
+<li>Specialized queries<ul>
+<li>  script query 脚本查询</li>
+</ul>
+</li>
+</ul>
+<p>这里并未将每个大类下的全部子类列举出来，只列举了本文涉及到查询。其他可到官网了解。</p>
+<h1 id="1-根据-ID-查询"><a href="#1-根据-ID-查询" class="headerlink" title="1. 根据 ID 查询"></a>1. 根据 ID 查询</h1><h2 id="1-1-获取单个文档"><a href="#1-1-获取单个文档" class="headerlink" title="1.1 获取单个文档"></a>1.1 获取单个文档</h2><p>根据文档 ID 获取单个文档信息。对应的 RESTful <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=API&spm=1001.2101.3001.7020">API</a> 为：</p>
+<pre><code>GET &lt;index&gt;/_doc/&lt;_id&gt;
+GET &lt;index&gt;/_source/&lt;_id&gt;
+</code></pre>
+<p>比如查询 index 为 es_index_userinfo 中文档 ID 为 1 的用户信息：</p>
+<pre><code>GET es_index_userinfo/_doc/1
+</code></pre>
+<p>如果只想返回部分字段，可以使用<code>_source_includes</code> 或<code>_source_excludes</code> 参数来包括或过滤掉特定字段。</p>
+<p>例如不返回创建时间（create_time） 和更新时间（update_time），支持通配符。</p>
+<pre><code>GET /es_index_userinfo/_doc/1?_source_includes=*&amp;_source_excludes=*time
+</code></pre>
+<p>翻译成 Go 为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetByID4ES 根据ID查询单个文档</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByID4ES</span><span class="params">(ctx context.Context, index, id <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	res, err := GetESClient().</span><br><span class="line">		Get().</span><br><span class="line">		Index(index).</span><br><span class="line">		Id(id).</span><br><span class="line">		Do(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(res.Source), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>注意：查询不存在的 ID，会报 <code>elastic: Error 404 (Not Found)</code> 错误。</strong></p>
+<h2 id="1-2-批量获取多个文档"><a href="#1-2-批量获取多个文档" class="headerlink" title="1.2 批量获取多个文档"></a>1.2 批量获取多个文档</h2><p>利用 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-multi-get.html">Multi get</a> 可以根据文档 ID 批量获取多个文档。</p>
+<pre><code>GET /_mget
+&#123;
+  &quot;docs&quot;: [
+    &#123;
+      &quot;_index&quot;: &quot;my-index-000001&quot;,
+      &quot;_id&quot;: &quot;1&quot;
+    &#125;,
+    &#123;
+      &quot;_index&quot;: &quot;my-index-000001&quot;,
+      &quot;_id&quot;: &quot;2&quot;
+    &#125;
+  ]
+&#125;
+
+GET /&lt;index&gt;/_mget
+&#123;
+  &quot;docs&quot;: [
+    &#123;
+      &quot;_id&quot;: &quot;1&quot;
+    &#125;,
+    &#123;
+      &quot;_id&quot;: &quot;2&quot;
+    &#125;
+  ]
+&#125;
+</code></pre>
+<p>借助 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#MgetService">MgetService</a> 和 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#MultiGetItem">MultiGetItem</a> 可实现批量获取文档。翻译成 Go 为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mgetSvc := EsCli.MultiGet()</span><br><span class="line"><span class="keyword">for</span> _, id := <span class="keyword">range</span> ids &#123;</span><br><span class="line">	mgetSvc.Add(elastic.NewMultiGetItem().Index(index).Id(id))</span><br><span class="line">&#125;</span><br><span class="line">rsp, err := mgetSvc.Do(ctx)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="2-精确匹配单个字段"><a href="#2-精确匹配单个字段" class="headerlink" title="2. 精确匹配单个字段"></a>2. 精确匹配单个字段</h1><p>比如获指定用户名的用户。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 term 查询条件，用于精确查询</span></span><br><span class="line">termQuery := elastic.NewTermQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;cat&quot;</span>)</span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). 			<span class="comment">// 设置索引名</span></span><br><span class="line">	Query(termQuery).           			<span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).    			<span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    			<span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   			<span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     			<span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;term&quot;: &#123;&quot;username&quot;: &quot;bob&quot;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<p><strong>注意：</strong> term 精确匹配 text 类型的字段可能匹配不到，因为 text 类型的字段会被<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%88%86%E8%AF%8D&spm=1001.2101.3001.7020">分词</a>.。如果分词的结果集中没有 term 指定的内容，那么将无法匹配。keyword 类型字段不会进行分词，所以可以用 term 进行精确匹配。</p>
+<p><strong>解决办法</strong>：给 text 类型的字段取一个别名，别名的类型为 keyword，即不进行分词。</p>
+<pre><code>&quot;ancestral&quot;:&#123;                 
+    &quot;type&quot;: &quot;text&quot;,         
+    &quot;fields&quot;: &#123;             
+      &quot;alias&quot;: &#123;          
+        &quot;type&quot;: &quot;keyword&quot;
+      &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>那么可以通过 ancestral.alias 访问字段 ancestral，其类型设为 keyword。</p>
+<h1 id="3-精确匹配单个字段的多个值"><a href="#3-精确匹配单个字段的多个值" class="headerlink" title="3. 精确匹配单个字段的多个值"></a>3. 精确匹配单个字段的多个值</h1><p>通过 TermsQuery 实现单个字段的多值精确匹配，类似于 SQL 的 in 查询。</p>
+<p>比如获指定用户名的用户，只需要命中一个即可。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 terms 查询条件，用于多值精确查询</span></span><br><span class="line">termsQuery := elastic.NewTermsQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;cat&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). 			<span class="comment">// 设置索引名</span></span><br><span class="line">	Query(termsQuery).           			<span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).    			<span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    			<span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   			<span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     			<span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;terms&quot;: &#123;&quot;username&quot;: [&quot;bobs&quot;,&quot;bob&quot;]&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h1 id="4-全文查询"><a href="#4-全文查询" class="headerlink" title="4. 全文查询"></a>4. 全文查询</h1><p>全文查询 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html">Full text queries</a> 是个 ES 的核心查询。</p>
+<p>无论需要查询什么字段， MatchQuery 查询都应该会是首选的查询方式。它是一个高级全文查询 ，这表示它既能处理全文字段，又能处理精确字段。</p>
+<p>使用 MatchQuery 对字段进行全文搜索，即匹配分词结果。如果分词出现在 MatchQuery 中指定的内容（指定的内容也会分词），如果存在相同的分词，则匹配。</p>
+<p>假设 “我爱中国” 的分词结果为 “我”、“爱”、“中国”，那么搜索 “我是第一名” 也会匹配，因为 “我是第一名” 的分词结果中也有 “我”。</p>
+<p>ES 查看某个字段数据的分词结果。</p>
+<pre><code>GET /&#123;index&#125;/&#123;type&#125;/&#123;id&#125;/_termvectors?fields=&#123;fields_name&#125;
+</code></pre>
+<p><strong>注意：</strong><br>（1）如果想对输入不进行分词，请使用 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html">term query</a>；<br>（2）如果想对输入的分词结果全部匹配，请使用 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html">match phrase query</a>；<br>（3）如果想对输入的分词结果全部匹配且最后一个分词支持前缀匹配，请使用 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html">match phrase prefix query</a>；<br>（4）如果是对 keyword 字段进行 MatchQuery，因为该类型不会分词，所以是精确匹配。</p>
+<p>比如获取指定用户名的用户。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 match 查询条件</span></span><br><span class="line">matchQuery := elastic.NewMatchQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(matchQuery).          <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;match&quot;: &#123;&quot;username&quot;: &quot;bob&quot;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h1 id="5-范围查询"><a href="#5-范围查询" class="headerlink" title="5. 范围查询"></a>5. 范围查询</h1><p>实现类似 <code>age &gt;= 18 and age &lt; 35</code> 的范围查询条件。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 range 查询条件</span></span><br><span class="line">rangeQuery := elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>).Lte(<span class="number">35</span>)</span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(rangeQuery).          <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;range&quot;:&#123;&quot;age&quot; : &#123;&quot;gte&quot; : 18, &quot;lte&quot;: 35&#125;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h1 id="6-判断某个字段是否存在"><a href="#6-判断某个字段是否存在" class="headerlink" title="6. 判断某个字段是否存在"></a>6. 判断某个字段是否存在</h1><p>有时，我们需要查询不包含指定字段的记录，此时我们可以借助 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html">Exists Query</a> 来完成。其表示某个字段存在，如果表示不存在，需要借助 must_not boolean query 来完成。</p>
+<p><strong>注意</strong>：如果字段为 null 或者 []，虽然值为空，但是字段是存在的。</p>
+<p>比如查询不存在 phone 字段且年龄大于 18 的用户记录，条件可以这么写：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;bool&quot;: &#123;
+      &quot;must_not&quot;: &#123;&quot;exists&quot;: &#123;&quot;field&quot;: &quot;phone&quot;&#125;&#125;,
+      &quot;filter&quot;:&#123;&quot;range&quot;:&#123;&quot;age&quot;:&#123;&quot;gte&quot;:18&#125;&#125;&#125;
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>翻译成 Golang，对应的条件写为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">boolQuery := elastic.NewBoolQuery()</span><br><span class="line">boolQuery.MustNot(elastic.NewExistsQuery(<span class="string">&quot;phone&quot;</span>)))</span><br><span class="line">boolQuery.Filter(elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>))</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="7-bool-组合查询"><a href="#7-bool-组合查询" class="headerlink" title="7.bool 组合查询"></a>7.bool 组合查询</h1><p>BoolQuery 是一种组合查询，将多个条件通过类似 SQL 语句 and 和 or 组合在一起来作为查询条件。</p>
+<p>其有四种类型的子句：</p>
+<p>类型</p>
+<p>描述</p>
+<p>must</p>
+<p>条件必须要满足，并将对分数起作用</p>
+<p>filter</p>
+<p>条件必须要满足，但又不同于 must 子句，在 filter context 中执行，这意味着忽略评分，并考虑使用缓存。效率会高于 must</p>
+<p>should</p>
+<p>条件应该满足。可以通过 minimum_should_match 参数指定应该满足的条件个数。如果 bool 查询包含 should 子句，并且没有 must 和 filter 子句，则默认值为 1，否则默认值为 0</p>
+<p>must_not</p>
+<p>条件必须不能满足。在 filter context 中执行，这意味着评分被忽略，并考虑使用缓存。因为评分被忽略，所以会返回所有 0 分的文档</p>
+<h2 id="must"><a href="#must" class="headerlink" title="must"></a>must</h2><p>类似 SQL 的 and，代表必须匹配的条件。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 bool 查询</span></span><br><span class="line">boolQuery := elastic.NewBoolQuery()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建查询条件</span></span><br><span class="line">termQuery := elastic.NewTermQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">rangeQuery := elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>).Lte(<span class="number">35</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 bool 查询的 must 条件, 组合了两个子查询</span></span><br><span class="line"><span class="comment">// 搜索用户名为 bob 且年龄在 18～35 岁的用户</span></span><br><span class="line">boolQuery.Must(termQuery, rangeQuery)</span><br><span class="line"></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(boolQuery).           <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;:&#123;
+    &quot;bool&quot;:&#123;
+      &quot;must&quot;:[
+        &#123;&quot;term&quot;:&#123;&quot;username&quot;: &quot;bob&quot;&#125;&#125;,
+        &#123;&quot;range&quot;:&#123;&quot;age&quot;:&#123;&quot;gte&quot;:18, &quot;lte&quot;:35&#125;&#125;&#125;
+      ]
+    &#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h2 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h2><p>类似 SQL 的 and，代表必须匹配的条件。不计算匹配分值，且子句被考虑用于缓存。</p>
+<p>使用 filter 替代 must 条件，查询用户名为 bob 且年龄在 18～35 岁的用户</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 bool 查询</span></span><br><span class="line">boolQuery := elastic.NewBoolQuery()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建查询条件</span></span><br><span class="line">termQuery := elastic.NewTermQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">rangeQuery := elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>).Lte(<span class="number">35</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 bool 查询的 filter 条件, 组合了两个子查询</span></span><br><span class="line"><span class="comment">// 搜索用户名为 bob 且年龄在 18～35 岁的用户</span></span><br><span class="line">boolQuery.Filter(termQuery, rangeQuery)</span><br><span class="line"></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(boolQuery).          <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;:&#123;
+    &quot;bool&quot;:&#123;
+      &quot;filter&quot;:[
+        &#123;&quot;term&quot;:&#123;&quot;username&quot;: &quot;bob&quot;&#125;&#125;,
+        &#123;&quot;range&quot;:&#123;&quot;age&quot;:&#123;&quot;gte&quot;:18, &quot;lte&quot;:35&#125;&#125;&#125;
+      ]
+    &#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h2 id="should"><a href="#should" class="headerlink" title="should"></a>should</h2><p>类似 SQL 中的 or， 可以通过 minimum_should_match 参数指定应该满足的条件个数。如果 bool 查询包含 should 子句，并且没有 must 和 filter 子句，则默认值为 1，否则默认值为 0。</p>
+<p>比如查询用户名为 bob 且年龄为 18 或 35 岁的用户。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 bool 查询</span></span><br><span class="line">boolQuery := elastic.NewBoolQuery()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建查询条件</span></span><br><span class="line">termQuery := elastic.NewTermQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">termQuery1 := elastic.NewTermQuery(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>)</span><br><span class="line">termQuery2 := elastic.NewTermQuery(<span class="string">&quot;age&quot;</span>, <span class="number">35</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 bool 查询的 filter 条件, 组合了两个子查询</span></span><br><span class="line"><span class="comment">// 搜索用户名为 bob 且年龄为 18 或 35 岁的用户</span></span><br><span class="line">boolQuery.Filter(termQuery, termQuery)</span><br><span class="line">boolQuery.Should(termQuery, termQuery1, termQuery2)</span><br><span class="line">boolQuery.MinimumNumberShouldMatch(<span class="number">1</span>) <span class="comment">// 至少满足 should 中的一个条件</span></span><br><span class="line"></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(boolQuery).           <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;:&#123;
+    &quot;bool&quot;:&#123;
+      &quot;filter&quot;: &#123;&quot;term&quot;:&#123;&quot;username&quot;: &quot;bob&quot;&#125;&#125;,
+      &quot;should&quot;:[
+        &#123;&quot;term&quot;:&#123;&quot;age&quot;:18&#125;&#125;,
+        &#123;&quot;term&quot;:&#123;&quot;age&quot;:35&#125;&#125;
+      ],
+      &quot;minimum_should_match&quot; : 1
+    &#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h2 id="must-not"><a href="#must-not" class="headerlink" title="must_not"></a>must_not</h2><p>跟 must 作用相反，表示条件必须不能满足。</p>
+<p>比如搜索用户名为 bob 且年龄不为 18 或 35 岁的用户。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 bool 查询</span></span><br><span class="line">boolQuery := elastic.NewBoolQuery()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建查询条件</span></span><br><span class="line">termQuery := elastic.NewTermQuery(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;bob&quot;</span>)</span><br><span class="line">termQuery1 := elastic.NewTermQuery(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>)</span><br><span class="line">termQuery2 := elastic.NewTermQuery(<span class="string">&quot;age&quot;</span>, <span class="number">35</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 bool 查询的 filter 条件, 组合了两个子查询</span></span><br><span class="line"><span class="comment">// 搜索用户名为 bob 且年龄不为 18 和 35 岁的用户</span></span><br><span class="line">boolQuery.Filter(termQuery)</span><br><span class="line">boolQuery.MustNot(termQuery1, termQuery2)</span><br><span class="line"></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(boolQuery).           <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">true</span>).  <span class="comment">// 设置排序字段，根据 create_time 字段升序排序</span></span><br><span class="line">	From(<span class="number">0</span>).                    <span class="comment">// 设置分页参数 - 起始偏移量，从第 0 行记录开始</span></span><br><span class="line">	Size(<span class="number">10</span>).                   <span class="comment">// 设置分页参数 - 每页大小</span></span><br><span class="line">	Do(ctx)                     <span class="comment">// 执行请求</span></span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;:&#123;
+    &quot;bool&quot;:&#123;
+      &quot;filter&quot;: &#123;&quot;term&quot;:&#123;&quot;username&quot;: &quot;bob&quot;&#125;&#125;,
+      &quot;must_not&quot;:[
+        &#123;&quot;term&quot;:&#123;&quot;age&quot;:18&#125;&#125;,
+        &#123;&quot;term&quot;:&#123;&quot;age&quot;:35&#125;&#125;
+      ]
+    &#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;asc&quot;&#125;
+  ],
+  &quot;from&quot;: 0,
+  &quot;size&quot;:10
+&#125;
+</code></pre>
+<h1 id="8-分页查询"><a href="#8-分页查询" class="headerlink" title="8. 分页查询"></a>8. 分页查询</h1><p>我们也可以根据条件分页查询。</p>
+<p>ES 分页搜索一般有三种方案，from + size、search after、<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=scroll&spm=1001.2101.3001.7020">scroll</a> api，这三种方案分别有自己的优缺点。</p>
+<h2 id="from-size（浅分页）"><a href="#from-size（浅分页）" class="headerlink" title="from+size（浅分页）"></a>from+size（浅分页）</h2><p>这是 ES 分页中最常用的一种方式，与 MySQL 类似，from 指定起始位置，size 指定返回的文档数。</p>
+<p>这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。</p>
+<p>理解为什么深度分页是有问题的，假设取的页数较大时（深分页），如请求第 20 页，<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Elasticsearch&spm=1001.2101.3001.7020">Elasticsearch</a> 不得不取出所有分片上的第 1 页到第 20 页的所有文档，并做排序，最终再取出 from 后的 size 条结果作爲最终的返回值。</p>
+<p>所以，当索引记录非常非常多 (千万或亿)，是无法使用 from + size 做深分页的，分页越深则越容易 OOM。即便不 OOM，也很消耗 CPU 和内存资源。</p>
+<p>所以 ES 为了避免深分页，不允许使用 from + size 的方式查询 1 万条以后的数据，即 from + size 大于 10000 会报错，不过可以通过 index.max_result_window 参数进行修改。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetByQueryPage4ES 分页查询</span></span><br><span class="line"><span class="comment">// param: index 索引; query 查询条件; page 起始页（从 1 开始）; size 页大小</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByQueryPage4ES</span><span class="params">(ctx context.Context, index <span class="keyword">string</span>, query elastic.Query, page, size <span class="keyword">int</span>)</span> <span class="params">([]<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	start := (page - <span class="number">1</span>) * size</span><br><span class="line">	res, err := GetESClient().Search(index).Query(query).From(start).Size(size).Do(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	sl := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, res.TotalHits())</span><br><span class="line">	<span class="keyword">for</span> _, hit := <span class="keyword">range</span> res.Hits.Hits &#123;</span><br><span class="line">		sl = <span class="built_in">append</span>(sl, <span class="keyword">string</span>(hit.Source))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sl, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetByQueryPageSort4ES 根据条件分页查询 &amp; 指定字段排序</span></span><br><span class="line"><span class="comment">// param: index 索引; query 查询条件; page 起始页（从 1 开始）; size 页大小; field 排序字段; ascending 升序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByQueryPageSort4ES</span><span class="params">(ctx context.Context, index <span class="keyword">string</span>, query elastic.Query, page, size <span class="keyword">int</span>, field <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">	ascending <span class="keyword">bool</span>)</span> <span class="params">([]<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	from := (page - <span class="number">1</span>) * size</span><br><span class="line">	res, err := GetESClient().</span><br><span class="line">		Search(index).</span><br><span class="line">		Query(query).</span><br><span class="line">		Sort(field, ascending).</span><br><span class="line">		From(from).</span><br><span class="line">		Size(size).</span><br><span class="line">		Do(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	sl := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, res.TotalHits())</span><br><span class="line">	<span class="keyword">for</span> _, hit := <span class="keyword">range</span> res.Hits.Hits &#123;</span><br><span class="line">		sl = <span class="built_in">append</span>(sl, <span class="keyword">string</span>(hit.Source))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sl, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>比如分页查询年龄 &gt;=18 且按照创建时间降序排序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">query := elastic.NewBoolQuery()</span><br><span class="line">query.Filter(elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>))</span><br><span class="line">sl, err := GetByQueryPageSort4ES(context.Background(), index, query, <span class="number">1</span>, <span class="number">500</span>, <span class="string">&quot;create_time&quot;</span>, <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>对应的 RESTful api 为：</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+    &quot;query&quot;: &#123;
+        &quot;bool&quot;: &#123;
+            &quot;filter&quot;:[&#123;&quot;range&quot; : &#123;&quot;age&quot; : &#123;&quot;gte&quot; : 18&#125;&#125;&#125;]
+        &#125;
+    &#125;,
+    &quot;from&quot;: 0, 
+    &quot;size&quot; : 500,
+    &quot;sort&quot; : [&#123;&quot;create_time&quot;:&quot;desc&quot;&#125;]
+&#125;
+</code></pre>
+<p>注意：如果想控制返回哪些字段，可以使用 _source 来指定。比如只返回用户名（username）和年龄（age）。</p>
+<pre><code>GET /es_index_userinfo/_search
+&#123;
+    &quot;query&quot;: &#123;
+        &quot;bool&quot;: &#123;
+            &quot;filter&quot;:[&#123;&quot;range&quot; : &#123;&quot;age&quot; : &#123;&quot;gte&quot; : 18&#125;&#125;&#125;]
+        &#125;
+    &#125;,
+    &quot;from&quot;: 0, 
+    &quot;size&quot; : 500,
+    &quot;sort&quot; : [&#123;&quot;create_time&quot;:&quot;desc&quot;&#125;],
+    &quot;_source&quot;: [&quot;username&quot;, &quot;age&quot;]
+&#125;
+</code></pre>
+<p>Go 代码带上<code>_source</code> 的方式。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fsc := elastic.NewFetchSourceContext(<span class="literal">true</span>).Include(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;age&quot;</span>)</span><br><span class="line">res, err := GetESClient().</span><br><span class="line">	Search(index).</span><br><span class="line">	Query(query).</span><br><span class="line">	FetchSourceContext(fsc).</span><br><span class="line">	Sort(field, ascending).</span><br><span class="line">	From(from).</span><br><span class="line">	Size(size).</span><br><span class="line">	Do(ctx)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="scroll-api（深分页）"><a href="#scroll-api（深分页）" class="headerlink" title="scroll api（深分页）"></a>scroll api（深分页）</h2><p>创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id。目前官方已经不推荐使用这个 API 了，建议使用 search after。</p>
+<p>首先需要获取第一页数据并获取游标 ID，然后便可以根据游标 ID 继续获取下一页数据。如果下一页为空会报 EOF 错误，此时便可知拉取结束了。</p>
+<p>比如我们还是要分页获取籍贯为安徽的用户，且按照创建时间降序。</p>
+<pre><code>GET es_index_userinfo/_search?scroll=1m
+&#123;
+  &quot;size&quot;: 1,
+  &quot;query&quot;: &#123;
+    &quot;match&quot;: &#123;&quot;ancestral&quot;: &quot;安徽&quot;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;desc&quot;&#125;
+  ]
+&#125;
+</code></pre>
+<p>在返回的数据中，有一个 _scroll_id 字段，下次搜索的时候带上这个数据，并且使用下面的查询语句。</p>
+<pre><code>POST _search/scroll
+&#123;
+  &quot;scroll&quot; : &quot;1m&quot;,
+  &quot;scroll_id&quot; : &quot;FGluY2x1ZGVfY29udGV4dF91dWlkDXF1ZXJ5QW5kRmV0Y2gBFFRpdno4bm9CU3A1TEhvY3ktQjZzAAAAAAKolSoWbm04UWQ5SHlRdDJRRjZaeGFBdjFEQQ==&quot;
+&#125;
+</code></pre>
+<p>上面的 scroll 指定搜索上下文保留的时间，1m 代表 1 分钟，还有其他时间可以选择，有 d、h、m、s 等，分别代表天、时、分钟、秒。</p>
+<p>搜索上下文有过期自动删除，但如果自己知道什么时候该删，可以自己手动删除，减少资源占用。</p>
+<pre><code>DELETE /_search/scroll
+&#123;
+  &quot;scroll_id&quot; : &quot;DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAA6UWWVJRTk9TUXFTLUdnU28xVFN6bEM4QQ==&quot;
+&#125;
+</code></pre>
+<p>Go 代码示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetByQueryPageSortScroll4ES 获取第一页数据 &amp; 获取游标ID</span></span><br><span class="line"><span class="comment">// ret: 文档切片, 游标ID, error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByQueryPageSortScroll4ES</span><span class="params">(ctx context.Context, index <span class="keyword">string</span>, query elastic.Query, size <span class="keyword">int</span>, field <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">ascending <span class="keyword">bool</span>)</span> <span class="params">([]<span class="keyword">string</span>, <span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	res, err := GetESClient().</span><br><span class="line">		Scroll(index).</span><br><span class="line">		Query(query).</span><br><span class="line">		Sort(field, ascending).</span><br><span class="line">		Size(size).</span><br><span class="line">		Do(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="string">&quot;&quot;</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	sl := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, res.TotalHits())</span><br><span class="line">	<span class="keyword">for</span> _, hit := <span class="keyword">range</span> res.Hits.Hits &#123;</span><br><span class="line">		sl = <span class="built_in">append</span>(sl, <span class="keyword">string</span>(hit.Source))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sl, res.ScrollId, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetByQScrollID4ES 根据游标 ID 获取下一页</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByQScrollID4ES</span><span class="params">(ctx context.Context, scrollID <span class="keyword">string</span>)</span> <span class="params">([]<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	res, err := GetESClient().</span><br><span class="line">		Scroll().</span><br><span class="line">		ScrollId(scrollID).</span><br><span class="line">		Do(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	sl := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, res.TotalHits())</span><br><span class="line">	<span class="keyword">for</span> _, hit := <span class="keyword">range</span> res.Hits.Hits &#123;</span><br><span class="line">		sl = <span class="built_in">append</span>(sl, <span class="keyword">string</span>(hit.Source))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sl, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="search-after（深分页）"><a href="#search-after（深分页）" class="headerlink" title="search after（深分页）"></a>search after（深分页）</h2><p>search after 利用实时游标来帮我们解决实时滚动的问题。</p>
+<p><strong>第一次搜索时需要指定 sort，并且保证值是唯一的，可以通过加入 _id 保证唯一性。</strong></p>
+<p>比如获取籍贯为安徽的用户，且按照创建时间降序。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">matchQuery := elastic.NewMatchQuery(<span class="string">&quot;ancestral&quot;</span>, <span class="string">&quot;安徽&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询第一页（无需指定 SearchAfter）</span></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>). <span class="comment">// 设置索引名</span></span><br><span class="line">	Query(matchQuery).          <span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">false</span>). <span class="comment">// 按照创建时间降序</span></span><br><span class="line">	Sort(<span class="string">&quot;_id&quot;</span>, <span class="literal">false</span>). 		<span class="comment">// 加入 ID 排序保证 after id 唯一</span></span><br><span class="line">	Size(<span class="number">1000</span>).                 <span class="comment">// 设置分页参数</span></span><br><span class="line">	Do(ctx)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询第 n 页（n &gt; 1，需要指定 SearchAfter）</span></span><br><span class="line">searchResult, err := GetESClient().Search().</span><br><span class="line">	Index(<span class="string">&quot;es_index_userinfo&quot;</span>).  		<span class="comment">// 设置索引名</span></span><br><span class="line">	Query(matchQuery).           		<span class="comment">// 设置查询条件</span></span><br><span class="line">	Sort(<span class="string">&quot;create_time&quot;</span>, <span class="literal">false</span>).  		<span class="comment">// 按照创建时间降序</span></span><br><span class="line">	Sort(<span class="string">&quot;_id&quot;</span>, <span class="literal">false</span>). 				<span class="comment">// 加入 ID 排序保证 after id 唯一</span></span><br><span class="line">	SearchAfter(lastCreateTime, id). 	<span class="comment">// 上页最后一条的创建时间和 ID</span></span><br><span class="line">	Size(<span class="number">1000</span>).                  		<span class="comment">// 设置分页参数</span></span><br><span class="line">	Do(ctx)</span><br></pre></td></tr></table></figure>
+
+
+<p>对应 RESTful api 的示例。</p>
+<pre><code>GET es_index_userinfo/_search
+&#123;
+  &quot;size&quot;: 1,
+  &quot;query&quot;: &#123;
+    &quot;match&quot;: &#123;&quot;ancestral&quot;: &quot;安徽&quot;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;desc&quot;&#125;,
+    &#123;&quot;_id&quot;: &quot;desc&quot;&#125;
+  ]
+&#125;
+</code></pre>
+<p>在返回的结果中，最后一个文档有类似下面的数据，由于我们排序用的是两个字段，返回的是两个值。</p>
+<pre><code>&quot;sort&quot; : [
+    1627522828,
+    &quot;2&quot;
+]
+</code></pre>
+<p>第二次搜索，带上这个 sort 信息即可，如下：</p>
+<pre><code>GET es_index_userinfo/_search
+&#123;
+  &quot;size&quot;: 1,
+  &quot;query&quot;: &#123;
+    &quot;match&quot;: &#123;&quot;ancestral&quot;: &quot;安徽&quot;&#125;
+  &#125;,
+  &quot;sort&quot;: [
+    &#123;&quot;create_time&quot;: &quot;desc&quot;&#125;,
+    &#123;&quot;_id&quot;: &quot;desc&quot;&#125;
+  ],
+  &quot;search_after&quot;: [
+    1627522828,
+    &quot;2&quot;
+  ]
+&#125;
+</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>from + size 的优点是简单，缺点是在深度分页的场景下系统开销比较大。</p>
+<p>search after 可以实时高效的进行分页查询，但是它只能做下一页这样的查询场景，不能随机的指定页数查询。</p>
+<p>scroll api 方案也很高效，但是它基于快照，不能用在实时性高的业务场景，且官方已不建议使用。</p>
+<h1 id="9-查询文档是否存在"><a href="#9-查询文档是否存在" class="headerlink" title="9. 查询文档是否存在"></a>9. 查询文档是否存在</h1><p>借助 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#ExistsService">ExistsService</a> 使用 HEAD 检查文档是否存在判断。</p>
+<p>如果文档存在， Elasticsearch 将返回一个 200 ok 的状态码，若文档不存在， Elasticsearch 将返回一个 404 Not Found 的状态码。</p>
+<h2 id="9-1-根据-ID-判断文档是否存在"><a href="#9-1-根据-ID-判断文档是否存在" class="headerlink" title="9.1 根据 ID 判断文档是否存在"></a>9.1 根据 ID 判断文档是否存在</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IsDocExists 某条记录是否存在</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IsDocExists</span><span class="params">(ctx context.Context, id, index <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> GetESClient().Exists().Index(index).Id(id).Do(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>RESTful api 示例：</p>
+<pre><code>head es_index_userinfo/_doc/1
+</code></pre>
+<p>返回：</p>
+<pre><code>200 - OK
+</code></pre>
+<h2 id="9-2-查询符合条件的文档数量"><a href="#9-2-查询符合条件的文档数量" class="headerlink" title="9.2 查询符合条件的文档数量"></a>9.2 查询符合条件的文档数量</h2><p>可以借助 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#CountService">CountService</a> 查询符合条件的文档数量，进而判断文档是否存在。</p>
+<p>比如查询年龄 <code>&gt;=18</code> 的用户数量。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 range 查询条件</span></span><br><span class="line">rangeQuery := elastic.NewRangeQuery(<span class="string">&quot;age&quot;</span>).Gte(<span class="number">18</span>)</span><br><span class="line">cnt, err := GetESClient().</span><br><span class="line">	Count(<span class="string">&quot;es_index_userinfo&quot;</span>).</span><br><span class="line">	Query(rangeQuery).</span><br><span class="line">	Do(ctx)</span><br></pre></td></tr></table></figure>
+
+
+<p>RESTful api 示例：</p>
+<pre><code>GET es_index_userinfo/_count
+&#123;
+    &quot;query&quot;: &#123;
+    &quot;range&quot;: &#123;
+        &quot;age&quot;: &#123;&quot;gte&quot; : 18&#125;
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<h1 id="10-获取文档数量"><a href="#10-获取文档数量" class="headerlink" title="10. 获取文档数量"></a>10. 获取文档数量</h1><p>上一节已经说了可以借助 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#CountService">CountService</a> 查询符合条件的文档数量，如果想查询 index 下的所有文档呢？</p>
+<p>很简单，不指定条件即可。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetIndexDocNum 获取索引文档总数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetIndexDocNum</span><span class="params">(ctx context.Context, index <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int64</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> GetESClient().Count(index).Do(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>RESTful API 示例：</p>
+<pre><code>GET es_index_userinfo/_count
+
+# 示例结果
+&#123;
+  &quot;count&quot; : 337,
+  &quot;_shards&quot; : &#123;
+    &quot;total&quot; : 20,
+    &quot;successful&quot; : 20,
+    &quot;skipped&quot; : 0,
+    &quot;failed&quot; : 0
+  &#125;
+&#125;
+</code></pre>
+<h1 id="12-脚本查询"><a href="#12-脚本查询" class="headerlink" title="12. 脚本查询"></a>12. 脚本查询</h1><p>有时候，我们需要通过脚本来设置复杂的查询条件。</p>
+<p><strong>注意</strong>：</p>
+<ul>
+<li>  脚本查询属于慢查询，在对性能要求严格的场景下谨慎使用；</li>
+<li>  如果 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html#query-dsl-allow-expensive-queries">search.allow_expensive_queries</a> 被设置为 false（缺省为 true），则无法进行脚本查询。</li>
+</ul>
+<h2 id="12-1-判断数组长度"><a href="#12-1-判断数组长度" class="headerlink" title="12.1 判断数组长度"></a>12.1 判断数组长度</h2><p>ES 中每一个字段都是数组，我们无需对字段做额外的设置，便可以将其当作数组来使用。</p>
+<p>有时我们需要根据某个字段的元素个数，即数组长度来查询，此时便需要借助于脚本来完成。比如查询 phone 字段的长度为 1 个且等于某个值。</p>
+<pre><code>POST /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;bool&quot;:&#123;
+      &quot;filter&quot;: [
+        &#123;&quot;term&quot;:&#123;&quot;phone&quot;:18819064334&#125;&#125;,
+        &#123;&quot;script&quot;: &#123;&quot;script&quot;: &quot;doc[&#39;phone&#39;].length == 1&quot;&#125;&#125;
+      ]
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>对应的 Golang 条件设置如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">boolQuery := elastic.NewBoolQuery().</span><br><span class="line">	Filter(elastic.NewTermQuery(<span class="string">&quot;phone&quot;</span>, <span class="number">18819064334</span>)).</span><br><span class="line">	Filter(elastic.NewScriptQuery(elastic.NewScript(<span class="string">&quot;doc[&#x27;phone&#x27;].length == 1&quot;</span>)))</span><br></pre></td></tr></table></figure>
+
+
+<p>如果需要向脚本传参，我们在脚本中设置相关的参数即可。</p>
+<pre><code>POST /es_index_userinfo/_search
+&#123;
+  &quot;query&quot;: &#123;
+    &quot;bool&quot;:&#123;
+      &quot;filter&quot;: [
+        &#123;&quot;term&quot;:&#123;&quot;phone&quot;:18819064334&#125;&#125;,
+        &#123;
+          &quot;script&quot;: &#123;
+            &quot;script&quot;: &#123;
+              &quot;source&quot;: &quot;doc[&#39;phone&#39;].length == params.length&quot;,
+              &quot;params&quot;: &#123;&quot;length&quot;: 1&#125;
+            &#125;
+          &#125;
+        &#125;
+      ]
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>对应 Golang 条件设置如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">boolQuery := elastic.NewBoolQuery().</span><br><span class="line">	Filter(elastic.NewTermQuery(<span class="string">&quot;phone&quot;</span>, <span class="number">18819064334</span>)).</span><br><span class="line">	Filter(elastic.NewScriptQuery(elastic.NewScript(<span class="string">&quot;doc[&#x27;phone&#x27;].length == 1&quot;</span>).Params(</span><br><span class="line">		<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">			<span class="string">&quot;length&quot;</span>: <span class="number">1</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">	)))</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="13-遍历查询结果"><a href="#13-遍历查询结果" class="headerlink" title="13. 遍历查询结果"></a>13. 遍历查询结果</h1><p>获取到查询结果后，我们可以借助 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7">olivere/elastic</a> 提供的工具函数 <a target="_blank" rel="noopener" href="https://pkg.go.dev/github.com/olivere/elastic/v7#SearchResult.Each">func (*SearchResult) Each</a> 完成对查询结果的遍历。下面是一个示例。</p>
+<p>假设 ES 中的文档对应的 Go struct 如下。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> UserInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">	Id         <span class="keyword">uint64</span> <span class="string">`json:&quot;id,omitempty&quot;`</span></span><br><span class="line">	Age        <span class="keyword">int32</span>  <span class="string">`json:&quot;age,omitempty&quot;`</span></span><br><span class="line">	Username   <span class="keyword">string</span> <span class="string">`json:&quot;username,omitempty&quot;`</span></span><br><span class="line">	Nickname   <span class="keyword">string</span> <span class="string">`json:&quot;nickname,omitempty&quot;`</span></span><br><span class="line">	Identity   <span class="keyword">string</span> <span class="string">`json:&quot;identity,omitempty&quot;`</span></span><br><span class="line">	Phone      <span class="keyword">uint64</span> <span class="string">`json:&quot;phone,omitempty&quot;`</span></span><br><span class="line">	Ancestral  <span class="keyword">string</span> <span class="string">`json:&quot;ancestral,omitempty&quot;`</span></span><br><span class="line">	UpdateTime <span class="keyword">int64</span>  <span class="string">`json:&quot;update_time,omitempty&quot;`</span></span><br><span class="line">	CreateTime <span class="keyword">int64</span>  <span class="string">`json:&quot;create_time,omitempty&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>遍历取出查询到的文档。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> _, v := <span class="keyword">range</span> res.Each(reflect.TypeOf(UserInfo&#123;&#125;)) &#123;</span><br><span class="line">	u := v.(UserInfo)</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</div></div></article><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
